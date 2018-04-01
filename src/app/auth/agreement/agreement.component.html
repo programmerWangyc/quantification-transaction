@@ -1,0 +1,19 @@
+<h2 mat-dialog-title bt-text-center>{{'AGREEMENT' | translate}}</h2>
+<mat-dialog-content>
+    <markdown [data]="content | async"></markdown>
+</mat-dialog-content>
+<mat-dialog-actions fxLayoutAlign="end">
+    <button
+        mat-button
+        [mat-dialog-close]="false"
+    >
+        {{'DISAGREE' | translate}}
+    </button>
+
+    <button
+        mat-button
+        [mat-dialog-close]="true"
+    >
+        {{'AGREE' | translate}}
+    </button>
+</mat-dialog-actions>

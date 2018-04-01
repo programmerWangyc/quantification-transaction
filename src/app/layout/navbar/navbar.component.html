@@ -1,0 +1,71 @@
+<nav mat-tab-nav-bar>
+    <a
+        mat-tab-link
+        disabled
+    >
+        <img
+            src="../../assets/logo.png"
+            width="50"
+            alt="botvs"
+        >
+    </a>
+    <a
+        mat-tab-link
+        *ngFor="let link of navLinks"
+        [routerLink]="link.path"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [active]="rla.isActive"
+        class="nav-content"
+    >
+        <mat-icon>{{link.icon}}</mat-icon>
+        {{link.label | translate}}
+    </a>
+
+    <a
+        mat-tab-link
+        [matMenuTriggerFor]="menu"
+        routerLink="tools"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [active]="rla.isActive"
+        class="nav-content"
+    >
+        <mat-icon>work</mat-icon>
+        {{'TOOLS' | translate}}
+        <mat-icon>keyboard_arrow_down</mat-icon>
+    </a>
+
+    <mat-menu
+        #menu="matMenu"
+        overlapTrigger="false"
+    >
+        <button mat-menu-item>
+            <mat-icon>trending_up</mat-icon>
+            {{'QUOTE_TOOL' | translate}}
+        </button>
+        <button mat-menu-item>
+            <mat-icon>build</mat-icon>
+            {{'ANALYZING_TOOL' | translate}}
+        </button>
+    </mat-menu>
+
+    <div id="auth">
+        <a
+            mat-button
+            routerLink="/auth/login"
+            routerLinkActive="active"
+        >
+            <mat-icon>input</mat-icon>
+            {{'LOGIN' |  translate}}
+        </a>
+        <a
+            mat-button
+            routerLink="auth/signup"
+            routerLinkActive="active"
+        >
+            <mat-icon>perm_identity</mat-icon>
+            {{'SIGNUP' |  translate}}
+        </a>
+    </div>
+</nav>

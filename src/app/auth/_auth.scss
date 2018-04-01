@@ -1,0 +1,26 @@
+$prefix: 'login' !default;
+.#{$prefix} {
+    &-container {
+        margin-top: -48px;
+    }
+    &-main {
+        position: relative;
+        margin: 0 auto;
+        width: 500px;
+    }
+}
+
+.full-width {
+    width: 100%;
+}
+
+.sign-third {
+    margin-top: 15px;
+}
+
+.redirect {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #673ab7;
+    text-decoration: none;
+}

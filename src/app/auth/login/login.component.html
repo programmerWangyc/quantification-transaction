@@ -1,0 +1,128 @@
+<div
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    class="login-container"
+>
+    <div class="login-main mat-elevation-z12">
+        <mat-card>
+            <mat-card-title>
+                {{'USER_LOGIN' | translate}}
+                <a
+                    routerLink="/auth/signup"
+                    class="redirect"
+                >
+                    {{'SIGNUP' | translate}}
+                </a>
+            </mat-card-title>
+            <mat-card-content>
+                <form
+                    fxLayout="column"
+                    fxLayoutAlign="start stretch"
+                    [formGroup]="loginForm"
+                    (ngSubmit)="login$.next(loginForm.value)"
+                >
+                    <mat-form-field
+                        [matTooltip]="'USERNAME_FORMAT_ERROR' | translate"
+                        [matTooltipPosition]="tipPosition"
+                        class="full-width"
+                    >
+                        <input
+                            type="text"
+                            class="input"
+                            [placeholder]="'USERNAME' | translate"
+                            formControlName="username"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="username.invalid && (username.dirty  || username.touched)">
+                        <div
+                            *ngIf="username.errors.required"
+                            class="form-error"
+                        >
+                            {{'USERNAME_TIP' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!username.errors.required && username.errors.usernameFormat"
+                            class="form-error"
+                        >
+                            {{loginForm.getError('usernameFormat', 'username') | translate}}
+                        </div>
+                    </div>
+
+                    <mat-form-field
+                        [matTooltip]="'PASSWORD_FORMAT_ERROR' | translate"
+                        [matTooltipPosition]="tipPosition"
+                        class="full-width"
+                    >
+                        <input
+                            type="password"
+                            class="input"
+                            [placeholder]="'PASSWORD' | translate"
+                            formControlName="password"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="password.invalid && (password.dirty  || password.touched)">
+                        <div
+                            *ngIf="password.errors.required"
+                            class="form-error"
+                        >
+                            {{'PASSWORD_TIP' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!password.errors.required && password.errors.passwordFormat"
+                            class="form-error"
+                        >
+                            {{loginForm.getError('passwordFormat', 'password') | translate}}
+                        </div>
+                    </div>
+
+                    <mat-form-field
+                        *ngIf="needVerification | async; let require"
+                        [matTooltip]="'VERIFICATION_CODE_TIP' | translate"
+                        [matTooltipPosition]="tipPosition"
+                    >
+                        <input
+                            type="text"
+                            [placeholder]="'VERIFICATION_CODE' | translate"
+                            formControlName="verificationCode"
+                            matInput
+                            [required]="require"
+                        >
+                    </mat-form-field>
+                    <div *ngIf="verificationCode.invalid && (verificationCode.dirty  || verificationCode.touched)">
+                        <div
+                            *ngIf="verificationCode.errors.required"
+                            class="form-error"
+                        >
+                            {{'VERIFICATION_CODE_TIP' | translate}}
+                        </div>
+                    </div>
+
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="!loginForm.valid"
+                    >
+                        {{'LOGIN' | translate}}
+                    </button>
+                </form>
+
+            </mat-card-content>
+
+            <div id="get-password">
+                <a
+                    routerLink="/auth/reget"
+                    class="redirect"
+                >
+                    {{'FORGET_PASSWORD' | translate}}
+                </a>
+            </div>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,158 @@
+<div
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    class="signup-container"
+>
+    <div class="signup-main mat-elevation-z12">
+        <mat-card>
+            <mat-card-title>
+                {{'USER_SIGNUP' | translate}}
+                <a
+                    routerLink="/auth/login"
+                    class="redirect"
+                >
+                    {{'LOGIN' | translate}}
+                </a>
+            </mat-card-title>
+            <mat-card-content>
+                <form
+                    fxLayout="column"
+                    fxLayoutAlign="start stretch"
+                    [formGroup]="signupForm"
+                    (ngSubmit)="signup$.next(signupForm.value)"
+                >
+                    <mat-form-field
+                        [matTooltip]="'USERNAME_FORMAT_ERROR' | translate"
+                        [matTooltipPosition]="tipPosition"
+                        class="full-width"
+                    >
+                        <input
+                            type="text"
+                            class="input"
+                            [placeholder]="'USERNAME' | translate"
+                            formControlName="username"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="username.invalid && (username.dirty  || username.touched)">
+                        <div
+                            *ngIf="username.errors.required"
+                            class="form-error"
+                        >
+                            {{'USERNAME_TIP' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!username.errors.required && username.errors.usernameFormat"
+                            class="form-error"
+                        >
+                            {{signupForm.getError('usernameFormat', 'username') | translate}}
+                        </div>
+                    </div>
+
+                    <mat-form-field class="full-width">
+                        <input
+                            type="email"
+                            class="input"
+                            [placeholder]="'EMAIL' | translate"
+                            formControlName="email"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="email.invalid && (email.dirty  || email.touched)">
+                        <div
+                            *ngIf="email.errors.required"
+                            class="form-error"
+                        >
+                            {{'EMAIL_REQUIRED_ERROR' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!email.errors.required && email.errors.emailFormat"
+                            class="form-error"
+                        >
+                            {{signupForm.getError('emailFormat', 'email') | translate}}
+                        </div>
+                    </div>
+
+                    <mat-form-field
+                        [matTooltip]="'PASSWORD_FORMAT_ERROR' | translate"
+                        [matTooltipPosition]="tipPosition"
+                        formGroupName="passwordInfo"
+                        class="full-width"
+                    >
+                        <input
+                            type="password"
+                            class="input"
+                            [placeholder]="'PASSWORD' | translate"
+                            formControlName="password"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="password.invalid && (password.dirty  || password.touched)">
+                        <div
+                            *ngIf="password.errors.required"
+                            class="form-error"
+                        >
+                            {{'PASSWORD_TIP' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!password.errors.required && password.errors.passwordFormat"
+                            class="form-error"
+                        >
+                            {{signupForm.getError('passwordFormat', 'passwordInfo.password') | translate}}
+                        </div>
+                    </div>
+
+                    <mat-form-field
+                        [matTooltip]="'PASSWORD_FORMAT_ERROR' | translate"
+                        [matTooltipPosition]="tipPosition"
+                        formGroupName="passwordInfo"
+                        class="full-width"
+                    >
+                        <input
+                            type="password"
+                            class="input"
+                            [placeholder]="'CONFIRM_PASSWORD' | translate"
+                            formControlName="confirmPassword"
+                            required
+                            matInput
+                        >
+                    </mat-form-field>
+
+                    <div
+                        *ngIf="signupForm.hasError('mismatch', 'passwordInfo') && (confirmPassword.dirty || confirmPassword.touched)"
+                        class="form-error"
+                    >
+                        <span>
+                            {{signupForm.getError('mismatch', 'passwordInfo') | translate}}
+                        </span>
+                    </div>
+
+                    <mat-checkbox
+                        [checked]="isAgree | async"
+                        (change)="toggleAgree$.next($event.checked)"
+                    >
+                        {{'AGREEMENT_TIP' | translate}}
+                        <a (click)="dialog$.next(true)" href="javascript:void 0" style="text-decoration: none;">{{'AGREEMENT' | translate}}</a>
+                    </mat-checkbox>
+
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="!signupForm.valid || !(isAgree | async)"
+                    >
+                        {{'LOGIN' | translate}}
+                    </button>
+                </form>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+</div>

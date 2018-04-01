@@ -1,0 +1,86 @@
+import { PublicResponse } from '../../interfaces/response.interface';
+import { Referrer } from './../../interfaces/business.interface';
+import { LocalStorageKey } from './../../interfaces/constant.interface';
+import { SettingsRequest } from './../../interfaces/request.interface';
+import { SettingsResponse } from './../../interfaces/response.interface';
+import * as actions from './public.action';
+
+export interface Settings {
+    agreement: string;
+    about: string;
+    api: string;
+    promotion: {}
+    docker: {}
+    brokers: {}
+    index: {}
+}
+
+export interface State extends PublicResponse {
+    referrer: Referrer,
+    settings: Settings;
+    settingsResponse: SettingsResponse
+    settingsRequest: SettingsRequest;
+}
+
+export const initialState: State = {
+    balance: null,
+    cached: null,
+    callbackId: null,
+    consumed: null,
+    error: null,
+    is_admin: null,
+    notify: null,
+    token: null,
+    username: null,
+    version: null,
+    referrer: null,
+    settings: null,
+    settingsRequest: null,
+    settingsResponse: null,
+}
+
+export function reducer(state = initialState, action: actions.Actions): State {
+    switch (action.type) {
+        case actions.SET_PUBLIC_INFORMATION:
+            return { ...state, ...action.payload };
+
+        case actions.SET_REFERRER:
+            return { ...state, referrer: action.payload };
+
+        case actions.GET_SETTINGS:
+            return { ...state, settingsRequest: action.payload };
+
+        case actions.GET_SETTINGS_FAIL:
+            return { ...state, settingsResponse: action.payload, settings: updateSettings(state.settings, state.settingsRequest.type, null) };
+
+        case actions.GET_SETTINGS_SUCCESS:
+            return { ...state, settingsResponse: action.payload, settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result) };
+
+        default:
+            return state;
+    }
+}
+
+function updateSettings(settings: Settings, key: string, data: any): Settings {
+    const result = { ...settings };
+
+    result[key] = data;
+
+    return result;
+}
+
+export const getBalance = (state: State) => state.balance;
+
+export const getUsername = (state: State) => state.username || localStorage.getItem(LocalStorageKey.username);
+
+export const getToken = (state: State) => state.token || localStorage.getItem(LocalStorageKey.token);
+
+export const getVersion = (state: State) => state.version;
+
+export const getIsAdmin = (state: State) => state.is_admin;
+
+export const getReferrer = (state: State) => state.referrer;
+
+export const getSettingsResponse = (state: State) => state.settingsResponse;
+
+export const getSettings = (state: State) => state.settings;
