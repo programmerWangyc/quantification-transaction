@@ -1,0 +1,66 @@
+<div
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    class="reset-container"
+>
+    <div class="reset-main mat-elevation-z12">
+        <mat-card>
+            <mat-card-title>
+                {{'REGAIN_PASSWORD' | translate}}
+                <a
+                    routerLink="/auth/login"
+                    class="redirect"
+                >
+                    {{'LOGIN' | translate}}
+                </a>
+            </mat-card-title>
+            <mat-card-content>
+                <form
+                    fxLayout="column"
+                    fxLayoutAlign="start stretch"
+                    #resetForm="ngForm"
+                    (ngSubmit)="resetPassword$.next(email)"
+                >
+                    <mat-form-field class="full-width">
+                        <input
+                            type="email"
+                            class="input"
+                            [placeholder]="'EMAIL' | translate"
+                            [(ngModel)]="email"
+                            name="email"
+                            required
+                            email
+                            matInput
+                            #spy="ngModel"
+                        >
+                    </mat-form-field>
+
+                    <div *ngIf="spy.invalid && (spy.dirty  || spy.touched)">
+                        <div
+                            *ngIf="spy.errors.required"
+                            class="form-error"
+                        >
+                            {{'EMAIL_REQUIRED_ERROR' | translate}}
+                        </div>
+                        <div
+                            *ngIf="!spy.errors.required && spy.errors.email"
+                            class="form-error"
+                        >
+                            {{'EMAIL_FORMAT_ERROR' | translate}}
+                        </div>
+                    </div>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="resetForm.form.invalid"
+                    >
+                        {{'REGAIN_PASSWORD' | translate}}
+                    </button>
+                </form>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+</div>

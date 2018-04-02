@@ -34,7 +34,7 @@ export class SettingsAction extends ApiAction {
 
 export const GET_SETTINGS = 'GET_SETTINGS';
 
-export class GetSettingsAction extends SettingsAction implements Action {
+export class GetSettingsRequestAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS;
 
     constructor(public payload: SettingsRequest) { super() }
@@ -56,7 +56,7 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super() }
 }
 
-export type ApiActions = GetSettingsAction
+export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
 

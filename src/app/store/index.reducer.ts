@@ -1,19 +1,25 @@
 import { ActionReducerMap, createSelector } from '@ngrx/store';
 
 import * as login from './auth/login.reducer';
+import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as pub from './public/public.reducer';
+import * as pwd from './auth/password.reducer';
 
 export interface AppState {
     pub: pub.State,
     login: login.State,
     signup: signup.State,
+    reset: reset.State,
+    pwd: pwd.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
     pub: pub.reducer,
     login: login.reducer,
     signup: signup.reducer,
+    reset: reset.reducer,
+    pwd: pwd.reducer,
 }
 
 
@@ -37,3 +43,11 @@ export const selectLoginResponse = createSelector(getLoginState, login.getLoginR
 export const getSignupState = (state: AppState) => state.signup;
 export const selectSignupResponse = createSelector(getSignupState, signup.getSingupResponse);
 export const selectAgreeState = createSelector(getSignupState, signup.getAgreeState);
+
+// reset password
+export const getResetPwdState = (state: AppState) => state.reset;
+export const selectResetPasswordResponse = createSelector(getResetPwdState, reset.getResetResponse);
+
+// set password
+export const getSetPwdState = (state: AppState) => state.pwd;
+export const selectSetPwdResponse = createSelector(getSetPwdState, pwd.getSetPwdResponse);

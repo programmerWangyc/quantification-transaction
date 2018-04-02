@@ -20,9 +20,9 @@ import {
 import { Settings, settings } from './../../../request.interface';
 import { Referrer } from './../interfaces/business.interface';
 import { LocalStorageKey } from './../interfaces/constant.interface';
-import { SettingsResponse } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
 import { SetReferrerAction } from './../store/public/public.action';
+import { SettingsResponseState } from './../store/public/public.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 
@@ -47,7 +47,7 @@ export class PublicService {
 
     /* =======================================================Date acquisition======================================================= */
 
-    getSettingsResponse(): Observable<SettingsResponse> {
+    getSettingsResponse(): Observable<SettingsResponseState> {
         return this.store.select(selectSettingsResponse)
             .filter(res => !!res);
     }

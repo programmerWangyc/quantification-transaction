@@ -33,7 +33,7 @@ export class PublicEffect extends BaseEffect {
     @Effect()
     settings$: Observable<ResponseAction> = this.actions$
         .ofType(pub.GET_SETTINGS)
-        .mergeMap((action: pub.GetSettingsAction) => this.ws
+        .mergeMap((action: pub.GetSettingsRequestAction) => this.ws
             .send(this.getParams(action))
             .takeUntil(this.actions$.ofType(pub.GET_SETTINGS))
             .mergeMap(body => this.getSplitAction(body, pub))

@@ -2,7 +2,6 @@ import { PublicResponse } from '../../interfaces/response.interface';
 import { Referrer } from './../../interfaces/business.interface';
 import { LocalStorageKey } from './../../interfaces/constant.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
-import { SettingsResponse } from './../../interfaces/response.interface';
 import * as actions from './public.action';
 
 export interface Settings {
@@ -15,10 +14,15 @@ export interface Settings {
     index: {}
 }
 
+export interface SettingsResponseState {
+    error: string;
+    action: string;
+}
+
 export interface State extends PublicResponse {
-    referrer: Referrer,
+    referrer: Referrer;
     settings: Settings;
-    settingsResponse: SettingsResponse
+    settingsResponse: SettingsResponseState;
     settingsRequest: SettingsRequest;
 }
 
@@ -51,10 +55,24 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, settingsRequest: action.payload };
 
         case actions.GET_SETTINGS_FAIL:
-            return { ...state, settingsResponse: action.payload, settings: updateSettings(state.settings, state.settingsRequest.type, null) };
+            return {
+                ...state,
+                settingsResponse: {
+                    action: action.payload.action,
+                    error: action.payload.error,
+                },
+                settings: updateSettings(state.settings, state.settingsRequest.type, null),
+            };
 
         case actions.GET_SETTINGS_SUCCESS:
-            return { ...state, settingsResponse: action.payload, settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result) };
+            return {
+                ...state,
+                settingsResponse: {
+                    error: action.payload.error,
+                    action: action.payload.action,
+                },
+                settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result),
+            };
 
         default:
             return state;

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { MarkdownModule } from 'angular2-markdown';
 
@@ -10,8 +10,9 @@ import { AgreementComponent } from './agreement/agreement.component';
 import { ContainerComponent } from './container/container.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './providers/auth.service';
-import { RegetComponent } from './reget/reget.component';
+import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
+import { PasswordComponent } from './password/password.component';
 
 const routs: Routes = [
     {
@@ -20,7 +21,8 @@ const routs: Routes = [
         children: [
             { path: 'login', component: LoginComponent },
             { path: 'signup', component: SignupComponent },
-            { path: 'reget', component: RegetComponent },
+            { path: 'reset', component: ResetComponent },
+            { path: 'pwd/:token', component: PasswordComponent },
             { path: '', redirectTo: 'login', pathMatch: 'full' }
         ]
     }
@@ -32,15 +34,17 @@ const routs: Routes = [
         SharedModule,
         RouterModule.forChild(routs),
         ReactiveFormsModule,
+        FormsModule,
         MarkdownModule.forRoot(),
         ToolModule,
     ],
     declarations: [
         SignupComponent,
         LoginComponent,
-        RegetComponent,
         ContainerComponent,
         AgreementComponent,
+        ResetComponent,
+        PasswordComponent,
     ],
     entryComponents: [
         AgreementComponent,

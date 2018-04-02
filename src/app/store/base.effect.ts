@@ -18,10 +18,11 @@ export const isFail: isFail<any> = (data: ResponseUnit<any>) => !!data.error;
 export class BaseEffect {
     constructor() { }
 
-    getSplitAction(data: ResponseBody, actionModule: Object, predicationFn: isFail<any> = isFail): Observable<ResponseAction> {
+    getSplitAction(data: ResponseBody, actionModule: Object, resultFail: isFail<any> = isFail): Observable<ResponseAction> {
         return Observable.from(data.result || [])
             .zip(Observable.from(data.callbackId.split('-')), (result, action) => ({ ...result, action }))
-            .map(res => new actionModule[res.action + (predicationFn(res) ? failTail : successTail)](res))
+            .do(v => console.log(v))
+            .map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res))
     }
 
     getParams(action: ApiActions): WsRequest {

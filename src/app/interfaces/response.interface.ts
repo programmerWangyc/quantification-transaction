@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 
 /* =======================================================Abstract response========================================================= */
+
 export type ResponseItem = string | number | boolean | {[key: string]: any};
 
 export interface ResponseBody extends PublicResponse{
@@ -44,6 +45,12 @@ export interface SignupResponse extends ResponseUnit<number> { }
 
 // get settings
 export interface SettingsResponse extends ResponseUnit<ResponseItem> { }
+
+// reset password
+export interface ResetPasswordResponse extends ResponseUnit<boolean> { }
+
+// set password
+export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 
 // export interface AgreementSettingResponse extends ResponseUnit<string>{ }
 // agreement: string;

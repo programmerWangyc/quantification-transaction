@@ -1,5 +1,5 @@
 
-//requrest interface
+//request interface
 export interface WsRequest {
     method: string[];
     params: any[][];
@@ -34,4 +34,15 @@ export enum SettingTypes {
 
 export interface SettingsRequest {
     type: string;
+}
+
+// reset password
+export interface ResetPasswordRequest {
+   email: string; 
+}
+
+// set password
+export interface SetPasswordRequest {
+    token: string;
+    password: string;
 }
