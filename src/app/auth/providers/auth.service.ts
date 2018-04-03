@@ -9,11 +9,14 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { LoginRequest, SignupRequest, SetPasswordRequest } from '../../interfaces/request.interface';
 import { ErrorService } from '../../providers/error.service';
-import { ToggleAgreeStateAction } from '../../store/auth/signup.action';
+import { ToggleAgreeStateAction,  ResetSignupResponseAction } from '../../store/auth/signup.action';
 import { AppState, selectLoginResponse, selectSignupResponse, selectResetPasswordResponse } from '../../store/index.reducer';
 import { LoginResponse, SignupResponse, ResetPasswordResponse, SetPasswordResponse } from './../../interfaces/response.interface';
 import { ProcessService } from './../../providers/process.service';
 import { selectAgreeState, selectSetPwdResponse } from './../../store/index.reducer';
+import { ResetLoginErrorAction } from '../../store/auth/login.action';
+import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
+import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 
 @Injectable()
 export class AuthService {
@@ -63,6 +66,10 @@ export class AuthService {
             .map(data => data.result === 0);
     }
 
+    resetLoginError(): void {
+        this.store.dispatch(new ResetLoginErrorAction());
+    }
+
     //signup
     private getSignupResponse(): Observable<SignupResponse> {
         return this.store.select(selectSignupResponse)
@@ -82,6 +89,16 @@ export class AuthService {
         return state.subscribe(state => this.store.dispatch(new ToggleAgreeStateAction(state)));
     }
 
+    resetSignupResponse(): void {
+        this.store.dispatch(new ResetSignupResponseAction());
+    }
+
+    showSignupResponse(): Subscription {
+        return this.isSignupSuccess()
+            .mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP'))
+            .subscribe(message => this.tip.showTip(message));
+    }
+
     // reset password
     private getResetPasswordResponse(): Observable<ResetPasswordResponse> {
         return this.store.select(selectResetPasswordResponse)
@@ -94,6 +111,11 @@ export class AuthService {
             .subscribe(message => this.tip.showTip(message, 60000));
     }
 
+    resetResetPasswordResponse(): void {
+        this.store.dispatch(new ResetResetPasswordResponseAction());
+    }
+
+    // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
         return this.store.select(selectSetPwdResponse)
             .filter(res => !!res);
@@ -103,6 +125,10 @@ export class AuthService {
         return this.getSetPasswordResponse()
             .mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP'))
             .subscribe(message => this.tip.showTip(message));
+    }
+
+    resetSetPasswordResponse(): void {
+        this.store.dispatch(new ResetSetPasswordResponseAction());
     }
 
     /* =======================================================Error Handle======================================================= */
@@ -134,7 +160,7 @@ export class AuthService {
     handleSetPasswordError(): Subscription {
         return this.error.handleResponseError(
             this.getSetPasswordResponse()
-                .filter(data => !! data.error)
+                .filter(data => !!data.error)
                 .map(data => data.error)
         )
     }

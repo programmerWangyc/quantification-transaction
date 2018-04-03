@@ -4,6 +4,9 @@ import { LoginRequest } from '../../interfaces/request.interface';
 import { LoginResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
+
+/* ===========================================Api action=================================== */
+
 /**
  * @enum LoginOrder
  * @description This enum indicate the parameter's order which send to the server. All parameters of this interface must be listed here event if the
@@ -27,7 +30,9 @@ export class LoginAction extends ApiAction {
     command = 'Login';
 
     order = LoginOrder;
-    
+
+    noneParams = false;
+
     constructor() { super() }
 }
 
@@ -35,6 +40,8 @@ export const LOGIN = 'LOGIN';
 
 export class LoginRequestAction extends LoginAction implements Action {
     readonly type = LOGIN;
+
+    public allowSeparateRequest = true;
 
     constructor(public payload: LoginRequest) { super() }
 }
@@ -55,8 +62,24 @@ export class LoginSuccessAction extends LoginAction implements Action {
     constructor(public payload: LoginResponse) { super() }
 }
 
+/* ===========================================Local action=================================== */
+
+export const RESET_LOGIN_ERROR = 'RESET_LOGIN_ERROR';
+
+export class ResetLoginErrorAction implements Action {
+    readonly type = RESET_LOGIN_ERROR;
+
+    constructor() { }
+}
+
 export type ApiActions = LoginRequestAction
     | LoginFailAction
-    | LoginSuccessAction;
+    | LoginSuccessAction
 
 export type Actions = ApiActions
+    | ResetLoginErrorAction;
+
+export const ResponseActions = {
+    LoginFailAction,
+    LoginSuccessAction,
+}

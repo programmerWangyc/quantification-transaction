@@ -2,23 +2,21 @@ import { Action } from '@ngrx/store';
 
 /* =======================================================Abstract response========================================================= */
 
-export type ResponseItem = string | number | boolean | {[key: string]: any};
+export type ResponseItem = string | number | boolean | { [key: string]: any } | JSON;
 
-export interface ResponseBody extends PublicResponse{
-    result: ResponseUnit<ResponseItem>[];
-}
-
-export interface ResponseUnit<T> {
+export interface ResponseState {
     error: string;
-    result: T;
     action?: string;
 }
 
-export class ResponseAction implements Action {
-    readonly type: string;
-
-    constructor(payload: any) { }
+export interface ResponseBody extends PublicResponse {
+    result: ResponseUnit<ResponseItem>[];
 }
+
+export interface ResponseUnit<T> extends ResponseState {
+    result: T;
+}
+
 
 /* =======================================================Public section of response========================================================= */
 
@@ -44,13 +42,42 @@ export interface LoginResponse extends ResponseUnit<number> { }
 export interface SignupResponse extends ResponseUnit<number> { }
 
 // get settings
-export interface SettingsResponse extends ResponseUnit<ResponseItem> { }
+export interface IndexSetting {
+    showLogo: string;
+}
+
+export interface SettingsResponse extends ResponseUnit<string | IndexSetting> { }
 
 // reset password
 export interface ResetPasswordResponse extends ResponseUnit<boolean> { }
 
 // set password
 export interface SetPasswordResponse extends ResponseUnit<boolean> { }
+
+// exchange list
+export interface ExchangeMetaData {
+    desc: string;
+    required: boolean;
+    type: string;
+    name: string;
+    label: string;
+}
+
+export interface Exchange {
+    eid: string;
+    id: number;
+    logo: string;
+    meta: ExchangeMetaData[];
+    name: string;
+    priority: number;
+    website: string;
+}
+
+export interface ExchangeListResponse {
+    exchanges: Exchange[];
+}
+
+export interface GetExchangeListResponse extends ResponseUnit<ExchangeListResponse> { }
 
 // export interface AgreementSettingResponse extends ResponseUnit<string>{ }
 // agreement: string;
@@ -59,7 +86,6 @@ export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 // promotion: {}
 // docker: {}
 // brokers: {}
-// index: {}
 
 
 
@@ -78,7 +104,7 @@ export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 
 
 /* ======================================= */
-export interface SomethingResponse extends ResponseUnit<Something>{ }
+export interface SomethingResponse extends ResponseUnit<Something> { }
 
 export interface Something {
     all: number;

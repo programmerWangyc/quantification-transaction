@@ -1,4 +1,3 @@
-import { SET_PASSWORD } from './password.action';
 import { ResponseUnit, SetPasswordResponse, ResetPasswordResponse } from './../../interfaces/response.interface';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
@@ -13,67 +12,35 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
 
-import { LoginResponse, ResponseAction, SignupResponse } from '../../interfaces/response.interface';
+import { LoginResponse, SignupResponse } from '../../interfaces/response.interface';
 import { WebsocketService } from '../../providers/websocket.service';
 import { BaseEffect } from '../base.effect';
-import { LOGIN } from './login.action';
-import * as loginAction from './login.action';
-import * as resetAction from './reset.action';
-import { RESET_PASSWORD } from './reset.action';
-import { SIGNUP } from './signup.action';
-import * as signupAction from './signup.action';
-import * as setAction from './password.action';
+import { ResponseActions as loginAction, LOGIN} from './login.action';
+import { ResponseActions as signupAction, SIGNUP } from './signup.action';
+import { ResponseActions as resetAction, RESET_PASSWORD} from './reset.action';
+import { ResponseActions as setAction, SET_PASSWORD} from './password.action';
 
 @Injectable()
 export class AuthEffect extends BaseEffect {
 
     @Effect()
-    login$: Observable<ResponseAction> = this.actions$
-        .ofType(loginAction.LOGIN)
-        .switchMap((action: loginAction.LoginRequestAction) => this.ws
-            .send(this.getParams(action))
-            .takeUntil(this.actions$.ofType(loginAction.LOGIN))
-            .mergeMap(body => this.getSplitAction(body, loginAction, isAuthFail))
-            .catch(error => Observable.of(error))
-        );
+    login$ = this.getResponseAction(LOGIN, loginAction, isAuthFail);
 
     @Effect()
-    signup$: Observable<ResponseAction> = this.actions$
-        .ofType(signupAction.SIGNUP)
-        .switchMap((action: signupAction.SignupRequestAction) => this.ws
-            .send(this.getParams(action))
-            .takeUntil(this.actions$.ofType(signupAction.SIGNUP))
-            .mergeMap(body => this.getSplitAction(body, signupAction, isAuthFail))
-            .catch(error => Observable.of(error))
-        );
+    signup$ = this.getResponseAction(SIGNUP, signupAction, isAuthFail);
 
     @Effect()
-    reset$: Observable<ResponseAction> = this.actions$
-        .ofType(resetAction.RESET_PASSWORD)
-        .switchMap((action: resetAction.ResetPasswordRequestAction) => this.ws
-            .send(this.getParams(action))
-            .takeUntil(this.actions$.ofType(resetAction.RESET_PASSWORD))
-            .mergeMap(body => this.getSplitAction(body, resetAction, isPwdFail))
-            .catch(error => Observable.of(error))
-        );
+    reset$ = this.getResponseAction(RESET_PASSWORD, resetAction, isPwdFail);
 
     @Effect()
-    setPwd$: Observable<ResponseAction> = this.actions$
-        .ofType(setAction.SET_PASSWORD)
-        .switchMap((action: setAction.SetPasswordRequestAction) => this.ws
-            .send(this.getParams(action))
-            .takeUntil(this.actions$.ofType(setAction.SET_PASSWORD))
-            .mergeMap(body => this.getSplitAction(body, setAction, isPwdFail))
-            .catch(error => Observable.of(error))
-        );
+    setPwd$ = this.getResponseAction(SET_PASSWORD, setAction, isPwdFail);
 
     constructor(
-        private actions$: Actions,
-        private ws: WebsocketService
+        public actions$: Actions,
+        public ws: WebsocketService
     ) {
-        super();
+        super(ws, actions$);
     }
-
 }
 
 function isAuthFail(res: LoginResponse): boolean

@@ -4,6 +4,9 @@ import { SignupResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SignupRequest } from './../../interfaces/request.interface';
 
+/* ===========================================Api action=================================== */
+
+// signup
 export enum SignupOrder {
     username,
     email,
@@ -13,15 +16,14 @@ export enum SignupOrder {
     length
 }
 
-/* ===========================================Api action=================================== */
-
-// signup
 export class SignupAction extends ApiAction {
     isSingleParams = false;
 
     command = 'Signup';
 
     order = SignupOrder;
+
+    noneParams = false;
 
     constructor() { super() }
 }
@@ -30,6 +32,8 @@ export const SIGNUP = 'SIGNUP';
 
 export class SignupRequestAction extends SignupAction implements Action {
     readonly type = SIGNUP;
+
+    public allowSeparateRequest = true;
 
     constructor(public payload: SignupRequest) { super() }
 }
@@ -60,10 +64,23 @@ export class ToggleAgreeStateAction implements Action {
     constructor(public payload: boolean) { }
 }
 
+export const RESET_SIGNUP_RESPONSE_ACTION = 'RESET_SIGNUP_RESPONSE_ACTION';
+
+export class ResetSignupResponseAction implements Action {
+    readonly type = RESET_SIGNUP_RESPONSE_ACTION;
+
+    constructor() { }
+}
+
 export type ApiActions = SignupRequestAction
     | SignupFailAction
     | SignupSuccessAction
 
 export type Actions = ApiActions
     | ToggleAgreeStateAction
+    | ResetSignupResponseAction
 
+export const ResponseActions = {
+    SignupFailAction,
+    SignupSuccessAction,
+}

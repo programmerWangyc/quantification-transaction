@@ -13,6 +13,8 @@ export class AgreementComponent implements OnInit {
 
     content: Observable<string>;
 
+    pending: Observable<boolean>
+
     constructor(
         private publicService: PublicService,
     ) {
@@ -20,5 +22,7 @@ export class AgreementComponent implements OnInit {
 
     ngOnInit() {
         this.content = this.publicService.getAgreement();
+        
+        this.pending = this.publicService.getAgreementState();
     }
 }

@@ -67,8 +67,8 @@ export class WebsocketService {
     connect(): void {
         if (this.messages) return;
 
-        const webSocketFactory: (a: string, b: string | string[]) => IWebSocket = (url: string, protocls: string | string[]) => {
-            const ws = new WebSocket(url, protocls);
+        const webSocketFactory: (a: string, b: string | string[]) => IWebSocket = (url: string, protocols: string | string[]) => {
+            const ws = new WebSocket(url, protocols);
 
             ws.binaryType = 'arraybuffer';
 

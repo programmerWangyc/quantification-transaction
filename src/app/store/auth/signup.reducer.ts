@@ -49,6 +49,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // ui state
         case actions.TOGGLE_AGREE_STATE:
             return { ...state, isAgree: action.payload };
+
+        case actions.RESET_SIGNUP_RESPONSE_ACTION:
+            return { ...state, response: null };
             
         default:
             return state;

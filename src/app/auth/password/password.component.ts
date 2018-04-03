@@ -60,6 +60,8 @@ export class PasswordComponent extends BusinessComponent {
 
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
+
+        this.authService.resetSetPasswordResponse();
     }
 
     get password(): AbstractControl {

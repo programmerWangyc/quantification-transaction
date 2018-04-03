@@ -4,12 +4,17 @@ import { ResetPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { ResetPasswordRequest } from './../../interfaces/request.interface';
 
+/* ===========================================Api action=================================== */
+
+// reset password
 export class ResetPasswordAction extends ApiAction {
     isSingleParams = true;
-    
+
     command = 'ResetPassword';
 
     order = null;
+
+    noneParams = false;
 
     constructor() { super() }
 }
@@ -17,15 +22,17 @@ export class ResetPasswordAction extends ApiAction {
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 
 export class ResetPasswordRequestAction extends ResetPasswordAction implements Action {
-    readonly type = 'RESET_PASSWORD';
+    readonly type = RESET_PASSWORD;
 
+    public allowSeparateRequest = true;
+    
     constructor(public payload: ResetPasswordRequest) { super() }
 }
 
 export const RESET_PASSWORD_FAIL = 'RESET_PASSWORD_FAIL';
 
 export class ResetPasswordFailAction extends ResetPasswordAction implements Action {
-    readonly type = 'RESET_PASSWORD_FAIL';
+    readonly type = RESET_PASSWORD_FAIL;
 
     constructor(public payload: ResetPasswordResponse) { super() }
 }
@@ -33,9 +40,19 @@ export class ResetPasswordFailAction extends ResetPasswordAction implements Acti
 export const RESET_PASSWORD_SUCCESS = 'RESET_PASSWORD_SUCCESS';
 
 export class ResetPasswordSuccessAction extends ResetPasswordAction implements Action {
-    readonly type = 'RESET_PASSWORD_SUCCESS';
+    readonly type = RESET_PASSWORD_SUCCESS;
 
     constructor(public payload: ResetPasswordResponse) { super() }
+}
+
+/* ===========================================Local action=================================== */
+
+export const RESET_RESET_PASSWORD = 'RESET_RESET_PASSWORD';
+
+export class ResetResetPasswordResponseAction implements Action {
+    readonly type = RESET_RESET_PASSWORD;
+
+    constructor() { }
 }
 
 export type ApiActions = ResetPasswordRequestAction
@@ -43,3 +60,9 @@ export type ApiActions = ResetPasswordRequestAction
     | ResetPasswordSuccessAction
 
 export type Actions = ApiActions
+    | ResetResetPasswordResponseAction;
+
+export const ResponseActions = {
+    ResetPasswordFailAction,
+    ResetPasswordSuccessAction
+}

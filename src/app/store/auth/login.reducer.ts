@@ -20,21 +20,24 @@ export enum LoginErrorMsg {
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
+        // login state
         case actions.LOGIN:
             return { ...state, username: action.payload.username };
 
         case actions.LOGIN_FAIL: {
             const response = { ...action.payload };
 
-            // if (code !== 0) {
             response.error = LoginErrorMsg[Math.abs(action.payload.result)];
-            // }
 
             return { ...state, response };
         }
 
         case actions.LOGIN_SUCCESS:
             return { ...state, response: action.payload };
+
+        // ui state
+        case actions.RESET_LOGIN_ERROR:
+            return { ...state, response: { ...state.response, error: null } };
 
         default:
             return state;

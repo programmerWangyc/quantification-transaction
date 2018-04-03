@@ -62,6 +62,7 @@ export class SignupComponent extends BusinessComponent {
             .add(this.authService.toggleAgreeState(this.toggleAgree$.merge(this.getDialogResult())))
             .add(this.activatedRoute.params.map(params => params['ref']).filter(ref => !!ref).subscribe(this.publicService.refUser$$))
             .add(this.authService.isSignupSuccess().filter(success => !!success).subscribe(_ => this.router.navigateByUrl('/home')))
+            .add(this.authService.showSignupResponse())
             .add(this.authService.handleSignupError())
             .add(this.publicService.handleSettingsError());
     }
@@ -84,6 +85,8 @@ export class SignupComponent extends BusinessComponent {
 
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
+
+        this.authService.resetSignupResponse();
     }
 
     get username(): AbstractControl {

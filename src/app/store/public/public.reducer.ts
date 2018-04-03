@@ -1,4 +1,4 @@
-import { PublicResponse } from '../../interfaces/response.interface';
+import { PublicResponse, ResponseState, SettingsResponse } from '../../interfaces/response.interface';
 import { Referrer } from './../../interfaces/business.interface';
 import { LocalStorageKey } from './../../interfaces/constant.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
@@ -14,15 +14,10 @@ export interface Settings {
     index: {}
 }
 
-export interface SettingsResponseState {
-    error: string;
-    action: string;
-}
-
 export interface State extends PublicResponse {
     referrer: Referrer;
     settings: Settings;
-    settingsResponse: SettingsResponseState;
+    settingsResponse: ResponseState;
     settingsRequest: SettingsRequest;
 }
 
@@ -45,37 +40,42 @@ export const initialState: State = {
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
+
+        // public information
         case actions.SET_PUBLIC_INFORMATION:
             return { ...state, ...action.payload };
 
-        case actions.SET_REFERRER:
-            return { ...state, referrer: action.payload };
-
+        // settings
         case actions.GET_SETTINGS:
             return { ...state, settingsRequest: action.payload };
 
         case actions.GET_SETTINGS_FAIL:
             return {
                 ...state,
-                settingsResponse: {
-                    action: action.payload.action,
-                    error: action.payload.error,
-                },
+                settingsResponse: updateSettingsState(action.payload),
                 settings: updateSettings(state.settings, state.settingsRequest.type, null),
             };
 
         case actions.GET_SETTINGS_SUCCESS:
             return {
                 ...state,
-                settingsResponse: {
-                    error: action.payload.error,
-                    action: action.payload.action,
-                },
+                settingsResponse: updateSettingsState(action.payload),
                 settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result),
             };
 
+        // ui state
+        case actions.SET_REFERRER:
+            return { ...state, referrer: action.payload };
+
         default:
             return state;
+    }
+}
+
+function updateSettingsState(payload: SettingsResponse): ResponseState {
+    return {
+        action: payload.action,
+        error: payload.error,
     }
 }
 

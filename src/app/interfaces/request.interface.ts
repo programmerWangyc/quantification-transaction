@@ -46,3 +46,8 @@ export interface SetPasswordRequest {
     token: string;
     password: string;
 }
+
+// exchange list
+export interface GetExchangeListRequest {
+
+}

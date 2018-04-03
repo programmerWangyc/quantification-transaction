@@ -5,6 +5,9 @@ import { PublicResponse, SettingsResponse } from '../../interfaces/response.inte
 import { ApiAction } from '../base.action';
 import { SettingsRequest } from './../../interfaces/request.interface';
 
+/* ===========================================Api action=================================== */
+
+// public 
 export const SET_PUBLIC_INFORMATION = 'SET_PUBLIC_INFORMATION';
 
 export class SetPublicInformationAction implements Action {
@@ -29,6 +32,8 @@ export class SettingsAction extends ApiAction {
 
     order = null;
 
+    noneParams = false;
+
     constructor() { super() }
 }
 
@@ -37,7 +42,7 @@ export const GET_SETTINGS = 'GET_SETTINGS';
 export class GetSettingsRequestAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS;
 
-    constructor(public payload: SettingsRequest) { super() }
+    constructor(public payload: SettingsRequest, public allowSeparateRequest = true) { super() }
 }
 
 export const GET_SETTINGS_FAIL = 'GET_SETTINGS_FAIL';
@@ -56,6 +61,10 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super() }
 }
 
+/* ===========================================Local action=================================== */
+
+/* none local action */
+
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
@@ -63,3 +72,8 @@ export type ApiActions = GetSettingsRequestAction
 export type Actions = ApiActions
     | SetPublicInformationAction
     | SetReferrerAction
+
+export const ResponseActions = {
+    GetSettingsFailAction,
+    GetSettingsSuccessAction, 
+}

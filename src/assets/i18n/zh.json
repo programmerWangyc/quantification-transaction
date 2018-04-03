@@ -44,6 +44,8 @@
     "AGREEMENT": "用户协议",
     "AGREE": "同意",
     "DISAGREE": "不同意",
+    "SIGNUP_FAIL_TIP": "注册失败",
+    "SIGNUP_SUCCESS_TIP": "注册成功",
 
     "REGAIN_PASSWORD": "找回密码",
     "EMAIL_VALID_TIP": "请前往邮箱中的链接地址修改密码",

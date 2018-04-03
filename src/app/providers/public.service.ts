@@ -1,3 +1,4 @@
+import { ResponseState } from './../interfaces/response.interface';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/filter';
@@ -22,7 +23,6 @@ import { Referrer } from './../interfaces/business.interface';
 import { LocalStorageKey } from './../interfaces/constant.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
 import { SetReferrerAction } from './../store/public/public.action';
-import { SettingsResponseState } from './../store/public/public.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 
@@ -41,13 +41,13 @@ export class PublicService {
 
     /* =======================================================Server Request======================================================= */
 
-    launchGetSettings(type: string): Subscription {
-        return this.process.processSettings(Observable.of({ type }));
+    launchGetSettings(type: string, single = true): Subscription {
+        return this.process.processSettings(Observable.of({ type }), single);
     }
 
     /* =======================================================Date acquisition======================================================= */
 
-    getSettingsResponse(): Observable<SettingsResponseState> {
+    getSettingsResponse(): Observable<ResponseState> {
         return this.store.select(selectSettingsResponse)
             .filter(res => !!res);
     }
@@ -58,6 +58,11 @@ export class PublicService {
             .do(settings => (!settings || !settings.agreement) && this.launchGetSettings(Settings.agreement))
             .filter(settings => !!settings && !!settings.agreement)
             .map(settings => settings.agreement)
+    }
+
+    getAgreementState(): Observable<boolean> {
+        return this.store.select(selectSettings)
+            .map(res => !!res && !!res.agreement);
     }
 
     // response body information
@@ -156,6 +161,7 @@ export class PublicService {
     handleSettingsError(): Subscription {
         return this.error.handleResponseError(
             this.getSettingsResponse()
+                .filter(res => !!res.error)
                 .map(res => res.error)
         );
     }

@@ -5,6 +5,7 @@ import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as pub from './public/public.reducer';
 import * as pwd from './auth/password.reducer';
+import * as exchange from './exchange/exchange.reducer';
 
 export interface AppState {
     pub: pub.State,
@@ -12,6 +13,7 @@ export interface AppState {
     signup: signup.State,
     reset: reset.State,
     pwd: pwd.State,
+    exchange: exchange.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -20,6 +22,7 @@ export const reducers: ActionReducerMap<AppState> = {
     signup: signup.reducer,
     reset: reset.reducer,
     pwd: pwd.reducer,
+    exchange: exchange.reducer,
 }
 
 
@@ -51,3 +54,8 @@ export const selectResetPasswordResponse = createSelector(getResetPwdState, rese
 // set password
 export const getSetPwdState = (state: AppState) => state.pwd;
 export const selectSetPwdResponse = createSelector(getSetPwdState, pwd.getSetPwdResponse);
+
+// exchange list
+export const getExchangeState = (state: AppState) => state.exchange;
+export const selectExchangeList = createSelector(getExchangeState, exchange.getExchangeListResponse);
+export const selectExchangeResponseState = createSelector(getExchangeState, exchange.getExchangeListResponseState);

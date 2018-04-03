@@ -6,16 +6,20 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
 import { LocalStorageKey } from './../../interfaces/constant.interface';
-import { PublicResponse, ResponseAction } from './../../interfaces/response.interface';
+import { PublicResponse } from './../../interfaces/response.interface';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as pub from './public.action';
-
+import { ResponseAction } from '../base.action';
 
 @Injectable()
 export class PublicEffect extends BaseEffect {
     @Effect()
-    pubInfo$: Observable<ResponseAction>;
+    pubInfo$: Observable<ResponseAction> = this.ws.messages.map(data => {
+        const info = <PublicResponse>omit(data, 'result');
+
+        return new pub.SetPublicInformationAction(info);
+    });
 
     @Effect()
     referrer$: Observable<any> = this.actions$
@@ -31,24 +35,12 @@ export class PublicEffect extends BaseEffect {
         });
 
     @Effect()
-    settings$: Observable<ResponseAction> = this.actions$
-        .ofType(pub.GET_SETTINGS)
-        .mergeMap((action: pub.GetSettingsRequestAction) => this.ws
-            .send(this.getParams(action))
-            .takeUntil(this.actions$.ofType(pub.GET_SETTINGS))
-            .mergeMap(body => this.getSplitAction(body, pub))
-            .catch(error => Observable.of(error))
-        );
+    sett$ = this.getResponseAction(pub.GET_SETTINGS, pub); 
 
     constructor(
-        private ws: WebsocketService,
-        private actions$: Actions
+        public ws: WebsocketService,
+        public actions$: Actions
     ) {
-        super();
-        this.pubInfo$ = ws.messages.map(data => {
-            const info = <PublicResponse>omit(data, 'result');
-
-            return new pub.SetPublicInformationAction(info);
-        });
+        super(ws, actions$);
     }
 }
