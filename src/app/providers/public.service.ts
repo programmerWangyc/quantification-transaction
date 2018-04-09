@@ -1,4 +1,3 @@
-import { ResponseState } from './../interfaces/response.interface';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/filter';
@@ -12,7 +11,9 @@ import { Subscription } from 'rxjs/Subscription';
 
 import {
     AppState,
+    selectFooterState,
     selectIsAdmin,
+    selectLanguage,
     selectReferrer,
     selectSettings,
     selectToken,
@@ -21,8 +22,9 @@ import {
 import { Settings, settings } from './../../../request.interface';
 import { Referrer } from './../interfaces/business.interface';
 import { LocalStorageKey } from './../interfaces/constant.interface';
+import { ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
-import { SetReferrerAction } from './../store/public/public.action';
+import { SetLanguageAction, SetReferrerAction, ToggleFooterAction } from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 
@@ -82,6 +84,15 @@ export class PublicService {
         return this.getToken().map(token => !!token && token.length > 0);
     }
 
+    // ui state
+    getLanguage(): Observable<string> {
+        return this.store.select(selectLanguage);
+    }
+
+    getFooterState(): Observable<boolean> {
+        return this.store.select(selectFooterState);
+    }
+
     /* =======================================================Config operate======================================================= */
 
     updateInformation(): Subscription {
@@ -102,6 +113,14 @@ export class PublicService {
         return this.store.select(selectReferrer)
             .filter(referrer => !!referrer)
             .merge(this.getReferrerFromLocalStorage());
+    }
+
+    updateLanguage(language: Observable<string>): Subscription {
+        return language.subscribe(lang => this.store.dispatch(new SetLanguageAction(lang)));
+    }
+
+    toggleFooter(): void {
+        this.store.dispatch(new ToggleFooterAction());
     }
 
     private getReferrerFromLocalStorage(): Observable<Referrer> {

@@ -1,0 +1,19 @@
+mat-icon,
+h2 {
+    margin: 20px 0;
+}
+
+.feature {
+    position: relative;
+    padding: 10px;
+}
+
+.feature::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: 90px;
+    height: 2px;
+    background-color:#607d8b; 
+}

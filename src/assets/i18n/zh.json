@@ -9,7 +9,6 @@
     "ANALYZING_TOOL": "分析工具",
     "SIGNUP": "注册",
     "LOGIN": "登录",
-    "SIMPLE_CHINESE": "简体中文",
 
     "USER_LOGIN": "用户登录",
     "USER_SIGNUP": "用户注册",
@@ -54,6 +53,43 @@
     "NEW_PASSWORD": "新密码",
     "CONFIRM_MODIFY": "确认修改",
     "SET_PWD_FAIL_TIP":"密码重置链接已失效，请重新获取重置链接",
-    "SET_PWD_SUCCESS_TIP": "密码重置成功，请使用新密码登录"
+    "SET_PWD_SUCCESS_TIP": "密码重置成功，请使用新密码登录",
 
+    "INTRODUCTION_TITLE": "筑就非凡的量化世界",
+    "INTRODUCTION_LABEL":"云端部署 在线编程",
+    "INTRODUCTION_LABEL_2":"跨平台 跨品种",
+    "INTRODUCTION_LABEL_3":"免费灵活 策略可简可繁",
+    "FOLLOW_WECHART": "宽客在线",
+    "JOIN_QQ_GROUP": "加入QQ群",
+
+    "INTRO_DES_KEYWORD_1": "专注",
+    "INTRO_DESCRIPTION_1": "匠人品质,匠心（jiàng xīn）是汉语词语，匠：灵巧，巧妙。匠心，指能工巧匠的心思，常指文学艺术方面创造性的构思。见唐 王士源 《<孟浩然集>序》：“文不按古，匠心独妙。”",
+    "INTRO_DES_KEYWORD_2": "自由",
+    "INTRO_DESCRIPTION_2": "高度定制,“定制”一词起源于萨维尔街，意思是为个别客户量身剪裁。",
+    "INTRO_DES_KEYWORD_3": "实盘",
+    "INTRO_DESCRIPTION_3": "千锤百炼,国际贸易常用术语之一，即有约束力的发盘。英文：FIRM OFFER",
+    "INTRO_DES_KEYWORD_4": "高效",
+    "INTRO_DESCRIPTION_4": "超前架构, 高效，指效能高的，基本解释是效率高的。指在相同或更短的时间里完成比其他人更多的任务，而且质量与其他人一样或者更好。",
+
+    "INTRO_DETAIL_TITLE": "为什么选择BotVs",
+    "INTRO_DETAIL_TITLE_1": "云端部署 在线编程",
+    "INTRO_DETAIL_TITLE_2": "跨平台 跨品种",
+    "INTRO_DETAIL_TITLE_3": "免费灵活 策略可简可繁",
+    "INTRO_DETAIL_1": "稳定高可扩展的云平台<br>让您的交易策略,随时随地都在掌控之中<br>策略支持: <font color=red><b>JavaScript&nbsp;Python&nbsp;C++</b></font>",
+    "INTRO_DETAIL_2": "统一了所有市场为一套API接口<br><font color='red'>跨平台, 策略分享与出售, 实盘围观, 量化社区</font><br>助您获得华尔街专业量化机构的装备",
+    "INTRO_DETAIL_3": "<font color='red'>唯一</font>支持三大金融市场的量化平台<br>策略回测框架让您专注策略实现的算法逻辑<br>无需关注底层细节架构",
+
+    "INTRO_ENTRANCE_TITLE": "构建和部署所需的一切",
+
+    "STRATEGY_SUBTITLE": "各种各样的策略，听过的，没听过的都有",
+    "GENERAL_STRATEGY": "通用策略",
+    "COMMODITY_FUTURES": "商品期货",
+    "STOCK_SECURITY": "股票证券",
+    "DIGITAL_CURRENCY": "数字货币",
+    "TEMPLATE_LIBRARY": "模板类库",
+
+    "ENGLISH": "English",
+    "SIMPLE_CHINESE": "简体中文",
+    "ABOUT_US": "关于我们",
+    "GITHUB": "Github"
 }

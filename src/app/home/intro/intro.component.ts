@@ -1,9 +1,10 @@
+import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+
+import { BusinessComponent } from '../../interfaces/business.interface';
 import { SettingTypes } from './../../interfaces/request.interface';
 import { PublicService } from './../../providers/public.service';
-import { Subscription } from 'rxjs';
 import { HomeService } from './../providers/home.service';
-import { Component, OnInit } from '@angular/core';
-import { BusinessComponent } from '../../interfaces/business.interface';
 
 @Component({
     selector: 'app-intro',
@@ -11,6 +12,7 @@ import { BusinessComponent } from '../../interfaces/business.interface';
     styleUrls: ['./intro.component.scss']
 })
 export class IntroComponent extends BusinessComponent {
+
     subscription$$: Subscription;
 
     constructor(
@@ -24,7 +26,7 @@ export class IntroComponent extends BusinessComponent {
         this.launch();
     }
 
-    launch() { 
+    launch() {
         this.subscription$$ = this.publicService.launchGetSettings(SettingTypes.index, false)
             .add(this.homeService.launchExchangeList())
             .add(this.publicService.handleSettingsError())
@@ -32,7 +34,6 @@ export class IntroComponent extends BusinessComponent {
     }
 
     initialModel() {
-
     }
 
     ngOnDestroy() {

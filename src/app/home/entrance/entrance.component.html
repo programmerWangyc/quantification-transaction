@@ -1,0 +1,17 @@
+<div
+    fxLayout="column"
+    class="entrance"
+>
+    <mat-icon color="primary">{{entrance.icon}}</mat-icon>
+    <h4>{{entrance.title | translate}}</h4>
+    <h6>{{entrance.subtitle | translate}}</h6>
+    <mat-nav-list>
+        <a
+            mat-list-item
+            *ngFor="let item of entrance.list"
+            (click)="goTo(item)"
+        >
+            {{item.label | translate}}
+        </a>
+    </mat-nav-list>
+</div>

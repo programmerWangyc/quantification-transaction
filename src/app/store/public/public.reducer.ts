@@ -19,6 +19,8 @@ export interface State extends PublicResponse {
     settings: Settings;
     settingsResponse: ResponseState;
     settingsRequest: SettingsRequest;
+    language: string;
+    needFooter: boolean;
 }
 
 export const initialState: State = {
@@ -36,6 +38,8 @@ export const initialState: State = {
     settings: null,
     settingsRequest: null,
     settingsResponse: null,
+    language: 'zh',
+    needFooter: false,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -66,6 +70,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // ui state
         case actions.SET_REFERRER:
             return { ...state, referrer: action.payload };
+
+        case actions.SET_LANGUAGE:
+            return { ...state, language: action.payload };
+
+        case actions.TOGGLE_FOOTER:
+
+            return { ...state, needFooter: !state.needFooter };
 
         default:
             return state;
@@ -102,3 +113,7 @@ export const getReferrer = (state: State) => state.referrer;
 export const getSettingsResponse = (state: State) => state.settingsResponse;
 
 export const getSettings = (state: State) => state.settings;
+
+export const getLanguage = (state: State) => state.language;
+
+export const getFooterState = (state: State) => state.needFooter;

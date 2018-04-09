@@ -1,3 +1,71 @@
-<p>
-  intro works!
-</p>
+<div
+    id="intro"
+    fxLayout="column"
+>
+    <section>
+        <img
+            src="../../../assets/images/botvs.png"
+            alt="introduction"
+        >
+        <h1>{{'INTRODUCTION_TITLE' | translate}}</h1>
+    </section>
+
+    <section>
+        <div fxLayout="row nowrap">
+            <mat-icon>check</mat-icon>
+            <span>{{'INTRODUCTION_LABEL' | translate}}</span>
+        </div>
+        <div fxLayout="row nowrap">
+            <mat-icon>check</mat-icon>
+            <span>{{'INTRODUCTION_LABEL_2' | translate}}</span>
+        </div>
+        <div fxLayout="row nowrap">
+            <mat-icon>check</mat-icon>
+            <span>{{'INTRODUCTION_LABEL_3' | translate}}</span>
+        </div>
+    </section>
+
+    <section fxLayout="row wrap" fxLayoutAlign="space-between" style="width: 300px;">
+        <ng-template #wechart>
+            <img src="../../../assets/images/wechart_quant.jpg">
+        </ng-template>
+        <button
+            mat-raised-button
+            color="primary"
+            [ngbPopover]="wechart"
+            triggers="mouseenter:mouseleave"
+            fxFlexAlign="start"
+        >
+            <mat-icon>home</mat-icon>
+            {{'FOLLOW_WECHART' | translate}}
+        </button>
+        <ng-template #qqGroup>
+            <p>四群: 456221748 (可加此群)</p>
+            <p>
+                三群: 469046711 (2000人群,
+                <font color="red">已满</font>
+                )
+            </p>
+            <p>
+                二群: 608262365 (2000人群,
+                <font color="red">已满</font>
+                )
+            </p>
+            <p>
+                主群: 309368835 (2000人群,
+                <font color="red">已满</font>
+                )
+            </p>
+        </ng-template>
+        <a
+            mat-raised-button
+            [ngbPopover]="qqGroup"
+            triggers="mouseenter:mouseleave"
+            href="//shang.qq.com/wpa/qunwpa?idkey=bfd30dcc563a4a14687967b51d5b9d11c8d227a0adf82a08e8a4e6bc1c647050"
+        >
+            <mat-icon color="primary">home</mat-icon>
+            {{'JOIN_QQ_GROUP' | translate}}
+        </a>
+    </section>
+    <div id="intro-bcg"></div>
+</div>

@@ -1,0 +1,19 @@
+#footer {
+    padding: 0 10%;
+    background-color: #fafafa;
+    border-top: 1px solid #dee2e6;
+    ul {
+        margin: 0 50px;
+        li {
+            list-style: none;
+            padding: 0 16px;
+            a {
+                color: inherit;
+            }
+        }
+    }
+    span {
+        font-size: 12px;
+    }
+}
+

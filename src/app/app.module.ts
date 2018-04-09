@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { MatSnackBarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -55,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         EffectsModule.forRoot(EFFECTS),
         MatSnackBarModule,
         ToolModule,
+        NgbModule.forRoot(),
     ],
     providers: [
         Store,

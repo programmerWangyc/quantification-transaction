@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ContainerComponent as HomeConainer } from './home/container/container.component';
+import { ContainerComponent as HomeContainer } from './home/container/container.component';
 
 const appRoutes: Routes = [
-    { path: 'home', component: HomeConainer },
+    { path: 'home', component: HomeContainer },
     { path: 'square', loadChildren: 'app/square/square.module#SquareModule' },
     { path: 'fact', loadChildren: './fact/fact.module#FactModule' },
     { path: 'community', loadChildren: './community/community.module#CommunityModule' },
@@ -14,7 +14,7 @@ const appRoutes: Routes = [
     { path: 'control', loadChildren: './control/control.module#ControlModule', canLoad: [] },
     { path: 'auth', loadChildren: './auth/auth.module#AuthModule' },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: '**', component: HomeConainer },  // 404页面
+    { path: '**', component: HomeContainer },  // 404页面
 ];
 
 @NgModule({

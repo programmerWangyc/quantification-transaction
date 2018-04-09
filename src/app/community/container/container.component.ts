@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-container',
-  templateUrl: './container.component.html',
-  styleUrls: ['./container.component.scss']
+    selector: 'app-container',
+    templateUrl: './container.component.html',
+    styleUrls: ['./container.component.scss']
 })
 export class ContainerComponent implements OnInit {
 
-  constructor() { }
+    selected = 'option2';
 
-  ngOnInit() {
-  }
+    constructor() { }
+
+    ngOnInit() {
+    }
 
 }

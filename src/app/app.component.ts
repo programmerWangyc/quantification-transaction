@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { PublicService } from './providers/public.service';
 
@@ -13,13 +14,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
     subscription$$: Subscription;
 
-    constructor(private translate: TranslateService, private pubService: PublicService) { }
+    needFooter: Observable<boolean>
+
+    constructor(
+        private translate: TranslateService,
+        private pubService: PublicService,
+    ) { }
 
     ngOnInit() {
         this.initLanguage();
 
         this.subscription$$ = this.pubService.updateInformation()
+            .add(this.pubService.getLanguage().subscribe(lang => this.translate.use(lang)))
             .add(this.pubService.saveReferrer());
+
+        this.needFooter = this.pubService.getFooterState();
     }
 
     initLanguage(): void {

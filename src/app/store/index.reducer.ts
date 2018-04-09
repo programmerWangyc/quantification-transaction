@@ -1,11 +1,11 @@
 import { ActionReducerMap, createSelector } from '@ngrx/store';
 
 import * as login from './auth/login.reducer';
+import * as pwd from './auth/password.reducer';
 import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
-import * as pub from './public/public.reducer';
-import * as pwd from './auth/password.reducer';
 import * as exchange from './exchange/exchange.reducer';
+import * as pub from './public/public.reducer';
 
 export interface AppState {
     pub: pub.State,
@@ -36,6 +36,8 @@ export const selectIsAdmin = createSelector(getPublicInformationState, pub.getIs
 export const selectReferrer = createSelector(getPublicInformationState, pub.getReferrer);
 export const selectSettings = createSelector(getPublicInformationState, pub.getSettings);
 export const selectSettingsResponse = createSelector(getPublicInformationState, pub.getSettingsResponse);
+export const selectLanguage = createSelector(getPublicInformationState, pub.getLanguage);
+export const selectFooterState = createSelector(getPublicInformationState, pub.getFooterState);
 
 // login
 export const getLoginState = (state: AppState) => state.login;

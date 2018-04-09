@@ -63,7 +63,21 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
 
 /* ===========================================Local action=================================== */
 
-/* none local action */
+export const SET_LANGUAGE = 'SET_LANGUAGE';
+
+export class SetLanguageAction implements Action {
+    readonly type = SET_LANGUAGE;
+
+    constructor(public payload: string) { }
+}
+
+export const TOGGLE_FOOTER = 'TOGGLE_FOOTER';
+
+export class ToggleFooterAction implements Action {
+    readonly type = TOGGLE_FOOTER;
+
+    constructor() { }
+}
 
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
@@ -72,6 +86,8 @@ export type ApiActions = GetSettingsRequestAction
 export type Actions = ApiActions
     | SetPublicInformationAction
     | SetReferrerAction
+    | SetLanguageAction
+    | ToggleFooterAction
 
 export const ResponseActions = {
     GetSettingsFailAction,

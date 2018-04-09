@@ -1,0 +1,29 @@
+@import '../../../theme/variable.theme';
+#intro {
+    padding: 0 10%;
+    position: relative;
+    background: #fff;
+    section {
+        padding: 20px 0;
+        z-index: 2;
+    }
+    h1 {
+        font: normal normal 300 72px "Google Sans", sans-serif;
+        margin: -20px 0 0 0;
+    }
+    span {
+        color: $gray;
+    }
+    mat-icon {
+        margin: 0 10px 5px 0;
+    }
+    #intro-bcg {
+        background: url("../../../assets/images/bcg_intro.png") center center no-repeat;
+        bottom: 0;
+        height: 352px;
+        position: absolute;
+        right: 10%;
+        width: 488px;
+        z-index: 1;
+    }
+}

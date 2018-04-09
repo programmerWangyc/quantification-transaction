@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+
+import { PublicService } from './../../providers/public.service';
+
 
 @Component({
-  selector: 'app-container',
-  templateUrl: './container.component.html',
-  styleUrls: ['./container.component.scss']
+    selector: 'app-container',
+    templateUrl: './container.component.html',
+    styleUrls: ['./container.component.scss']
 })
-export class ContainerComponent implements OnInit {
+export class ContainerComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+    constructor(
+        private publicService: PublicService,
+    ) { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+        this.publicService.toggleFooter();
+    }
+
+    ngOnDestroy() {
+        this.publicService.toggleFooter();
+    }
 
 }

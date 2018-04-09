@@ -1,3 +1,24 @@
-<p>
-  footer works!
-</p>
+<div
+    id="footer"
+    fxLayout="row"
+    fxLayoutAlign="start center"
+>
+    <mat-form-field>
+        <mat-select
+            [(value)]="selected"
+            (selectionChange)="language$.next($event)"
+        >
+            <mat-option value="zh">简体中文</mat-option>
+            <mat-option value="en">English</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <ul fxLayout="row">
+        <li>
+            <a href>{{"GITHUB" | translate}}</a>
+        </li>
+        <li>
+            <a href>{{"ABOUT_US" | translate}}</a>
+        </li>
+    </ul>
+    <span>© 2015 - ∞ BotVS. 京ICP备15046776号</span>
+</div>
