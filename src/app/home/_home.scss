@@ -1,0 +1,13 @@
+$container-margin: 164px;
+$content-padding: 10%;
+$title-font: 400 40px/60px 'Google Sans',
+sans-serif;
+@mixin section-bcg($bcg) {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -164px;
+    width: 100vw;
+    height: 100%;
+    background: $bcg
+}

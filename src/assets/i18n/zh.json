@@ -9,6 +9,7 @@
     "ANALYZING_TOOL": "分析工具",
     "SIGNUP": "注册",
     "LOGIN": "登录",
+    "CONTROL_PANEL": "控制台",
 
     "USER_LOGIN": "用户登录",
     "USER_SIGNUP": "用户注册",
@@ -71,7 +72,7 @@
     "INTRO_DES_KEYWORD_4": "高效",
     "INTRO_DESCRIPTION_4": "超前架构, 高效，指效能高的，基本解释是效率高的。指在相同或更短的时间里完成比其他人更多的任务，而且质量与其他人一样或者更好。",
 
-    "INTRO_DETAIL_TITLE": "为什么选择BotVs",
+    "INTRO_DETAIL_TITLE": "为什么选择BotVS",
     "INTRO_DETAIL_TITLE_1": "云端部署 在线编程",
     "INTRO_DETAIL_TITLE_2": "跨平台 跨品种",
     "INTRO_DETAIL_TITLE_3": "免费灵活 策略可简可繁",
@@ -91,5 +92,9 @@
     "ENGLISH": "English",
     "SIMPLE_CHINESE": "简体中文",
     "ABOUT_US": "关于我们",
-    "GITHUB": "Github"
+    "GITHUB": "Github",
+    "SEARCH": "搜索",
+    "FIND_OUT_DETAILS": "了解详情",
+    "VIEW_ALL_PRODUCTS": "查看所有产品",
+    "FREE_TRIAL": "免费试用"
 }

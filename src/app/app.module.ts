@@ -4,12 +4,12 @@ import { HttpModule } from '@angular/http';
 import { MatSnackBarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
@@ -56,7 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         EffectsModule.forRoot(EFFECTS),
         MatSnackBarModule,
         ToolModule,
-        NgbModule.forRoot(),
+        NgZorroAntdModule.forRoot(),
     ],
     providers: [
         Store,

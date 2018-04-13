@@ -1,19 +1,33 @@
-mat-icon,
-h2 {
-    margin: 20px 0;
-}
-
-.feature {
+@import '../../../theme/variable.theme';
+@import '../_home';
+#feature {
+    padding: 48px $content-padding 40px;
+    min-height: 240px;
     position: relative;
-    padding: 10px;
-}
-
-.feature::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 10px;
-    width: 90px;
-    height: 2px;
-    background-color:#607d8b; 
+    height: 300px;
+    &::before {
+        @include section-bcg(#f7f7f7);
+    }
+    .feature-border {
+        background-color: rgb(84, 143, 232);
+        height: 2px;
+        margin-bottom: 26px;
+        width: 90px;
+    }
+    .feature {
+        position: relative;
+    }
+    h3 {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 25px;
+        margin: 0 0 14px;
+    }
+    p {
+        min-height: 60px;
+        margin: 16px 0;
+    }
+    .detail {
+        color: $blue;
+    }
 }

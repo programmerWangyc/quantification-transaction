@@ -5,11 +5,14 @@
 <!-- <app-menu></app-menu> -->
 
 <!-- Content Wrapper. Contains page content -->
-<router-outlet></router-outlet>
+<div id="main-content">
+    <router-outlet></router-outlet>
+</div>
 <!-- /.content-wrapper -->
 
 <!-- Main Footer -->
-<app-footer *ngIf="needFooter | async"></app-footer>
+<!-- <app-footer *ngIf="needFooter | async"></app-footer> -->
+<app-footer></app-footer>
 
 <!-- Control Sidebar -->
 <!-- <app-sidebar></app-sidebar> -->

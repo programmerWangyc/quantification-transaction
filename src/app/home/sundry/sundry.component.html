@@ -1,0 +1,39 @@
+<section
+    id="sundry"
+    fxLayout="row"
+    nz-row
+>
+    <div
+        id="sundry-left"
+        nz-col
+        [nzSpan]="20"
+        fxLayout="row"
+    >
+        <ul
+            *ngFor="let type of list"
+            fxFlex="33"
+        >
+            <h3>{{type.title}}</h3>
+            <li *ngFor="let item of type.list">
+                <a href="javascript: void 0">{{item.label}}</a>
+            </li>
+        </ul>
+    </div>
+    <div
+        id="sundry-right"
+        nz-col
+        [nzSpan]="4"
+    >
+        <h3>
+            <a href="javascript: void 0">
+                <img src="../../../assets/images/botvs.png">
+            </a>
+        </h3>
+        <ul>
+            <li *ngFor="let item of rightList">
+                <a href="javascript: void 0">{{item.label}}</a>
+            </li>
+        </ul>
+
+    </div>
+</section>

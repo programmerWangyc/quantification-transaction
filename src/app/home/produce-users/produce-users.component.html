@@ -1,0 +1,31 @@
+<section>
+    <div
+        nz-row
+        [nzGutter]="24"
+    >
+        <div
+            *ngFor="let user of users"
+            nz-col
+            [nzSpan]="8"
+            fxLayout="column"
+            fxLayoutAlign="center center"
+            class="user"
+        >
+            <img [src]="user.logo">
+            <p bt-text-center>{{user.desc}}</p>
+        </div>
+    </div>
+
+</section>
+
+<div bt-text-center id="free">
+    <button
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'large'"
+        class="popover-button"
+    >
+        <i class="anticon anticon-global quant-icon"></i>
+        {{'FREE_TRIAL' | translate}}
+    </button>
+</div>

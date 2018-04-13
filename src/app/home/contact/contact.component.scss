@@ -1,0 +1,28 @@
+@import '../../../theme/variable.theme';
+@import '../_home';
+#contact {
+    padding: 0 $content-padding 40px;
+    min-height: 240px;
+    position: relative;
+    height: 153px;
+    &::before {
+        @include section-bcg(#666);
+    }
+    .contact {
+        $color: #fff;
+        position: relative;
+        padding: 10px;
+        color: $color;
+        h3 {
+            color: $color;
+            margin: 32px 0 16px;
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 25px;
+        }
+        p {
+            min-height: 60px;
+            margin: 16px 0;
+        }
+    }
+}

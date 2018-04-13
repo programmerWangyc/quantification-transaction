@@ -1,67 +1,98 @@
-<nav mat-tab-nav-bar>
-    <a
-        mat-tab-link
-        disabled
-    >
-        <img
-            src="../../assets/images/botvs.png"
-            width="50"
-            alt="botvs"
-        >
-    </a>
-    <a
-        mat-tab-link
-        *ngFor="let link of navLinks"
-        [routerLink]="link.path"
-        routerLinkActive
-        #rla="routerLinkActive"
-        [active]="rla.isActive"
-        class="nav-content"
-    >
-        {{link.label | translate}}
-    </a>
-
-    <a
-        mat-tab-link
-        [matMenuTriggerFor]="menu"
-        routerLink="tools"
-        routerLinkActive
-        #rla="routerLinkActive"
-        [active]="rla.isActive"
-        class="nav-content"
-    >
-        {{'TOOLS' | translate}}
-        <mat-icon>keyboard_arrow_down</mat-icon>
-    </a>
-
-    <mat-menu
-        #menu="matMenu"
-        overlapTrigger="false"
-    >
-        <button mat-menu-item>
-            {{'QUOTE_TOOL' | translate}}
-        </button>
-        <button mat-menu-item>
-            {{'ANALYZING_TOOL' | translate}}
-        </button>
-    </mat-menu>
-
-    <div id="auth">
+<header fxLayout="column">
+    <div class="header">
         <a
-            mat-button
-            routerLink="/auth/login"
-            routerLinkActive="active"
+            disabled
+            style="width: 986px; height: 36px; margin: 6px 0;"
+            fxLayout="row no-wrap"
+            fxFlex="1 0 auto"
         >
-            <mat-icon>input</mat-icon>
-            {{'LOGIN' |  translate}}
+            <img
+                src="../../assets/images/botvs.png"
+                width="207"
+                height="32"
+                alt="botvs"
+            >
         </a>
-        <a
-            mat-button
-            routerLink="auth/signup"
-            routerLinkActive="active"
+
+        <section
+            class="right"
+            fxLayoutAlign="center"
         >
-            <mat-icon>perm_identity</mat-icon>
-            {{'SIGNUP' |  translate}}
-        </a>
+
+            <form fxLayoutAlign="center center">
+                <div id="searchBox">
+                    <nz-input
+                        [nzPlaceHolder]="'SEARCH' | translate"
+                        [nzSize]="'large'"
+                        [(ngModel)]="searchValue"
+                        [ngModelOptions]="{standalone: true}"
+                    >
+                        <ng-template #addOnBefore>
+                            <i class="anticon anticon-search"></i>
+                        </ng-template>
+                    </nz-input>
+                </div>
+            </form>
+
+            <a
+                fxFlexAlign="center"
+                style="color:#039be5; margin-left: 16px; font-size: 14px"
+            >
+                {{'CONTROL_PANEL' | translate}}
+            </a>
+
+            <i
+                class="anticon anticon-ellipsis more"
+                style="transform: translateY(90deg)"
+            ></i>
+
+            <nz-avatar
+                nzIcon="user"
+                class="avatar"
+            ></nz-avatar>
+        </section>
     </div>
-</nav>
+    <nav
+        class="header"
+        fxLayoutAlign="space-between"
+    >
+
+        <div fxLayoutAlign="space-between center">
+            <a
+                *ngFor="let link of navLinks"
+                [routerLink]="link.path"
+                class="module-link"
+            >
+                {{link.label | translate}}
+            </a>
+        </div>
+
+        <div
+            id="auth"
+            fxLayoutAlign="space-between center"
+        >
+            <a
+                nz-button
+                [nzType]="'primary'"
+                [nzSize]="'large'"
+                routerLink="/auth/login"
+                routerLinkActive="active"
+                fxLayoutAlign="center center"
+            >
+                <i class="anticon anticon-login"></i>
+                <span>{{'LOGIN' |  translate}}</span>
+            </a>
+            <a
+                nz-button
+                [nzType]="'default'"
+                [nzSize]="'large'"
+                routerLink="auth/signup"
+                routerLinkActive="active"
+                fxLayoutAlign="center center"
+            >
+                <i class="anticon anticon-user-add"></i>
+                <span>{{'SIGNUP' |  translate}}</span>
+            </a>
+        </div>
+    </nav>
+</header>

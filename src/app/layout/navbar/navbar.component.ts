@@ -30,9 +30,14 @@ const documentation: Link = {
     label: 'API_DOCUMENTATION',
 }
 
-const tools: Link = {
+const market: Link = {
     path: '',
-    label: 'TOOLS',
+    label: 'QUOTE_TOOL'
+}
+
+const analyzing: Link = {
+    path: '',
+    label: 'ANALYZING_TOOL',
 }
 
 @Component({
@@ -42,11 +47,16 @@ const tools: Link = {
 })
 export class NavbarComponent implements OnInit {
 
-    navLinks: Link[] = [main, square, factFinder, community, documentation];
+    navLinks: Link[] = [main, square, factFinder, community, documentation, market, analyzing ];
+
+    searchValue: string;
 
     constructor() { }
 
     ngOnInit() {
     }
 
+    onSearch(event: string): void {
+        console.log(event);
+    }
 }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
 import {
     MatAutocompleteModule,
     MatButtonModule,
@@ -35,6 +36,7 @@ import {
     MatTooltipModule,
 } from '@angular/material';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 @NgModule({
     exports: [
@@ -72,6 +74,8 @@ import { TranslateModule } from '@ngx-translate/core';
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
+        NgZorroAntdModule,
+        FormsModule,
     ]
 })
 export class SharedModule { }

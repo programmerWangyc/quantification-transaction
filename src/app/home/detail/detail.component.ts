@@ -1,28 +1,15 @@
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/reduce';
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 
-@Component({
-    selector: 'app-detail',
-    templateUrl: './detail.component.html',
-    styleUrls: ['./detail.component.scss']
-})
-export class DetailComponent implements OnInit {
-
-    @Input() imageAddress: string;
-
-    @Input() title: string;
-
-    @Input() detail: SafeHtml;
-
-    constructor() { }
-
-    ngOnInit() { }
-
+interface Detail {
+    title: string;
+    detail: SafeHtml;
+    src: string;
 }
 
 export const list = [
@@ -43,26 +30,14 @@ export const list = [
     }
 ];
 
-interface Detail {
-    title: string;
-    detail: SafeHtml;
-    src: string;
-}
-
 @Component({
-    selector: 'detail-container',
-    template: `
-    <div id="detail">
-        <h2 bt-text-center>{{'INTRO_DETAIL_TITLE' | translate}}</h2>
-        <div fxLayout="row no-wrap" fxLayoutAlign="space-between center">
-            <app-detail *ngFor="let item of list | async" [imageAddress]="item.src" [title]="item.title" [detail]="item.detail"></app-detail>
-        </div>
-        <div class="border"></div>
-    </div>`,
-    styles: ['#detail{ padding: 50px 10%; background: #fff;}']
+    selector: 'app-detail',
+    templateUrl: './detail.component.html',
+    styleUrls: ['./detail.component.scss']
 })
-export class DetailContainerComponent implements OnInit {
-    list: Observable<Detail[]>;
+export class DetailComponent implements OnInit {
+
+    list: Observable<Detail[]>
 
     constructor(
         private translate: TranslateService,

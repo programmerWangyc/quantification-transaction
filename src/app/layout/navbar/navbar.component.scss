@@ -1,11 +1,74 @@
+$header-height: 96px;
 
-.nav-content {
-    min-width: 100px;
+$bcg-nav: #f7f7f7;
+
+header {
+    width: 100vw;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+    height: $header-height;
+    background: #fff;
+    font-size: 14px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+}
+
+header::before {
+    background: #f7f7f7;
+    bottom: 0;
+    content: " ";
+    display: block;
+    height: 48px;
+    position: absolute;
+    width: 100vw;
+}
+
+#searchBox {
+    background-color: $bcg-nav;
+    border-radius: 2px;
+    display: inline-block;
+    // height: 36px;
+    width: 200px;
+    // text-align: left;
+    // opacity: 1;
+    // margin: 6px 0 6px 24px;
+}
+
+.header {
+    width: 1400px;
+    display: flex;
+    padding: 0 24px;
+    position: relative;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+.more {
+    align-self: center;
+    margin-left: 12px;
+    font-size: 24px;
+    font-weight: 900;
+    transform: rotate(90deg);
+}
+
+.avatar {
+    margin: 8px 0 8px 8px;
+}
+
+nav {
+    height: $header-height/2;
+}
+
+.module-link {
+    padding: 0 24px;
+    color: rgba($color: #000000, $alpha: .54);
+}
+
+.module-link:hover {
+    color: #000000;
 }
 
 #auth {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
+    width: 225px;
 }

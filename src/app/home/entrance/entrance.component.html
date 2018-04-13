@@ -1,17 +1,38 @@
-<div
-    fxLayout="column"
-    class="entrance"
->
-    <mat-icon color="primary">{{entrance.icon}}</mat-icon>
-    <h4>{{entrance.title | translate}}</h4>
-    <h6>{{entrance.subtitle | translate}}</h6>
-    <mat-nav-list>
-        <a
-            mat-list-item
-            *ngFor="let item of entrance.list"
-            (click)="goTo(item)"
+<div id="entrance">
+    <h1 bt-text-center>{{'INTRO_ENTRANCE_TITLE' | translate}}</h1>
+    <div
+        nz-row
+        [nzGutter]="24"
+    >
+        <div
+            nz-col
+            [nzSpan]="8"
+            *ngFor="let entrance of list"
+            class="entrance-list"
         >
-            {{item.label | translate}}
+            <div
+                fxLayout="column"
+                class="entrance"
+            >
+                <i [class]="entrance.icon"></i>
+                <h3>{{entrance.title | translate}}</h3>
+                <p>{{entrance.subtitle | translate}}</p>
+                <mat-nav-list>
+                    <a
+                        mat-list-item
+                        *ngFor="let item of entrance.list"
+                        (click)="goTo(item)"
+                    >
+                        {{item.label | translate}}
+                    </a>
+                </mat-nav-list>
+            </div>
+        </div>
+    </div>
+    <p bt-text-center id="view-all">
+        <a>
+            <span>{{'VIEW_ALL_PRODUCTS' | translate}}</span>
+            <i class="anticon anticon-right-circle"></i>
         </a>
-    </mat-nav-list>
+    </p>
 </div>

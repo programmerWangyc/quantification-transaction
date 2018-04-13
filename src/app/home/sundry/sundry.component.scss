@@ -1,0 +1,31 @@
+@import '../_home';
+#sundry {
+    padding: 0 $content-padding 40px;
+    min-height: 500px;
+    position: relative;
+    height: 200px;
+    &::before {
+        @include section-bcg(linear-gradient(to right, #303c42 70%, #37424b 70%));
+    }
+    a {
+        color: #cfd8dc;
+        padding: 8px 0;
+        &:hover {
+            color: #fff;
+        }
+    }
+    ul {
+        padding: 24px 20px 30px 24px;
+        li {
+            height: 32px;
+            line-height: 32px;
+        }
+    }
+    #sundry-left h3 {
+        color: #fff;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+    }
+}

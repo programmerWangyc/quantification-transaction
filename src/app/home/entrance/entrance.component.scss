@@ -1,22 +1,57 @@
-mat-icon { 
-    position: absolute;
-    top: 0;
-    left: -25px;
-    font-size: 30px;
-}
+@import '../../../theme/_variable.theme';
+@import '../_home';
+#entrance {
+    padding: 50px $content-padding;
+    h1 {
+        color: #36474f;
+        margin-bottom: 30px;
+        font: $title-font;
+    }
+    &>div {
+        padding: 24px 0 16px 0;
+    }
+    .entrance-list {
+        $padding: 2px 0 0 47px;
+        padding: 10px;
+        .entrance {
+            position: relative;
+            i {
+                position: absolute;
+                top: 16px;
+                font-size: 30px;
+                color: $blue;
+            }
+            h3 {
+                margin: 16px 0 12px;
+                padding: $padding;
+                color: #455a64;
+                font-size: 20px;
+                font-weight: 500;
+            }
+            p {
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 28px;
+                margin: 0 0 16px 0;
+                padding: $padding;
+            }
+            mat-nav-list {
+                padding: $padding;
+            }
+            a {
+                border-bottom: 1px solid #dee2e6;
+                color: #8fa4ae;
+                height: 32px;
+                line-height: 32px;
+            }
+            a:hover {
+                color: $blue !important;
+            }
+        }
+    }
 
-h4,h6 {
-    padding: 0 16px;
-}
-
-h6 { 
-    margin-top: 16px;
-}
-
-.entrance {
-    position: relative;
-}
-
-a { 
-    border-bottom: 1px solid #dee2e6;
+    #view-all {
+        margin-top: 40px;
+        color: #0273d4
+    }
 }

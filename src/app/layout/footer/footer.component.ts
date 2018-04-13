@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatSelectChange } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -16,7 +15,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 
     selected = 'zh';
 
-    language$: Subject<MatSelectChange> = new Subject();
+    language$: Subject<string> = new Subject();
 
     subscription: Subscription;
 
@@ -29,7 +28,9 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.publicService.updateLanguage(this.language$.do(v=> console.log(v)).map(matSelect => matSelect.value));
+        this.subscription = this.publicService.updateLanguage(this.language$);
+
+        this.isShow = this.publicService.getFooterState();
     }
 
     ngOnDestroy() {

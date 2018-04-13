@@ -1,8 +1,25 @@
 <div
-    fxLayout="column"
-    fxLayoutAlign="start stretch"
-    class="feature"
+    nz-row
+    [nzGutter]="24"
+    id="feature"
 >
-    <h2>{{keyword | translate}}</h2>
-    <p>{{label | translate}}</p>
+    <div
+        *ngFor="let item of list"
+        nz-col
+        [nzSpan]="8"
+        fxLayoutAlign="start stretch"
+        fxLayout='column'
+        class="feature"
+    >
+        <div class="feature-border"></div>
+        <h3>{{item.keyword | translate}}</h3>
+        <p>{{item.label | translate}}</p>
+        <a
+            href="javascript:void 0"
+            class="detail"
+        >
+            {{'FIND_OUT_DETAILS' | translate}}
+            <i class="anticon anticon-right-circle"></i>
+        </a>
+    </div>
 </div>
