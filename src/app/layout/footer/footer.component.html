@@ -2,7 +2,7 @@
     id="footer"
     fxLayout="row"
     fxLayoutAlign="start center"
-    ng-if="isShow | async"
+    *ngIf="isShow | async"
 >
     <nz-select
         style="width: 120px;"
@@ -21,13 +21,13 @@
         </nz-option>
 
     </nz-select>
-    <ul fxLayout="row">
+    <ul fxLayout="row wrap" fxLayoutAlign="center center">
         <li>
             <a href>{{"GITHUB" | translate}}</a>
         </li>
         <li>
             <a href>{{"ABOUT_US" | translate}}</a>
         </li>
+        <li><span>© 2015 - ∞ BotVS. 京ICP备15046776号</span></li>
     </ul>
-    <span>© 2015 - ∞ BotVS. 京ICP备15046776号</span>
 </div>

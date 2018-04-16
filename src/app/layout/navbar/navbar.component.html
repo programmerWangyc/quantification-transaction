@@ -1,50 +1,36 @@
 <header fxLayout="column">
-    <div class="header">
-        <a
-            disabled
-            style="width: 986px; height: 36px; margin: 6px 0;"
+    <div
+        id="header"
+        class="header"
+    >
+        <span
             fxLayout="row no-wrap"
             fxFlex="1 0 auto"
         >
             <img
                 src="../../assets/images/botvs.png"
-                width="207"
-                height="32"
                 alt="botvs"
             >
-        </a>
+        </span>
 
-        <section
-            class="right"
-            fxLayoutAlign="center"
-        >
+        <section fxLayoutAlign="center">
 
             <form fxLayoutAlign="center center">
-                <div id="searchBox">
-                    <nz-input
-                        [nzPlaceHolder]="'SEARCH' | translate"
-                        [nzSize]="'large'"
-                        [(ngModel)]="searchValue"
-                        [ngModelOptions]="{standalone: true}"
-                    >
-                        <ng-template #addOnBefore>
-                            <i class="anticon anticon-search"></i>
-                        </ng-template>
-                    </nz-input>
-                </div>
+                <nz-input
+                    [nzPlaceHolder]="'SEARCH' | translate"
+                    [nzSize]="'large'"
+                    [(ngModel)]="searchValue"
+                    [ngModelOptions]="{standalone: true}"
+                >
+                    <ng-template #addOnBefore>
+                        <i class="anticon anticon-search"></i>
+                    </ng-template>
+                </nz-input>
             </form>
 
-            <a
-                fxFlexAlign="center"
-                style="color:#039be5; margin-left: 16px; font-size: 14px"
-            >
-                {{'CONTROL_PANEL' | translate}}
-            </a>
+            <a fxFlexAlign="center">{{'CONTROL_PANEL' | translate}}</a>
 
-            <i
-                class="anticon anticon-ellipsis more"
-                style="transform: translateY(90deg)"
-            ></i>
+            <i class="anticon anticon-ellipsis"></i>
 
             <nz-avatar
                 nzIcon="user"
@@ -54,24 +40,46 @@
     </div>
     <nav
         class="header"
-        fxLayoutAlign="space-between"
+        fxLayoutAlign="space-between center"
     >
 
-        <div fxLayoutAlign="space-between center">
+        <div
+            fxLayoutAlign="space-between center"
+            id="nav"
+        >
             <a
                 *ngFor="let link of navLinks"
                 [routerLink]="link.path"
-                class="module-link"
             >
                 {{link.label | translate}}
             </a>
         </div>
 
+        <div id="menu">
+            <button
+                nz-button
+                nz-dropdown
+                (click)="isCollapsed = !isCollapsed"
+            >
+                <i class="anticon anticon-bars"></i>
+            </button>
+            <ul
+                nz-menu
+                [style.display]="isCollapsed ? 'none' : 'block'"
+            >
+                <li
+                    *ngFor="let link of navLinks"
+                    nz-menu-item
+                >
+                    <a [routerLink]="link.path">{{link.label | translate}}</a>
+                </li>
+            </ul>
+        </div>
         <div
             id="auth"
             fxLayoutAlign="space-between center"
         >
-            <a
+            <button
                 nz-button
                 [nzType]="'primary'"
                 [nzSize]="'large'"
@@ -81,8 +89,8 @@
             >
                 <i class="anticon anticon-login"></i>
                 <span>{{'LOGIN' |  translate}}</span>
-            </a>
-            <a
+            </button>
+            <button
                 nz-button
                 [nzType]="'default'"
                 [nzSize]="'large'"
@@ -92,7 +100,7 @@
             >
                 <i class="anticon anticon-user-add"></i>
                 <span>{{'SIGNUP' |  translate}}</span>
-            </a>
+            </button>
         </div>
     </nav>
 </header>

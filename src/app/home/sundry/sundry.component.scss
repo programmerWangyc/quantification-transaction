@@ -1,12 +1,10 @@
 @import '../_home';
+#sundry-bcg {
+    @include home-section-bcg(#303c42);
+    padding: 0 0 0 $container-margin;
+}
 #sundry {
-    padding: 0 $content-padding 40px;
-    min-height: 500px;
     position: relative;
-    height: 200px;
-    &::before {
-        @include section-bcg(linear-gradient(to right, #303c42 70%, #37424b 70%));
-    }
     a {
         color: #cfd8dc;
         padding: 8px 0;
@@ -21,11 +19,25 @@
             line-height: 32px;
         }
     }
-    #sundry-left h3 {
+    h3 {
         color: #fff;
         margin-bottom: 8px;
         font-weight: 500;
         font-size: 14px;
         line-height: 16px;
     }
+}
+
+#sundry-right {
+    background-color: #37424b;
+}
+
+@media screen and (max-width: $screen-width-small) {
+    #sundry-bcg {
+        margin: 0;
+    }
+    .sundry {
+        width: 50%;
+    }
+
 }

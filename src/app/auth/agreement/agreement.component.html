@@ -1,18 +1,29 @@
-<h2 mat-dialog-title bt-text-center>{{'AGREEMENT' | translate}}</h2>
+<h2
+    mat-dialog-title
+    bt-text-center
+>
+    {{'AGREEMENT' | translate}}
+</h2>
 <mat-dialog-content>
     <markdown [data]="content | async"></markdown>
-    <mat-spinner *ngIf="!(pending | async)" style="margin: 0 auto;"></mat-spinner>
+    <mat-spinner
+        *ngIf="!(pending | async)"
+        style="margin: 0 auto;"
+    ></mat-spinner>
 </mat-dialog-content>
 <mat-dialog-actions fxLayoutAlign="end">
     <button
-        mat-button
+        nz-button
+        [nzSize]="'large'"
         [mat-dialog-close]="false"
     >
         {{'DISAGREE' | translate}}
     </button>
 
     <button
-        mat-button
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'large'"
         [mat-dialog-close]="true"
     >
         {{'AGREE' | translate}}

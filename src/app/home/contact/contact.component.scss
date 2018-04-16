@@ -1,13 +1,11 @@
 @import '../../../theme/variable.theme';
 @import '../_home';
+#contact-bcg {
+    @include home-section-bcg(#666);
+}
 #contact {
     padding: 0 $content-padding 40px;
-    min-height: 240px;
     position: relative;
-    height: 153px;
-    &::before {
-        @include section-bcg(#666);
-    }
     .contact {
         $color: #fff;
         position: relative;
@@ -24,5 +22,14 @@
             min-height: 60px;
             margin: 16px 0;
         }
+    }
+}
+
+@media screen and (max-width: $screen-width-small) {
+    #contact-bcg {
+        margin: 0;
+    }
+    .contact {
+        width: 100%;
     }
 }

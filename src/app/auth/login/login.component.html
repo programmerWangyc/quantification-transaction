@@ -3,126 +3,165 @@
     fxLayoutAlign="center center"
     class="login-container"
 >
-    <div class="login-main mat-elevation-z12">
-        <mat-card>
-            <mat-card-title>
-                {{'USER_LOGIN' | translate}}
-                <a
-                    routerLink="/auth/signup"
-                    class="redirect"
-                >
-                    {{'SIGNUP' | translate}}
-                </a>
-            </mat-card-title>
-            <mat-card-content>
+    <div class="auth">
+        <img src="../../../assets/images/auth.jpg">
+    </div>
+    <div class="login-main">
+        <nz-card>
+            <ng-template #title>
+                <span style="font-size: 18px">{{'USER_LOGIN' | translate}}</span>
+            </ng-template>
+            <ng-template #body>
                 <form
+                    nz-form
                     fxLayout="column"
                     fxLayoutAlign="start stretch"
                     [formGroup]="loginForm"
                     (ngSubmit)="login$.next(loginForm.value)"
                 >
-                    <mat-form-field
-                        [matTooltip]="'USERNAME_FORMAT_ERROR' | translate"
-                        [matTooltipPosition]="tipPosition"
-                        class="full-width"
-                    >
-                        <input
-                            type="text"
-                            class="input"
-                            [placeholder]="'USERNAME' | translate"
-                            formControlName="username"
-                            required
-                            matInput
-                        >
-                    </mat-form-field>
-
-                    <div *ngIf="username.invalid && (username.dirty  || username.touched)">
-                        <div
-                            *ngIf="username.errors.required"
-                            class="form-error"
-                        >
-                            {{'USERNAME_TIP' | translate}}
+                    <div nz-form-item>
+                        <div nz-form-label>
+                            <label
+                                for="username"
+                                nz-form-item-required
+                            >
+                                {{'USERNAME' | translate}}
+                            </label>
                         </div>
                         <div
-                            *ngIf="!username.errors.required && username.errors.usernameFormat"
-                            class="form-error"
+                            nz-form-control
+                            nzHasFeedback
                         >
-                            {{loginForm.getError('usernameFormat', 'username') | translate}}
-                        </div>
-                    </div>
-
-                    <mat-form-field
-                        [matTooltip]="'PASSWORD_FORMAT_ERROR' | translate"
-                        [matTooltipPosition]="tipPosition"
-                        class="full-width"
-                    >
-                        <input
-                            type="password"
-                            class="input"
-                            [placeholder]="'PASSWORD' | translate"
-                            formControlName="password"
-                            required
-                            matInput
-                        >
-                    </mat-form-field>
-
-                    <div *ngIf="password.invalid && (password.dirty  || password.touched)">
-                        <div
-                            *ngIf="password.errors.required"
-                            class="form-error"
-                        >
-                            {{'PASSWORD_TIP' | translate}}
-                        </div>
-                        <div
-                            *ngIf="!password.errors.required && password.errors.passwordFormat"
-                            class="form-error"
-                        >
-                            {{loginForm.getError('passwordFormat', 'password') | translate}}
+                            <nz-input
+                                formControlName="username"
+                                [nzPlaceHolder]="'USERNAME' | translate"
+                                [nzSize]="'large'"
+                                [nzId]="'username'"
+                                required
+                            >
+                                <ng-template #prefix>
+                                    <i class="anticon anticon-user"></i>
+                                </ng-template>
+                            </nz-input>
+                            <div
+                                nz-form-explain
+                                *ngIf="username.invalid && (username.dirty  || username.touched)"
+                            >
+                                <div *ngIf="username.errors.required">{{'USERNAME_TIP' | translate}}</div>
+                                <div *ngIf="!username.errors.required && username.errors.usernameFormat">
+                                    {{loginForm.getError('usernameFormat', 'username') | translate}}
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div
+                        nz-form-item
+                        nz-row
+                    >
+                        <div
+                            nz-form-label
+                            id="get-password"
+                        >
+                            <label
+                                for="password"
+                                nz-form-item-required
+                            >
+                                {{'PASSWORD' | translate}}
+                            </label>
+                            <span>
+                                <a
+                                    routerLink="/auth/reset"
+                                    class="redirect"
+                                >
+                                    {{'FORGET_PASSWORD' | translate}}
+                                </a>
+                            </span>
+                        </div>
+                        <div
+                            nz-form-control
+                            nzHasFeedback
+                        >
+                            <nz-input
+                                [nzType]="'password'"
+                                formControlName="password"
+                                [nzPlaceHolder]="'PASSWORD' | translate"
+                                [nzSize]="'large'"
+                                [nzId]="'password'"
+                                required
+                            >
+                                <ng-template #prefix>
+                                    <i class="anticon anticon-lock"></i>
+                                </ng-template>
+                            </nz-input>
 
-                    <mat-form-field
+                            <div
+                                nz-form-explain
+                                *ngIf="password.invalid && (password.dirty  || password.touched)"
+                            >
+                                <div *ngIf="password.errors.required">{{'PASSWORD_TIP' | translate}}</div>
+                                <div *ngIf="!password.errors.required && password.errors.passwordFormat">
+                                    {{loginForm.getError('passwordFormat', 'password') | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        nz-form-item
+                        nz-row
                         *ngIf="needVerification | async; let require"
-                        [matTooltip]="'VERIFICATION_CODE_TIP' | translate"
-                        [matTooltipPosition]="tipPosition"
                     >
-                        <input
-                            type="text"
-                            [placeholder]="'VERIFICATION_CODE' | translate"
-                            formControlName="verificationCode"
-                            matInput
-                            [required]="require"
-                        >
-                    </mat-form-field>
-                    <div *ngIf="verificationCode.invalid && (verificationCode.dirty  || verificationCode.touched)">
+                        <div nz-form-label>
+                            <label
+                                for="verificationCode"
+                                nz-form-item-required
+                            >
+                                {{'VERIFICATION_CODE' | translate}}
+                            </label>
+                        </div>
+
                         <div
-                            *ngIf="verificationCode.errors.required"
-                            class="form-error"
+                            nz-form-control
+                            nzHasFeedback
                         >
-                            {{'VERIFICATION_CODE_TIP' | translate}}
+                            <nz-input
+                                [nzPlaceHolder]="'VERIFICATION_CODE' | translate"
+                                formControlName="verificationCode"
+                                [nzSize]="'large'"
+                                [nzId]="'verificationCode'"
+                                [required]="require"
+                            >
+                                <ng-template #prefix>
+                                    <i class="anticon anticon-lock"></i>
+                                </ng-template>
+                            </nz-input>
+                            <div
+                                nz-form-explain
+                                *ngIf="verificationCode.invalid && (verificationCode.dirty  || verificationCode.touched)"
+                            >
+                                <div *ngIf="verificationCode.errors.required">{{'VERIFICATION_CODE_TIP' | translate}}</div>
+                            </div>
+
                         </div>
                     </div>
 
                     <button
-                        mat-raised-button
-                        color="primary"
+                        nz-button
+                        [nzType]="'primary'"
                         type="submit"
+                        [nzSize]="'large'"
                         [disabled]="!loginForm.valid"
+                        style="height: 46px"
                     >
                         {{'LOGIN' | translate}}
                     </button>
                 </form>
 
-            </mat-card-content>
+                <div class="bottom-text">
+                    <span>{{"HAVE_NO_ACCOUNT" | translate}}</span>
+                    <a routerLink="/auth/signup">{{'REGISTER_NOW' | translate}}</a>
+                </div>
 
-            <div id="get-password">
-                <a
-                    routerLink="/auth/reset"
-                    class="redirect"
-                >
-                    {{'FORGET_PASSWORD' | translate}}
-                </a>
-            </div>
-        </mat-card>
+            </ng-template>
+        </nz-card>
     </div>
 </div>

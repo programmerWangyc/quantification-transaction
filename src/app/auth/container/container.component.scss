@@ -1,8 +1,5 @@
-$gray-lighter: #eceeef !default;
-$image-path: "/assets/images/" !default;
 #auth-container {
-    background: $gray-lighter url('#{$image-path}login-bcg.jpg') no-repeat center center fixed;
-    background-size: cover;
-    min-height: calc(100% - 48px);
     position: relative;
+    height: 100vh;
+    margin: -96px;
 }

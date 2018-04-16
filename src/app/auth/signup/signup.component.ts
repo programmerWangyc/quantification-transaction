@@ -8,9 +8,9 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent, SignupFormModel } from '../../interfaces/business.interface';
 import { emailValidator, passwordMatchValidator, passwordValidator, usernameValidator } from '../../validators/validators';
+import { AgreementComponent } from '../agreement/agreement.component';
 import { EncryptService } from './../../providers/encrypt.service';
 import { PublicService } from './../../providers/public.service';
-import { AgreementComponent } from './../agreement/agreement.component';
 import { AuthService } from './../providers/auth.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class SignupComponent extends BusinessComponent {
 
     signup$: Subject<SignupFormModel> = new Subject();
 
-    isAgree: Observable<boolean>;
+    isAgree = true;
 
     tipPosition = 'after';
 
@@ -54,7 +54,6 @@ export class SignupComponent extends BusinessComponent {
     }
 
     initialModel(): void {
-        this.isAgree = this.authService.isAgree();
     }
 
     launch(): void {
@@ -63,6 +62,7 @@ export class SignupComponent extends BusinessComponent {
             .add(this.activatedRoute.params.map(params => params['ref']).filter(ref => !!ref).subscribe(this.publicService.refUser$$))
             .add(this.authService.isSignupSuccess().filter(success => !!success).subscribe(_ => this.router.navigateByUrl('/home')))
             .add(this.authService.showSignupResponse())
+            .add(this.authService.isAgree().subscribe(agree => this.isAgree = agree))
             .add(this.authService.handleSignupError())
             .add(this.publicService.handleSettingsError());
     }
@@ -104,5 +104,4 @@ export class SignupComponent extends BusinessComponent {
     get confirmPassword(): AbstractControl {
         return this.signupForm.get('passwordInfo.confirmPassword');
     }
-
 }

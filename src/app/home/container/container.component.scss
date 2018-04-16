@@ -1,3 +1,10 @@
+@import '../_home';
 #home-container {
-    margin: 0 164px;
+    margin: 0 $container-margin;
+}
+
+@media screen and (max-width: $screen-width-small) {
+    #home-container {
+        margin: 0;
+    }
 }

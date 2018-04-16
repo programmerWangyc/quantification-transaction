@@ -1,25 +1,26 @@
-<div
-    nz-row
-    [nzGutter]="24"
-    id="feature"
->
+<div id="feature-bcg">
     <div
-        *ngFor="let item of list"
-        nz-col
-        [nzSpan]="8"
-        fxLayoutAlign="start stretch"
-        fxLayout='column'
-        class="feature"
+        nz-row
+        id="feature"
     >
-        <div class="feature-border"></div>
-        <h3>{{item.keyword | translate}}</h3>
-        <p>{{item.label | translate}}</p>
-        <a
-            href="javascript:void 0"
-            class="detail"
+        <div
+            *ngFor="let item of list"
+            nz-col
+            [nzSpan]="8"
+            fxLayoutAlign="start stretch"
+            fxLayout="column"
+            class="feature"
         >
-            {{'FIND_OUT_DETAILS' | translate}}
-            <i class="anticon anticon-right-circle"></i>
-        </a>
+            <div class="feature-border"></div>
+            <h3>{{item.keyword | translate}}</h3>
+            <p>{{item.label | translate}}</p>
+            <a
+                href="javascript:void 0"
+                class="detail"
+            >
+                {{'FIND_OUT_DETAILS' | translate}}
+                <i class="anticon anticon-right-circle"></i>
+            </a>
+        </div>
     </div>
 </div>

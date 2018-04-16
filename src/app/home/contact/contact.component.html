@@ -1,15 +1,23 @@
-<div
-    fxLayoutAlign="space-between center"
-    id="contact"
->
-    <div class="contact" *ngFor="let item of list" fxLayout="column">
-        <h3>{{item.title}}</h3>
-        <p>{{item.desc}}</p>
-        <a
-            href="javascript:void 0"
-            *ngFor="let icon of item.buttons"
+<div id="contact-bcg">
+    <div
+        nz-row
+        id="contact"
+    >
+        <div
+            class="contact"
+            *ngFor="let item of list"
+            nz-col
+            [nzSpan]="8"
+            fxLayout="column"
         >
-        </a>
-    </div>
+            <h3>{{item.title}}</h3>
+            <p>{{item.desc}}</p>
+            <a
+                href="javascript:void 0"
+                *ngFor="let icon of item.buttons"
+            >
+            </a>
+        </div>
 
+    </div>
 </div>

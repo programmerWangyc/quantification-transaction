@@ -1,16 +1,18 @@
 @import '../../../theme/_variable.theme';
 @import '../_home';
+#produce-bcg {
+    @include home-section-bcg(#0288d1);
+}
 section {
-    padding: 0 $content-padding;
+    padding: 35px $content-padding;
     position: relative;
     color: #fff;
-    &::before {
-        @include section-bcg(#0288d1);
-    }
     .user {
         min-height: 198px;
         p {
             padding: 24px 15px;
+            height: 153px;
+            overflow: hidden;
         }
         img {
             width: 150px;
@@ -30,5 +32,16 @@ section {
         i {
             margin: 0 16px 0 0;
         }
+    }
+}
+
+@media screen and (max-width: $screen-width-small) {
+    #produce-bcg {
+        margin: 0;
+    }
+
+    section {
+        margin: 0 -35px;
+        padding: 35px 0;
     }
 }

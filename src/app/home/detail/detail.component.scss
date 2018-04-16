@@ -27,8 +27,14 @@
     }
 }
 
-@media screen and (max-width: 1450px) {
+@media screen and (max-width: $screen-width-middle) {
     #detail {
         padding: 50px 5%;
+    }
+}
+
+@media screen and (max-width: $screen-width-small) {
+    .detail {
+        width: 100%;
     }
 }

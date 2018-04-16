@@ -1,13 +1,21 @@
 $container-margin: 164px;
 $content-padding: 10%;
-$title-font: 400 40px/60px 'Google Sans',
-sans-serif;
+$title-font: 400 40px/60px 'Google Sans', sans-serif;
+$screen-width-middle: 1450px;
+$screen-width-small: 1000px;
 @mixin section-bcg($bcg) {
     content: "";
     position: absolute;
     top: 0;
-    left: -164px;
+    left: -$container-margin;
     width: 100vw;
     height: 100%;
     background: $bcg
+}
+
+@mixin home-section-bcg($bcg) {
+    width: 100vw;
+    margin: 0 (-$container-margin);
+    padding: 0 $container-margin;
+    background: $bcg;
 }

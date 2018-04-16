@@ -51,6 +51,8 @@ export class NavbarComponent implements OnInit {
 
     searchValue: string;
 
+    isCollapsed = true;
+
     constructor() { }
 
     ngOnInit() {

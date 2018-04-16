@@ -55,3 +55,16 @@
         color: #0273d4
     }
 }
+@media screen and (max-width: $screen-width-middle) {
+    #entrance {
+        padding: 50px 0;
+    }
+}
+@media screen and (max-width: $screen-width-small) {
+    .entrance-list {
+        width: 100%;
+    }
+    #entrance {
+        padding: 50px $content-padding;
+    }
+}
