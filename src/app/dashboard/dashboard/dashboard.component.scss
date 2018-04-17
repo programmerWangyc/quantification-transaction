@@ -1,0 +1,56 @@
+@import '../../../theme/_variable.theme';
+$side-width: 240px;
+$header-height: 48px;
+header {
+    height: $header-height;
+    position: fixed;
+    top: 0;
+    left: 0;
+    line-height: $header-height;
+    background-color: $bcg-nav;
+    width: 100%;
+    .logo {
+        display: inline-block;
+        height: 100%;
+        width: $side-width;
+        font-size: 32px;
+        text-align: center;
+    }
+    .collapse {
+        width: $header-height;
+        height: $header-height;
+        text-align: center;
+        color: $blue;
+        &:hover {
+            background-color: #ccc;
+            cursor: pointer;
+        }
+    }
+    .fold-btn {
+        margin-left: 5px;
+    }
+    section {
+        position: absolute;
+        right: 24px;
+    }
+}
+
+#side-bar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: $header-height;
+    width: $side-width;
+    height: 100vh;
+    &>ul {
+        height: 100%;
+        border: 1px solid #e9e9e9;
+    }
+    i {
+        font-size: 18px;
+    }
+}
+
+.header {
+    width: 100%;
+}

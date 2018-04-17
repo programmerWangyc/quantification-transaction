@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 
@@ -29,6 +30,7 @@ export class LoginComponent extends BusinessComponent {
         private fb: FormBuilder,
         private authService: AuthService,
         private encrypt: EncryptService,
+        private router: Router,
     ) {
         super();
         this.createForm();
@@ -54,7 +56,7 @@ export class LoginComponent extends BusinessComponent {
 
     launch(): void {
         this.subscription$$ = this.authService.launchLogin(this.login$.map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) })))
-            .add(this.authService.isLoginSuccess().filter(success => success).subscribe())
+            .add(this.authService.isLoginSuccess().filter(success => success).subscribe(_ => this.router.navigateByUrl('/dashboard/robot')))
             .add(this.authService.handleLoginError());
     }
 

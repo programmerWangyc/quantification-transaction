@@ -12,7 +12,7 @@ export function usernameValidator(input: FormControl): ValidatorResult {
     return usernameFormat.test(input.value) ? null : { usernameFormat: 'USERNAME_FORMAT_ERROR'};
 }
 
-export const passwordFormat = /^\w{10,16}$/;
+export const passwordFormat = /^\w{6,16}$/;
 
 export function passwordValidator(input: FormControl): ValidatorResult {
     return passwordFormat.test(input.value) ? null : { passwordFormat: 'PASSWORD_FORMAT_ERROR'}

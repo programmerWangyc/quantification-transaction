@@ -9,10 +9,10 @@ import { ToolModule } from './../tool/tool.module';
 import { AgreementComponent } from './agreement/agreement.component';
 import { ContainerComponent } from './container/container.component';
 import { LoginComponent } from './login/login.component';
+import { PasswordComponent } from './password/password.component';
 import { AuthService } from './providers/auth.service';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
-import { PasswordComponent } from './password/password.component';
 
 const routs: Routes = [
     {
@@ -49,6 +49,6 @@ const routs: Routes = [
     entryComponents: [
         AgreementComponent,
     ],
-    providers: [AuthService]
+    providers: [AuthService],
 })
 export class AuthModule { }

@@ -98,5 +98,12 @@
     "SEARCH": "搜索",
     "FIND_OUT_DETAILS": "了解详情",
     "VIEW_ALL_PRODUCTS": "查看所有产品",
-    "FREE_TRIAL": "免费试用"
+    "FREE_TRIAL": "免费试用",
+
+    "CONTROL_CENTER": "控制中心",
+    "FIRMWARE_SIMULATION": "实盘仿真",
+    "EXCHANGE": "交易所",
+    "STRATEGY_LIBRARY": "策略库",
+    "TRUSTEE": "托管者",
+    "ROBOT": "机器人"
 }

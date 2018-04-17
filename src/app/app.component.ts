@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { PublicService } from './providers/public.service';
 
@@ -13,9 +14,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     subscription$$: Subscription;
 
-    // needFooter: Observable<boolean>;
-
-    // showFooter = false;
+    isLogin: Observable<boolean>;
 
     constructor(
         private translate: TranslateService,
@@ -25,11 +24,11 @@ export class AppComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.initLanguage();
 
+        this.isLogin = this.pubService.isLogin();
+
         this.subscription$$ = this.pubService.updateInformation()
             .add(this.pubService.getLanguage().subscribe(lang => this.translate.use(lang)))
             .add(this.pubService.saveReferrer());
-
-        // this.pubService.getFooterState().subscribe(pre => this.showFooter = pre);
     }
 
     initLanguage(): void {

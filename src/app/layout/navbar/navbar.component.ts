@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+
+import { Path } from '../../interfaces/constant.interface';
+import { PublicService } from './../../providers/public.service';
 
 export interface Link {
     path: string;
@@ -6,37 +10,37 @@ export interface Link {
 }
 
 const main: Link = {
-    path: 'home',
+    path: Path.home,
     label: 'HOME',
 }
 
 const square: Link = {
-    path: 'square',
+    path: Path.square,
     label: 'STRATEGY_SQUARE',
 }
 
 const factFinder: Link = {
-    path: 'fact',
+    path: Path.fact,
     label: 'FACT_FINDER',
 }
 
 const community: Link = {
-    path: 'community',
+    path: Path.community,
     label: 'COMMUNITY',
 }
 
 const documentation: Link = {
-    path: 'doc',
+    path: Path.doc,
     label: 'API_DOCUMENTATION',
 }
 
 const market: Link = {
-    path: '',
+    path: Path.market,
     label: 'QUOTE_TOOL'
 }
 
 const analyzing: Link = {
-    path: '',
+    path: Path.analyze,
     label: 'ANALYZING_TOOL',
 }
 
@@ -52,10 +56,15 @@ export class NavbarComponent implements OnInit {
     searchValue: string;
 
     isCollapsed = true;
+    
+    isLogin: Observable<boolean>
 
-    constructor() { }
+    constructor(
+        private publicService: PublicService,
+    ) { }
 
     ngOnInit() {
+        this.isLogin = this.publicService.isLogin();
     }
 
     onSearch(event: string): void {

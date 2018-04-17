@@ -1,4 +1,4 @@
-<header fxLayout="column">
+<header fxLayout="column" *ngIf="!(isLogin | async)">
     <div
         id="header"
         class="header"
@@ -7,10 +7,7 @@
             fxLayout="row no-wrap"
             fxFlex="1 0 auto"
         >
-            <img
-                src="../../assets/images/botvs.png"
-                alt="botvs"
-            >
+            <img src="../../assets/images/botvs.png">
         </span>
 
         <section fxLayoutAlign="center">
@@ -42,7 +39,6 @@
         class="header"
         fxLayoutAlign="space-between center"
     >
-
         <div
             fxLayoutAlign="space-between center"
             id="nav"
