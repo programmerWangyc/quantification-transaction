@@ -13,6 +13,7 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
+import { BtCommonModule } from './btcommon/bt.common.module';
 import { HomeModule } from './home/home.module';
 import { FooterComponent } from './layout/footer/footer.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
@@ -57,6 +58,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         MatSnackBarModule,
         ToolModule,
         NgZorroAntdModule.forRoot(),
+        BtCommonModule,
     ],
     providers: [
         Store,

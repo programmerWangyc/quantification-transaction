@@ -1,0 +1,14 @@
+@import '../../../theme/_variable.theme';
+.indicator {
+    padding: 0 10px;
+    border-left: 3px solid $blue;
+    height: 24px;
+    line-height: 24px;
+    color: $gray;
+    .indicator-split {
+        position: relative;
+        &::after {
+            content: '>';
+        }
+    }
+}

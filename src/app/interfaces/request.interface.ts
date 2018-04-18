@@ -48,6 +48,11 @@ export interface SetPasswordRequest {
 }
 
 // exchange list
-export interface GetExchangeListRequest {
+export interface GetExchangeListRequest { }
 
+// robot list
+export interface GetRobotListRequest {
+    start: number; // 查询的起始位置
+    limit: number; // 每次查询的数量
+    status: number; // 机器人的状态
 }

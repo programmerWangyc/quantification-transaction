@@ -1,5 +1,3 @@
-import { Action } from '@ngrx/store';
-
 /* =======================================================Abstract response========================================================= */
 
 export type ResponseItem = string | number | boolean | { [key: string]: any } | JSON;
@@ -78,6 +76,50 @@ export interface ExchangeListResponse {
 }
 
 export interface GetExchangeListResponse extends ResponseUnit<ExchangeListResponse> { }
+
+
+// robot list
+export interface Robot {
+    charge_time:number;
+    date: string;
+    end_time: string;
+    id:number;
+    is_sandbox:number;
+    name: string;
+    node_guid: string;
+    node_id:number;
+    profit:number;
+    public:number;
+    refresh:number;
+    start_time: string;
+    status:number;
+    strategy_id:number;
+    strategy_isowner: boolean;
+    strategy_name: string;
+    wd:number;
+}
+
+export enum RobotStatus {
+    COMPLETE,
+    ERROR,
+    QUEUEING,
+    RUNNING,
+    STOPPED,
+    STOPPING
+}
+
+export enum RobotPublicStatus {
+    UNDISCLOSED,
+    DISCLOSED
+}
+
+export interface RobotListResponse {
+    all: number;
+    concurrent: number;
+    robots: Robot[];
+}
+
+export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { }
 
 // export interface AgreementSettingResponse extends ResponseUnit<string>{ }
 // agreement: string;

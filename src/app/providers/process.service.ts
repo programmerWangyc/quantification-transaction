@@ -1,4 +1,3 @@
-import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -6,11 +5,13 @@ import { Subscription } from 'rxjs/Subscription';
 
 import * as Request from '../interfaces/request.interface';
 import { LoginRequestAction } from '../store/auth/login.action';
+import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
+import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
 import { SignupRequestAction } from './../store/auth/signup.action';
 import { GetSettingsRequestAction } from './../store/public/public.action';
-import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
+import { GetRobotListRequestAction } from './../store/robot/robot.action';
 
 @Injectable()
 export class ProcessService {
@@ -39,5 +40,9 @@ export class ProcessService {
 
     processExchangeList(source: Observable<Request.GetExchangeListRequest>): Subscription {
         return source.subscribe(_ => this.store.dispatch(new GetExchangeListRequestAction()));
+    }
+
+    processRobotList(source: Observable<Request.GetRobotListRequest>): Subscription {
+        return source.subscribe(source => this.store.dispatch(new GetRobotListRequestAction(source)));
     }
 }

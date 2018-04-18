@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from './../shared/shared.module';
 import { TextCenterDirective } from './directives/style.directive';
+import { IndicatorComponent } from './indicator/indicator.component';
 import { CustomSnackBarComponent } from './tool.components';
 
 @NgModule({
@@ -13,6 +14,7 @@ import { CustomSnackBarComponent } from './tool.components';
     declarations: [
         CustomSnackBarComponent,
         TextCenterDirective,
+        IndicatorComponent,
     ],
     
     entryComponents: [
@@ -20,6 +22,7 @@ import { CustomSnackBarComponent } from './tool.components';
     ],
     exports: [
         TextCenterDirective,
+        IndicatorComponent,
     ]
 })
 export class ToolModule { }

@@ -5,18 +5,18 @@ import { Observable } from 'rxjs/Observable';
 import { ResponseAction } from '../base.action';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
-import { GET_EXCHANGE_LIST, ResponseActions as exchange } from './exchange.action';
+import { GET_ROBOT_LIST, ResponseActions as robot } from './robot.action';
 
 @Injectable()
-export class ExchangeEffect extends BaseEffect {
+export class RobotEffect extends BaseEffect {
 
     @Effect()
-    exchangeList$: Observable<ResponseAction> = this.getResponseAction(GET_EXCHANGE_LIST, exchange);
+    robotList$: Observable<ResponseAction> = this.getResponseAction(GET_ROBOT_LIST, robot);
 
     constructor(
-        public actions$: Actions,
         public ws: WebsocketService,
-    ) {
+        public actions$: Actions,
+    ) { 
         super(ws, actions$);
     }
 }

@@ -6,6 +6,7 @@ import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as exchange from './exchange/exchange.reducer';
 import * as pub from './public/public.reducer';
+import * as robot from './robot/robot.reducer';
 
 export interface AppState {
     pub: pub.State,
@@ -14,6 +15,7 @@ export interface AppState {
     reset: reset.State,
     pwd: pwd.State,
     exchange: exchange.State,
+    robot: robot.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -23,6 +25,7 @@ export const reducers: ActionReducerMap<AppState> = {
     reset: reset.reducer,
     pwd: pwd.reducer,
     exchange: exchange.reducer,
+    robot: robot.reducer,
 }
 
 
@@ -61,3 +64,8 @@ export const selectSetPwdResponse = createSelector(getSetPwdState, pwd.getSetPwd
 export const getExchangeState = (state: AppState) => state.exchange;
 export const selectExchangeList = createSelector(getExchangeState, exchange.getExchangeListResponse);
 export const selectExchangeResponseState = createSelector(getExchangeState, exchange.getExchangeListResponseState);
+
+// robot list 
+export const getRobotState = (state: AppState) => state.robot;
+export const selectRobotListResState = createSelector(getRobotState, robot.getResponseState);
+export const selectRobotListData = createSelector(getRobotState, robot.getRobotData);

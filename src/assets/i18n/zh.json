@@ -1,4 +1,38 @@
 {
+
+    "OPERATE": "操作",
+    "CREATE": "创建",
+    "DELETE": "删除",
+    "COPY": "复制",
+    "EDIT": "编辑",
+    "ADD": "添加",
+    "REBOOT": "重启",
+    "OPERATE_CONFIRM": "操作确认",
+    "CONFIRM": "确定",
+    "CANCEL": "取消",
+    "SELL": "售卖",
+    "RECHARGE": "充值",
+    "DEBUG": "调试",
+    "NAME": "名称",
+    "STRATEGY": "策略",
+    "CREATE_DATE": "创建日期",
+    "ONLOOKERS": "围观",
+    "PROFIT": "盈利",
+
+    "STATUS": "状态",
+    "COMPLETE": "完成",
+    "ERROR": "错误",
+    "RUNNING": "运行中",
+    "QUEUEING": "排队中",
+    "STOPPED": "已停止",
+    "STOPPING": "停止中",
+    "DISPLAY": "显示",
+    "HIDE": "隐藏",
+    "PUBLISH": "公开",
+    "DISCLOSED": "已公开",
+    "UNDISCLOSED": "未公开",
+
+
     "HOME": "首页",
     "STRATEGY_SQUARE": "策略广场",
     "FACT_FINDER": "实盘围观",
@@ -105,5 +139,9 @@
     "EXCHANGE": "交易所",
     "STRATEGY_LIBRARY": "策略库",
     "TRUSTEE": "托管者",
-    "ROBOT": "机器人"
+    "ROBOT": "机器人",
+
+    "CREATE_ROBOT": "创建机器人",
+    "CANCEL_PUBLISH_ROBOT": "确定要取消公开这个机器人的交易日志吗?",
+    "PUBLISH_ROBOT": "确定要公开这个机器人的交易日志吗?"
 }

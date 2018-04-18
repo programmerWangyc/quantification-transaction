@@ -1,30 +1,30 @@
 import { RouterModule, Routes } from '@angular/router';
 
-import { ContainerComponent as Community } from '../community/container/container.component';
-import { ExchangeComponent } from '../control/exchange/exchange.component';
-import { RobotComponent } from '../control/robot/robot.component';
-import { StrategyLibComponent } from '../control/strategy-lib/strategy-lib.component';
-import { TrusteeComponent } from '../control/trustee/trustee.component';
-import { ContainerComponent as Doc } from '../document/container/container.component';
-import { ContainerComponent as Fact } from '../fact/container/container.component';
+import { ExchangeComponent } from '../btcommon/exchange/exchange.component';
+import { RobotComponent } from '../btcommon/robot/robot.component';
+import { StrategyLibComponent } from '../btcommon/strategy-lib/strategy-lib.component';
+import { TrusteeComponent } from '../btcommon/trustee/trustee.component';
 import { Path } from '../interfaces/constant.interface';
-import { ContainerComponent as Square } from '../square/container/container.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { CommunityComponent } from './community/community.component';
+import { ContainerComponent as Dashboard } from './container/container.component';
+import { DocComponent } from './doc/doc.component';
+import { FactComponent } from './fact/fact.component';
+import { SquareComponent } from './square/square.component';
 
 const routs: Routes = [
     {
         path: '',
-        component: DashboardComponent,
+        component: Dashboard,
         children: [
             { path: Path.robot, component: RobotComponent },
             { path: Path.strategy, component: StrategyLibComponent },
             { path: Path.exchange, component: ExchangeComponent },
             { path: Path.trustee, component: TrusteeComponent },
-            { path: Path.square, component: Square },
-            { path: Path.fact, component: Fact},
-            { path: Path.community, component: Community},
-            { path: Path.doc, component: Doc },
-            { path: '', redirectTo: 'robot', pathMatch: 'full' },
+            { path: Path.square, component: SquareComponent},
+            { path: Path.community, component: CommunityComponent},
+            { path: Path.doc, component: DocComponent},
+            { path: Path.fact, component: FactComponent},
+            { path: '', redirectTo: Path.robot, pathMatch: 'full' },
         ]
     },
 ];

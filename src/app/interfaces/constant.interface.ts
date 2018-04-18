@@ -20,5 +20,6 @@ export enum Path  {
     strategy = 'strategy',
     trustee = 'trustee',
     exchange = 'exchange',
-    simulate = 'simulate'
+    simulate = 'simulate',
+    dashboard = 'dashboard',
 }

@@ -62,7 +62,6 @@ const controlCenter: SideNav = {
         { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
         { path: Path.trustee, label: 'TRUSTEE', icon: 'apple' },
         { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
-
     ]
 }
 
@@ -84,15 +83,27 @@ export class DashboardComponent implements OnInit {
 
     list: SideNav[] = [controlCenter, simulation, square, factFinder, community, documentation, market, analyzing];
 
+    currentPath: string;
+
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
-    ) { }
+        private activatedRoute: ActivatedRoute,
+    ) {
+    }
 
     ngOnInit() {
+        const url = this.router.url.split('/');
+
+        this.currentPath = url[url.length - 1];
     }
 
     navigateTo(target: SideNav): void {
-        this.router.navigate([target.path], { relativeTo: this.route });
+        this.router.navigate([target.path], { relativeTo: this.activatedRoute });
+    }
+
+    isActive(source: SideNav): boolean {
+        const paths = source.subNav.map(item => item.path);
+
+        return paths.indexOf(this.currentPath) !== -1;
     }
 }

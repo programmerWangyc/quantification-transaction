@@ -1,0 +1,5 @@
+<div class="indicator">
+    <span *ngFor="let item of paths; last as isLast" [ngClass]="{'indicator-split': !isLast}">
+        {{item | translate}}
+    </span>
+</div>

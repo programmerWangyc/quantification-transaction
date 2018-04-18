@@ -1,4 +1,3 @@
-import { ResponseUnit, SetPasswordResponse, ResetPasswordResponse } from './../../interfaces/response.interface';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
@@ -14,26 +13,28 @@ import { Observable } from 'rxjs/Observable';
 
 import { LoginResponse, SignupResponse } from '../../interfaces/response.interface';
 import { WebsocketService } from '../../providers/websocket.service';
+import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
-import { ResponseActions as loginAction, LOGIN} from './login.action';
+import { ResetPasswordResponse, SetPasswordResponse } from './../../interfaces/response.interface';
+import { LOGIN, ResponseActions as loginAction } from './login.action';
+import { ResponseActions as setAction, SET_PASSWORD } from './password.action';
+import { RESET_PASSWORD, ResponseActions as resetAction } from './reset.action';
 import { ResponseActions as signupAction, SIGNUP } from './signup.action';
-import { ResponseActions as resetAction, RESET_PASSWORD} from './reset.action';
-import { ResponseActions as setAction, SET_PASSWORD} from './password.action';
 
 @Injectable()
 export class AuthEffect extends BaseEffect {
 
     @Effect()
-    login$ = this.getResponseAction(LOGIN, loginAction, isAuthFail);
+    login$: Observable<ResponseAction> = this.getResponseAction(LOGIN, loginAction, isAuthFail);
 
     @Effect()
-    signup$ = this.getResponseAction(SIGNUP, signupAction, isAuthFail);
+    signup$: Observable<ResponseAction> = this.getResponseAction(SIGNUP, signupAction, isAuthFail);
 
     @Effect()
-    reset$ = this.getResponseAction(RESET_PASSWORD, resetAction, isPwdFail);
+    reset$: Observable<ResponseAction> = this.getResponseAction(RESET_PASSWORD, resetAction, isPwdFail);
 
     @Effect()
-    setPwd$ = this.getResponseAction(SET_PASSWORD, setAction, isPwdFail);
+    setPwd$: Observable<ResponseAction> = this.getResponseAction(SET_PASSWORD, setAction, isPwdFail);
 
     constructor(
         public actions$: Actions,
