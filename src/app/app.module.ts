@@ -15,8 +15,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 import { BtCommonModule } from './btcommon/bt.common.module';
 import { HomeModule } from './home/home.module';
-import { FooterComponent } from './layout/footer/footer.component';
-import { NavbarComponent } from './layout/navbar/navbar.component';
 import { GLOBAL_SERVICES } from './providers/service.import';
 import { SharedModule } from './shared/shared.module';
 import { EFFECTS } from './store/index.effect';
@@ -32,8 +30,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
     declarations: [
         AppComponent,
-        NavbarComponent,
-        FooterComponent,
     ],
     imports: [
         BrowserModule,

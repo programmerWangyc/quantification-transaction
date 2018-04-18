@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ContainerComponent as HomeContainer } from './home/container/container.component';
+import { HomeComponent } from './home/home.component';
 
 const appRoutes: Routes = [
-    { path: 'home', component: HomeContainer }, // 主页
+    { path: 'home', component: HomeComponent }, // 主页
     { path: 'square', loadChildren: './square/square.module#SquareModule' }, // 策略广场
     { path: 'fact', loadChildren: './fact/fact.module#FactModule' }, // 实盘围观 
     { path: 'community', loadChildren: './community/community.module#CommunityModule' }, //交流社区
@@ -14,7 +14,7 @@ const appRoutes: Routes = [
     { path: 'auth', loadChildren: './auth/auth.module#AuthModule' }, // 登录、注册、重置密码、修改密码
     { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' }, // 控制台
     { path: '', redirectTo: '/home', pathMatch: 'full' }, // 重定向页面
-    { path: '**', component: HomeContainer },  // 404页面
+    { path: '**', component: HomeComponent },  // 404页面
 ];
 
 @NgModule({

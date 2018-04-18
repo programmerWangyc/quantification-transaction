@@ -6,7 +6,7 @@ import { StrategyLibComponent } from '../btcommon/strategy-lib/strategy-lib.comp
 import { TrusteeComponent } from '../btcommon/trustee/trustee.component';
 import { Path } from '../interfaces/constant.interface';
 import { CommunityComponent } from './community/community.component';
-import { ContainerComponent as Dashboard } from './container/container.component';
+import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
 import { SquareComponent } from './square/square.component';
@@ -14,7 +14,7 @@ import { SquareComponent } from './square/square.component';
 const routs: Routes = [
     {
         path: '',
-        component: Dashboard,
+        component: DashboardComponent,
         children: [
             { path: Path.robot, component: RobotComponent },
             { path: Path.strategy, component: StrategyLibComponent },

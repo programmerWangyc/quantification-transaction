@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Path } from '../../interfaces/constant.interface';
+import { Path } from '../interfaces/constant.interface';
 
 export interface SideNavItem {
     label: string;
