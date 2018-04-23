@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import { ApiActions } from "./index.action";
-import { WsRequest } from "../interfaces/request.interface";
+
+import { WsRequest } from '../interfaces/request.interface';
 
 /**
  * @class ApiAction
@@ -44,7 +44,11 @@ export abstract class ApiAction {
      * @description If the request has multiple parameters, use this method to generate parameters that communicate with the server.
      */
     private orderParams(payload: any, defaultValue): any[] {
-        return new Array(this.order.length).fill(defaultValue).map((value, index) => payload[this.order[index]] || value);
+        return new Array(this.order.length).fill(defaultValue).map((value, index) => {
+            const result = payload[this.order[index]];
+
+            return result === undefined ? defaultValue : result;
+        });
     }
 
     /**

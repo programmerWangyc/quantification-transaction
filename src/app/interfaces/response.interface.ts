@@ -4,7 +4,7 @@ export type ResponseItem = string | number | boolean | { [key: string]: any } | 
 
 export interface ResponseState {
     error: string;
-    action?: string;
+    action?: string; // custom field at front end, indicate the response from serve belongs to which action.
 }
 
 export interface ResponseBody extends PublicResponse {
@@ -31,13 +31,32 @@ export interface PublicResponse {
     version: number;
 }
 
-/* =======================================================Api section of response========================================================= */
+
+
+/**
+ * <------------
+ *  @description  Interfaces and enums below are all response related;
+ */
+
+/* =======================================================Auth response========================================================= */
 
 // login 
 export interface LoginResponse extends ResponseUnit<number> { }
 
 // signup
 export interface SignupResponse extends ResponseUnit<number> { }
+
+// reset password
+export interface ResetPasswordResponse extends ResponseUnit<boolean> { }
+
+// set password
+export interface SetPasswordResponse extends ResponseUnit<boolean> { }
+
+// verify password
+export interface VerifyPasswordResponse extends ResponseUnit<boolean> { }
+
+
+/* =======================================================Auth response========================================================= */
 
 // get settings
 export interface IndexSetting {
@@ -46,11 +65,7 @@ export interface IndexSetting {
 
 export interface SettingsResponse extends ResponseUnit<string | IndexSetting> { }
 
-// reset password
-export interface ResetPasswordResponse extends ResponseUnit<boolean> { }
-
-// set password
-export interface SetPasswordResponse extends ResponseUnit<boolean> { }
+/* =======================================================Exchange response========================================================= */
 
 // exchange list
 export interface ExchangeMetaData {
@@ -78,39 +93,41 @@ export interface ExchangeListResponse {
 export interface GetExchangeListResponse extends ResponseUnit<ExchangeListResponse> { }
 
 
+/** ===================================================Robot========================================= **/
+
 // robot list
 export interface Robot {
-    charge_time:number;
+    charge_time: number;
     date: string;
     end_time: string;
-    id:number;
-    is_sandbox:number;
+    id: number;
+    is_sandbox: number;
     name: string;
     node_guid: string;
-    node_id:number;
-    profit:number;
-    public:number;
-    refresh:number;
+    node_id: number;
+    profit: number;
+    public: number;
+    refresh: number;
     start_time: string;
-    status:number;
-    strategy_id:number;
+    status: number;
+    strategy_id: number;
     strategy_isowner: boolean;
     strategy_name: string;
-    wd:number;
+    wd: number;
 }
 
 export enum RobotStatus {
-    COMPLETE,
-    ERROR,
     QUEUEING,
     RUNNING,
+    STOPPING,
+    COMPLETE,
     STOPPED,
-    STOPPING
+    ERROR,
 }
 
 export enum RobotPublicStatus {
-    UNDISCLOSED,
-    DISCLOSED
+    UNDISCLOSED, // 未公开
+    DISCLOSED // 公开
 }
 
 export interface RobotListResponse {
@@ -121,13 +138,162 @@ export interface RobotListResponse {
 
 export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { }
 
-// export interface AgreementSettingResponse extends ResponseUnit<string>{ }
-// agreement: string;
-// about: string;
-// api: string;
-// promotion: {}
-// docker: {}
-// brokers: {}
+// public robot
+export interface PublicRobotResponse extends ResponseUnit<boolean> { }
+
+// robot detail 
+export interface RobotDebug {
+    Nano: number;
+    Stderr: string;
+    Stdout: string;
+}
+
+export interface IdToName {
+    [key: number]: string;
+}
+
+export interface StrategyExchangePairs {
+    kLinePeriod: number;
+    exchangeIds: number[];
+    stocks: string[];
+}
+
+export interface RobotDetail {
+    charge_time: number;
+    charged: number;
+    consumed: number;
+    date: string;
+    debug: JSON;  // RobotDebug
+    end_time: string;
+    fixed_id: number;
+    id: number;
+    is_deleted: number;
+    is_manager: boolean;
+    is_sandbox: number;
+    name: string;
+    node_id: number;
+    pexchanges: IdToName; // {id: exchangeName}
+    plabels: IdToName; // { id: customName } 
+    profit: number;
+    public: number;
+    refresh: number;
+    robot_args: string;
+    start_time: string;
+    status: number;
+    strategy_args: string; //"[]"
+    strategy_exchange_pairs: string; //"[4,[-1],["BTC_USD"]]" 0： k 线周期的ID。1: 交易所ID; 2: 股票；
+    strategy_id: number;
+    strategy_last_modified: string;
+    strategy_name: string;
+    templates: any[];
+    username: string;
+    wd: number;
+}
+
+export interface RobotDetailResponse {
+    robot: RobotDetail;
+}
+
+export interface GetRobotDetailResponse extends ResponseUnit<RobotDetailResponse> { }
+
+// robot logs
+export interface Logs {
+    Total: number;
+    Max: number;
+    Min: number;
+    Arr: any[][];
+}
+
+export interface RobotLogs {
+    chart: string;
+    chartTime: number;
+    logs: Logs[];
+    node_id: number;
+    online: boolean;
+    refresh: number;
+    status: number;
+    summary: string;
+    updateTime: number;
+    wd: number;
+}
+
+export interface GetRobotLogsResponse extends ResponseUnit<RobotLogs> { }
+
+// subscribe robot
+export interface SubscribeRobotResponse extends ResponseUnit<boolean> { }
+
+// reboot robot
+export enum RestartRobotResult {
+    STRATEGY_EXPIRED = 1,
+    NO_DOCKER_FOUND,
+    INTERNAL_ERROR,
+    ROBOT_IS_RUNNING,
+    INSUFFICIENT_BALANCE,
+    EXCEED_MAX_CONCURRENCY,
+    PASSWORD_NEED,
+    MEAL_EXPIRED,
+}
+
+export interface RestartRobotResponse extends ResponseUnit<number | string> { }
+
+// stop robot
+export interface StopRobotResponse extends ResponseUnit<any> { }
+
+/** ===================================================Node list========================================= **/
+
+// node list
+export interface BtNode {
+    build: string;
+    city: string;
+    date: string;
+    id: number;
+    ip: string;
+    is_owner: boolean;
+    loaded: number;
+    name: string;
+    online: boolean;
+    os: string;
+    public: number;
+    region: string;
+    version: string;
+    wd: number;
+}
+
+export interface NodeListResponse {
+    nodes: BtNode[];
+}
+
+export interface GetNodeListResponse extends ResponseUnit<NodeListResponse> { }
+
+/** ===================================================Platform list========================================= **/
+
+// platform list
+export interface Platform {
+
+}
+
+export interface PlatformListResponse {
+    platforms: Platform[];
+}
+
+export interface GetPlatformListResponse extends ResponseUnit<PlatformListResponse> { }
+
+/** ===================================================Watch dog========================================= **/
+
+// robot watch dog
+export interface SetRobotWD extends ResponseUnit<any> { }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

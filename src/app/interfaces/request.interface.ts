@@ -1,9 +1,10 @@
 
-//request interface
 export interface WsRequest {
     method: string[];
     params: any[][];
 }
+
+/** ===================================================Auth========================================= **/
 
 // login
 export interface LoginRequest {
@@ -21,6 +22,24 @@ export interface SignupRequest {
     refUrl: string;
 }
 
+// reset password
+export interface ResetPasswordRequest {
+    email: string;
+}
+
+// set password
+export interface SetPasswordRequest {
+    token: string;
+    password: string;
+}
+
+// verify password
+export interface VerifyPasswordRequest {
+    password: string; 
+}
+
+/** ===================================================Setting========================================= **/
+
 // get settings
 export enum SettingTypes {
     about = 'about',
@@ -36,19 +55,12 @@ export interface SettingsRequest {
     type: string;
 }
 
-// reset password
-export interface ResetPasswordRequest {
-   email: string; 
-}
-
-// set password
-export interface SetPasswordRequest {
-    token: string;
-    password: string;
-}
+/** ===================================================Exchange========================================= **/
 
 // exchange list
 export interface GetExchangeListRequest { }
+
+/** ===================================================Robot========================================= **/
 
 // robot list
 export interface GetRobotListRequest {
@@ -56,3 +68,73 @@ export interface GetRobotListRequest {
     limit: number; // 每次查询的数量
     status: number; // 机器人的状态
 }
+
+// public robot
+export interface PublicRobotRequest {
+    id: number;
+    type: number; // 0 放弃公开 1 公开
+}
+
+// robot detail 
+export interface GetRobotDetailRequest {
+    id: number;
+}
+
+// robot logs
+export interface GetRobotLogsRequest {
+    robotId: number;
+    // table Log
+    logMinId: number;
+    logMaxId: number;
+    logOffset: number;
+    logLimit: number;
+    // table Profit
+    profitMinId: number;
+    profitMaxId: number;
+    profitOffset: number;
+    profitLimit: number;
+    // table Chart
+    chartMinId: number;
+    chartMaxId: number;
+    chartOffset: number;
+    chartLimit: number;
+    chartUpdateBaseId: number;
+    chartUpdateTime: number;
+}
+
+// subscribe robot
+export interface SubscribeRobotRequest {
+    id: number;
+}
+
+// restart robot
+export interface RestartRobotRequest {
+    id: number;
+}
+
+// stop robot
+export interface StopRobotRequest {
+    id: number;
+}
+
+/** ===================================================Node list========================================= **/
+
+export const getNodeList = 'GetNodeList';
+
+export interface GetNodeListRequest { }
+
+/** ===================================================Platform list========================================= **/
+
+export interface GetPlatformListRequest { }
+
+/** ===================================================Watch dog========================================= **/
+
+// robot watch dog
+export interface SetRobotWD {
+    id: number;
+    watchDogStatus: number;
+}
+
+/**
+ * 接口总数： 83， 已完成： 16
+ */

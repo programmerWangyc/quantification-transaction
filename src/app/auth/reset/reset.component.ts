@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 
-import { AuthService } from './../providers/auth.service';
 import { BusinessComponent } from '../../interfaces/business.interface';
+import { AuthService } from '../../shared/providers/auth.service';
 
 @Component({
     selector: 'app-reset',

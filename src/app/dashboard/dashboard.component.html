@@ -1,90 +1,86 @@
-<header
-    *ngIf="!(isLogin | async)"
-    fxLayout="row"
-    fxLayoutAlign="start center"
->
-    <span class="logo">BotVS</span>
-
-    <div
-        class="collapse"
-        (click)="isCollapsed = !isCollapsed"
+<nz-layout id="dashboard">
+    <nz-sider
+        nzCollapsible
+        [(nzCollapsed)]="isCollapsed"
+        [nzTrigger]="null"
     >
-        <i
-            class="anticon"
-            [class.anticon-menu-unfold]="isCollapsed"
-            [class.anticon-menu-fold]="!isCollapsed"
+        <div class="logo">BotVS</div>
+        <ul
+            nz-menu
+            [nzInlineCollapsed]="isCollapsed"
+            [nzMode]="isCollapsed?'vertical':'inline'"
         >
-        </i>
-    </div>
-
-    <section fxLayoutAlign="center center">
-        <nz-avatar
-            nzIcon="user"
-            class="avatar"
-        ></nz-avatar>
-    </section>
-</header>
-
-<div id="side-bar">
-    <ul
-        nz-menu
-        [nzMode]="'inline'"
-        [nzInlineCollapsed]="isCollapsed"
-    >
-        <li *ngFor="let nav of list">
-            <div
-                *ngIf="nav.subNav"
-                nz-submenu
-                [nzOpen]="isActive(nav)"
-            >
-                <span
-                    title
-                    style="font-size: 14px"
+            <li *ngFor="let nav of list">
+                <div
+                    *ngIf="nav.subNav"
+                    nz-submenu
+                    [nzOpen]="isActive(nav)"
                 >
-                    <i
-                        class="anticon"
-                        [ngClass]="'anticon-'+ nav.icon"
-                    ></i>
-                    <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
-                </span>
-                <ul>
-                    <li
-                        *ngFor="let item of nav.subNav"
-                        (click)="navigateTo(item)"
+                    <span
+                        title
                         style="font-size: 14px"
-                        nz-menu-item
-                        [ngClass]="{'ant-menu-item-selected': item.path === currentPath}"
                     >
                         <i
                             class="anticon"
-                            [ngClass]="'anticon-'+item.icon"
+                            [ngClass]="'anticon-'+ nav.icon"
                         ></i>
-                        {{item.label | translate}}
-                    </li>
-                </ul>
-            </div>
+                        <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
+                    </span>
+                    <ul>
+                        <li
+                            *ngFor="let item of nav.subNav"
+                            (click)="navigateTo(item)"
+                            style="font-size: 14px"
+                            nz-menu-item
+                            [ngClass]="{'ant-menu-item-selected': item.path === currentPath}"
+                        >
+                            <i
+                                class="anticon"
+                                [ngClass]="'anticon-'+item.icon"
+                            ></i>
+                            {{item.label | translate}}
+                        </li>
+                    </ul>
+                </div>
 
-            <div
-                nz-menu-item
-                *ngIf="!nav.subNav"
-                (click)="navigateTo(nav)"
-                [ngClass]="{'ant-menu-item-selected': nav.path === currentPath}"
-            >
-                <span
-                    title
-                    style="font-size: 14px"
+                <div
+                    nz-menu-item
+                    *ngIf="!nav.subNav"
+                    (click)="navigateTo(nav)"
+                    [ngClass]="{'ant-menu-item-selected': nav.path === currentPath}"
                 >
-                    <i
-                        class="anticon"
-                        [ngClass]="'anticon-'+nav.icon"
-                    ></i>
-                    <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
-                </span>
-            </div>
-        </li>
-    </ul>
-</div>
-
-<div id="desktop">
-    <router-outlet></router-outlet>
-</div>
+                    <span
+                        title
+                        style="font-size: 14px"
+                    >
+                        <i
+                            class="anticon"
+                            [ngClass]="'anticon-'+nav.icon"
+                        ></i>
+                        <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </nz-sider>
+    <nz-layout>
+        <!--TODO:响应式布局还有问题-->
+        <nz-header>
+            <i
+                class="anticon trigger"
+                [class.anticon-menu-fold]="!isCollapsed"
+                [class.anticon-menu-unfold]="isCollapsed"
+                (click)="isCollapsed=!isCollapsed"
+            ></i>
+            <section fxLayoutAlign="center center">
+                <nz-avatar
+                    nzIcon="user"
+                    class="avatar"
+                ></nz-avatar>
+            </section>
+        </nz-header>
+        <nz-content>
+            <router-outlet></router-outlet>
+        </nz-content>
+    </nz-layout>
+</nz-layout>

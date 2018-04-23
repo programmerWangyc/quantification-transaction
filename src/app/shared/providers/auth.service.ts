@@ -1,4 +1,3 @@
-import { TipService } from './../../providers/tip.service';
 import 'rxjs/add/operator/startWith';
 
 import { Injectable } from '@angular/core';
@@ -7,16 +6,24 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LoginRequest, SignupRequest, SetPasswordRequest } from '../../interfaces/request.interface';
+import { LoginRequest, SetPasswordRequest, SignupRequest } from '../../interfaces/request.interface';
 import { ErrorService } from '../../providers/error.service';
-import { ToggleAgreeStateAction,  ResetSignupResponseAction } from '../../store/auth/signup.action';
-import { AppState, selectLoginResponse, selectSignupResponse, selectResetPasswordResponse } from '../../store/index.reducer';
-import { LoginResponse, SignupResponse, ResetPasswordResponse, SetPasswordResponse } from './../../interfaces/response.interface';
-import { ProcessService } from './../../providers/process.service';
-import { selectAgreeState, selectSetPwdResponse } from './../../store/index.reducer';
 import { ResetLoginErrorAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
+import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
+import { AppState, selectLoginResponse, selectResetPasswordResponse, selectSignupResponse } from '../../store/index.reducer';
+import { VerifyPasswordRequest } from './../../interfaces/request.interface';
+import {
+    LoginResponse,
+    ResetPasswordResponse,
+    SetPasswordResponse,
+    SignupResponse,
+    VerifyPasswordResponse,
+} from './../../interfaces/response.interface';
+import { ProcessService } from './../../providers/process.service';
+import { TipService } from './../../providers/tip.service';
+import { selectAgreeState, selectSetPwdResponse, selectVerifyPwdResponse } from './../../store/index.reducer';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +52,10 @@ export class AuthService {
 
     launchSetPwd(source: Observable<SetPasswordRequest>): Subscription {
         return this.process.processSetPwd(source);
+    }
+
+    launchVerifyPassword(source: Observable<VerifyPasswordRequest>): Subscription {
+        return this.process.processVerifyPwd(source);
     }
 
     /* =======================================================Date Acquisition======================================================= */
@@ -131,37 +142,38 @@ export class AuthService {
         this.store.dispatch(new ResetSetPasswordResponseAction());
     }
 
+    // verify password
+    private getVerifyPasswordResponse(): Observable<VerifyPasswordResponse> {
+        return this.store.select(selectVerifyPwdResponse)
+            .filter(v => !!v);
+    }
+
+    verifyPasswordSuccess(): Observable<boolean> {
+        return this.getVerifyPasswordResponse()
+            .map(res => res.result)
+            .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
+            .filter(success => success);
+    }
+
     /* =======================================================Error Handle======================================================= */
 
     handleLoginError(): Subscription {
-        return this.error.handleResponseError(
-            this.getLoginResponse()
-                .filter(data => !!data.error)
-                .mergeMap(data => this.translate.get(data.error))
-        );
+        return this.error.handleResponseError(this.getLoginResponse());
     }
 
     handleSignupError(): Subscription {
-        return this.error.handleResponseError(
-            this.getSignupResponse()
-                .filter(data => !!data.error)
-                .mergeMap(data => this.translate.get(data.error))
-        );
+        return this.error.handleResponseError(this.getSignupResponse());
     }
 
     handleResetPasswordError(): Subscription {
-        return this.error.handleResponseError(
-            this.getResetPasswordResponse()
-                .filter(data => !!data.error)
-                .map(data => data.error)
-        );
+        return this.error.handleResponseError(this.getResetPasswordResponse());
     }
 
     handleSetPasswordError(): Subscription {
-        return this.error.handleResponseError(
-            this.getSetPasswordResponse()
-                .filter(data => !!data.error)
-                .map(data => data.error)
-        )
+        return this.error.handleResponseError(this.getSetPasswordResponse());
+    }
+
+    handleVerifyPasswordError(): Subscription {
+        return this.error.handleResponseError(this.getVerifyPasswordResponse());
     }
 }

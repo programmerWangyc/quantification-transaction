@@ -6,9 +6,9 @@ import { Observable } from 'rxjs/Observable';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { LoginRequest } from '../../interfaces/request.interface';
+import { AuthService } from '../../shared/providers/auth.service';
 import { passwordValidator, usernameValidator } from '../../validators/validators';
 import { EncryptService } from './../../providers/encrypt.service';
-import { AuthService } from './../providers/auth.service';
 
 @Component({
     selector: 'app-login',

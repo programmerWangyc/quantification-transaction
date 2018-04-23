@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import {
     AppState,
+    selectError,
     selectFooterState,
     selectIsAdmin,
     selectLanguage,
@@ -72,6 +73,11 @@ export class PublicService {
         return this.store.select(selectToken);
     }
 
+    isSubAccount(): Observable<boolean> {
+        return this.getToken()
+            .map(token => typeof token === 'string' && token.indexOf("1|") === 0);
+    }
+
     getCurrentUser(): Observable<string> {
         return this.store.select(selectUsernameFromPublic);
     }
@@ -82,6 +88,10 @@ export class PublicService {
 
     isLogin(): Observable<boolean> {
         return this.getToken().map(token => !!token && token.length > 0);
+    }
+
+    getError(): Observable<string> {
+        return this.store.select(selectError);
     }
 
     // ui state
@@ -178,11 +188,11 @@ export class PublicService {
     /* =======================================================Error Handle======================================================= */
 
     handleSettingsError(): Subscription {
-        return this.error.handleResponseError(
-            this.getSettingsResponse()
-                .filter(res => !!res.error)
-                .map(res => res.error)
-        );
+        return this.error.handleResponseError(this.getSettingsResponse());
+    }
+
+    handlePublicError(): Subscription {
+        return this.error.handleError(this.getError());
     }
 
 }

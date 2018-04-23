@@ -1,11 +1,12 @@
-import { Subscription, Subject } from 'rxjs';
+import { Component } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from './../providers/auth.service';
-import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
-import { EncryptService } from './../../providers/encrypt.service';
-import { Component, OnInit } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
+
 import { BusinessComponent } from '../../interfaces/business.interface';
+import { AuthService } from '../../shared/providers/auth.service';
 import { passwordMatchValidator, passwordValidator } from '../../validators/validators';
+import { EncryptService } from './../../providers/encrypt.service';
 
 @Component({
     selector: 'app-password',

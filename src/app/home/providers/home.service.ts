@@ -1,13 +1,13 @@
-import { selectExchangeResponseState } from './../../store/index.reducer';
-import { ExchangeListResponse, ResponseState } from './../../interfaces/response.interface';
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { ErrorService } from './../../providers/error.service';
-import { Store } from '@ngrx/store';
-import { ProcessService } from './../../providers/process.service';
-import { PublicService } from './../../providers/public.service';
-import { Injectable } from '@angular/core';
+
 import { AppState } from '../../store/index.reducer';
+import { ResponseState } from './../../interfaces/response.interface';
+import { ErrorService } from './../../providers/error.service';
+import { ProcessService } from './../../providers/process.service';
+import { selectExchangeResponseState } from './../../store/index.reducer';
 
 @Injectable()
 export class HomeService {
@@ -32,12 +32,8 @@ export class HomeService {
     }
 
     /* =======================================================Error handle======================================================= */
-    
+
     handleExchangeListError(): Subscription {
-        return this.error.handleResponseError(
-            this.getExchangeListResponseState()
-                .filter(res => !!res.error)
-                .map(res => res.error)
-        );
+        return this.error.handleResponseError(this.getExchangeListResponseState());
     }
 }

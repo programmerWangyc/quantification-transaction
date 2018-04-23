@@ -79,9 +79,9 @@ export class WebsocketService {
 
         this.messages = messages
             .map(msg => this.unfold(msg))
+            // .do(msg => console.log('Websocket get message: ', JSON.parse(msg)))
             .filter(response => response !== 'P')
             .map(response => JSON.parse(response) as ResponseBody)
-            .do(v => console.log(v))
             .retryWhen(errors => errors.do(_ => this.tip.showTip('网络错误')).delay(2000))
             .share();
 

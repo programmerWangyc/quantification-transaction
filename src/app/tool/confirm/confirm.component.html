@@ -1,0 +1,20 @@
+<p>{{'OPERATE_CONFIRM' | translate}}</p>
+<mat-dialog-content>{{ data | translate}}</mat-dialog-content>
+<mat-dialog-actions>
+    <button
+        nz-button
+        [nzSize]="'large'"
+        [mat-dialog-close]="false"
+        style="margin-right: 20px;"
+    >
+        {{'CANCEL' | translate}}
+    </button>
+    <button
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'large'"
+        [mat-dialog-close]="true"
+    >
+        {{'CONFIRM' | translate}}
+    </button>
+</mat-dialog-actions>

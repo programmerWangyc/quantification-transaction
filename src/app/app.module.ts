@@ -38,7 +38,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         HttpModule,
         HomeModule,
         AppRoutingModule, // top level route, must at last of all routers;
-        SharedModule,
+        SharedModule.forRoot(),
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

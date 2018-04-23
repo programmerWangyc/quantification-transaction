@@ -9,6 +9,7 @@ import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
+import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { SquareComponent } from './square/square.component';
 
 const routs: Routes = [
@@ -17,6 +18,7 @@ const routs: Routes = [
         component: DashboardComponent,
         children: [
             { path: Path.robot, component: RobotComponent },
+            { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
             { path: Path.strategy, component: StrategyLibComponent },
             { path: Path.exchange, component: ExchangeComponent },
             { path: Path.trustee, component: TrusteeComponent },

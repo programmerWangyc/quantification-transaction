@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
     MatAutocompleteModule,
     MatButtonModule,
@@ -37,6 +37,8 @@ import {
 } from '@angular/material';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
+
+import { AuthService } from './providers/auth.service';
 
 @NgModule({
     exports: [
@@ -76,6 +78,14 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
         MatTooltipModule,
         NgZorroAntdModule,
         FormsModule,
+        ReactiveFormsModule,
     ]
 })
-export class SharedModule { }
+export class SharedModule { 
+    static forRoot() {
+        return {
+            ngModule: SharedModule,
+            providers: [AuthService]
+        }
+    }
+}

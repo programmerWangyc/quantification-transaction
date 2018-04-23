@@ -98,7 +98,7 @@
                                 nz-form-explain
                                 *ngIf="password.invalid && (password.dirty  || password.touched)"
                             >
-                                <div *ngIf="password.errors.required">{{'PASSWORD_TIP' | translate}}</div>
+                                <div *ngIf="password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
                                 <div *ngIf="!password.errors.required && password.errors.passwordFormat">
                                     {{loginForm.getError('passwordFormat', 'password') | translate}}
                                 </div>

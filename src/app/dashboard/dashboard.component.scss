@@ -1,62 +1,62 @@
 @import '../../theme/_variable.theme';
 @import './_dashboard';
-header {
-    height: $header-height;
-    position: fixed;
-    top: 0;
-    left: 0;
-    line-height: $header-height;
-    background-color: $bcg-nav;
-    width: 100%;
+#dashboard {
+    margin-top: (-$header-height*2);
     .logo {
-        display: inline-block;
-        height: 100%;
-        width: $side-width;
-        font-size: 32px;
+        font-size: 32;
         text-align: center;
-    }
-    .collapse {
-        width: $header-height;
         height: $header-height;
-        text-align: center;
-        color: $blue;
-        &:hover {
-            background-color: #ccc;
-            cursor: pointer;
+        line-height: $header-height;
+    }
+    nz-layout {
+        background-color: #fff;
+    }
+    nz-header {
+        height: $header-height;
+        line-height: $header-height;
+        background-color: $bcg-nav;
+        padding: 0 50px 0 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    nz-sider {
+        background-color: $bcg-nav;
+        height: 100vh;
+        ul {
+            height: calc(100% - 48px);
         }
     }
-    .fold-btn {
-        margin-left: 5px;
-    }
-    section {
-        position: absolute;
-        right: 24px;
+
+    nz-content {
+        padding: 50px 100px 0;
     }
 }
 
-#side-bar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding-top: $header-height;
-    width: $side-width;
-    height: 100vh;
-    &>ul {
-        height: 100%;
-        border: 1px solid #e9e9e9;
-    }
-    i {
-        font-size: 18px;
-    }
+:host ::ng-deep .ant-layout-sider-collapsed .ant-menu-submenu-title:after {
+    display: none;
 }
 
-.header {
-    width: 100%;
+:host ::ng-deep .ant-layout-sider-collapsed .anticon {
+    font-size: 16px;
+    margin-left: 8px;
 }
 
-#desktop {
-    position: relative; 
-    left: $side-width;
-    width: calc(100% - 240px);
-    padding: 0 100px;
+:host ::ng-deep .trigger {
+    font-size: 18px;
+    line-height: $header-height;
+    cursor: pointer;
+    transition: color .3s;
 }
+
+:host ::ng-deep .trigger:hover {
+    color: #108ee9;
+}
+
+// :host ::ng-deep .ant-affix {
+//     width: calc(100% - 200px);
+// }
+
+// :host ::ng-deep .ant-layout-sider-collapsed .ant-affix {
+//     left: 0;
+//     width: calc(100% - 64px);
+// }

@@ -172,7 +172,7 @@ export interface GetRobotLogs {
 export const subscribeRobot = 'SubscribeRobot';
 
 export interface SubscribeRobot {
-    magic1: number;
+    id: number;
 }
 
 export const CommandRobot = 'CommandRobot';

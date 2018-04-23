@@ -28,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.subscription$$ = this.pubService.updateInformation()
             .add(this.pubService.getLanguage().subscribe(lang => this.translate.use(lang)))
+            .add(this.pubService.handlePublicError())
             .add(this.pubService.saveReferrer());
     }
 

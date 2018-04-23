@@ -117,3 +117,5 @@ export const getSettings = (state: State) => state.settings;
 export const getLanguage = (state: State) => state.language;
 
 export const getFooterState = (state: State) => state.needFooter;
+
+export const getError = (state: State) => state.error;

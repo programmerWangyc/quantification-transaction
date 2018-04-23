@@ -20,6 +20,7 @@ import { LOGIN, ResponseActions as loginAction } from './login.action';
 import { ResponseActions as setAction, SET_PASSWORD } from './password.action';
 import { RESET_PASSWORD, ResponseActions as resetAction } from './reset.action';
 import { ResponseActions as signupAction, SIGNUP } from './signup.action';
+import { ResponseActions as verifyAction, VERIFY_PASSWORD } from './verify-password.action';
 
 @Injectable()
 export class AuthEffect extends BaseEffect {
@@ -35,6 +36,9 @@ export class AuthEffect extends BaseEffect {
 
     @Effect()
     setPwd$: Observable<ResponseAction> = this.getResponseAction(SET_PASSWORD, setAction, isPwdFail);
+
+    @Effect()
+    verify$: Observable<ResponseAction> = this.getResponseAction(VERIFY_PASSWORD, verifyAction);
 
     constructor(
         public actions$: Actions,

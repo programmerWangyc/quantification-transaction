@@ -60,7 +60,7 @@
             *ngFor="let robot of nzTable.data"
         >
             <td nz-td>
-                <a href="javascript: void 0">{{robot.name}}</a>
+                <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
             </td>
             <td nz-td>{{robot.strategy_name}}</td>
             <td nz-td>
@@ -68,9 +68,11 @@
             </td>
             <td nz-td>{{robot.profit}}</td>
             <td nz-td>
+                <!--1已公开，0未公开-->
+                <!--FIXME: 开关组件突变了robot的原始数据-->
                 <nz-switch
-                    [ngModel]="!!robot.public"
-                    (click)="togglePublicStatus(robot)"
+                    [(ngModel)]="!!robot.public"
+                    (click)="publicRobot$.next(robot)"
                 >
                     <span checked>{{'DISCLOSED' | translate}}</span>
                     <span unchecked>{{'UNDISCLOSED' | translate}}</span>

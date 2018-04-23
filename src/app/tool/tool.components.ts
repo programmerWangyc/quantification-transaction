@@ -4,9 +4,9 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material';
 @Component({
     selector: 'custom-snack-bar',
     template: `
-        <span>{{message}}<mat-icon (click)="close()">close</mat-icon></span>`,
+        <span>{{message | translate}}<i (click)="close()" class="close anticon anticon-close"></i></span>`,
     styles: [`
-        mat-icon {
+        .close {
             float: right;
             cursor: pointer;
         }`]
