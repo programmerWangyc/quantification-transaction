@@ -1,8 +1,21 @@
 import { Action } from '@ngrx/store';
 
-import { GetRobotListRequest, StopRobotRequest, SubscribeRobotRequest } from '../../interfaces/request.interface';
-import { GetRobotListResponse, StopRobotResponse, SubscribeRobotResponse } from '../../interfaces/response.interface';
+import {
+    GetRobotListRequest,
+    ModifyRobotRequest,
+    StopRobotRequest,
+    SubscribeRobotRequest,
+    CommandRobotRequest,
+} from '../../interfaces/request.interface';
+import {
+    GetRobotListResponse,
+    ModifyRobotResponse,
+    StopRobotResponse,
+    SubscribeRobotResponse,
+    CommandRobotResponse,
+} from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
+import { ImportedArg, VariableOverview } from './../../interfaces/constant.interface';
 import {
     GetRobotDetailRequest,
     GetRobotLogsRequest,
@@ -328,6 +341,103 @@ export class StopRobotSuccessAction extends StopRobotAction implements Action {
     constructor(public payload: StopRobotResponse) { super() }
 }
 
+/** ======================================================Modify robot========================================= **/
+
+export enum ModifyRobotOrder {
+    id,
+    name,
+    nodeId,
+    kLinePeriodId,
+    platform,
+    stocks,
+    args,
+    length
+}
+
+class ModifyRobotAction extends ApiAction {
+    isSingleParams = false;
+
+    command = 'ModifyRobot';
+
+    order = ModifyRobotOrder;
+
+    noneParams = false;
+
+    constructor() { super() }
+}
+
+export const MODIFY_ROBOT = 'MODIFY_ROBOT';
+
+export class ModifyRobotRequestAction extends ModifyRobotAction implements Action {
+    readonly type = MODIFY_ROBOT;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: ModifyRobotRequest) { super() };
+}
+
+export const MODIFY_ROBOT_FAIL = 'MODIFY_ROBOT_FAIL';
+
+export class ModifyRobotFailAction extends ModifyRobotAction implements Action {
+    readonly type = MODIFY_ROBOT_FAIL;
+
+    constructor(public payload: ModifyRobotResponse) { super() }
+}
+
+export const MODIFY_ROBOT_SUCCESS = 'MODIFY_ROBOT_SUCCESS';
+
+export class ModifyRobotSuccessAction extends ModifyRobotAction implements Action {
+    readonly type = MODIFY_ROBOT_SUCCESS;
+
+    constructor(public payload: ModifyRobotResponse) { super() }
+}
+
+/** ======================================================Command robot========================================= **/
+
+export enum CommandRobotOrder {
+    id,
+    command,
+    length
+}
+
+export class CommandRobotAction extends ApiAction {
+    isSingleParams = false;
+
+    order = CommandRobotOrder;
+
+    noneParams = false;
+
+    command = 'CommandRobot';
+
+    constructor() { super() };
+}
+
+export const COMMAND_ROBOT = 'COMMAND_ROBOT';
+
+export class CommandRobotRequestAction extends CommandRobotAction implements Action {
+    readonly type = COMMAND_ROBOT;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: CommandRobotRequest) { super() }
+}
+
+export const COMMAND_ROBOT_FAIL = 'COMMAND_ROBOT_FAIL';
+
+export class CommandRobotFailAction extends CommandRobotAction implements Action {
+    readonly type = COMMAND_ROBOT_FAIL;
+
+    constructor(public payload: CommandRobotResponse) { super() }
+}
+
+export const COMMAND_ROBOT_SUCCESS = 'COMMAND_ROBOT_SUCCESS';
+
+export class CommandRobotSuccessAction extends CommandRobotAction implements Action {
+    readonly type = COMMAND_ROBOT_SUCCESS;
+
+    constructor(public payload: CommandRobotResponse) { super() }
+}
+
 /** ======================================================Local action========================================= **/
 
 export const RESET_ROBOT_DETAIL = 'RESET_ROBOT_DETAIL';
@@ -338,6 +448,13 @@ export class ResetRobotDetailAction implements Action {
     constructor() { }
 }
 
+export const MODIFY_ROBOT_ARG = 'MODIFY_ROBOT_ARG';
+
+export class ModifyRobotArgAction implements Action {
+    readonly type = MODIFY_ROBOT_ARG;
+
+    constructor(public payload: VariableOverview | ImportedArg, public templateFlag?: string | number) { }
+}
 
 export type ApiActions = GetRobotListRequestAction
     | GetRobotListFailAction
@@ -360,9 +477,16 @@ export type ApiActions = GetRobotListRequestAction
     | StopRobotRequestAction
     | StopRobotFailAction
     | StopRobotSuccessAction
+    | ModifyRobotRequestAction
+    | ModifyRobotFailAction
+    | ModifyRobotSuccessAction
+    | CommandRobotRequestAction
+    | CommandRobotFailAction
+    | CommandRobotSuccessAction
 
 export type Actions = ApiActions
     | ResetRobotDetailAction
+    | ModifyRobotArgAction
 
 export const ResponseActions = {
     GetRobotListFailAction,
@@ -379,4 +503,8 @@ export const ResponseActions = {
     RestartRobotSuccessAction,
     StopRobotFailAction,
     StopRobotSuccessAction,
+    ModifyRobotFailAction,
+    ModifyRobotSuccessAction,
+    CommandRobotFailAction,
+    CommandRobotSuccessAction
 }

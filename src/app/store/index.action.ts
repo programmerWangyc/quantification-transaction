@@ -8,6 +8,7 @@ import { Actions as exchange, ApiActions as apiExchange } from './exchange/excha
 import { Actions as platform, ApiActions as apiPlatform } from './platform/platform.action';
 import { Actions as pub, ApiActions as apiPublic } from './public/public.action';
 import { Actions as robot, ApiActions as apiRobot } from './robot/robot.action';
+import { Actions as watchDog, ApiActions as apiWatchDog } from './watch-dog/watch-dog.action';
 
 export const failTail = 'FailAction';
 
@@ -24,6 +25,7 @@ export type Actions = pub
     | btNode
     | platform
     | verifyPassword
+    | watchDog
 
 export type ApiActions = apiLogin
     | apiSignup
@@ -35,3 +37,4 @@ export type ApiActions = apiLogin
     | apiBtNode
     | apiPlatform
     | apiVerifyPassword
+    | apiWatchDog

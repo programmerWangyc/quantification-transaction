@@ -9,7 +9,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { NgZorroAntdModule, NzNotificationService } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
@@ -58,6 +58,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ],
     providers: [
         Store,
+        NzNotificationService,
         GLOBAL_SERVICES,
     ],
     bootstrap: [AppComponent],

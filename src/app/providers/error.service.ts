@@ -30,6 +30,7 @@ export class ErrorService {
             return status;
         }
     }
+
     getStopRobotError(result: any): string {
         return result ? '' : 'STOP_ROBOT_ERROR';
     }

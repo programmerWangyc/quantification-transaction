@@ -42,7 +42,7 @@ export class BaseEffect {
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
         return Observable.from(data.result || [])
             .zip(Observable.from(data.callbackId.split('-')), (result, action) => ({ ...result, action }))
-            // .do(res => console.log(`Action-${res.action} get response: `, res.result))
+            .do(res => console.log(`Action-${res.action} get response: `, res.result))
             .map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res));
     }
 

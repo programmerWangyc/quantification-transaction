@@ -15,12 +15,12 @@ import { LoginResponse, SignupResponse } from '../../interfaces/response.interfa
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
-import { ResetPasswordResponse, SetPasswordResponse } from './../../interfaces/response.interface';
+import { ResetPasswordResponse, SetPasswordResponse, VerifyPasswordResponse } from './../../interfaces/response.interface';
 import { LOGIN, ResponseActions as loginAction } from './login.action';
 import { ResponseActions as setAction, SET_PASSWORD } from './password.action';
 import { RESET_PASSWORD, ResponseActions as resetAction } from './reset.action';
 import { ResponseActions as signupAction, SIGNUP } from './signup.action';
-import { ResponseActions as verifyAction, VERIFY_PASSWORD } from './verify-password.action';
+import { ResponseActions as verifyAction, VERIFY_PASSWORD, VerifyPasswordRequestAction, VERIFY_PASSWORD_FAIL } from './verify-password.action';
 
 @Injectable()
 export class AuthEffect extends BaseEffect {
@@ -38,7 +38,7 @@ export class AuthEffect extends BaseEffect {
     setPwd$: Observable<ResponseAction> = this.getResponseAction(SET_PASSWORD, setAction, isPwdFail);
 
     @Effect()
-    verify$: Observable<ResponseAction> = this.getResponseAction(VERIFY_PASSWORD, verifyAction);
+    verify$: Observable<ResponseAction> = this.getResponseAction(VERIFY_PASSWORD, verifyAction, isPwdFail);
 
     constructor(
         public actions$: Actions,
@@ -54,6 +54,7 @@ function isAuthFail(res: SignupResponse): boolean {
 }
 
 function isPwdFail(res: ResetPasswordResponse): boolean
+function isPwdFail(res: VerifyPasswordResponse): boolean
 function isPwdFail(res: SetPasswordResponse): boolean {
     return !res.result;
 }

@@ -1,3 +1,4 @@
+import { Renderer2, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 /**
@@ -8,6 +9,8 @@ import { Subscription } from 'rxjs/Subscription';
  */
 export abstract class BusinessComponent {
 
+    constructor(public render?: Renderer2, public eleRef?: ElementRef) { }
+
     abstract subscription$$: Subscription;
 
     abstract launch(option?: any): void;
@@ -17,6 +20,16 @@ export abstract class BusinessComponent {
     abstract ngOnInit(): void;
 
     abstract ngOnDestroy(): void;
+
+    toggle(isFold: boolean) {
+        const ele: HTMLElement = this.eleRef.nativeElement.querySelector('.ant-card-body');
+
+        if (isFold) {
+            this.render.setStyle(ele, 'display', 'none');
+        } else {
+            this.render.removeStyle(ele, 'display');
+        }
+    }
 }
 
 export interface Referrer {

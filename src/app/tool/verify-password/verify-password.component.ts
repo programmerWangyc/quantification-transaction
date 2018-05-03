@@ -27,14 +27,16 @@ export class VerifyPasswordComponent extends BusinessComponent {
     }
 
     ngOnInit() {
+        this.authService.resetVerifyPwdResponse();
+
         this.launch();
     }
 
     launch() {
-        this.subscription$$ = this.authService.launchVerifyPassword(
-            this.verify$.map(password => ({ password: this.encryptService.encryptPassword(password) }))
-        )
-            .add(this.authService.handleVerifyPasswordError());
+        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$.map(password => ({ password: this.encryptService.encryptPassword(password) })))
+            .add(this.authService.storePwdTemporary(this.verify$))
+
+        this.authService.handleVerifyPasswordError();
     }
 
     initialModel() {

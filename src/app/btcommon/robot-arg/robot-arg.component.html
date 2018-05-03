@@ -1,0 +1,102 @@
+<h6 *ngIf="!!title">{{title}}</h6>
+
+<form
+    nz-form
+    [nzType]="'horizontal'"
+    fxLayout="row wrap"
+>
+
+    <div
+        *ngFor="let item of args"
+        nz-form-item
+        nz-row
+        style="width: 50%;"
+    >
+        <div
+            nz-form-label
+            nz-col
+            [nzSpan]="7"
+        >
+            <label>{{item.variableDes}}</label>
+        </div>
+        <div
+            nz-form-control
+            nz-col
+            [nzSpan]="16"
+        >
+            <div [ngSwitch]="item.variableTypeId">
+                <div *ngSwitchCase="1">
+                    <nz-tooltip [nzTitle]="item.variableComment">
+                        <label
+                            nz-checkbox
+                            [(ngModel)]="item.variableValue"
+                            (ngModelChange)="change.next(item)"
+                            [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+                            nz-tooltip
+                            class="alternative"
+                        >
+                        </label>
+                    </nz-tooltip>
+                    <button
+                        nz-button
+                        *ngIf="isAlternative"
+                        (click)="command.next(item)"
+                    >
+                        {{item.variableName | robotCommandButtonText}}
+                    </button>
+                </div>
+
+                <div *ngSwitchCase="3">
+                    <nz-tooltip
+                        [nzTitle]="item.variableComment"
+                        [ngClass]="{'alternative': isAlternative}"
+                    >
+                        <nz-select
+                            [(ngModel)]="item.variableValue"
+                            (ngModelChange)="change.next(item)"
+                            [ngModelOptions]="{standalone: true}"
+                            [nzPlaceHolder]="'PLEASE_SELECT' | translate"
+                            nz-tooltip
+                        >
+                            <nz-option
+                                *ngFor="let opt of (item.originValue | variableToSelectList)"
+                                [nzLabel]="opt"
+                                [nzValue]="opt"
+                            ></nz-option>
+                        </nz-select>
+                    </nz-tooltip>
+                    <button
+                        nz-button
+                        *ngIf="isAlternative"
+                        (click)="command.next(item)"
+                    >
+                        {{item.variableName | robotCommandButtonText}}
+                    </button>
+                </div>
+
+                <div *ngSwitchDefault>
+                    <nz-tooltip
+                        [nzTitle]="item.variableComment"
+                        [ngClass]="{'alternative': isAlternative}"
+                    >
+                        <nz-input
+                            *ngIf="item.originValue !== '__button__'"
+                            [(ngModel)]="item.variableValue"
+                            [nzType]="item.variableTypeId | variableType"
+                            (ngModelChange)="change.next(item)"
+                            [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+                            nz-tooltip
+                        ></nz-input>
+                    </nz-tooltip>
+                    <button
+                        nz-button
+                        *ngIf="isAlternative"
+                        (click)="command.next(item)"
+                    >
+                        {{item.variableName | robotCommandButtonText}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

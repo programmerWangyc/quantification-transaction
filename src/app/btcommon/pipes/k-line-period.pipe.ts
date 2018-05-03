@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { kLinePeriod } from '../../interfaces//constant.interface';
+import { K_LINE_PERIOD } from '../../providers/constant.service';
 
 
 @Pipe({
@@ -10,7 +10,7 @@ export class KLinePeriodPipe implements PipeTransform {
     transform(source: any[]): string {
         const [id] = source;
 
-        const target = kLinePeriod.find(item => item.id === id);
+        const target = K_LINE_PERIOD.find(item => item.id === id);
 
         return target.period;
     }

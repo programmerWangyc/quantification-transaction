@@ -3,8 +3,9 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { GetNodeListResponse, NodeListResponse } from '../interfaces/response.interface';
+import { GetNodeListResponse } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
+import { BtNode } from './../interfaces/response.interface';
 import { AppState } from './../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
@@ -31,9 +32,9 @@ export class BtNodeService {
             .filter(res => !!res);
     }
 
-    getNodeList(): Observable<NodeListResponse> {
+    getNodeList(): Observable<BtNode[]> {
         return this.getNodeListResponse()
-            .map(res => res.result);
+            .map(res => res.result.nodes);
     }
 
     /* =======================================================Error Handle======================================================= */

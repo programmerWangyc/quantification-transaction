@@ -1,11 +1,316 @@
+<nz-alert 
+    [nzType]="'warning'"
+    nzCloseable
+    nzShowIcon 
+    *ngIf="warningMessage | async as msg;"
+  >
+  <span alert-body [innerHTML]="msg"></span>
+</nz-alert>
+
 <nz-card>
-    <ng-template #title>Card title</ng-template>
+    <ng-template #title>{{'MODIFY_CONFIG' | translate}}</ng-template>
     <ng-template #extra>
-        <a>More</a>
+        <a (click)="toggleFold()">
+            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+        </a>
     </ng-template>
+
     <ng-template #body>
-        <p>Card content</p>
-        <p>Card content</p>
-        <p>Card content</p>
+        <form
+            nz-form
+            [formGroup]="configForm"
+            [nzType]="'horizontal'"
+            fxLayout="row"
+        >
+            <div class="configLeft">
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="7"
+                    >
+                        <label
+                            for="robotName"
+                            nz-form-item-required
+                        >
+                            {{'ROBOT_NAME' | translate}}
+                        </label>
+                    </div>
+                    <div
+                        nz-form-control
+                        nz-col
+                        [nzSpan]="16"
+                    >
+                        <nz-input
+                            formControlName="robotName"
+                            [nzId]="'robotName'"
+                            required
+                        ></nz-input>
+                        <div
+                            nz-form-explain
+                            *ngIf="robotName.invalid && (robotName.dirty  || robotName.touched)"
+                        >
+                            <div *ngIf="robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
+                            <!-- TODO:机器人名称规则验证 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="7"
+                    >
+                        <label nz-form-item-required>{{'K_LINE_PERIOD' | translate}}</label>
+                    </div>
+                    <div
+                        nz-form-control
+                        nz-col
+                        [nzSpan]="16"
+                    >
+                        <nz-select
+                            formControlName="kLinePeriod"
+                            [nzSize]="'large'"
+                            required
+                        >
+                            <nz-option
+                                *ngFor="let item of periods"
+                                [nzLabel]="item.period | translate"
+                                [nzValue]="item.id"
+                            ></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="7"
+                    >
+                        <label nz-form-item-required>{{'MANDATORY' | translate}}</label>
+                    </div>
+                    <div
+                        nz-form-control
+                        nz-col
+                        [nzSpan]="16"
+                    >
+                        <nz-select
+                            formControlName="agent"
+                            [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate"
+                            *ngIf="agents | async; let agt"
+                            [ngModel]="agt[0]?.id"
+                        >
+                            <nz-option
+                                *ngFor="let item of agt"
+                                [nzLabel]="item | btNodeName"
+                                [nzValue]="item.id"
+                            >
+                                <ng-template #nzOptionTemplate>
+                                    <b *ngIf="item.public === 1">{{'PUBLIC' | translate}}</b>
+                                    <b *ngIf="item.public === 0">{{'PRIVATE' | translate}}</b>
+                                    {{item | btNodeName}}
+                                </ng-template>
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="configRight">
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="6"
+                    >
+                        <label nz-form-item-required>{{'EXCHANGE_PLATFORM' | translate}}</label>
+                    </div>
+                    <div
+                        nz-form-control
+                        nz-col
+                        [nzSpan]="16"
+                    >
+                        <nz-select
+                            formControlName="platform"
+                            [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate"
+                            [nzSize]="'large'"
+                            nz-col
+                            [nzSpan]="6"
+                            nzShowSearch
+                            [ngModel]="platforms[0]?.id"
+                        >
+                            <nz-option
+                                *ngFor="let item of platforms"
+                                [nzLabel]="item.name"
+                                [nzValue]="item.id"
+                            ></nz-option>
+                        </nz-select>
+                        <div
+                            nz-form-explain
+                            *ngIf="platform.invalid && (platform.dirty  || platform.touched)"
+                        >
+                            <div *ngIf="platform.errors.required">
+                                {{'PLEASE_SELECT_PLATFORM' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="6"
+                    >
+                        <label nz-form-item-required>{{'EXCHANGE_NAME' | translate}}</label>
+                    </div>
+                    <div
+                        nz-form-control
+                        nz-col
+                        [nzSpan]="16"
+                        class="stock"
+                    >
+                        <nz-input-group
+                            nzCompact
+                            [nzSize]="'large'"
+                        >
+                            <nz-select
+                                [(ngModel)]="isCustomStock"
+                                [nzSize]="'large'"
+                                [ngModelOptions]="{standalone: true}"
+                            >
+                                <nz-option
+                                    [nzLabel]="'CUSTOM' | translate"
+                                    [nzValue]="true"
+                                ></nz-option>
+                                <nz-option
+                                    [nzLabel]="'USE_EXIST' | translate"
+                                    [nzValue]="false"
+                                ></nz-option>
+                            </nz-select>
+
+                            <nz-select
+                                formControlName="stock"
+                                [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate"
+                                [nzSize]="'large'"
+                                *ngIf="!isCustomStock"
+                                [nzDisabled]="!platform.value"
+                            >
+                                <nz-option
+                                    *ngFor="let item of (selectedPlatform | async)?.stocks"
+                                    [nzLabel]="item"
+                                    [nzValue]="item"
+                                ></nz-option>
+                            </nz-select>
+
+                            <input
+                                nz-input
+                                formControlName="stock"
+                                [nzSize]="'large'"
+                                [nzDisabled]="!platform.value"
+                                *ngIf="isCustomStock"
+                            >
+                        </nz-input-group>
+                    </div>
+                </div>
+                <div
+                    nz-form-item
+                    nz-row
+                >
+                    <div
+                        nz-form-label
+                        nz-col
+                        [nzSpan]="6"
+                    >
+                        <button
+                            nz-button
+                            (click)="addPair(platform.value, stock.value)"
+                        >
+                            {{'ADD_EXCHANGE_PAIR' | translate}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div
+            id="exchange-pair"
+            fxLayout="row wrap"
+            fxLayoutAlign="start center"
+        >
+            <p
+                *ngFor="let item of selectedPairs index as idx;"
+                class="pairs"
+            >
+                {{item.platformName}} / {{item.stock}}
+                <i
+                    class="anticon anticon-close"
+                    (click)="removePair(idx);"
+                ></i>
+            </p>
+        </div>
+
+        <app-robot-arg
+            [args]="strategyArgs | async"
+            (change)="argChange($event)"
+            [title]="'STRATEGY_ARGUMENTS' | translate"
+        ></app-robot-arg>
+
+        <app-robot-arg
+            *ngFor="let template of templateArgs | async"
+            [title]="template.name"
+            [args]="template.variables"
+            (change)="argChange($event, template.name)"
+        ></app-robot-arg>
+
+        <button
+            nz-button
+            [nzType]="'primary'"
+            type="submit"
+            [nzSize]="'large'"
+            (click)="modify$.next(configForm.value)"
+            [disabled]="configForm.invalid || !selectedPairs.length"
+        >
+            {{'UPDATE_CONFIG' | translate}}
+        </button>
+
+        <button
+            nz-button
+            *ngIf="hasArgs | async"
+            [nzType]="'primary'"
+            [nzSize]="'large'"
+            (click)="exportArgs()"
+        >
+            <i class="anticon anticon-upload"></i>
+            <span>{{'EXPORT_ARGUMENT' | translate}}</span>
+        </button>
+
+        <button
+            nz-button
+            *ngIf="hasArgs | async"
+            [nzSize]="'large'"
+            class="file-btn"
+        >
+            <i class="anticon anticon-download" ></i>
+            <span>{{'IMPORT_ARGUMENT' | translate}}</span>
+            <input type='file' ng2FileSelect [uploader]="uploader" (onFileSelected)="importArgs($event)">
+        </button>
+
     </ng-template>
 </nz-card>

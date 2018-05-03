@@ -37,8 +37,10 @@ import {
 } from '@angular/material';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { FileUploadModule } from 'ng2-file-upload';
 
 import { AuthService } from './providers/auth.service';
+import { WatchDogService } from './providers/watch-dog.service';
 
 @NgModule({
     exports: [
@@ -79,13 +81,14 @@ import { AuthService } from './providers/auth.service';
         NgZorroAntdModule,
         FormsModule,
         ReactiveFormsModule,
+        FileUploadModule,
     ]
 })
-export class SharedModule { 
+export class SharedModule {
     static forRoot() {
         return {
             ngModule: SharedModule,
-            providers: [AuthService]
+            providers: [AuthService, WatchDogService]
         }
     }
 }

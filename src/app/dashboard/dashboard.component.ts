@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Path } from '../interfaces/constant.interface';
@@ -84,6 +84,8 @@ export class DashboardComponent implements OnInit {
     list: SideNav[] = [controlCenter, simulation, square, factFinder, community, documentation, market, analyzing];
 
     currentPath: string;
+
+    @ViewChild('header') header: HTMLElement;
 
     constructor(
         private router: Router,

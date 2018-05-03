@@ -3,11 +3,20 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { GetPlatformListResponse, PlatformListResponse } from '../interfaces/response.interface';
+import { GetPlatformListResponse, Platform } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
 import { AppState } from './../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
+
+export interface GroupPlatform extends Platform {
+    group: string;
+}
+
+export interface GroupedPlatform {
+    group: string;
+    platforms: GroupPlatform[];
+}
 
 @Injectable()
 export class PlatformService {
@@ -31,9 +40,34 @@ export class PlatformService {
             .filter(res => !!res);
     }
 
-    getPlatformList(): Observable<PlatformListResponse> {
+    getPlatformList(): Observable<Platform[]> {
         return this.getPlatformListResponse()
-            .map(res => res.result);
+            .map(res => res.result.platforms);
+    }
+
+    groupPlatformList(): Observable<GroupedPlatform[]> {
+        return this.getPlatformList()
+            .mergeMap(list => Observable.from(list).map(platform => {
+                if (platform.eid === 'Futures_CTP') {
+                    platform['group'] = 'ctp';
+                } else if (platform.eid === 'Futures_LTS') {
+                    platform['group'] = 'lts';
+                } else {
+                    platform['group'] = 'botvs';
+                }
+                return <GroupPlatform>platform;
+            }))
+            .groupBy(item => item.group)
+            .mergeMap(obs => obs.reduce((acc, cur) => {
+                const { group } = cur;
+
+                const platforms = [...acc.platforms, cur];
+
+                return { group, platforms };
+
+            }, { group: '', platforms: [] }))
+            .reduce((acc, cur) => [...acc, cur], [])
+            .do(v => console.log(v));
     }
 
     /* =======================================================Error Handle======================================================= */

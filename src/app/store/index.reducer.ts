@@ -10,6 +10,7 @@ import * as exchange from './exchange/exchange.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
+import * as watchDog from './watch-dog/watch-dog.reducer';
 
 export interface AppState {
     pub: pub.State,
@@ -22,6 +23,7 @@ export interface AppState {
     btNode: btNode.State,
     platform: platform.State,
     verifyPwd: verifyPwd.State,
+    watchDog: watchDog.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -35,6 +37,7 @@ export const reducers: ActionReducerMap<AppState> = {
     btNode: btNode.reducer,
     platform: platform.reducer,
     verifyPwd: verifyPwd.reducer,
+    watchDog: watchDog.reducer,
 }
 
 
@@ -75,6 +78,7 @@ export const selectSetPwdResponse = createSelector(getSetPwdState, pwd.getSetPwd
 // verify password
 const getVerifyPwdState = (state: AppState) => state.verifyPwd;
 export const selectVerifyPwdResponse = createSelector(getVerifyPwdState, verifyPwd.getVerifyResponse);
+export const selectTemporaryPwd = createSelector(getVerifyPwdState, verifyPwd.getTemporaryPwd);
 
 /** ===================================================Exchange=================================================== */
 
@@ -113,6 +117,18 @@ export const selectRestartRobotResponse = createSelector(getRobotState, robot.ge
 // stop robot
 export const selectStopRobotResponse = createSelector(getRobotState, robot.getStopRobotRes);
 
+// local params
+export const selectRobotArgs = createSelector(getRobotState, robot.getRobotArgs);
+export const selectRobotStrategyArgs = createSelector(selectRobotArgs, state => state ? state.strategyArgs : null);
+export const selectRobotTemplateArgs = createSelector(selectRobotArgs, state => state ? state.templateArgs : null);
+export const selectRobotCommandArgs = createSelector(selectRobotArgs, state => state ? state.commandArgs : null);
+
+// modify robot config
+export const selectModifyRobotResponse = createSelector(getRobotState, robot.getModifyRobotRes);
+
+// command robot
+export const selectCommandRobotResponse = createSelector(getRobotState, robot.getCommandRobotRes);
+
 /** ===================================================Node=================================================== */
 
 const getBtNodeState = (state: AppState) => state.btNode;
@@ -124,3 +140,9 @@ export const selectBtNodeListResponse = createSelector(getBtNodeState, btNode.ge
 const getPlatformState = (state: AppState) => state.platform;
 
 export const selectPlatformListResponse = createSelector(getPlatformState, platform.getPlatformListResponse);
+
+/** ===================================================Watch dog=================================================== */
+
+const getWatchDogState = (state: AppState) => state.watchDog;
+
+export const selectSetWatchDogResponse = createSelector(getWatchDogState, watchDog.getSetWDResponse);

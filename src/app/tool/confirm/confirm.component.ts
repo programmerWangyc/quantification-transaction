@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { ConfirmOperateTipData } from '../../interfaces/constant.interface';
 
 @Component({
     selector: 'app-confirm',
@@ -7,5 +8,5 @@ import { MAT_DIALOG_DATA } from '@angular/material';
     styleUrls: ['./confirm.component.scss']
 })
 export class ConfirmComponent {
-    constructor(@Inject(MAT_DIALOG_DATA) public data: string) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmOperateTipData) { }
 }

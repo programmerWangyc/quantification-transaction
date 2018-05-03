@@ -1,11 +1,17 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<header fxLayoutAlign="space-between stretch">
-
+<div class="part">
     <app-robot-overview></app-robot-overview>
+</div>
 
+<div class="part">
     <app-robot-config></app-robot-config>
+</div>
 
-</header>
+<div class="part">
+    <app-robot-command></app-robot-command>
+</div>
 
-<app-robot-log></app-robot-log>
+<div class="part">
+    <app-robot-log></app-robot-log>
+</div>

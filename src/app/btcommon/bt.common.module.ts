@@ -5,9 +5,10 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from './../shared/shared.module';
 import { ToolModule } from './../tool/tool.module';
 import { ExchangeComponent } from './exchange/exchange.component';
-import { KLinePeriodPipe } from './pipes/k-line-period.pipe';
-import { RobotPublicStatusPipe, RobotStatusPipe } from './pipes/robot.pipe';
+import { PIPES } from './pipes/index.pipes';
 import { RobotService } from './providers/robot.service';
+import { RobotArgComponent } from './robot-arg/robot-arg.component';
+import { RobotCommandComponent } from './robot-command/robot-command.component';
 import { RobotConfigComponent } from './robot-config/robot-config.component';
 import { RobotLogComponent } from './robot-log/robot-log.component';
 import { RobotOverviewComponent } from './robot-overview/robot-overview.component';
@@ -27,12 +28,12 @@ import { TrusteeComponent } from './trustee/trustee.component';
         StrategyLibComponent,
         ExchangeComponent,
         RobotComponent,
-        RobotPublicStatusPipe,
-        RobotStatusPipe,
-        KLinePeriodPipe,
         RobotOverviewComponent,
         RobotConfigComponent,
         RobotLogComponent,
+        RobotArgComponent,
+        RobotCommandComponent,
+        PIPES,
     ],
 
     entryComponents: [
@@ -46,12 +47,11 @@ import { TrusteeComponent } from './trustee/trustee.component';
         StrategyLibComponent,
         ExchangeComponent,
         RobotComponent,
-        RobotPublicStatusPipe,
-        RobotStatusPipe,
-        KLinePeriodPipe,
         RobotOverviewComponent,
         RobotConfigComponent,
         RobotLogComponent,
+        RobotCommandComponent,
+        PIPES,
     ]
 })
 export class BtCommonModule { }

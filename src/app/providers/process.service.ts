@@ -9,6 +9,7 @@ import { VerifyPasswordRequestAction } from '../store/auth/verify-password.actio
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
+import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
 import { SignupRequestAction } from './../store/auth/signup.action';
@@ -22,6 +23,8 @@ import {
     RestartRobotRequestAction,
     StopRobotRequestAction,
     SubscribeRobotRequestAction,
+    ModifyRobotRequestAction,
+    CommandRobotRequestAction,
 } from './../store/robot/robot.action';
 import { TipService } from './tip.service';
 
@@ -55,6 +58,10 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new SetPasswordRequestAction((params))));
     }
 
+    processVerifyPwd(params: Observable<Request.VerifyPasswordRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new VerifyPasswordRequestAction(params)));
+    }
+
     /** ===================================================Exchange=================================================== */
 
     processExchangeList(params: Observable<Request.GetExchangeListRequest>): Subscription {
@@ -83,7 +90,6 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params)));
     }
 
-    // processRestartRobot(params: Observable<any>): Subscription {
     processRestartRobot(params: Observable<Request.RestartRobotRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new RestartRobotRequestAction(params)));
     }
@@ -92,15 +98,29 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new StopRobotRequestAction(params)));
     }
 
+    processModifyRobot(params: Observable<Request.ModifyRobotRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new ModifyRobotRequestAction(params)));
+    }
+
+    processCommandRobot(params: Observable<Request.CommandRobotRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new CommandRobotRequestAction(params)));
+    }
+
+    /** ===================================================Node list=================================================== */
+
     processGetNodeList(params: Observable<Request.GetNodeListRequest>): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetNodeListRequestAction()));
     }
+
+    /** ===================================================Platform list=================================================== */
 
     processGetPlatformList(params: Observable<Request.GetPlatformListRequest>): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetPlatformListRequestAction()));
     }
 
-    processVerifyPwd(params: Observable<Request.VerifyPasswordRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new VerifyPasswordRequestAction(params)));
+    /** ===================================================Watch dog=================================================== */
+
+    processSetRobotWatchDog(params: Observable<Request.SetRobotWDRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new SetRobotWDRequestAction(params)));
     }
 }

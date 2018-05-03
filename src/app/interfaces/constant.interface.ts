@@ -5,8 +5,6 @@ export enum LocalStorageKey {
     refUser = 'refUser'
 }
 
-export const version = 3.5;
-
 export enum Path {
     home = 'home',
     square = 'square',
@@ -23,58 +21,85 @@ export enum Path {
     dashboard = 'dashboard',
 }
 
-export interface KLinePeriod {
-    period: string;
-    id: number;
-    minutes: number;
+export enum VariableType {
+    NUMBER_TYPE,
+    BOOLEAN_TYPE,
+    STRING_TYPE,
+    SELECT_TYPE,
+    ENCRYPT_STRING_TYPE,
+    BUTTON_TYPE
 }
 
-export const kLinePeriod: KLinePeriod[] = [{
-    period: 'ONE_MINUTE',
-    id: 0,
-    minutes: 1
-}, {
-    period: 'THREE_MINUTES',
-    id: 1,
-    minutes: 3
-}, {
-    period: 'FIVE_MINUTES',
-    id: 2,
-    minutes: 5
-}, {
-    period: 'FIFTEEN_MINUTES',
-    id: 3,
-    minutes: 15,
-}, {
-    period: 'THIRTY_MINUTES',
-    id: 4,
-    minutes: 30
-}, {
-    period: 'ONE_HOUR',
-    id: 5,
-    minutes: 60
-}, {
-    period: 'ONE_DAY',
-    id: 10,
-    minutes: 60 * 24
-}]
+export enum NotificationType {
+    SUCCESS = 'success',
+    ERROR = 'error',
+    WARNING = 'warning', 
+    INFO = 'INFO'
+}
+
+export enum CommandRobotTip {
+    invalidRobotState = 'COMMAND_ROBOT_STATE_ERROR_TIP',
+    invalidNumberTypeArg = 'COMMAND_ROBOT_NUMBER_TYPE_ARG_ERROR_TIP',
+    invalidStringTypeArg = 'COMMAND_ROBOT_EMPTY_STRING_ARG_ERROR_TIP',
+    invalidCommandLength = 'COMMAND_ROBOT_LENGTH_ERROR_TIP'
+}
+
+/** ==========================================================Front end custom data structure======================================== **/
 
 export interface RobotOperateMap {
     tip: string;
     btnText: string[];
 }
-export const robotOperateMap: RobotOperateMap[] = [
-    { btnText: ['RESTART', 'RESTARTING'], tip: 'RESTART_ROBOT_CONFIRM' },
-    { btnText: ['STOP', 'STOPPING'], tip: 'STOP_ROBOT_CONFIRM' },
-    { btnText: ['kill'], tip: 'KILL_ROBOT_CONFIRM' },
-]
 
-export function getRobotOperateMap(status: number): RobotOperateMap {
-    if (status > 2) {
-        return robotOperateMap[0];
-    } else if (status === 2) {
-        return robotOperateMap[2];
-    } else {
-        return robotOperateMap[1];
-    }
+export interface VariableTypeDes {
+    id: number;
+    name: string;
+    inputType: string;
+}
+
+export interface ArgOptimizeSetting {
+    begin: number;
+    end: number;
+    step: number;
+};
+
+export interface VariableOverview {
+    variableName: string;
+    variableDes: string;
+    variableComment: string; // 从页面上看貌似只能是这个
+    variableValue: string | number | boolean;
+    variableTypeId: number;
+    originValue: string | number;
+}
+
+export interface TemplateVariableOverview {
+    variables: VariableOverview[];
+    id: number;
+    name: string;
+    category: number;
+}
+
+export interface RobotConfigForm {
+    robotName: string;
+    kLinePeriod: number;
+    platform: number; // 交易平台，和 stock合成交易对
+    stock: string;
+    agent: number;
+}
+
+export interface SelectedPair {
+    platformId: number;
+    stock: string;
+    platformName: string;
+}
+
+export interface ImportedArg {
+    variableName: string;
+    variableValue: string | number | boolean;
+    templateId?: number;
+}
+
+export interface ConfirmOperateTipData {
+    message: string;
+    needTranslate: boolean;
 }

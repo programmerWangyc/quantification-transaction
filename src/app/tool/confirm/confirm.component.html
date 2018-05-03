@@ -1,5 +1,6 @@
 <p>{{'OPERATE_CONFIRM' | translate}}</p>
-<mat-dialog-content>{{ data | translate}}</mat-dialog-content>
+<mat-dialog-content *ngIf="data.needTranslate">{{ data.message | translate}}</mat-dialog-content>
+<mat-dialog-content *ngIf="!data.needTranslate">{{ data.message }}</mat-dialog-content>
 <mat-dialog-actions>
     <button
         nz-button

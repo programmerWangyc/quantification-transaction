@@ -117,6 +117,23 @@ export interface StopRobotRequest {
     id: number;
 }
 
+// modify robot config
+export interface ModifyRobotRequest {
+    id: number;
+    name: string;
+    nodeId: number;
+    kLinePeriodId: number;
+    platform: number[];
+    stocks: string[];
+    args: string;
+}
+
+// command robot
+export interface CommandRobotRequest {
+    id: number;
+    command: string;
+}
+
 /** ===================================================Node list========================================= **/
 
 export const getNodeList = 'GetNodeList';
@@ -130,11 +147,11 @@ export interface GetPlatformListRequest { }
 /** ===================================================Watch dog========================================= **/
 
 // robot watch dog
-export interface SetRobotWD {
-    id: number;
+export interface SetRobotWDRequest {
+    robotId: number;
     watchDogStatus: number;
 }
 
 /**
- * 接口总数： 83， 已完成： 16
+ * 接口总数： 83， 已完成： 19
  */

@@ -1,0 +1,57 @@
+@import '../../../theme/_variable.theme';
+.configLeft,
+.configRight {
+    width: 50%;
+}
+
+.stock {
+    nz-select:first-child {
+        width: 20%;
+    }
+    nz-select:last-child {
+        width: 80%;
+    }
+    input {
+        width: 80%;
+        border-radius: 0 4px 4px 0 !important;
+    }
+}
+
+#exchange-pair {
+    margin: 0 0 20px 0;
+    padding: 0 7em;
+    .pairs {
+        border: 1px dashed $blue;
+        border-radius: 4px;
+        margin: 2px 0 0 10px;
+        height: 32px;
+        text-align: center;
+        line-height: 32px;
+        width: 23%;
+        position: relative;
+        i {
+            $size: 8px;
+            font-size: $size*2;
+            cursor: pointer;
+            position: absolute;
+            top: (-$size);
+            right: (-$size);
+            background-color: #fff;
+            border-radius: $size;
+            color: $warn;
+        }
+    }
+}
+
+.file-btn {
+    position: relative;
+    input {
+        max-width: 100%;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+}

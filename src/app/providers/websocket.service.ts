@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { LocalStorageKey } from './../interfaces/constant.interface';
 import { WsRequest } from './../interfaces/request.interface';
 import { ResponseBody } from './../interfaces/response.interface';
+import { ConstantService } from './constant.service';
 import { TipService } from './tip.service';
 
 export interface CustomEvent {
@@ -40,9 +41,10 @@ export class WebsocketService {
 
     private msgSubscription: Subscription;
 
-    private version = 3.5;
-
-    constructor(private tip: TipService) {
+    constructor(
+        private tip: TipService,
+        private constant: ConstantService
+    ) {
         this.connect();
     }
 
@@ -52,7 +54,7 @@ export class WebsocketService {
             method: data.method,
             params: data.params,
             token: localStorage.getItem(LocalStorageKey.token),
-            version: this.version,
+            version: this.constant.VERSION,
             callbackId: data.method.join('-')
         }
 

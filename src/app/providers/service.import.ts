@@ -1,4 +1,6 @@
+import { UtilService } from './util.service';
 import { BtNodeService } from './bt-node.service';
+import { ConstantService } from './constant.service';
 import { EncryptService } from './encrypt.service';
 import { ErrorService } from './error.service';
 import { PlatformService } from './platform.service';
@@ -17,5 +19,7 @@ export const GLOBAL_SERVICES = [
     PublicService,
     BtNodeService,
     PlatformService,
+    ConstantService,
+    UtilService,
 ];
 

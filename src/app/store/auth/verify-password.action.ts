@@ -55,12 +55,21 @@ export class ResetVerifyPasswordResponseAction implements Action {
     constructor() { }
 }
 
+export const STORE_PWD_TEMPORARY = 'STORE_PWD_TEMPORARY';
+
+export class StorePwdTemporaryAction implements Action {
+    readonly type = STORE_PWD_TEMPORARY;
+
+    constructor(public payload: string) { }
+}
+
 export type ApiActions = VerifyPasswordRequestAction
     | VerifyPasswordFailAction
     | VerifyPasswordSuccessAction
 
 export type Actions = ApiActions
-    | ResetVerifyPasswordResponseAction;
+    | ResetVerifyPasswordResponseAction
+    | StorePwdTemporaryAction
 
 export const ResponseActions = {
     VerifyPasswordFailAction,

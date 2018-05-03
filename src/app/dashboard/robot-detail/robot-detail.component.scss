@@ -1,19 +1,10 @@
 @import '../../../theme/_variable.theme';
-header {
-    margin: 50px 0;
-    app-robot-overview,
-    app-robot-config {
-        width: 45%;
-        margin: 20px 0;
-    }
+app-robot-overview,
+app-robot-config {
+    width: 100%;
+    margin: 20px 0;
 }
 
-@media screen and (max-width: $screen-width-middle) {
-    header {
-        flex-direction: column !important;
-    }
-    app-robot-overview,
-    app-robot-config {
-        width: 80% !important;
-    }
+.part {
+    margin: 50px 0;
 }

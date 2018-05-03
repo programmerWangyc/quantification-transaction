@@ -1,7 +1,9 @@
 <nz-card *ngIf="robot | async; let robot">
     <ng-template #title>{{'ROBOT_OVERVIEW' | translate}}</ng-template>
     <ng-template #extra>
-        <a>{{'FOLD' | translate}}</a>
+        <a (click)="toggleFold()">
+            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+        </a>
     </ng-template>
     <ng-template #body>
         <div
@@ -61,7 +63,7 @@
                 [nzSpan]="10"
                 class="row"
             >
-                <h6>{{'STATUS' | translate}}:</h6>
+                <h6 [nz-tooltip]="statusTip | async">{{'STATUS' | translate}}:</h6>
                 <span>
                     {{robot.status | robotStatus | translate}}
                 </span>
@@ -81,7 +83,7 @@
                     [disabled]="isLoading | async"
                     *ngIf="robot.status <= 2"
                 >
-                >
+                    >
                     {{operateBtnText| async | translate}}
                 </button>
                 <button
@@ -111,7 +113,9 @@
                 class="row"
             >
                 <h6>{{'EXCHANGE_PLATFORM' | translate}}:</h6>
-                <span>xxxxxxxx</span>
+                <span fxLayout="column start">
+                    <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock">{{pair.platform}}/{{pair.stock}}</span>
+                </span>
             </div>
         </div>
     </ng-template>

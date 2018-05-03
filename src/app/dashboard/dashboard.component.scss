@@ -18,10 +18,17 @@
         padding: 0 50px 0 0;
         display: flex;
         justify-content: space-between;
+        position: fixed;
+        top: 0;
+        z-index: 999;
     }
     nz-sider {
         background-color: $bcg-nav;
         height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
         ul {
             height: calc(100% - 48px);
         }
@@ -29,6 +36,7 @@
 
     nz-content {
         padding: 50px 100px 0;
+        margin: $header-height 0 0 0;
     }
 }
 

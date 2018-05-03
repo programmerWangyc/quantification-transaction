@@ -8,7 +8,7 @@
         <ul
             nz-menu
             [nzInlineCollapsed]="isCollapsed"
-            [nzMode]="isCollapsed?'vertical':'inline'"
+            [nzMode]="isCollapsed ? 'vertical':'inline'"
         >
             <li *ngFor="let nav of list">
                 <div
@@ -65,7 +65,10 @@
     </nz-sider>
     <nz-layout>
         <!--TODO:响应式布局还有问题-->
-        <nz-header>
+        <nz-header 
+        [style.width]="isCollapsed ? 'calc(100% - 64px)' : 'calc(100% - 200px)'"
+        [style.left]="isCollapsed ? '64px' : '200px'"
+        >
             <i
                 class="anticon trigger"
                 [class.anticon-menu-fold]="!isCollapsed"
@@ -79,7 +82,7 @@
                 ></nz-avatar>
             </section>
         </nz-header>
-        <nz-content>
+        <nz-content [style.margin]="isCollapsed ? '48px 0 0 64px' : '48px 0 0 200px'">
             <router-outlet></router-outlet>
         </nz-content>
     </nz-layout>

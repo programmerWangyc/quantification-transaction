@@ -1,4 +1,6 @@
 import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/delayWhen';
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -23,7 +25,13 @@ import {
 } from './../../interfaces/response.interface';
 import { ProcessService } from './../../providers/process.service';
 import { TipService } from './../../providers/tip.service';
-import { selectAgreeState, selectSetPwdResponse, selectVerifyPwdResponse } from './../../store/index.reducer';
+import { StorePwdTemporaryAction, ResetVerifyPasswordResponseAction } from './../../store/auth/verify-password.action';
+import {
+    selectAgreeState,
+    selectSetPwdResponse,
+    selectTemporaryPwd,
+    selectVerifyPwdResponse,
+} from './../../store/index.reducer';
 
 @Injectable()
 export class AuthService {
@@ -122,10 +130,6 @@ export class AuthService {
             .subscribe(message => this.tip.showTip(message, 60000));
     }
 
-    resetResetPasswordResponse(): void {
-        this.store.dispatch(new ResetResetPasswordResponseAction());
-    }
-
     // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
         return this.store.select(selectSetPwdResponse)
@@ -151,8 +155,31 @@ export class AuthService {
     verifyPasswordSuccess(): Observable<boolean> {
         return this.getVerifyPasswordResponse()
             .map(res => res.result)
-            .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
+            // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
             .filter(success => success);
+    }
+
+    getTemporaryPwd(): Observable<string> {
+        return this.store.select(selectTemporaryPwd)
+            .filter(value => !!value);
+    }
+
+    /* =======================================================Local Action======================================================= */
+
+    /**
+     * @description This action must take place after the VerifyPasswordSuccessAction action.
+     */
+    storePwdTemporary(pwd: Observable<string>): Subscription {
+        return pwd.delayWhen(pwd => this.verifyPasswordSuccess())
+            .subscribe(pwd => this.store.dispatch(new StorePwdTemporaryAction(pwd)));
+    }
+
+    resetResetPasswordResponse(): void {
+        this.store.dispatch(new ResetResetPasswordResponseAction());
+    }
+
+    resetVerifyPwdResponse(): void {
+        this.store.dispatch(new ResetVerifyPasswordResponseAction());
     }
 
     /* =======================================================Error Handle======================================================= */
@@ -174,6 +201,11 @@ export class AuthService {
     }
 
     handleVerifyPasswordError(): Subscription {
-        return this.error.handleResponseError(this.getVerifyPasswordResponse());
+        return this.error.handleError(
+            this.getVerifyPasswordResponse()
+                .filter(res => !!res.error)
+                .switchMap(res => this.translate.get(res.error))
+                .take(1)
+        );
     }
 }

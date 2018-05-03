@@ -158,6 +158,13 @@ export interface StrategyExchangePairs {
     stocks: string[];
 }
 
+export interface RobotTemplate {
+    args: string; // 'string | number[][]';
+    id: number;
+    name: string;
+    category: number;
+}
+
 export interface RobotDetail {
     charge_time: number;
     charged: number;
@@ -177,15 +184,15 @@ export interface RobotDetail {
     profit: number;
     public: number;
     refresh: number;
-    robot_args: string;
+    robot_args: string; // string | number [][]
     start_time: string;
     status: number;
-    strategy_args: string; //"[]"
+    strategy_args: string; // string | number[][] 0: variable name 1: variable description 2:variable value
     strategy_exchange_pairs: string; //"[4,[-1],["BTC_USD"]]" 0： k 线周期的ID。1: 交易所ID; 2: 股票；
     strategy_id: number;
     strategy_last_modified: string;
     strategy_name: string;
-    templates: any[];
+    templates: RobotTemplate[]; // 
     username: string;
     wd: number;
 }
@@ -237,7 +244,13 @@ export enum RestartRobotResult {
 export interface RestartRobotResponse extends ResponseUnit<number | string> { }
 
 // stop robot
-export interface StopRobotResponse extends ResponseUnit<any> { }
+export interface StopRobotResponse extends ResponseUnit<number> { } //FIXME: 这个响应类型是要根据原代码猜的，不知道对不对。
+
+// update robot config
+export interface ModifyRobotResponse extends ResponseUnit<boolean> { }
+
+// command robot
+export interface CommandRobotResponse extends ResponseUnit<boolean> { }
 
 /** ===================================================Node list========================================= **/
 
@@ -269,7 +282,13 @@ export interface GetNodeListResponse extends ResponseUnit<NodeListResponse> { }
 
 // platform list
 export interface Platform {
-
+    id: number;
+    label: string;
+    eid: string;
+    name: string;
+    stocks: string[];
+    webSite?: string;
+    logo?: string;
 }
 
 export interface PlatformListResponse {
@@ -281,7 +300,7 @@ export interface GetPlatformListResponse extends ResponseUnit<PlatformListRespon
 /** ===================================================Watch dog========================================= **/
 
 // robot watch dog
-export interface SetRobotWD extends ResponseUnit<any> { }
+export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 
 
 
