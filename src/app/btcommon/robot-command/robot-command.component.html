@@ -1,4 +1,4 @@
-<nz-card>
+<nz-card *ngIf="hasArgs | async">
     <ng-template #title>{{'STRATEGY_ALTERNATION' | translate}}</ng-template>
     <ng-template #extra>
         <a (click)="toggleFold()">

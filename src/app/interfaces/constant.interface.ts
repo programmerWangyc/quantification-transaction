@@ -33,7 +33,7 @@ export enum VariableType {
 export enum NotificationType {
     SUCCESS = 'success',
     ERROR = 'error',
-    WARNING = 'warning', 
+    WARNING = 'warning',
     INFO = 'INFO'
 }
 
@@ -42,6 +42,25 @@ export enum CommandRobotTip {
     invalidNumberTypeArg = 'COMMAND_ROBOT_NUMBER_TYPE_ARG_ERROR_TIP',
     invalidStringTypeArg = 'COMMAND_ROBOT_EMPTY_STRING_ARG_ERROR_TIP',
     invalidCommandLength = 'COMMAND_ROBOT_LENGTH_ERROR_TIP'
+}
+
+export enum LogTypes {
+    BUY,
+    SALE,
+    RETRACT,
+    ERROR,
+    PROFIT,
+    MESSAGE,
+    RESTART
+}
+
+export enum ServerSendRobotEventType {
+    UPDATE_STATUS = 1 << 0,
+    UPDATE_PROFIT = 1 << 1,
+    UPDATE_SUMMARY = 1 << 2,
+    UPDATE_PUSH = 1 << 3,
+    UPDATE_REFRESH = 1 << 4,
+    UPDATE_DEBUG = 1 << 5
 }
 
 /** ==========================================================Front end custom data structure======================================== **/
@@ -102,4 +121,11 @@ export interface ImportedArg {
 export interface ConfirmOperateTipData {
     message: string;
     needTranslate: boolean;
+}
+
+export interface RobotStatusTable {
+    type: string;
+    title: string;
+    cols: string[];
+    rows: any[][];
 }

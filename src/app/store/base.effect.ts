@@ -6,7 +6,7 @@ import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { WsRequest } from '../interfaces/request.interface';
-import { ResponseBody } from '../interfaces/response.interface';
+import { ResponseBody, ResponseItem } from '../interfaces/response.interface';
 import { ResponseUnit } from './../interfaces/response.interface';
 import { WebsocketService } from './../providers/websocket.service';
 import { RequestAction, ResponseAction } from './base.action';
@@ -40,7 +40,7 @@ export class BaseEffect {
      * @description Used to split the response data to corresponding response actions.
      */
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
-        return Observable.from(data.result || [])
+        return Observable.from(<ResponseUnit<ResponseItem>[]>data.result || [])
             .zip(Observable.from(data.callbackId.split('-')), (result, action) => ({ ...result, action }))
             .do(res => console.log(`Action-${res.action} get response: `, res.result))
             .map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res));

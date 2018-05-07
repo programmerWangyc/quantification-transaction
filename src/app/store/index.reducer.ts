@@ -61,6 +61,7 @@ export const selectError = createSelector(getPublicInformationState, pub.getErro
 const getLoginState = (state: AppState) => state.login;
 export const selectUsername = createSelector(getLoginState, login.getUsername);
 export const selectLoginResponse = createSelector(getLoginState, login.getLoginResponse);
+export const selectNeedGoogleSecondaryVer = createSelector(getLoginState, login.getNeedSecondaryVer);
 
 // singup
 const getSignupState = (state: AppState) => state.signup;
@@ -128,6 +129,20 @@ export const selectModifyRobotResponse = createSelector(getRobotState, robot.get
 
 // command robot
 export const selectCommandRobotResponse = createSelector(getRobotState, robot.getCommandRobotRes);
+
+// default params
+export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
+export const selectRobotDefaultLogParams =createSelector(selectRobotDefaultParams, state => state.robotLogs);
+
+// monitoring message type
+export const selectRobotLogMonitoringSound = createSelector(getRobotState, robot.getMonitoringSound);
+
+// ui state
+export const selectRobotUiState = createSelector(getRobotState, robot.getUIState);
+export const selectRobotLogCurrentPage = createSelector(selectRobotUiState, state => state.currentPage);
+
+// server send robot message
+export const selectServerSendRobotMessage = createSelector(getRobotState, robot.getServerSendMessage);
 
 /** ===================================================Node=================================================== */
 

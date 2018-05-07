@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { Robot } from '../../interfaces/response.interface';
 import { GetRobotListRequest } from './../../interfaces/request.interface';
+import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class RobotComponent extends BusinessComponent {
 
     constructor(
         private robotService: RobotService,
+        private robotOperate: RobotOperateService,
     ) {
         super();
     }
@@ -43,8 +45,8 @@ export class RobotComponent extends BusinessComponent {
 
     launch() {
         this.subscription$$ = this.robotService.launchRobotList(this.robotList$)
-            .add(this.robotService.launchPublicRobot(this.publicRobot$))
-            .add(this.robotService.handlePublicRobotError())
+            .add(this.robotOperate.launchPublicRobot(this.publicRobot$))
+            .add(this.robotOperate.handlePublicRobotError())
             .add(this.robotService.handleRobotListError())
     }
 

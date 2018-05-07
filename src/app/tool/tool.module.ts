@@ -9,8 +9,10 @@ import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FromJSONPipe } from './pipes/from-json.pipe';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
+import { OriginDataPipe } from './pipes/origin-data.pipe';
 
 @NgModule({
     imports: [
@@ -25,8 +27,10 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         NavbarComponent,
         FooterComponent,
         ConfirmComponent,
-        FromJSONPipe,
         VerifyPasswordComponent,
+        FromJSONPipe,
+        SafeHtmlPipe,
+        OriginDataPipe,
     ],
     
     entryComponents: [
@@ -40,6 +44,8 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         NavbarComponent,
         FooterComponent,
         FromJSONPipe,
+        SafeHtmlPipe,
+        OriginDataPipe,
     ]
 })
 export class ToolModule { }

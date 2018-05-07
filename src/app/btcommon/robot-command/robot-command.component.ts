@@ -1,11 +1,11 @@
-import { UtilService } from './../../providers/util.service';
-import { Subject } from 'rxjs/Subject';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { VariableOverview } from './../../interfaces/constant.interface';
+import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 
 @Component({
@@ -19,6 +19,8 @@ export class RobotCommandComponent extends BusinessComponent {
 
     commandArgs: Observable<VariableOverview[]>;
 
+    hasArgs: Observable<boolean>;
+
     subscription$$: Subscription;
 
     command$: Subject<VariableOverview> = new Subject();
@@ -27,6 +29,7 @@ export class RobotCommandComponent extends BusinessComponent {
         public render: Renderer2,
         public eleRef: ElementRef,
         private robotService: RobotService,
+        private robotOperate: RobotOperateService,
     ) {
         super(render, eleRef);
     }
@@ -38,16 +41,18 @@ export class RobotCommandComponent extends BusinessComponent {
     }
 
     initialModel() {
-        this.commandArgs = this.robotService.getRobotCommandArgs();
+        this.commandArgs = this.robotOperate.getRobotCommandArgs();
+
+        this.hasArgs = this.commandArgs.map(args => !!args.length);
     }
 
     launch() {
-        this.subscription$$ = this.robotService.launchCommandRobot(this.command$)
-            .add(this.robotService.handleCommandRobotError());
+        this.subscription$$ = this.robotOperate.launchCommandRobot(this.command$)
+            .add(this.robotOperate.handleCommandRobotError());
     }
 
     argChange(arg: VariableOverview): void {
-        arg.variableName && this.robotService.updateRobotArg(arg);
+        arg.variableName && this.robotOperate.updateRobotArg(arg);
     }
 
     toggleFold() {

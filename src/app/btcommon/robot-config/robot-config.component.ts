@@ -20,6 +20,7 @@ import { ModifyRobotRequest } from './../../interfaces/request.interface';
 import { BtNode, Platform } from './../../interfaces/response.interface';
 import { BtNodeService } from './../../providers/bt-node.service';
 import { PlatformService } from './../../providers/platform.service';
+import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 
 
@@ -58,6 +59,8 @@ export class RobotConfigComponent extends BusinessComponent {
 
     warningMessage: Observable<SafeHtml>;
 
+    hasStrategyArg: Observable<boolean>
+
     constructor(
         private fb: FormBuilder,
         public eleRef: ElementRef,
@@ -66,6 +69,7 @@ export class RobotConfigComponent extends BusinessComponent {
         private btNodeService: BtNodeService,
         private platformService: PlatformService,
         private domSanitizer: DomSanitizer,
+        private robotOperate: RobotOperateService,
     ) {
         super(render, eleRef);
 
@@ -85,19 +89,21 @@ export class RobotConfigComponent extends BusinessComponent {
                 kLinePeriod: JSON.parse(robot.strategy_exchange_pairs)[0],
             }))
             .add(this.platformService.getPlatformList().subscribe(list => this.platforms = list))
-            .add(this.robotService.launchUpdateRobotConfig(this.modify$.map(formValue => this.createModifyParams(formValue))))
+            .add(this.robotOperate.launchUpdateRobotConfig(this.modify$.map(formValue => this.createModifyParams(formValue))))
     }
 
     initialModel() {
         this.agents = this.btNodeService.getNodeList();
 
-        this.strategyArgs = this.robotService.getRobotStrategyArgs();
+        this.strategyArgs = this.robotOperate.getRobotStrategyArgs();
 
-        this.templateArgs = this.robotService.getRobotTemplateArgs();
+        this.hasStrategyArg = this.strategyArgs.map(args => !!args.length);
 
-        this.hasArgs = this.robotService.hasArgs();
+        this.templateArgs = this.robotOperate.getRobotTemplateArgs();
 
-        this.warningMessage = this.robotService.getRobotConfigMessage().map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg))
+        this.hasArgs = this.robotOperate.hasArgs();
+
+        this.warningMessage = this.robotOperate.getRobotConfigMessage().map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg))
     }
 
     initialForm() {
@@ -111,7 +117,7 @@ export class RobotConfigComponent extends BusinessComponent {
     }
 
     argChange(arg: VariableOverview, templateName?: string): void {
-        arg.variableName && this.robotService.updateRobotArg(arg, templateName);
+        arg.variableName && this.robotOperate.updateRobotArg(arg, templateName);
     }
 
     ngOnDestroy() {
@@ -123,13 +129,10 @@ export class RobotConfigComponent extends BusinessComponent {
     createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
         const { robotName, agent, kLinePeriod } = formValue;
 
-        return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotService.getPairsParams(this.selectedPairs) }
+        return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotOperate.getPairsParams(this.selectedPairs) }
     }
 
-    /**
-     * FIXME: 这个方法多个地方用到
-     */
-    toggleFold() {
+   toggleFold() {
         this.isFold = !this.isFold;
 
         this.toggle(this.isFold);
@@ -154,7 +157,7 @@ export class RobotConfigComponent extends BusinessComponent {
     }
 
     exportArgs(): void {
-        this.robotService.exportArgs(this.kLinePeriod.value); // FIXME: 未处理取消订阅
+        this.robotOperate.exportArgs(this.kLinePeriod.value); // FIXME: 未处理取消订阅
     }
 
     importArgs(files: FileList): void {
@@ -167,7 +170,7 @@ export class RobotConfigComponent extends BusinessComponent {
 
             result.period && this.configForm.patchValue({ kLinePeriod: result.period });
 
-            this.robotService.importArgs(result);
+            this.robotOperate.importArgs(result);
         };
     }
 

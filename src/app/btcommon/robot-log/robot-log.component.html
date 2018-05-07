@@ -1,3 +1,157 @@
-<p>
-  robot-log works!
-</p>
+<head fxLayoutAlign="space-between center">
+    <h3>{{'LOG-INFORMATION' | translate}}</h3>
+    <div>
+        <button nz-button [nzShape]="'circle'" [nzSize]="'small'" [disabled]="!isSoundOpen" [nz-tooltip]="'CLICK_TO_PLAY_AUDIO' | translate" (click)="playAudio()">
+            <i class="anticon anticon-sound"></i>
+        </button>
+        <nz-switch [(ngModel)]="isSoundOpen" (ngModelChange)="updateSoundState(isSoundOpen)" [nz-tooltip]="'SOUND_REMAINING' | translate">
+            <span checked>{{'OPEN' | translate}}</span>
+            <span unchecked>{{'CLOSE' | translate}}</span>
+        </nz-switch>
+        <nz-select
+            *ngIf="isSoundOpen"
+            [nzMode]="'multiple'"
+            [nzPlaceHolder]="'PLEASE_SELECT_LOG_TYPE' | translate"
+            [(ngModel)]="monitoringSoundTypes"
+            (ngModelChange)="updateMonitoringTypes($event)"
+            class="log-type"
+        >
+            <nz-option
+                *ngFor="let item of soundTypes"
+                [nzValue]="item"
+                [nzLabel]="item | translate "
+            ></nz-option>
+        </nz-select>
+        <button
+            nz-button
+            [nzType]="'primary'"
+            (click)="refresh$.next(true)"
+            [nzLoading]="isLoading | async"
+        >
+            <i
+                class="anticon anticon-reload"
+                *ngIf="!(isLoading | async)"
+            ></i>
+            {{'REFRESH' | translate}}
+        </button>
+    </div>
+</head>
+<nz-table
+    #nzTable
+    [nzDataSource]="logs | async"
+    [nzPageSize]="20"
+    [nzIsPagination]="false"
+>
+    <thead nz-thead>
+        <tr>
+            <th nz-th>
+                <span>{{'TIME' | translate}}</span>
+            </th>
+            <th nz-th>
+                <span>{{'PLATFORM' | translate}}</span>
+            </th>
+            <th nz-th>
+                <span>{{'TYPE' | translate}}</span>
+                <nz-dropdown [nzTrigger]="'click'">
+                    <i
+                        class="anticon anticon-filter"
+                        nz-dropdown
+                    ></i>
+                    <ul nz-menu>
+                        <li
+                            nz-menu-item
+                            *ngFor="let filter of filterTypes"
+                        >
+                            <label
+                                nz-checkbox
+                                [(ngModel)]="filter.selected"
+                            >
+                                <span>{{filter.type | logType | translate}}</span>
+                            </label>
+                        </li>
+                    </ul>
+                    <div nz-table-filter>
+                        <span
+                            nz-table-filter-confirm
+                            (click)="search$.next(filterTypes)"
+                        >
+                            {{'CONFIRM' | translate}}
+                        </span>
+                        <span
+                            nz-table-filter-clear
+                            (click)="resetFilterTypes()"
+                        >
+                            {{'RESET' | translate}}
+                        </span>
+                    </div>
+                </nz-dropdown>
+            </th>
+            <th nz-th>
+                <span>{{'PRICE' | translate}}</span>
+            </th>
+            <th nz-th>
+                <span>{{'AMOUNT' | translate}}</span>
+            </th>
+            <th nz-th>
+                <span>{{'INFORMATION' | translate}}</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody nz-tbody>
+        <tr
+            nz-tbody-tr
+            *ngFor="let data of nzTable.data"
+            [ngStyle]="{color: data.extra | extraColorPicker, 'background-color': data.extra | extraBcgColorPicker}"
+        >
+            <td nz-td>{{data.date}}</td>
+
+            <td nz-td>
+                <!-- 0: 买入 1：卖出 2：撤消 3：错误 4：收益 5：消息 6：重启 -->
+                <span *ngIf="data.logType < 4">{{data.eid | eid2String}}</span>
+            </td>
+
+            <td nz-td>
+                <span>{{data.logType | logType | translate}}</span>
+                <span *ngIf="!!(data.direction | directionType)">
+                    {{data.direction | directionType | translate}} - {{data.contractType}}
+                </span>
+            </td>
+
+            <td nz-td>
+                <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">
+                    {{data.price | logPrice: data.logType | translate}}
+                </span>
+            </td>
+
+            <td nz-td>
+                <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">{{data.logType < 2 ? data.amount : ''}}</span>
+            </td>
+
+            <td nz-td>
+                <span [innerHTML]="data.extra | extraContent | safeHtml"></span>
+                <span
+                    *ngIf="data.extra | showExtraIcon"
+                    class="anticon anticon-rocket"
+                    style="margin-left: 8px;"
+                ></span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<div
+    fxLayoutAlign="space-between center"
+    class="pagination"
+>
+    <div>{{statistics | async}}</div>
+    <nz-pagination
+        [(nzPageIndex)]="currentPage"
+        (nzPageIndexChange)="changePage(currentPage)"
+        [nzTotal]="logTotal | async"
+        [nzPageSize]="pageSize | async"
+        (nzPageSizeChange)="onPageSizeChange($event)"
+        [nzPageSizeSelectorValues]="pageSizeSelectorValues"
+        nzShowQuickJumper
+        nzShowSizeChanger
+    ></nz-pagination>
+</div>

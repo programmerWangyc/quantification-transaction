@@ -8,13 +8,16 @@ export interface ResponseState {
 }
 
 export interface ResponseBody extends PublicResponse {
-    result: ResponseUnit<ResponseItem>[];
+    result: ResponseUnit<ResponseItem>[] | ServerSendRobotMessage;
 }
 
 export interface ResponseUnit<T> extends ResponseState {
     result: T;
 }
 
+export interface ServerSendMessage<T> extends PublicResponse {
+    result: T;
+}
 
 /* =======================================================Public section of response========================================================= */
 
@@ -29,14 +32,33 @@ export interface PublicResponse {
     token: string;
     username: string;
     version: number;
+    event?: string;
 }
-
-
 
 /**
  * <------------
  *  @description  Interfaces and enums below are all response related;
  */
+
+/* =======================================================Server send message========================================================= */
+
+export enum ServerSendEventType {
+    ROBOT = 'robot',
+    NODE = 'node',
+    RSYNC = 'rsync', // remote sync
+    PAYMENT = 'payment',
+    CHARGE = 'charge',
+    BACKTEST = 'backtest'
+}
+
+export interface ServerSendRobotMessage {
+    flags: number;
+    id: number;
+    status?: number;
+    profit?: number;
+    refresh?: number;
+    summary?: string;
+}
 
 /* =======================================================Auth response========================================================= */
 
@@ -114,6 +136,7 @@ export interface Robot {
     strategy_isowner: boolean;
     strategy_name: string;
     wd: number;
+    summary?: string; // FIXME: 这个字段从接口上看目前还没有发现， 但从代码上看貌似有, 待确定。
 }
 
 export enum RobotStatus {
@@ -195,6 +218,7 @@ export interface RobotDetail {
     templates: RobotTemplate[]; // 
     username: string;
     wd: number;
+    summary?: string;
 }
 
 export interface RobotDetailResponse {
@@ -204,24 +228,48 @@ export interface RobotDetailResponse {
 export interface GetRobotDetailResponse extends ResponseUnit<RobotDetailResponse> { }
 
 // robot logs
-export interface Logs {
+export interface RunningLog {
+    id: number;
+    logType: number;
+    eid: string;
+    orderId: string;
+    price: number;
+    amount: number;
+    extra: string;
+    date: string; // 日期的毫秒表示
+    contractType: string;
+    direction: string;
+}
+
+export interface LogOverview {
     Total: number;
     Max: number;
     Min: number;
-    Arr: any[][];
+    Arr: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
+}
+
+export interface RunningLogOverview {
+    Total: number;
+    Max: number;
+    Min: number;
+    Arr: RunningLog[];
 }
 
 export interface RobotLogs {
     chart: string;
     chartTime: number;
-    logs: Logs[];
+    logs: LogOverview[]; // 第一个元素是运行日志？第二个元素是收益日志信息？第三个元素是图表日志？
     node_id: number;
     online: boolean;
     refresh: number;
-    status: number;
+    status: number; // 机器人的状态。
     summary: string;
     updateTime: number;
     wd: number;
+    // 以下3个字段根据logs字段的值扁平化的结果
+    runningLog?: RunningLogOverview// logs[0];
+    profitLog?: LogOverview;// logs[1];
+    chartLog?: LogOverview; // logs[2];
 }
 
 export interface GetRobotLogsResponse extends ResponseUnit<RobotLogs> { }

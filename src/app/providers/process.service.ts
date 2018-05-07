@@ -16,15 +16,15 @@ import { SignupRequestAction } from './../store/auth/signup.action';
 import { GetNodeListRequestAction } from './../store/bt-node/bt-node.action';
 import { GetSettingsRequestAction } from './../store/public/public.action';
 import {
+    CommandRobotRequestAction,
     GetRobotDetailRequestAction,
     GetRobotListRequestAction,
     GetRobotLogsRequestAction,
+    ModifyRobotRequestAction,
     PublicRobotRequestAction,
     RestartRobotRequestAction,
     StopRobotRequestAction,
     SubscribeRobotRequestAction,
-    ModifyRobotRequestAction,
-    CommandRobotRequestAction,
 } from './../store/robot/robot.action';
 import { TipService } from './tip.service';
 
@@ -86,8 +86,8 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new SubscribeRobotRequestAction(params)));
     }
 
-    processRobotLogs(params: Observable<Request.GetRobotLogsRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params)));
+    processRobotLogs(params: Observable<Request.GetRobotLogsRequest>, allSeparateRequest: boolean): Subscription {
+        return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params, allSeparateRequest)));
     }
 
     processRestartRobot(params: Observable<Request.RestartRobotRequest>): Subscription {

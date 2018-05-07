@@ -15,7 +15,7 @@ import { ApiAction } from '../base.action';
 export enum LoginOrder {
     username,
     password,
-    secondaryVerificationCode,
+    verificationCode,
     length
 }
 

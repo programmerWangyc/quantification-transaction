@@ -1,11 +1,11 @@
-import { TranslateService } from '@ngx-translate/core';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
+import { NzNotificationService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 
-import { CustomSnackBarComponent } from '../tool/tool.components';
-import { NzNotificationService } from 'ng-zorro-antd';
 import { ConfirmOperateTipData } from '../interfaces/constant.interface';
+import { CustomSnackBarComponent } from '../tool/tool.components';
 
 @Injectable()
 export class TipService {
@@ -49,6 +49,16 @@ export class TipService {
     confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
         return this.dialog.open(component, { data, ...this.confirmConfig })
             .afterClosed();
+    }
+
+    playAudio(src: string): void {
+        const audio = new Audio();
+
+        audio.src = src
+
+        audio.load();
+
+        audio.play();
     }
 
 }

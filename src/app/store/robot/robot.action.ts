@@ -1,18 +1,19 @@
 import { Action } from '@ngrx/store';
 
 import {
+    CommandRobotRequest,
     GetRobotListRequest,
     ModifyRobotRequest,
     StopRobotRequest,
     SubscribeRobotRequest,
-    CommandRobotRequest,
 } from '../../interfaces/request.interface';
 import {
+    CommandRobotResponse,
     GetRobotListResponse,
     ModifyRobotResponse,
+    ServerSendRobotMessage,
     StopRobotResponse,
     SubscribeRobotResponse,
-    CommandRobotResponse,
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { ImportedArg, VariableOverview } from './../../interfaces/constant.interface';
@@ -28,6 +29,17 @@ import {
     PublicRobotResponse,
     RestartRobotResponse,
 } from './../../interfaces/response.interface';
+
+
+/** =====================================================Server send event========================================= **/
+
+export const RECEIVE_SERVER_SEND_ROBOT_EVENT = 'RECEIVE_SERVER_SEND_ROBOT_EVENT';
+
+export class ReceiveServerSendRobotEventAction implements Action {
+    readonly type = RECEIVE_SERVER_SEND_ROBOT_EVENT;
+
+    constructor(public payload: ServerSendRobotMessage) { }
+}
 
 /** =====================================================Robot list========================================= **/
 
@@ -240,9 +252,7 @@ export const GET_ROBOT_LOGS = 'GET_ROBOT_LOGS';
 export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS;
 
-    allowSeparateRequest = true;
-
-    constructor(public payload: GetRobotLogsRequest) { super() }
+    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean) { super() }
 }
 
 export const GET_ROBOT_LOGS_FAIL = 'GET_ROBOT_LOGS_FAIL';
@@ -456,6 +466,39 @@ export class ModifyRobotArgAction implements Action {
     constructor(public payload: VariableOverview | ImportedArg, public templateFlag?: string | number) { }
 }
 
+export const MODIFY_DEFAULT_PARAMS = 'MODIFY_DEFAULT_PARAMS';
+
+export class ModifyDefaultParamsAction implements Action {
+    readonly type = MODIFY_DEFAULT_PARAMS;
+
+    // key: path of the target key; value: value to be modified.
+    constructor(public payload: Map<string[], any>) { }
+}
+
+export const MONITOR_SOUND_TYPES = 'MONITOR_SOUND_TYPES';
+
+export class MonitorSoundTypeAction implements Action {
+    readonly type = MONITOR_SOUND_TYPES;
+
+    constructor(public payload: number[]) { }
+}
+
+export const TOGGLE_MONITOR_SOUND = 'TOGGLE_MONITOR_SOUND';
+
+export class ToggleMonitorSoundAction implements Action {
+    readonly type = TOGGLE_MONITOR_SOUND;
+
+    constructor(public payload: boolean) { }
+}
+
+export const CHANGE_LOG_PAGE = 'CHANGE_LOG_PAGE';
+
+export class ChangeLogPageAction implements Action {
+    readonly type = CHANGE_LOG_PAGE;
+
+    constructor(public payload: number) { }
+}
+
 export type ApiActions = GetRobotListRequestAction
     | GetRobotListFailAction
     | GetRobotListSuccessAction
@@ -487,6 +530,11 @@ export type ApiActions = GetRobotListRequestAction
 export type Actions = ApiActions
     | ResetRobotDetailAction
     | ModifyRobotArgAction
+    | ModifyDefaultParamsAction
+    | MonitorSoundTypeAction
+    | ToggleMonitorSoundAction
+    | ChangeLogPageAction
+    | ReceiveServerSendRobotEventAction
 
 export const ResponseActions = {
     GetRobotListFailAction,

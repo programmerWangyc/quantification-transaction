@@ -267,6 +267,7 @@
         </div>
 
         <app-robot-arg
+            *ngIf="hasStrategyArg | async"
             [args]="strategyArgs | async"
             (change)="argChange($event)"
             [title]="'STRATEGY_ARGUMENTS' | translate"

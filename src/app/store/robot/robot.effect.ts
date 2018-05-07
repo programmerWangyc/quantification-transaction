@@ -7,11 +7,11 @@ import { Observable } from 'rxjs/Observable';
 import { ResponseAction } from '../base.action';
 import * as btNodeActions from '../bt-node/bt-node.action';
 import * as platformActions from '../platform/platform.action';
-import { RestartRobotResponse, CommandRobotResponse } from './../../interfaces/response.interface';
+import { RestartRobotResponse, CommandRobotResponse, ServerSendEventType, ServerSendRobotMessage } from './../../interfaces/response.interface';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as robotActions from './robot.action';
-import { ModifyRobotFailAction, CommandRobotSuccessAction, CommandRobotFailAction } from './robot.action';
+import { ModifyRobotFailAction, CommandRobotSuccessAction, CommandRobotFailAction, ReceiveServerSendRobotEventAction } from './robot.action';
 
 @Injectable()
 export class RobotEffect extends BaseEffect {
@@ -35,6 +35,9 @@ export class RobotEffect extends BaseEffect {
     );
 
     @Effect()
+    robotLog$: Observable<ResponseAction> = this.getResponseAction(robotActions.GET_ROBOT_LOGS, robotActions.ResponseActions);
+
+    @Effect()
     restartRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.RESTART_ROBOT, robotActions.ResponseActions, isRestartRobotFail);
 
     @Effect()
@@ -46,11 +49,15 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail)
-        .do(action =>{ 
+        .do(action => {
             const message = (<CommandRobotSuccessAction | CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
-            
+
             this.tip.showTip(message);
-        })
+        });
+
+    @Effect()
+    serverSendEvent$: Observable<ResponseAction> = this.ws.messages.filter(msg => msg.event && msg.event === ServerSendEventType.ROBOT)
+        .map(msg => new ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result));
 
     constructor(
         public ws: WebsocketService,

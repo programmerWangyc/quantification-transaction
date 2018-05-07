@@ -1,6 +1,6 @@
+import 'rxjs/add/operator/delayWhen';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/delayWhen';
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,13 @@ import { ResetLoginErrorAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
-import { AppState, selectLoginResponse, selectResetPasswordResponse, selectSignupResponse } from '../../store/index.reducer';
+import {
+    AppState,
+    selectLoginResponse,
+    selectNeedGoogleSecondaryVer,
+    selectResetPasswordResponse,
+    selectSignupResponse,
+} from '../../store/index.reducer';
 import { VerifyPasswordRequest } from './../../interfaces/request.interface';
 import {
     LoginResponse,
@@ -25,7 +31,7 @@ import {
 } from './../../interfaces/response.interface';
 import { ProcessService } from './../../providers/process.service';
 import { TipService } from './../../providers/tip.service';
-import { StorePwdTemporaryAction, ResetVerifyPasswordResponseAction } from './../../store/auth/verify-password.action';
+import { ResetVerifyPasswordResponseAction, StorePwdTemporaryAction } from './../../store/auth/verify-password.action';
 import {
     selectAgreeState,
     selectSetPwdResponse,
@@ -75,9 +81,7 @@ export class AuthService {
     }
 
     needVerification(): Observable<boolean> {
-        return this.getLoginResponse()
-            .map(response => response.result === -2)
-            .startWith(false);
+        return this.store.select(selectNeedGoogleSecondaryVer);
     }
 
     isLoginSuccess(): Observable<boolean> {

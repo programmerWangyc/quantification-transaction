@@ -4,11 +4,13 @@ import * as actions from './login.action';
 export interface State {
     username: string;
     response: LoginResponse;
+    needGoogleSecondaryVerificationCode: boolean;
 }
 
 export const initialState: State = {
     username: null,
-    response: null
+    response: null,
+    needGoogleSecondaryVerificationCode: false
 }
 
 export enum LoginErrorMsg {
@@ -27,9 +29,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.LOGIN_FAIL: {
             const response = { ...action.payload };
 
-            response.error = LoginErrorMsg[Math.abs(action.payload.result)];
+            const errorCode = Math.abs(action.payload.result)
 
-            return { ...state, response };
+            response.error = LoginErrorMsg[errorCode];
+
+            return { ...state, response, needGoogleSecondaryVerificationCode: needGoogleSecondaryVerificationCode(errorCode) };
         }
 
         case actions.LOGIN_SUCCESS:
@@ -44,6 +48,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
     }
 }
 
+function needGoogleSecondaryVerificationCode(code): boolean {
+    const codes = [LoginErrorMsg.NEED_GOOGLE_SECONDARY_VERIFICATION, LoginErrorMsg.GOOGLE_SECONDARY_VERIFICATION_CODE_ERROR];
+
+    return codes.indexOf(code) !== -1;
+}
+
 export const getUsername = (state: State) => state.username;
 
 export const getLoginResponse = (state: State) => state.response;
+
+export const getNeedSecondaryVer = (state: State) => state.needGoogleSecondaryVerificationCode;

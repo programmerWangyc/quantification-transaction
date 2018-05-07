@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { RobotOperateMap, VariableType, VariableTypeDes } from '../interfaces/constant.interface';
+import { LogTypes, RobotOperateMap, VariableType, VariableTypeDes } from '../interfaces/constant.interface';
 import { ArgOptimizeSetting } from './../interfaces/constant.interface';
 
 
@@ -46,7 +46,7 @@ export const K_LINE_PERIOD: KLinePeriod[] = [{
 export const ROBOT_OPERATE_MAP: RobotOperateMap[] = [
     { btnText: ['RESTART', 'RESTARTING'], tip: 'RESTART_ROBOT_CONFIRM' },
     { btnText: ['STOP', 'STOPPING'], tip: 'STOP_ROBOT_CONFIRM' },
-    { btnText: ['kill'], tip: 'KILL_ROBOT_CONFIRM' },
+    { btnText: ['KILL'], tip: 'KILL_ROBOT_CONFIRM' },
 ];
 
 export const VARIABLE_TYPES: VariableTypeDes[] = [{
@@ -85,6 +85,48 @@ export const VARIABLE_NAME_REGEXPS: RegExp[] = [
     /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([a-zA-Z_$][0-9a-zA-Z_$]*)([=!><]=|>|<)([0-9]*)$/,
     /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([!]*[a-zA-Z_$][0-9a-zA-Z_$]*)$/
 ];
+
+export const COINS = {
+    '-1': '',
+    '0': 'HUOBI',
+    '1': 'OKCoin',
+    '2': 'BTCC',
+    '3': 'YUNBI',
+    '4': 'CHBTC',
+    '5': 'BTCTRADE',
+    '6': 'BTC100',
+    '7': 'Binance',
+    '8': '796_FUTURES',
+    '9': 'HaoBTC',
+    '10': 'BTER',
+    '11': 'BITVC',
+    '12': 'OKCOIN',
+    '13': 'EXCHANGE',
+    '14': 'ViaBTC',
+    '15': 'Jubi',
+    '16': 'BotVS',
+    '17': 'BTC38',
+    '20': 'BTC-E',
+    '21': 'Bitstamp',
+    '22': 'Bitfinex',
+    '23': 'OKCOINEN',
+    '24': 'Bithumb',
+    '25': 'Korbit',
+    '26': 'CoinPlus',
+    '27': 'Poloniex',
+    '28': 'Kraken',
+    '30': 'ZTrade',
+    '31': 'Quoine',
+    '32': 'Coincheck',
+    '33': 'Zaif',
+    '34': 'BitMEX',
+    '35': 'OKEX',
+    '36': 'Bittrex',
+    '100': 'CTP',
+    '101': 'LTS'
+};
+
+export const PAGE_SIZE_SELECT_VALUES = [20, 50, 100, 500];
 
 export function getArgSelectItem(id: number): VariableTypeDes {
     if (id > 5 || id < 0) {
@@ -146,6 +188,12 @@ export class ConstantService {
     ENCRYPT_PREFIX = ENCRYPT_PREFIX;
 
     VARIABLE_NAME_REGEXPS = VARIABLE_NAME_REGEXPS;
+
+    COINS = COINS;
+
+    LOG_TYPES = LogTypes;
+
+    PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
     constructor() { }
 

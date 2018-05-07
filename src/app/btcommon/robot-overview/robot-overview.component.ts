@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { RobotDetail } from '../../interfaces/response.interface';
 import { WatchDogService } from './../../shared/providers/watch-dog.service';
+import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 
 interface RobotStatusBtn {
@@ -53,6 +54,7 @@ export class RobotOverviewComponent extends BusinessComponent {
 
     constructor(
         private robotService: RobotService,
+        private robotOperate: RobotOperateService,
         public eleRef: ElementRef,
         public render: Renderer2,
         private watchDogService: WatchDogService,
@@ -67,22 +69,22 @@ export class RobotOverviewComponent extends BusinessComponent {
     }
 
     launch() {
-        this.subscription$$ = this.robotService.launchRestartRobot(this.restart$)
-            .add(this.robotService.launchStopRobot(this.stop$))
+        this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
+            .add(this.robotOperate.launchStopRobot(this.stop$))
             .add(this.watchDogService.launchSetRobotWatchDog(this.watchDot$))
-            .add(this.robotService.handleRobotRestartError())
-            .add(this.robotService.handleRobotStopError())
+            .add(this.robotOperate.handleRobotRestartError())
+            .add(this.robotOperate.handleRobotStopError())
             .add(this.watchDogService.handleSetWatchDogError());
     }
 
     initialModel() {
         this.robot = this.robotService.getRobotDetail();
 
-        this.isLoading = this.robotService.isLoading();
+        this.isLoading = this.robotOperate.isLoading();
 
-        this.operateBtnText = this.robotService.getOperateBtnText();
+        this.operateBtnText = this.robotOperate.getOperateBtnText();
 
-        this.statusTip = this.robotService.getRobotStatusTip();
+        this.statusTip = this.robotOperate.getRobotStatusTip();
     }
 
     ngOnDestroy() {

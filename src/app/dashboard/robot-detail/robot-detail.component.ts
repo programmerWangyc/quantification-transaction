@@ -43,42 +43,17 @@ export class RobotDetailComponent extends BusinessComponent {
     }
 
     launch() {
-        const id = this.activatedRoute.paramMap.map(param => ({ id: +param.get('id') }));
-
-        const logsParam = this.activatedRoute.paramMap.map(param => {
-            const result = {
-                robotId: +param.get('id'),
-                // table Log
-                logMinId: 0,
-                logMaxId: 0,
-                logOffset: 0,
-                logLimit: 20,
-                // table Profit
-                profitMinId: 0,
-                profitMaxId: 0,
-                profitOffset: 0,
-                profitLimit: 1000,
-                // table Chart
-                chartMinId: 0,
-                chartMaxId: 0,
-                chartOffset: 0,
-                chartLimit: 1000,
-                chartUpdateBaseId: 0,
-                chartUpdateTime: 0,
-            };
-            return result;
-        })
+        const id = this.activatedRoute.paramMap.map(param => +param.get('id'));
 
         const isMainAccount = this.publicService.isSubAccount().filter(sure => !sure);
 
-        this.subscription$$ = this.robotService.launchRobotDetail(id)
-            .add(this.robotService.launchSubscribeRobot(id))
-            .add(this.robotService.launchRobotLogs(logsParam))
+        this.subscription$$ = this.robotService.launchRobotDetail(id.map(id => ({ id })))
+            .add(this.robotService.monitorServerSendRobotStatus())
+            .add(this.robotService.launchSubscribeRobot(id.map(id => ({ id }))))
             .add(this.btNodeService.launchGetNodeList(isMainAccount.mergeMapTo(id.mapTo(true))))
             .add(this.platformService.launchGetPlatformList(isMainAccount.mergeMapTo(id.mapTo(true))))
             .add(this.robotService.handleRobotDetailError())
             .add(this.robotService.handleSubscribeRobotError())
-            .add(this.robotService.handleRobotLogsError())
             .add(this.btNodeService.handleNodeListError())
             .add(this.platformService.handlePlatformListError())
     }
