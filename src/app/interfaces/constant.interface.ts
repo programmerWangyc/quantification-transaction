@@ -55,12 +55,12 @@ export enum LogTypes {
 }
 
 export enum ServerSendRobotEventType {
-    UPDATE_STATUS = 1 << 0,
-    UPDATE_PROFIT = 1 << 1,
-    UPDATE_SUMMARY = 1 << 2,
-    UPDATE_PUSH = 1 << 3,
-    UPDATE_REFRESH = 1 << 4,
-    UPDATE_DEBUG = 1 << 5
+    UPDATE_STATUS = 1 << 0, // 状态栏
+    UPDATE_PROFIT = 1 << 1, // 
+    UPDATE_SUMMARY = 1 << 2, // 
+    UPDATE_PUSH = 1 << 3, // none used
+    UPDATE_REFRESH = 1 << 4, // 日志
+    UPDATE_DEBUG = 1 << 5 //
 }
 
 /** ==========================================================Front end custom data structure======================================== **/

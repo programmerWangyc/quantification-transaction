@@ -119,7 +119,7 @@
 
             <td nz-td>
                 <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">
-                    {{data.price | logPrice: data.logType | translate}}
+                    {{data.price | logPrice: data.logType}}
                 </span>
             </td>
 

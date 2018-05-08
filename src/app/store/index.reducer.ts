@@ -108,6 +108,7 @@ export const selectSubscribeRobotResponse = createSelector(getRobotState, robot.
 
 // robot logs
 export const selectRobotLogsResponse = createSelector(getRobotState, robot.getRobotLogsRes);
+export const selectSyncRobotLogsResponse = createSelector(getRobotState, robot.getSyncLogsResponse);
 
 // operate loading state
 export const selectRobotOperationLoadingState = createSelector(getRobotState, robot.getLoadingState);

@@ -47,6 +47,7 @@ interface RequestParams {
     robotDetail: GetRobotDetailRequest;
     subscribeRobot: SubscribeRobotRequest;
     robotLogs: GetRobotLogsRequest;
+    isSyncLogs: boolean;
     restartRobot: RestartRobotRequest;
     stopRobot: StopRobotRequest;
     modifyRobot: ModifyRobotRequest;
@@ -88,6 +89,7 @@ export interface State {
     }
     uiState: UIState;
     serverMessage: ServerSendRobotMessage;
+    syncRobotLogsRes: GetRobotLogsResponse;
 }
 
 const getRobotLogsDefaultParams = {
@@ -136,6 +138,7 @@ const initialState: State = {
         currentPage: 0,
     },
     serverMessage: null,
+    syncRobotLogsRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -226,13 +229,18 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // robot logs
         case actions.GET_ROBOT_LOGS: {
-            const requestParams = { ...state.requestParams, robotLogs: action.payload };
+            const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: action.isSyncAction || false };
 
             return { ...state, isLoading: true, requestParams };
         }
 
-        case actions.GET_ROBOT_LOGS_FAIL:
-            return { ...state, isLoading: false, robotLogsRes: action.payload };
+        case actions.GET_ROBOT_LOGS_FAIL: {
+            if(state.requestParams.isSyncLogs) {
+                return { ...state, isLoading: false, syncRobotLogsRes: action.payload}
+            }else {
+                return { ...state, isLoading: false, robotLogsRes: action.payload };
+            }
+        }
 
         case actions.GET_ROBOT_LOGS_SUCCESS: {
             const result = pickUpLogs(action.payload.result.logs);
@@ -245,12 +253,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const latestInfo: LatestRobotInfo = { flags: NaN, id: state.requestParams.robotLogs.robotId, status, wd, node_id };
 
-            const robotDetailRes = updateRobotDetailRes(state.robotDetailRes, keyNames, latestInfo)
+            const robotDetailRes = updateRobotDetailRes(state.robotDetailRes, keyNames, latestInfo);
 
-            const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo)
+            const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            return { ...state, isLoading: false, robotLogsRes: action.payload, robotDetailRes, robotList };
-
+            if(state.requestParams.isSyncLogs) {
+                return { ...state, isLoading: false, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
+            }else {
+                return { ...state, isLoading: false, robotLogsRes: action.payload, robotDetailRes, robotList };
+            }
         }
 
         // restart robot
@@ -607,3 +618,5 @@ export const getMonitoringSound = (state: State) => state.monitoringSound;
 export const getUIState = (state: State) => state.uiState;
 
 export const getServerSendMessage = (state: State) => state.serverMessage;
+
+export const getSyncLogsResponse = (state: State) => state.syncRobotLogsRes;

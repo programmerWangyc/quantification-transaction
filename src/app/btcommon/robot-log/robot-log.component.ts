@@ -105,7 +105,7 @@ export class RobotLogComponent extends BusinessComponent {
             )
             .startWith([]);
 
-        this.logTotal = this.robotLog.getRobotLogs().map(log => log.runningLog.Total);
+        this.logTotal = this.robotLog.getLogsTotal();
 
         this.pageSize = this.robotLog.getRobotLogDefaultParams().map(params => params.logLimit).startWith(20);
 
@@ -119,8 +119,9 @@ export class RobotLogComponent extends BusinessComponent {
 
         this.subscription$$ = this.robotLog.launchRobotLogs(id.map(robotId => ({ robotId })), this.allowSeparateRequest)
             .add(this.robotLog.launchRobotLogs(id.combineLatest(this.robotLog.getLogOffset(), (robotId, logOffset) => ({ robotId, logOffset })).skip(1)))
-            .add(this.robotLog.launchGetLogsRegularly())
+            .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
+            .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()) )
             .add(this.robotLog.handleRobotLogsError())
     }
 

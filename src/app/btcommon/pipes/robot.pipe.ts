@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { Pipe, PipeTransform } from '@angular/core';
 import { isString, last, zip } from 'lodash';
 
@@ -126,13 +127,26 @@ export class DirectionTypePipe implements PipeTransform {
     name: 'logPrice'
 })
 export class LogPricePipe implements PipeTransform {
-    constructor(private constantService: ConstantService) { }
+    constructor(
+        private constantService: ConstantService,
+        private translate: TranslateService,
+    ) { }
 
     transform(price: number, logType: number): string | number {
         const types = [this.constantService.LOG_TYPES.BUY, this.constantService.LOG_TYPES.SALE, this.constantService.LOG_TYPES.PROFIT];
 
         if (types.indexOf(logType) !== -1) {
-            return logType !== this.constantService.LOG_TYPES.PROFIT && price === -1 ? 'MARKET_ORDER' : price;
+
+            if (logType !== this.constantService.LOG_TYPES.PROFIT && price === -1) {
+
+                let result = null;
+
+                this.translate.get('MARKET_ORDER').subscribe(label => result = label);
+
+                return result;
+            } else {
+                return price;
+            }
         } else {
             return '-';
         }

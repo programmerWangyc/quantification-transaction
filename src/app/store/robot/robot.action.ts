@@ -252,7 +252,7 @@ export const GET_ROBOT_LOGS = 'GET_ROBOT_LOGS';
 export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS;
 
-    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean) { super() }
+    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean, public isSyncAction = false) { super() }
 }
 
 export const GET_ROBOT_LOGS_FAIL = 'GET_ROBOT_LOGS_FAIL';
@@ -554,5 +554,5 @@ export const ResponseActions = {
     ModifyRobotFailAction,
     ModifyRobotSuccessAction,
     CommandRobotFailAction,
-    CommandRobotSuccessAction
+    CommandRobotSuccessAction,
 }

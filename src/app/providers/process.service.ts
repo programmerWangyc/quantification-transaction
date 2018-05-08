@@ -86,8 +86,8 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new SubscribeRobotRequestAction(params)));
     }
 
-    processRobotLogs(params: Observable<Request.GetRobotLogsRequest>, allSeparateRequest: boolean): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params, allSeparateRequest)));
+    processRobotLogs(params: Observable<Request.GetRobotLogsRequest>, allSeparateRequest: boolean, isSyncAction): Subscription {
+        return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params, allSeparateRequest, isSyncAction)));
     }
 
     processRestartRobot(params: Observable<Request.RestartRobotRequest>): Subscription {

@@ -86,6 +86,10 @@ export class RobotService {
             .map(res => res.result.robot);
     }
 
+    getCurrentRobotId(): Observable<number> {
+        return this.getRobotDetail().map(robot => robot.id);
+    }
+
     getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
         return this.getRobotDetail()
             .map(detail => {

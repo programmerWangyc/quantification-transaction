@@ -67,7 +67,7 @@ export class RobotOperateService {
     launchRestartRobot(data: Observable<fromRes.RobotDetail>): Subscription {
         const params = this.canChangePlatform()
             .filter(sure => sure)
-            .mergeMapTo(this.getRobotOperateConfirm(data).filter(sure => sure).mergeMapTo(this.isPublicNode()))
+            .switchMapTo(this.getRobotOperateConfirm(data).filter(sure => sure).mergeMapTo(this.isPublicNode()))
             .switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : Observable.of(true))
             .zip(data, (condition, data) => condition && data)
             .filter(value => !!value)
