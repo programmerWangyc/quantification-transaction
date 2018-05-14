@@ -1,0 +1,17 @@
+<nz-card>
+    <ng-template #title>{{'PROFIT_CURVE' | translate}}</ng-template>
+    <ng-template #extra>
+        <a (click)="toggleFold()">
+            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+        </a>
+    </ng-template>
+    <ng-template #body>
+        <chart
+            type="StockChart"
+            [options]="options | async"
+            (load)="initialChart($event.context)"
+            class="chart"
+        ></chart>
+        <p>{{statistics | async}}</p>
+    </ng-template>
+</nz-card>

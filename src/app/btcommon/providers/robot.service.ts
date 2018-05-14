@@ -141,14 +141,18 @@ export class RobotService {
 
     monitorServerSendRobotStatus(): Subscription {
         const param = this.getServerSendRobotMessage()
-            .filter(data => data.status && this.isNormalStatus(data.status))
+            .filter(data => data.status && this.isOverStatus(data.status))
             .switchMap(data => this.getRobotDetail().map(({ id }) => ({ id })).filter(({ id }) => id === data.id));
 
         return this.launchRobotDetail(param);
     }
 
-    isNormalStatus(status: number): boolean {
+    isOverStatus(status: number): boolean {
         return includes([RobotStatus.COMPLETE, RobotStatus.STOPPED, RobotStatus.ERROR], status);
+    }
+
+    isNormalStatus(status: number): boolean {
+        return includes([RobotStatus.QUEUEING, RobotStatus.RUNNING, RobotStatus.STOPPING], status);
     }
 
     private getSummary(source: string): any {

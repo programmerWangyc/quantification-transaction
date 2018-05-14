@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ChartModule } from 'angular2-highcharts';
 
 import { SharedModule } from './../shared/shared.module';
 import { ToolModule } from './../tool/tool.module';
@@ -14,7 +15,9 @@ import { RobotCommandComponent } from './robot-command/robot-command.component';
 import { RobotConfigComponent } from './robot-config/robot-config.component';
 import { RobotLogComponent } from './robot-log/robot-log.component';
 import { RobotOverviewComponent } from './robot-overview/robot-overview.component';
+import { RobotProfitChartComponent } from './robot-profit-chart/robot-profit-chart.component';
 import { RobotStatusComponent } from './robot-status/robot-status.component';
+import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strategy-chart.component';
 import { RobotComponent } from './robot/robot.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
 import { TrusteeComponent } from './trustee/trustee.component';
@@ -25,6 +28,9 @@ import { TrusteeComponent } from './trustee/trustee.component';
         SharedModule,
         ToolModule,
         RouterModule,
+        ChartModule.forRoot(
+            require('highcharts/highstock')
+        ),
     ],
     declarations: [
         TrusteeComponent,
@@ -36,8 +42,10 @@ import { TrusteeComponent } from './trustee/trustee.component';
         RobotLogComponent,
         RobotArgComponent,
         RobotCommandComponent,
-        PIPES,
         RobotStatusComponent,
+        RobotStrategyChartComponent,
+        RobotProfitChartComponent,
+        PIPES,
     ],
 
     entryComponents: [
@@ -58,7 +66,12 @@ import { TrusteeComponent } from './trustee/trustee.component';
         RobotLogComponent,
         RobotCommandComponent,
         RobotStatusComponent,
+        RobotStrategyChartComponent,
+        RobotProfitChartComponent,
         PIPES,
+    ],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
     ]
 })
 export class BtCommonModule { }

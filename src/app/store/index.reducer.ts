@@ -134,6 +134,8 @@ export const selectCommandRobotResponse = createSelector(getRobotState, robot.ge
 // default params
 export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
 export const selectRobotDefaultLogParams =createSelector(selectRobotDefaultParams, state => state.robotLogs);
+export const selectRobotProfitMaxPoint =createSelector(selectRobotDefaultParams, state => state.PROFIT_MAX_POINTS);
+export const selectRobotStrategyMaxPoint = createSelector(selectRobotDefaultParams, state => state.STRATEGY_MAX_POINTS);
 
 // monitoring message type
 export const selectRobotLogMonitoringSound = createSelector(getRobotState, robot.getMonitoringSound);

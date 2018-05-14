@@ -228,6 +228,13 @@ export interface RobotDetailResponse {
 export interface GetRobotDetailResponse extends ResponseUnit<RobotDetailResponse> { }
 
 // robot logs
+export interface LogOverview {
+    Total: number;
+    Max: number;
+    Min: number;
+    Arr: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
+}
+
 export interface RunningLog {
     id: number;
     logType: number;
@@ -241,13 +248,6 @@ export interface RunningLog {
     direction: string;
 }
 
-export interface LogOverview {
-    Total: number;
-    Max: number;
-    Min: number;
-    Arr: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
-}
-
 export interface RunningLogOverview {
     Total: number;
     Max: number;
@@ -255,8 +255,35 @@ export interface RunningLogOverview {
     Arr: RunningLog[];
 }
 
+
+export interface ProfitLog {
+    id: number;
+    time: number;
+    profit: number;
+}
+
+export interface ProfitLogOverview {
+    Total: number;
+    Max: number;
+    Min: number;
+    Arr: ProfitLog[];
+}
+
+export interface StrategyLog { 
+    id: number;
+    seriesIdx: number;
+    data: any;
+}
+
+export interface StrategyLogOverview {
+    Total: number;
+    Max: number;
+    Min: number;
+    Arr: StrategyLog[];
+}
+
 export interface RobotLogs {
-    chart: string;
+    chart: string; // JSON 字符串
     chartTime: number;
     logs: LogOverview[]; // 第一个元素是运行日志？第二个元素是收益日志信息？第三个元素是图表日志？
     node_id: number;
@@ -268,8 +295,8 @@ export interface RobotLogs {
     wd: number;
     // 以下3个字段根据logs字段的值扁平化的结果
     runningLog?: RunningLogOverview// logs[0];
-    profitLog?: LogOverview;// logs[1];
-    chartLog?: LogOverview; // logs[2];
+    profitLog?: ProfitLogOverview;// logs[1];
+    strategyLog?: StrategyLogOverview; // logs[2];
 }
 
 export interface GetRobotLogsResponse extends ResponseUnit<RobotLogs> { }

@@ -121,7 +121,7 @@ export class RobotLogComponent extends BusinessComponent {
             .add(this.robotLog.launchRobotLogs(id.combineLatest(this.robotLog.getLogOffset(), (robotId, logOffset) => ({ robotId, logOffset })).skip(1)))
             .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
-            .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()) )
+            .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()))
             .add(this.robotLog.handleRobotLogsError())
     }
 

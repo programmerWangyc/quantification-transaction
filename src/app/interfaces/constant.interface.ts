@@ -63,6 +63,14 @@ export enum ServerSendRobotEventType {
     UPDATE_DEBUG = 1 << 5 //
 }
 
+export enum StrategyChartSeriesData {
+    X,
+    OPEN,
+    HIGH,
+    LOW,
+    CLOSE
+}
+
 /** ==========================================================Front end custom data structure======================================== **/
 
 export interface RobotOperateMap {
@@ -128,4 +136,24 @@ export interface RobotStatusTable {
     title: string;
     cols: string[];
     rows: any[][];
+}
+
+export interface StrategyChartPoint {
+    id: number;
+    x?: number;
+    y?: number;
+    high?: number;
+    low?: number;
+    open?: number;
+    close?: number;
+    color?: string;
+    shape?: string;
+    text?: string;
+    title?: string;
+    seriesIdx?: number;
+}
+
+export interface StrategyChartData {
+    seriesIdx: number;
+    data: StrategyChartPoint[];
 }

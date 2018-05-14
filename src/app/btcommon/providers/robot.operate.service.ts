@@ -34,7 +34,6 @@ import { ErrorService } from './../../providers/error.service';
 import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
-import { UtilService } from './../../providers/util.service';
 import * as fromRoot from './../../store/index.reducer';
 
 @Injectable()
@@ -51,7 +50,6 @@ export class RobotOperateService {
         private translate: TranslateService,
         private constantService: ConstantService,
         private encryptService: EncryptService,
-        private utilService: UtilService,
     ) {
     }
 
@@ -114,14 +112,8 @@ export class RobotOperateService {
                     this.getRobotDetail().map(robot => robot.id),
                     (command, id) => ({ id, command })
                 )
-                .switchMap(request => this.translate.get('CONFIRM_SEND_COMMAND_TO_ROBOT_TIP')
-                    .mergeMap(message => this.tipService.confirmOperateTip(
-                        ConfirmComponent,
-                        {
-                            message: this.utilService.replaceLabelVariable(message, { cmd: this.constantService.withoutPrefix(request.command, this.constantService.COMMAND_PREFIX) }),
-                            needTranslate: false
-                        }
-                    ))
+                .switchMap(request => this.translate.get('CONFIRM_SEND_COMMAND_TO_ROBOT_TIP', { cmd: this.constantService.withoutPrefix(request.command, this.constantService.COMMAND_PREFIX) })
+                    .mergeMap(message => this.tipService.confirmOperateTip(ConfirmComponent, { message, needTranslate: false }))
                     .filter(confirm => confirm)
                     .mapTo(request)
                 )
@@ -285,6 +277,11 @@ export class RobotOperateService {
             );
     }
 
+    getRobotWatchDogBtnText(): Observable<string> {
+        return this.getRobotDetail()
+            .map(robot => robot.wd === 0 ? 'MONITOR' : 'CANCEL');
+    }
+
     getSelectedNode(): Observable<fromRes.BtNode> {
         return this.btNodeService.getNodeList()
             .zip(this.getRobotDetail(), (nodes, { fixed_id }) => nodes.find(item => item.id === fixed_id))
@@ -343,8 +340,7 @@ export class RobotOperateService {
             .withLatestFrom(this.pubService.isLogin())
             .mergeMap(([bindNode, isLogin]) => {
                 if (!!bindNode && (bindNode.public === 1) && !bindNode.is_owner && isLogin) {
-                    return this.translate.get('ROBOT_RUNNING_ON_PUBLIC_WARING')
-                        .map(label => this.utilService.replaceLabelVariable(label, bindNode));
+                    return this.translate.get('ROBOT_RUNNING_ON_PUBLIC_WARING', bindNode);
                 } else {
                     return Observable.of('');
                 }

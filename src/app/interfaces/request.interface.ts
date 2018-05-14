@@ -83,18 +83,18 @@ export interface GetRobotDetailRequest {
 // robot logs
 export interface GetRobotLogsRequest {
     robotId: number;
-    // table Log
+    // Log
     logMinId: number;
     logMaxId: number;
     // 查询起点位置，和传page其实一样，只不过用这种方式需要前台把这个值计算出来，比如当前limit === 20, 当前页是3，那么查询下一页时这个值就应该是60;
     logOffset: number; 
     logLimit: number; 
-    // table Profit
+    // Profit
     profitMinId: number;
     profitMaxId: number;
     profitOffset: number;
     profitLimit: number;
-    // table Chart
+    // Chart
     chartMinId: number;
     chartMaxId: number;
     chartOffset: number;

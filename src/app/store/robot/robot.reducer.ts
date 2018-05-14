@@ -6,11 +6,14 @@ import {
     CommandRobotResponse,
     LogOverview,
     ModifyRobotResponse,
+    ProfitLogOverview,
     RestartRobotResponse,
     RunningLog,
     RunningLogOverview,
     ServerSendRobotMessage,
     StopRobotResponse,
+    StrategyLog,
+    StrategyLogOverview,
 } from '../../interfaces/response.interface';
 import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
 import {
@@ -29,6 +32,7 @@ import {
 import {
     GetRobotDetailResponse,
     GetRobotLogsResponse,
+    ProfitLog,
     PublicRobotResponse,
     ResponseState,
     RobotListResponse,
@@ -56,6 +60,8 @@ interface RequestParams {
 
 interface DefaultParams {
     robotLogs: GetRobotLogsRequest;
+    PROFIT_MAX_POINTS: number;
+    STRATEGY_MAX_POINTS: number;
 }
 
 interface RobotArgs {
@@ -94,17 +100,17 @@ export interface State {
 
 const getRobotLogsDefaultParams = {
     robotId: NaN,
-    // table Log
+    // Log
     logMinId: 0,
     logMaxId: 0,
     logOffset: 0,
     logLimit: 20,
-    // table Profit
+    // Profit
     profitMinId: 0,
     profitMaxId: 0,
     profitOffset: 0,
     profitLimit: 1000,
-    // table Chart
+    // Chart
     chartMinId: 0,
     chartMaxId: 0,
     chartOffset: 0,
@@ -129,6 +135,8 @@ const initialState: State = {
     commandRobotRes: null,
     defaultParams: {
         robotLogs: getRobotLogsDefaultParams,
+        PROFIT_MAX_POINTS: 1000,
+        STRATEGY_MAX_POINTS: 1000,
     },
     monitoringSound: {
         isMonitorOpen: false,
@@ -235,9 +243,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.GET_ROBOT_LOGS_FAIL: {
-            if(state.requestParams.isSyncLogs) {
-                return { ...state, isLoading: false, syncRobotLogsRes: action.payload}
-            }else {
+            if (state.requestParams.isSyncLogs) {
+                return { ...state, isLoading: false, syncRobotLogsRes: action.payload }
+            } else {
                 return { ...state, isLoading: false, robotLogsRes: action.payload };
             }
         }
@@ -257,9 +265,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            if(state.requestParams.isSyncLogs) {
+            if (state.requestParams.isSyncLogs) {
                 return { ...state, isLoading: false, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
-            }else {
+            } else {
                 return { ...state, isLoading: false, robotLogsRes: action.payload, robotDetailRes, robotList };
             }
         }
@@ -490,8 +498,8 @@ function updateVariableName(arg: VariableOverview): VariableOverview {
 /**
  * @description Extract log information from source data and store them in some custom field.
  */
-function pickUpLogs(source: LogOverview[]): { runningLog: RunningLogOverview, profitLog: LogOverview, chartLog: LogOverview } {
-    const [run, profitLog, chartLog] = source;
+function pickUpLogs(source: LogOverview[]): { runningLog: RunningLogOverview, profitLog: ProfitLogOverview, strategyLog: StrategyLogOverview } {
+    const [run, profit, strategy] = source;
 
     const runningLog: RunningLog[] = run.Arr.map(ary => {
         let [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
@@ -510,7 +518,11 @@ function pickUpLogs(source: LogOverview[]): { runningLog: RunningLogOverview, pr
         };
     });
 
-    return { runningLog: { ...run, Arr: runningLog }, profitLog, chartLog };
+    const profitLog: ProfitLog[] = profit.Arr.map(([id, profit, time]) => ({ id, profit, time } as ProfitLog));
+
+    const strategyLog: StrategyLog[] = strategy.Arr.map(([id, seriesIdx, data]) => ({ id, seriesIdx, data: JSON.parse(<string>data) } as StrategyLog));
+
+    return { runningLog: { ...run, Arr: runningLog }, profitLog: { ...profit, Arr: profitLog }, strategyLog: { ...strategy, Arr: strategyLog } };
 }
 
 /**

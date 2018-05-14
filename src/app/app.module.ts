@@ -21,7 +21,6 @@ import { EFFECTS } from './store/index.effect';
 import { reducers } from './store/index.reducer';
 import { ToolModule } from './tool/tool.module';
 
-
 // Use AoT, so we need a exported factory function for compiler.
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http);

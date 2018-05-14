@@ -84,6 +84,8 @@ export class RobotOverviewComponent extends BusinessComponent {
 
         this.operateBtnText = this.robotOperate.getOperateBtnText();
 
+        this.watchDogBtnText = this.robotOperate.getRobotWatchDogBtnText();
+
         this.statusTip = this.robotOperate.getRobotStatusTip();
     }
 

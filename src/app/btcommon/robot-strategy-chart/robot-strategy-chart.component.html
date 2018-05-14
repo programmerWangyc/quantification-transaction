@@ -1,0 +1,14 @@
+<nz-card>
+    <ng-template #title>{{'STRATEGY_CHART' | translate}}</ng-template>
+    <ng-template #extra>
+        <a (click)="toggleFold()">
+            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+        </a>
+    </ng-template>
+    <ng-template #body>
+        <div *ngFor="let option of options | async">
+            <chart [type]="option.__isStock === false ? 'Chart' : 'StockChart'" [options]="option" (load)="initialChart($event.context)" class="chart"></chart>
+        </div>
+        <p>{{statistics | async}}</p>
+    </ng-template>
+</nz-card>
