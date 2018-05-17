@@ -105,7 +105,7 @@ export interface GetRobotLogsRequest {
 
 // subscribe robot
 export interface SubscribeRobotRequest {
-    id: number;
+    id: number; // 0的时候取消订阅；
 }
 
 // restart robot

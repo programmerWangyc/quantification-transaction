@@ -1,7 +1,10 @@
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/bufferCount';
+import 'rxjs/add/operator/bufferCount';
 import 'rxjs/add/operator/delayWhen';
+import 'rxjs/add/operator/distinct';
+import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/distinctUntilKeyChanged';
 import 'rxjs/add/operator/first';
@@ -14,17 +17,12 @@ import 'rxjs/add/operator/withLatestFrom';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { includes, isArray, isNumber, isObject, omit, take } from 'lodash';
+import { assignWith, compact, includes, isArray, last, omit, take, uniqBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import {
-    ServerSendRobotEventType,
-    StrategyChartData,
-    StrategyChartPoint,
-    StrategyChartSeriesData,
-} from '../../interfaces/constant.interface';
+import { ChartUpdateIndicator, ServerSendRobotEventType } from '../../interfaces/constant.interface';
 import { ChangeLogPageAction, MonitorSoundTypeAction, ToggleMonitorSoundAction } from '../../store/robot/robot.action';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
@@ -70,7 +68,6 @@ export class RobotLogService {
 
     /**
      * @description Get logs when the server notifies log updates.
-     * TODO: 还有chart的参数要改
      */
     launchSyncLogsWhenServerRefreshed(): Subscription {
         // 获取一套新的日志请求参数。
@@ -78,7 +75,8 @@ export class RobotLogService {
             .zip(
                 this.robotService.getCurrentRobotId(),
                 this.getProfitParamsForSyncLogs(),
-                (logMinId, robotId, profitParam) => ({ robotId, logMinId, ...profitParam, chartLimit: 0 })
+                this.getStrategyParamsForSyncLogs(),
+                (logMinId, robotId, profitParam, strategyParam) => ({ robotId, logMinId, ...profitParam, ...strategyParam })
             );
 
         // 收到服务器更新通知---> 确保当前状态可以发送请求---->跳转到参数流上获取参数
@@ -95,7 +93,6 @@ export class RobotLogService {
 
     /* =======================================================Date Acquisition======================================================= */
 
-    // regular logs
     private getRobotLogsResponse(): Observable<fromRes.GetRobotLogsResponse> {
         return this.store.select(fromRoot.selectRobotLogsResponse)
             .filter(res => !!res)
@@ -110,6 +107,18 @@ export class RobotLogService {
             .map(res => res.result);
     }
 
+    getSyncRobotLogs(): Observable<fromRes.RobotLogs> {
+        return this.getSyncRobotLogsResponse()
+            .filter(v => !!v)
+            .map(res => res.result);
+    }
+
+    getRobotLogDefaultParams(): Observable<fromReq.GetRobotLogsRequest> {
+        return this.store.select(fromRoot.selectRobotDefaultLogParams);
+    }
+
+    /* =======================================================Running log ====================================================== */
+
     /**
      * @description The log information retrieved here is the semantic version of the original log.
      */
@@ -123,69 +132,6 @@ export class RobotLogService {
             );
     }
 
-    getSemanticsRobotProfitLogs(): Observable<fromRes.ProfitLog[]> {
-        return this.getRobotLogs()
-            .map(res => res.profitLog.Arr);
-    }
-
-    getSemanticsRobotStrategyLogs(): Observable<StrategyChartData[]> {
-        return this.getRobotLogs()
-            .mergeMap(res => Observable.from(res.strategyLog.Arr)
-                .groupBy(item => item.seriesIdx)
-                .mergeMap(obs => obs.map(item => this.restoreStrategyChartData(item)).reduce((acc, cur) => {
-                    if (isNaN(acc.seriesIdx)) return { seriesIdx: cur.seriesIdx, data: [cur] };
-
-                    acc.data.push(cur);
-
-                    return acc;
-                }, { seriesIdx: NaN, data: [] }))
-                .map(({ seriesIdx, data }) => ({ seriesIdx, data: data.reverse().map(item => omit(item, 'seriesIdx')) }))
-                .reduce((acc, cur) => [...acc, cur], [])
-            );
-    }
-
-    getStrategyChartOptions(): Observable<Highcharts.Options[]> {
-        return this.getRobotLogs()
-            .map(res => {
-                const data = JSON.parse(res.chart.replace(/useHTML/gi, '__disableHTML'));
-
-                return isArray(data) ? data : [data] as Highcharts.Options[];
-            })
-            .withLatestFrom(
-                this.getSemanticsRobotStrategyLogs(),
-                (options, logs) => this.chartService.getRobotStrategyLogsOptions(options, logs)
-            );
-    }
-
-    restoreStrategyChartData(log: fromRes.StrategyLog): StrategyChartPoint {
-        const data = log.data;
-
-        let result = { id: log.id, seriesIdx: log.seriesIdx };
-
-        if (isObject(data) && !isArray(data)) return { ...result, ...data };
-
-        if (isNumber(data)) return { ...result, y: data };
-
-        const info = { x: data[0] };
-
-        if (data.length < 5) {
-            return { ...result, ...info, y: data[1] }
-        } else {
-            return {
-                ...result,
-                ...info,
-                open: data[StrategyChartSeriesData.OPEN],
-                close: data[StrategyChartSeriesData.CLOSE],
-                high: data[StrategyChartSeriesData.HIGH],
-                low: data[StrategyChartSeriesData.LOW]
-            };
-        }
-    }
-
-    hasProfitLogs(): Observable<boolean> {
-        return this.getSemanticsRobotProfitLogs().map(res => !!res.length);
-    }
-
     /**
      * 1、自动获取的不一定比手动获取的更新，如手动获取发生在自动获取之后恰好日志又有更新时。
      * 2、只有通过比较手动获取和自动获取的Max值，其中较大者才一定是客户端所知道的最新的ID。
@@ -197,21 +143,6 @@ export class RobotLogService {
                 (manual, automatic) => automatic ? Math.max(manual.Max, automatic.Max) : manual.Max
             )
             .distinctUntilChanged();
-    }
-
-    getProfitParamsForSyncLogs(): Observable<{ profitMinId: number, profitLimit: number }> {
-        return this.getRobotLogs().map(res => res.profitLog)
-            .combineLatest(
-                this.getSyncRobotLogsResponse().map(res => res && res.result.profitLog),
-                (manual, automatic) => automatic ? Math.max(manual.Max, automatic.Max) : manual.Max
-            )
-            .distinctUntilChanged()
-            .withLatestFrom(this.getProfitMaxPoint(), (profitMinId, profitLimit) => ({ profitMinId, profitLimit }));
-    }
-
-    getProfitChartOptions(): Observable<Highstock.Options> {
-        return this.getSemanticsRobotProfitLogs()
-            .map(data => this.chartService.getRobotProfitLogsOptions(data.map(item => [item.time, item.profit]).reverse() as [number, number][]))
     }
 
     needPlayTipAudio(): Observable<boolean> {
@@ -232,30 +163,6 @@ export class RobotLogService {
             .combineLatest(this.getRobotLogDefaultParams().map(param => param.logLimit), (total, page) => ({ total, page: Math.ceil(total / page) }))
             .switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page }))
             .distinctUntilChanged();
-    }
-
-    isAlreadyRefreshed(): Observable<boolean> {
-        return this.getRobotLogs()
-            .map(log => log.updateTime > 0)
-    }
-
-    // default params
-    getRobotLogDefaultParams(): Observable<fromReq.GetRobotLogsRequest> {
-        return this.store.select(fromRoot.selectRobotDefaultLogParams);
-    }
-
-    getProfitMaxPoint(): Observable<number> {
-        return this.store.select(fromRoot.selectRobotProfitMaxPoint);
-    }
-
-    getStrategyMaxPoint(): Observable<number> {
-        return this.store.select(fromRoot.selectRobotStrategyMaxPoint);
-    }
-
-    getStrategyUpdateTime(): Observable<string> {
-        return this.getRobotLogsResponse()
-            .merge(this.getSyncRobotLogsResponse().filter(v => !!v))
-            .map(res => moment(res.result.chartTime).format('YYYY-MM-DD HH:mm:ss'));
     }
 
     // monitoring message
@@ -290,13 +197,46 @@ export class RobotLogService {
             );
     }
 
+    /* =======================================================Profit log ====================================================== */
+
+    getSemanticsRobotProfitLogs(): Observable<fromRes.ProfitLog[]> {
+        return this.getRobotLogs()
+            .map(res => res.profitLog.Arr);
+    }
+
+    hasProfitLogs(): Observable<boolean> {
+        return this.getSemanticsRobotProfitLogs().map(res => !!res.length);
+    }
+
+    getProfitParamsForSyncLogs(): Observable<{ profitMinId: number, profitLimit: number }> {
+        return this.getRobotLogs()
+            .map(res => res.profitLog)
+            .combineLatest(
+                this.getSyncRobotLogsResponse().map(res => res && res.result.profitLog),
+                (manual, automatic) => automatic ? Math.max(manual.Max, automatic.Max) : manual.Max
+            )
+            .distinctUntilChanged()
+            // TODO:limit没有控制， 原代码的逻辑当前不是第一页时把它重置成0， strategy也一样。
+            .withLatestFrom(this.getProfitMaxPoint(), (profitMinId, profitLimit) => ({ profitMinId, profitLimit }));
+    }
+
+    getProfitChartOptions(): Observable<Highstock.Options> {
+        return this.getSemanticsRobotProfitLogs()
+            .map(data => this.chartService.getRobotProfitLogsOptions(data.map(item => [item.time, item.profit]).reverse() as [number, number][]))
+    }
+
+    getProfitMaxPoint(): Observable<number> {
+        return this.store.select(fromRoot.selectRobotProfitMaxPoint);
+    }
+
+    //TODO: start line
     addStartPlotLine(chart: Observable<Highstock.ChartObject>): Subscription {
         return this.robotService.getRobotDetail()
             .map(robot => robot.start_time)
             .distinctUntilChanged()
             .withLatestFrom(chart)
             .subscribe(([startTime, chart]) => {
-                console.log(startTime, chart)
+
                 const id = 'plot-line-1';
 
                 const xAxisHead = chart.xAxis[0];
@@ -309,7 +249,7 @@ export class RobotLogService {
                     dashStyle: 'hot',
                     value: moment(startTime).unix() * 1000,
                     id
-                })
+                });
             });
     }
 
@@ -333,13 +273,143 @@ export class RobotLogService {
             .merge(this.getSyncRobotLogsResponse().filter(v => !!v).map(res => res.result.profitLog.Total));
     }
 
+    getProfitChartStatistics(): Observable<string> {
+        return this.getProfitChartTotal()
+            .withLatestFrom(this.getProfitMaxPoint())
+            .mergeMap(([total, limit]) => this.translate.get('PAGINATION_STATISTICS', { total, page: Math.ceil(total / limit) }));
+    }
+
+    /* =======================================================Strategy log ====================================================== */
+
+    //FIXME: unused
+    private getSemanticsRobotStrategyLogs(): Observable<fromRes.StrategyLog[]> {
+        return this.getStrategyChartOptionSourceData()
+            .map(res => res.strategyLog.Arr);
+    }
+
+    private getStrategyChartOptionSourceData(): Observable<fromRes.RobotLogs> {
+        return this.getRobotLogs()
+            .combineLatest(
+                this.getSyncRobotLogsResponse(),
+                (manual, automatic) => !manual.chart && !!automatic && automatic.result.chart ? automatic.result : manual
+            )
+            .distinct()
+            .filter(log => !!log.chart);
+    }
+
+    getStrategyChartOptions(): Observable<Highcharts.Options[]> {
+        return this.getStrategyChartOptionSourceData()
+            .mergeMap(res => {
+                const data = JSON.parse(res.chart.replace(/useHTML/gi, '__disableHTML'));
+
+                const options = Observable.of(isArray(data) ? data : [data] as Highcharts.Options[]);
+
+                const logs = Observable.from(res.strategyLog.Arr)
+                    .groupBy(item => item.seriesIdx)
+                    .mergeMap(obs => obs.map(item => this.chartService.restoreStrategyChartData(item)).reduce((acc, cur) => isNaN(acc.seriesIdx)
+                        ? { seriesIdx: cur.seriesIdx, data: [cur] } : { ...acc, data: [...acc.data, cur] }, { seriesIdx: NaN, data: [] }))
+                    .map(({ seriesIdx, data }) => ({ seriesIdx, data: data.reverse().map(item => omit(item, 'seriesIdx')) }))
+                    .reduce((acc, cur) => [...acc, cur], []);
+
+                return options.zip(logs);
+            })
+            .map(([options, logs]) => this.chartService.getRobotStrategyLogsOptions(options, logs))
+    }
+
+    hasStrategyChart(): Observable<boolean> {
+        return this.getStrategyChartOptionSourceData().mapTo(true).startWith(false);
+    }
+
+    getStrategyMaxPoint(): Observable<number> {
+        return this.store.select(fromRoot.selectRobotStrategyMaxPoint);
+    }
+
+    getStrategyUpdateTime(): Observable<string> {
+        return this.getRobotLogs()
+            .merge(this.getSyncRobotLogs().filter(res => !!res.chartTime))
+            .map(res => moment(res.chartTime).format('YYYY-MM-DD HH:mm:ss'));
+    }
+
     getStrategyChartTotal(): Observable<number> {
         return this.getRobotLogs()
-            .map(res => res.strategyLog.Total)
-            .merge(this.getSyncRobotLogsResponse().filter(v => !!v).map(res => res.result.strategyLog.Total));
+            .merge(this.getSyncRobotLogs().filter(res => !!res.strategyLog.Total))
+            .map(res => res.strategyLog.Total);
+    }
+
+    getStrategyChartStatistics(): Observable<string> {
+        return this.getStrategyChartTotal()
+            .withLatestFrom(this.getStrategyMaxPoint(), this.getStrategyUpdateTime())
+            .mergeMap(([total, limit, time]) => this.translate.get('PAGINATION_STATISTICS_WITH_UPDATE_TIME', { total, page: Math.ceil(total / limit), time }))
+    }
+
+    getStrategyParamsForSyncLogs(): Observable<{ chartMinId: number; chartLimit: number; chartUpdateBaseId: number; chartUpdateTime: number }> {
+        const getParam = (source: fromRes.RobotLogs) => {
+            const strategy = source.strategyLog;
+
+            const lastPoint = last(strategy.Arr);
+
+            return { chartMinId: strategy.Max, chartUpdateBaseId: lastPoint ? lastPoint.id : 0, chartUpdateTime: source.chartTime };
+        }
+
+        return this.getRobotLogs()
+            .combineLatest(
+                this.getSyncRobotLogsResponse(),
+                (manual, automatic) => automatic ? assignWith(getParam(manual), getParam(automatic.result), (manual, auto) => Math.max(manual, auto))
+                    : getParam(manual)
+            )
+            .distinct()
+            .withLatestFrom(this.getStrategyMaxPoint(), (source, chartLimit) => ({ ...source, chartLimit }));
+    }
+
+    updateStrategyCharts(charts: Observable<Highcharts.ChartObject[]>): Subscription {
+        const flatten = (acc: ChartUpdateIndicator[], cur: ChartUpdateIndicator[]) => [...acc, ...cur];
+
+        const getChartIndex = (data: ChartUpdateIndicator) => data.chartIndex;
+
+        return this.updateStrategyChartLabel(charts)
+            .zip(this.updateStrategyChartPoints(charts), this.updateStrategyChartSeries(charts))
+            .filter(result => result.some(item => !!item))
+            .mergeMap(result => Observable.from(compact(result).reduce(flatten))
+                .groupBy(item => item.chartIndex)
+                .mergeMap(obs => obs.filter(item => item.updated).reduce((acc, cur) => [...acc, cur], []))
+                .reduce(flatten)
+            )
+            .withLatestFrom(charts)
+            .subscribe(([result, charts]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => charts[idx].redraw()));
+    }
+
+    private updateStrategyChartLabel(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
+        return this.getSyncRobotLogs()
+            .withLatestFrom(this.getRobotLogs(), charts)
+            .map(([automatic, manual, charts]) => this.chartService.updateRobotStrategyChartLabel(charts, automatic, manual));
+    }
+
+    private updateStrategyChartPoints(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
+        return this.getDbMinId()
+            .withLatestFrom(charts)
+            .map(([ids, charts]) => this.chartService.updateRobotStrategyChartPoints(charts, ids));
+    }
+
+    private updateStrategyChartSeries(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
+        return this.getSyncRobotLogs()
+            .map(res => res.strategyLog.Arr)
+            .withLatestFrom(this.getStrategyMaxPoint(), charts)
+            .map(([logs, maxPoint, charts]) => this.chartService.updateRobotStrategyChartSeries(charts, logs, maxPoint))
+    }
+
+    private getDbMinId(): Observable<number[]> {
+        return this.getRobotLogs()
+            .merge(this.getSyncRobotLogs())
+            .map(res => res.strategyLog.Min)
+            .bufferCount(2, 1);
     }
 
     /* =======================================================Short cart method================================================== */
+
+    //TODO: unused
+    isAlreadyRefreshed(): Observable<boolean> {
+        return this.getRobotLogs().map(log => log.updateTime > 0);
+    }
 
     /**
      * @description Predicate whether the robot status need to refresh log automatically.
@@ -367,7 +437,7 @@ export class RobotLogService {
     private needSyncLogs(): Observable<boolean> {
         return this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_REFRESH)
             // .merge(this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_SUMMARY))
-            .mapTo(true);
+            .withLatestFrom(this.robotService.getRobotDetail(), (msg, robot) => msg.id === robot.id);
     }
 
     /**
@@ -377,7 +447,7 @@ export class RobotLogService {
      * @description Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
      */
     private isFresh(headLog: fromRes.RunningLog, compareLog: fromRes.RunningLog): boolean {
-        return headLog.date < compareLog.date;
+        return headLog ? headLog.date < compareLog.date : true;
     }
 
     /**
@@ -394,6 +464,7 @@ export class RobotLogService {
             return take(result, logs.length);
         }
     }
+
     /* =======================================================Local state modify================================================== */
 
     modifyDefaultParam(size: number, path: string[]): void {

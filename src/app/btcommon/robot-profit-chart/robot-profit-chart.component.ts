@@ -23,6 +23,8 @@ export class RobotProfitChartComponent extends BusinessComponent {
 
     chart: Highstock.ChartObject;
 
+    isShow: Observable<boolean>;
+
     constructor(
         public eleRef: ElementRef,
         public render: Renderer2,
@@ -39,9 +41,9 @@ export class RobotProfitChartComponent extends BusinessComponent {
     initialModel() {
         this.options = this.robotLog.getProfitChartOptions();
 
-        this.statistics = this.robotLog.getProfitChartTotal()
-            .withLatestFrom(this.robotLog.getProfitMaxPoint())
-            .mergeMap(([total, limit]) => this.translate.get('PAGINATION_STATISTICS', { total, page: Math.ceil(total / limit) }))
+        this.statistics = this.robotLog.getProfitChartStatistics();
+
+        this.isShow = this.robotLog.hasProfitLogs();
     }
 
     launch() {
@@ -61,6 +63,6 @@ export class RobotProfitChartComponent extends BusinessComponent {
     }
 
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.subscription$$ && this.subscription$$.unsubscribe();
     }
 }

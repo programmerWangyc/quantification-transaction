@@ -2,6 +2,7 @@ import 'rxjs/add/operator/mergeMapTo';
 
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { RobotService } from '../../btcommon/providers/robot.service';
@@ -49,7 +50,7 @@ export class RobotDetailComponent extends BusinessComponent {
 
         this.subscription$$ = this.robotService.launchRobotDetail(id.map(id => ({ id })))
             .add(this.robotService.monitorServerSendRobotStatus())
-            .add(this.robotService.launchSubscribeRobot(id.map(id => ({ id }))))
+            .add(this.robotService.launchSubscribeRobot(id.map(id => ({ id })), false))
             .add(this.btNodeService.launchGetNodeList(isMainAccount.mergeMapTo(id.mapTo(true))))
             .add(this.platformService.launchGetPlatformList(isMainAccount.mergeMapTo(id.mapTo(true))))
             .add(this.robotService.handleRobotDetailError())
@@ -59,6 +60,9 @@ export class RobotDetailComponent extends BusinessComponent {
     }
 
     ngOnDestroy() {
+        this.robotService.launchSubscribeRobot(Observable.of({ id: 0 }));
+
         this.subscription$$.unsubscribe();
+
     }
 }

@@ -12,6 +12,7 @@ import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as robotActions from './robot.action';
 import { ModifyRobotFailAction, CommandRobotSuccessAction, CommandRobotFailAction, ReceiveServerSendRobotEventAction } from './robot.action';
+import { Action } from '@ngrx/store';
 
 @Injectable()
 export class RobotEffect extends BaseEffect {
@@ -24,15 +25,12 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL)
-            .zip(
-                this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT),
-                this.actions$.ofType(robotActions.GET_ROBOT_LOGS),
-                this.actions$.ofType(btNodeActions.GET_NODE_LIST),
-                this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
-            ),
+        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).zip(...this.getOtherObs()),
         { ...robotActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
+
+    @Effect()
+    subscribeRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SUBSCRIBE_ROBOT, robotActions.ResponseActions);
 
     @Effect()
     robotLog$: Observable<ResponseAction> = this.getResponseAction(robotActions.GET_ROBOT_LOGS, robotActions.ResponseActions);
@@ -65,6 +63,15 @@ export class RobotEffect extends BaseEffect {
         public tip: TipService,
     ) {
         super(ws, actions$);
+    }
+
+    getOtherObs(): Observable<Action>[] {
+        return [
+            this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT).filter((action: robotActions.SubscribeRobotRequestAction) => action.payload.id !== 0),
+            this.actions$.ofType(robotActions.GET_ROBOT_LOGS).filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest),
+            this.actions$.ofType(btNodeActions.GET_NODE_LIST),
+            this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
+        ]
     }
 }
 

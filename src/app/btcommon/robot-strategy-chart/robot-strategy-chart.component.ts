@@ -1,6 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
@@ -23,6 +24,12 @@ export class RobotStrategyChartComponent extends BusinessComponent {
 
     statistics: Observable<string>;
 
+    chart$: Subject<Highcharts.ChartObject> = new Subject();
+
+    charts: Observable<Highcharts.ChartObject[]>;
+
+    isShow: Observable<boolean>;
+
     constructor(
         public eleRef: ElementRef,
         public render: Renderer2,
@@ -35,24 +42,25 @@ export class RobotStrategyChartComponent extends BusinessComponent {
     ngOnInit() {
         this.initialModel();
 
+        this.launch();
     }
 
     initialModel() {
         this.options = this.robotLog.getStrategyChartOptions();
 
-        this.statistics = this.robotLog.getStrategyChartTotal()
-            .withLatestFrom(this.robotLog.getStrategyMaxPoint(), this.robotLog.getStrategyUpdateTime())
-            .mergeMap(([total, limit, time]) => this.translate.get('PAGINATION_STATISTICS_WITH_UPDATE_TIME', { total, page: Math.ceil(total / limit), time }))
+        this.statistics = this.robotLog.getStrategyChartStatistics();
+
+        this.isShow = this.robotLog.hasStrategyChart();
+
+        this.charts = this.chart$.scan((acc, cur) => [...acc, cur], [])
+            .withLatestFrom(this.options.map(options => options.length).take(1))
+            .filter(([charts, length]) => charts.length === length)
+            .map(([charts, _]) => charts);
+
     }
 
     launch() {
-
-    }
-
-    initialChart(chart: Highcharts.ChartObject) {
-        this.chart = chart;
-
-        this.launch();
+        this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts);
     }
 
     toggleFold() {
@@ -62,6 +70,8 @@ export class RobotStrategyChartComponent extends BusinessComponent {
     }
 
     ngOnDestroy() {
+        this.charts.subscribe(charts => charts.forEach(item => item.destroy()));
+        
         this.subscription$$.unsubscribe();
     }
 

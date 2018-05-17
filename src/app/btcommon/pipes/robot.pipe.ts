@@ -1,5 +1,5 @@
-import { TranslateService } from '@ngx-translate/core';
 import { Pipe, PipeTransform } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { isString, last, zip } from 'lodash';
 
 import { RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
@@ -220,5 +220,24 @@ export class ExtraBcgColorPickerPipe implements PipeTransform {
         const info = getColorInfo(source);
 
         return info.length > 7 ? `#${info.slice(7)}` : 'inherit'
+    }
+}
+
+@Pipe({
+    name: 'strategyChartTitle'
+})
+export class StrategyChartTitlePipe implements PipeTransform {
+    constructor(private translate: TranslateService) { }
+
+    transform(source: Highcharts.Options, index: number): string {
+        if (!!source.title && !!source.title.text) {
+            return source.title.text;
+        } else {
+            let str = '';
+
+            this.translate.get('STRATEGY_DEFAULT_TITLE', { index }).subscribe(label => str = label);
+
+            return str;
+        }
     }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isArray } from 'lodash';
 
 @Injectable()
 export class UtilService {
@@ -17,5 +18,9 @@ export class UtilService {
         }
 
         return label;
+    }
+
+    toArray<T>(value: T): T[] {
+        return isArray(value) ? value : [value];
     }
 }

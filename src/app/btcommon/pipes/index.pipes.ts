@@ -13,6 +13,7 @@ import {
     RobotPublicStatusPipe,
     RobotStatusPipe,
     ShowExtraIconPipe,
+    StrategyChartTitlePipe,
     VariableToSelectListPipe,
     VariableTypePipe,
 } from './robot.pipe';
@@ -34,4 +35,5 @@ export const PIPES = [
     ShowExtraIconPipe,
     ExtraBcgColorPickerPipe,
     ExtraColorPickerPipe,
+    StrategyChartTitlePipe
 ]

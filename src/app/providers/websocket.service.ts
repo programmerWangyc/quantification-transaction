@@ -84,7 +84,7 @@ export class WebsocketService {
             // .do(msg => console.log('Websocket get message: ', JSON.parse(msg)))
             .filter(response => response !== 'P')
             .map(response => JSON.parse(response) as ResponseBody)
-            .retryWhen(errors => errors.do(_ => this.tip.showTip('网络错误')).delay(2000))
+            .retryWhen(errors => errors.do(_ => this.tip.showTip('网络错误')).delay(5000))
             .share();
 
         this.connectionStatus = connectionStatus;
@@ -99,7 +99,7 @@ export class WebsocketService {
          * to keep at least one observer on this stream, the observer is the publicEffect observer provided by ngrx library. If no one plays this role, please
          * de-comment the code blow.
          */
-        // this.msgSubscription = this.messages.subscribe(() => {});
+        this.msgSubscription = this.messages.subscribe(() => {});
     }
 
     deflate(source: Object): ArrayBuffer {

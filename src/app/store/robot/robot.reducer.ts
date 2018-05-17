@@ -48,9 +48,9 @@ interface LatestRobotInfo extends ServerSendRobotMessage {
 
 interface RequestParams {
     publicRobot: PublicRobotRequest;
-    robotDetail: GetRobotDetailRequest;
-    subscribeRobot: SubscribeRobotRequest;
-    robotLogs: GetRobotLogsRequest;
+    robotDetail: GetRobotDetailRequest; //
+    subscribeRobot: SubscribeRobotRequest; //
+    robotLogs: GetRobotLogsRequest; // 
     isSyncLogs: boolean;
     restartRobot: RestartRobotRequest;
     stopRobot: StopRobotRequest;
@@ -98,7 +98,7 @@ export interface State {
     syncRobotLogsRes: GetRobotLogsResponse;
 }
 
-const getRobotLogsDefaultParams = {
+const robotLogsDefaultParams = {
     robotId: NaN,
     // Log
     logMinId: 0,
@@ -119,6 +119,12 @@ const getRobotLogsDefaultParams = {
     chartUpdateTime: 0,
 }
 
+const initialDefaultParams: DefaultParams = {
+    robotLogs: { ...robotLogsDefaultParams },
+    PROFIT_MAX_POINTS: 1000,
+    STRATEGY_MAX_POINTS: 1000,
+}
+
 const initialState: State = {
     robotListResState: null,
     robotList: null,
@@ -133,11 +139,7 @@ const initialState: State = {
     robotArgs: null,
     modifyRobotConfigRes: null,
     commandRobotRes: null,
-    defaultParams: {
-        robotLogs: getRobotLogsDefaultParams,
-        PROFIT_MAX_POINTS: 1000,
-        STRATEGY_MAX_POINTS: 1000,
-    },
+    defaultParams: initialDefaultParams,
     monitoringSound: {
         isMonitorOpen: false,
         logTypes: []
@@ -348,8 +350,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         // state clear
-        case actions.RESET_ROBOT_DETAIL:
-            return { ...state, robotDetailRes: null, restartRobotRes: null };
+        case actions.RESET_ROBOT_DETAIL: {
+            return { ...state, robotDetailRes: null, defaultParams: initialDefaultParams, syncRobotLogsRes: null, robotLogsRes: null, subscribeDetailRes: null, };
+        }
 
         // default params;
         case actions.MODIFY_DEFAULT_PARAMS:

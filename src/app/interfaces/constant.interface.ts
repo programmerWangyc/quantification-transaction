@@ -139,7 +139,7 @@ export interface RobotStatusTable {
 }
 
 export interface StrategyChartPoint {
-    id: number;
+    id: string;
     x?: number;
     y?: number;
     high?: number;
@@ -156,4 +156,10 @@ export interface StrategyChartPoint {
 export interface StrategyChartData {
     seriesIdx: number;
     data: StrategyChartPoint[];
+}
+
+export interface ChartUpdateIndicator {
+    updated: boolean;
+    chartIndex: number;
+    feedback: string;
 }

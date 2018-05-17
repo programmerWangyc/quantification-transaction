@@ -1,4 +1,4 @@
-<nz-card>
+<nz-card *ngIf="isShow | async">
     <ng-template #title>{{'STRATEGY_CHART' | translate}}</ng-template>
     <ng-template #extra>
         <a (click)="toggleFold()">
@@ -6,8 +6,26 @@
         </a>
     </ng-template>
     <ng-template #body>
-        <div *ngFor="let option of options | async">
-            <chart [type]="option.__isStock === false ? 'Chart' : 'StockChart'" [options]="option" (load)="initialChart($event.context)" class="chart"></chart>
+        <!-- FIXME: nz-tab 有BUG -->
+        <!-- <nz-tabset>
+            <nz-tab *ngFor="let option of options | async index as idx">
+                <ng-template #nzTabHeading>{{option | strategyChartTitle: idx}}</ng-template>
+                <chart
+                    [type]="option.__isStock === false ? 'Chart' : 'StockChart'"
+                    [options]="option"
+                    (load)="chart$.next($event.context)"
+                    class="chart"
+                ></chart>
+            </nz-tab>
+        </nz-tabset> -->
+        <div *ngFor="let option of options | async index as idx">
+            <head>{{option | strategyChartTitle: idx}}</head>
+            <chart
+                [type]="option.__isStock === false ? 'Chart' : 'StockChart'"
+                [options]="option"
+                (load)="chart$.next($event.context)"
+                class="chart"
+            ></chart>
         </div>
         <p>{{statistics | async}}</p>
     </ng-template>

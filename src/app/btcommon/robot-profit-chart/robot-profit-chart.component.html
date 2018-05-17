@@ -1,4 +1,4 @@
-<nz-card>
+<nz-card *ngIf="isShow | async">
     <ng-template #title>{{'PROFIT_CURVE' | translate}}</ng-template>
     <ng-template #extra>
         <a (click)="toggleFold()">

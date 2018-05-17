@@ -315,5 +315,6 @@
 
     "PROFIT_CURVE": "收益曲线",
     "ACCUMULATED_EARNINGS": "累计收益",
-    "STRATEGY_CHART": "策略图表"
+    "STRATEGY_CHART": "策略图表",
+    "STRATEGY_DEFAULT_TITLE": "图表-{{index}}"
 }

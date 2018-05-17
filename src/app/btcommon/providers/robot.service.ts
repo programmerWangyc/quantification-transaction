@@ -43,8 +43,8 @@ export class RobotService {
         return this.process.processRobotDetail(data);
     }
 
-    launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>): Subscription {
-        return this.process.processSubscribeRobot(data);
+    launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>, allowSeparateRequest = true): Subscription {
+        return this.process.processSubscribeRobot(data, allowSeparateRequest);
     }
 
     /* =======================================================Date Acquisition======================================================= */

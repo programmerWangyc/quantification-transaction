@@ -92,6 +92,8 @@ export class BaseEffect {
             result.params = result.params.concat(source[i].params);
         }
 
+        console.log(result);
+
         return result;
     }
 }

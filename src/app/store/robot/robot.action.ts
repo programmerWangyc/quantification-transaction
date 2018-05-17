@@ -193,9 +193,9 @@ export const SUBSCRIBE_ROBOT = 'SUBSCRIBE_ROBOT';
 export class SubscribeRobotRequestAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT;
 
-    allowSeparateRequest = true;
+    // allowSeparateRequest = true;
 
-    constructor(public payload: SubscribeRobotRequest) { super() }
+    constructor(public payload: SubscribeRobotRequest, public allowSeparateRequest: boolean) { super() }
 }
 
 export const SUBSCRIBE_ROBOT_FAIL = 'SUBSCRIBE_ROBOT_FAIL';

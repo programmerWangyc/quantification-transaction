@@ -78,6 +78,8 @@ export class RobotLogComponent extends BusinessComponent {
 
     currentPage = 1;
 
+    sync$$: Subscription;
+
     constructor(
         private robotService: RobotService,
         private activatedRoute: ActivatedRoute,
@@ -119,10 +121,13 @@ export class RobotLogComponent extends BusinessComponent {
 
         this.subscription$$ = this.robotLog.launchRobotLogs(id.map(robotId => ({ robotId })), this.allowSeparateRequest)
             .add(this.robotLog.launchRobotLogs(id.combineLatest(this.robotLog.getLogOffset(), (robotId, logOffset) => ({ robotId, logOffset })).skip(1)))
-            .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
+            // .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
             .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()))
             .add(this.robotLog.handleRobotLogsError())
+
+        // FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
+        this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
     }
 
     onPageSizeChange(size: number): void {
@@ -156,6 +161,8 @@ export class RobotLogComponent extends BusinessComponent {
 
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
+
+        this.sync$$.unsubscribe();
     }
 
 }
