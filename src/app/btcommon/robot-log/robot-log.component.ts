@@ -71,9 +71,9 @@ export class RobotLogComponent extends BusinessComponent {
 
     isLoading: Observable<boolean>;
 
-    isSoundOpen = false
+    isSoundOpen = false;
 
-    //FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功
+    // FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功;
     monitoringSoundTypes: string[] = [...soundTypes];
 
     currentPage = 1;

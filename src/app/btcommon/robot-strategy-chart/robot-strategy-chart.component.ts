@@ -12,7 +12,7 @@ import { SemanticsLog } from './../../interfaces/constant.interface';
 @Component({
     selector: 'app-robot-strategy-chart',
     templateUrl: './robot-strategy-chart.component.html',
-    styleUrls: ['./robot-strategy-chart.component.scss']
+    styleUrls: ['./robot-strategy-chart.component.scss'],
 })
 export class RobotStrategyChartComponent extends BusinessComponent {
 
@@ -82,11 +82,11 @@ export class RobotStrategyChartComponent extends BusinessComponent {
                             chartMinId: 0,
                             chartMaxId: 0,
                             chartUpdateBaseId: 0,
-                            chartUpdateTime: 0
+                            chartUpdateTime: 0,
                         })
                     )
                     .skip(1))
-            )
+            );
     }
 
     toggleFold() {

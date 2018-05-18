@@ -7,17 +7,17 @@
     </ng-template>
     <ng-template #body>
         <!-- FIXME: nz-tab 有BUG -->
-        <!-- <nz-tabset>
+        <nz-tabset>
             <nz-tab *ngFor="let option of options | async index as idx">
                 <ng-template #nzTabHeading>{{option | strategyChartTitle: idx}}</ng-template>
-                <chart
+                <!-- <chart
                     [type]="option.__isStock === false ? 'Chart' : 'StockChart'"
                     [options]="option"
                     (load)="chart$.next($event.context)"
                     class="chart"
-                ></chart>
+                ></chart> -->
             </nz-tab>
-        </nz-tabset> -->
+        </nz-tabset>
         <div *ngFor="let option of options | async index as idx">
             <head>{{option | strategyChartTitle: idx}}</head>
             <chart
