@@ -9,9 +9,22 @@
         <chart
             type="StockChart"
             [options]="options | async"
-            (load)="initialChart($event.context)"
+            (load)="chart$.next($event.context)"
             class="chart"
         ></chart>
-        <p>{{statistics | async}}</p>
+
+        <div
+            fxLayoutAlign="space-between center"
+            class="pagination"
+        >
+            <div>{{statistics | async}}</div>
+            <nz-pagination
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="changePage(currentPage)"
+                [nzTotal]="logTotal | async"
+                [nzPageSize]="pageSize | async"
+                nzShowQuickJumper
+            ></nz-pagination>
+        </div>
     </ng-template>
 </nz-card>

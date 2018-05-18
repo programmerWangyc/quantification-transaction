@@ -142,10 +142,16 @@ export const selectRobotLogMonitoringSound = createSelector(getRobotState, robot
 
 // ui state
 export const selectRobotUiState = createSelector(getRobotState, robot.getUIState);
-export const selectRobotLogCurrentPage = createSelector(selectRobotUiState, state => state.currentPage);
+export const selectRobotRunningLogCurrentPage = createSelector(selectRobotUiState, state => state.currentRunningLogPage);
+export const selectRobotProfitChartCurrentPage = createSelector(selectRobotUiState, state => state.currentProfitChartPage);
+export const selectRobotStrategyChartCurrentPage = createSelector(selectRobotUiState, state => state.currentStrategyChartPage);
 
 // server send robot message
 export const selectServerSendRobotMessage = createSelector(getRobotState, robot.getServerSendMessage);
+
+// request parameter
+export const selectRobotRequestParameters = createSelector(getRobotState, robot.getRequestParameter);
+export const selectRobotLogRequestParameters = createSelector(selectRobotRequestParameters, state => state.robotLogs);
 
 /** ===================================================Node=================================================== */
 

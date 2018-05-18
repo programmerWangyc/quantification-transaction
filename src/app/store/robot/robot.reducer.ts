@@ -6,14 +6,12 @@ import {
     CommandRobotResponse,
     LogOverview,
     ModifyRobotResponse,
-    ProfitLogOverview,
     RestartRobotResponse,
     RunningLog,
-    RunningLogOverview,
+    SemanticsLogsOverview,
     ServerSendRobotMessage,
     StopRobotResponse,
     StrategyLog,
-    StrategyLogOverview,
 } from '../../interfaces/response.interface';
 import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
 import {
@@ -71,7 +69,9 @@ interface RobotArgs {
 }
 
 interface UIState {
-    currentPage: number;
+    currentRunningLogPage: number;
+    currentProfitChartPage: number;
+    currentStrategyChartPage: number;
 }
 
 export interface State {
@@ -145,7 +145,9 @@ const initialState: State = {
         logTypes: []
     },
     uiState: {
-        currentPage: 0,
+        currentRunningLogPage: 0,
+        currentProfitChartPage: 0,
+        currentStrategyChartPage: 0,
     },
     serverMessage: null,
     syncRobotLogsRes: null,
@@ -351,7 +353,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // state clear
         case actions.RESET_ROBOT_DETAIL: {
-            return { ...state, robotDetailRes: null, defaultParams: initialDefaultParams, syncRobotLogsRes: null, robotLogsRes: null, subscribeDetailRes: null, };
+            const requestParams = {
+                ...state.requestParams,
+                robotLogs: null,
+            };
+
+            return { ...state, robotDetailRes: null, defaultParams: initialDefaultParams, syncRobotLogsRes: null, robotLogsRes: null, subscribeDetailRes: null, requestParams };
         }
 
         // default params;
@@ -367,7 +374,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // ui state
         case actions.CHANGE_LOG_PAGE:
-            return { ...state, uiState: { ...state.uiState, currentPage: action.payload } };
+            return { ...state, uiState: { ...state.uiState, currentRunningLogPage: action.payload } };
+
+        case actions.CHANGE_PROFIT_CHART_PAGE:
+            return { ...state, uiState: { ...state.uiState, currentProfitChartPage: action.payload } };
+
+        case actions.CHANGE_STRATEGY_CHART_PAGE:
+            return { ...state, uiState: { ...state.uiState, currentStrategyChartPage: action.payload } };
 
         /** ==============================================Server send message===================================================== **/
 
@@ -501,7 +514,7 @@ function updateVariableName(arg: VariableOverview): VariableOverview {
 /**
  * @description Extract log information from source data and store them in some custom field.
  */
-function pickUpLogs(source: LogOverview[]): { runningLog: RunningLogOverview, profitLog: ProfitLogOverview, strategyLog: StrategyLogOverview } {
+function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
     const [run, profit, strategy] = source;
 
     const runningLog: RunningLog[] = run.Arr.map(ary => {
@@ -525,7 +538,11 @@ function pickUpLogs(source: LogOverview[]): { runningLog: RunningLogOverview, pr
 
     const strategyLog: StrategyLog[] = strategy.Arr.map(([id, seriesIdx, data]) => ({ id, seriesIdx, data: JSON.parse(<string>data) } as StrategyLog));
 
-    return { runningLog: { ...run, Arr: runningLog }, profitLog: { ...profit, Arr: profitLog }, strategyLog: { ...strategy, Arr: strategyLog } };
+    return {
+        runningLog: { ...run, Arr: runningLog },
+        profitLog: { ...profit, Arr: profitLog },
+        strategyLog: { ...strategy, Arr: strategyLog }
+    }; 
 }
 
 /**
@@ -635,3 +652,5 @@ export const getUIState = (state: State) => state.uiState;
 export const getServerSendMessage = (state: State) => state.serverMessage;
 
 export const getSyncLogsResponse = (state: State) => state.syncRobotLogsRes;
+
+export const getRequestParameter = (state: State) => state.requestParams;

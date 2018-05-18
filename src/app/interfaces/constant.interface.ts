@@ -71,6 +71,12 @@ export enum StrategyChartSeriesData {
     CLOSE
 }
 
+export enum SemanticsLog {
+    runningLog = 'runningLog',
+    profitLog = 'profitLog',
+    strategyLog = 'strategyLog'
+}
+
 /** ==========================================================Front end custom data structure======================================== **/
 
 export interface RobotOperateMap {

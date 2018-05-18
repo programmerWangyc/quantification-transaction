@@ -282,6 +282,12 @@ export interface StrategyLogOverview {
     Arr: StrategyLog[];
 }
 
+export interface SemanticsLogsOverview {
+    runningLog: RunningLogOverview;
+    profitLog: ProfitLogOverview;
+    strategyLog: StrategyLogOverview;
+}
+
 export interface RobotLogs {
     chart: string; // JSON 字符串
     chartTime: number;

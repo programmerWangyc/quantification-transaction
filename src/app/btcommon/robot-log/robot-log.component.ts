@@ -8,7 +8,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
-import { LogTypes } from '../../interfaces/constant.interface';
+import { LogTypes, SemanticsLog } from '../../interfaces/constant.interface';
 import { RunningLog } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from './../../providers/constant.service';
 import { TipService } from './../../providers/tip.service';
@@ -107,7 +107,7 @@ export class RobotLogComponent extends BusinessComponent {
             )
             .startWith([]);
 
-        this.logTotal = this.robotLog.getLogsTotal();
+        this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.runningLog);
 
         this.pageSize = this.robotLog.getRobotLogDefaultParams().map(params => params.logLimit).startWith(20);
 

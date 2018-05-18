@@ -27,6 +27,18 @@
                 class="chart"
             ></chart>
         </div>
-        <p>{{statistics | async}}</p>
+        <div
+            fxLayoutAlign="space-between center"
+            class="pagination"
+        >
+            <div>{{statistics | async}}</div>
+            <nz-pagination
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="changePage(currentPage)"
+                [nzTotal]="logTotal | async"
+                [nzPageSize]="pageSize | async"
+                nzShowQuickJumper
+            ></nz-pagination>
+        </div>
     </ng-template>
 </nz-card>

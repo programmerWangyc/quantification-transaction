@@ -1,9 +1,12 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
+import { SemanticsLog } from '../../interfaces/constant.interface';
 import { RobotLogService } from './../providers/robot.log.service';
 
 @Component({
@@ -21,21 +24,30 @@ export class RobotProfitChartComponent extends BusinessComponent {
 
     statistics: Observable<string>;
 
-    chart: Highstock.ChartObject;
+    chart$: Subject<Highstock.ChartObject> = new Subject();
 
     isShow: Observable<boolean>;
+
+    currentPage = 1;
+
+    logTotal: Observable<number>;
+
+    pageSize: Observable<number>;
 
     constructor(
         public eleRef: ElementRef,
         public render: Renderer2,
         private robotLog: RobotLogService,
         private translate: TranslateService,
+        private route: ActivatedRoute,
     ) {
         super(render, eleRef);
     }
 
     ngOnInit() {
         this.initialModel();
+
+        this.launch();
     }
 
     initialModel() {
@@ -44,22 +56,27 @@ export class RobotProfitChartComponent extends BusinessComponent {
         this.statistics = this.robotLog.getProfitChartStatistics();
 
         this.isShow = this.robotLog.hasProfitLogs();
+
+        this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.profitLog);
+
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().map(item => item.profitLimit);
     }
 
     launch() {
-        this.subscription$$ = this.robotLog.addProfitPoints(this.chart);
-    }
+        const id = this.route.paramMap.map(param => +param.get('id'));
 
-    initialChart(chart: Highstock.ChartObject) {
-        this.chart = chart;
-
-        this.launch();
+        this.subscription$$ = this.robotLog.addProfitPoints(this.chart$)
+            .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset().withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })).skip(1)));
     }
 
     toggleFold() {
         this.isFold = !this.isFold;
 
         this.toggle(this.isFold);
+    }
+
+    changePage(page) {
+        this.robotLog.changeProfitChartPage(page);
     }
 
     ngOnDestroy() {

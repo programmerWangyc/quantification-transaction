@@ -22,8 +22,14 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ChartUpdateIndicator, ServerSendRobotEventType } from '../../interfaces/constant.interface';
-import { ChangeLogPageAction, MonitorSoundTypeAction, ToggleMonitorSoundAction } from '../../store/robot/robot.action';
+import { ChartUpdateIndicator, SemanticsLog, ServerSendRobotEventType } from '../../interfaces/constant.interface';
+import {
+    ChangeLogPageAction,
+    ChangeProfitChartPageAction,
+    ChangeStrategyChartPageAction,
+    MonitorSoundTypeAction,
+    ToggleMonitorSoundAction,
+} from '../../store/robot/robot.action';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
 import { ChartService } from './../../providers/chart.service';
@@ -52,7 +58,8 @@ export class RobotLogService {
         return this.process.processRobotLogs(
             data.withLatestFrom(
                 this.store.select(fromRoot.selectRobotDefaultLogParams),
-                (newParams, defaultParams) => ({ ...defaultParams, ...newParams })
+                this.store.select(fromRoot.selectRobotLogRequestParameters).map(req => req || {}),
+                (newParams, defaultParams, perviousParams) => ({ ...defaultParams, ...perviousParams, ...newParams })
             ),
             allowSeparateRequest,
             isSyncAction
@@ -117,6 +124,15 @@ export class RobotLogService {
         return this.store.select(fromRoot.selectRobotDefaultLogParams);
     }
 
+    getLogsTotal(key: string): Observable<number> {
+        return this.getRobotLogs()
+            .map(res => res[key].Total)
+            .combineLatest(
+                this.getSyncRobotLogsResponse().filter(v => !!v).map(res => res.result[key].Total).startWith(0),
+                (t1, t2) => Math.max(t1, t2)
+            );
+    }
+
     /* =======================================================Running log ====================================================== */
 
     /**
@@ -127,7 +143,7 @@ export class RobotLogService {
             .map(res => res.runningLog.Arr)
             .combineLatest(
                 this.getSyncRobotLogsResponse().map(res => res ? res.result.runningLog.Arr : []).scan((acc, cur) => [...cur, ...acc], []),
-                this.getCurrentPage().map(page => page === 0),
+                this.store.select(fromRoot.selectRobotRunningLogCurrentPage).map(this.isFirstPage),
                 (logs, newLogs, isFirstPage) => newLogs.length && isFirstPage ? this.updateLogs(logs, newLogs) : logs
             );
     }
@@ -159,7 +175,7 @@ export class RobotLogService {
      * @description Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
      */
     getRobotLogPaginationStatistics(): Observable<string> {
-        return this.getLogsTotal()
+        return this.getLogsTotal(SemanticsLog.runningLog)
             .combineLatest(this.getRobotLogDefaultParams().map(param => param.logLimit), (total, page) => ({ total, page: Math.ceil(total / page) }))
             .switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page }))
             .distinctUntilChanged();
@@ -180,21 +196,8 @@ export class RobotLogService {
      * @description Request parameter of getRobotLogs, corresponding to 'logOffset' field.
      */
     getLogOffset(): Observable<number> {
-        return this.getCurrentPage()
+        return this.store.select(fromRoot.selectRobotRunningLogCurrentPage)
             .combineLatest(this.getRobotLogDefaultParams(), (page, { logLimit }) => page * logLimit);
-    }
-
-    getCurrentPage(): Observable<number> {
-        return this.store.select(fromRoot.selectRobotLogCurrentPage);
-    }
-
-    getLogsTotal(): Observable<number> {
-        return this.getRobotLogs()
-            .map(res => res.runningLog.Total)
-            .combineLatest(
-                this.getSyncRobotLogsResponse().filter(v => !!v).map(res => res.result.runningLog.Total).startWith(0),
-                (t1, t2) => Math.max(t1, t2)
-            );
     }
 
     /* =======================================================Profit log ====================================================== */
@@ -253,12 +256,13 @@ export class RobotLogService {
             });
     }
 
-    addProfitPoints(chart: Highstock.ChartObject): Subscription {
+    addProfitPoints(chart: Observable<Highstock.ChartObject>): Subscription {
         return this.getSyncRobotLogsResponse()
             .filter(res => !!res && !!res.result.profitLog.Arr.length)
             .map(res => res.result.profitLog.Arr)
-            .withLatestFrom(this.getProfitMaxPoint())
-            .subscribe(([points, maxPoints]) => {
+            .withLatestFrom(this.getProfitMaxPoint(), chart, this.canAddProfitPoint())
+            .filter(([points, maxPoints, chart, can]) => can)
+            .subscribe(([points, maxPoints, chart]) => {
                 const needShift = points.length + chart.series[0].data.length > maxPoints
 
                 points.forEach(item => chart.series[0].addPoint([item.time, item.profit], false, needShift));
@@ -277,6 +281,15 @@ export class RobotLogService {
         return this.getProfitChartTotal()
             .withLatestFrom(this.getProfitMaxPoint())
             .mergeMap(([total, limit]) => this.translate.get('PAGINATION_STATISTICS', { total, page: Math.ceil(total / limit) }));
+    }
+
+    private canAddProfitPoint(): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotProfitChartCurrentPage).map(this.isFirstPage);
+    }
+
+    getProfitOffset(): Observable<number> {
+        return this.store.select(fromRoot.selectRobotProfitChartCurrentPage)
+            .combineLatest(this.getRobotLogDefaultParams(), (page, { profitLimit }) => page * profitLimit);
     }
 
     /* =======================================================Strategy log ====================================================== */
@@ -313,7 +326,7 @@ export class RobotLogService {
 
                 return options.zip(logs);
             })
-            .map(([options, logs]) => this.chartService.getRobotStrategyLogsOptions(options, logs))
+            .map(([options, logs]) => this.chartService.getRobotStrategyLogsOptions(options, logs));
     }
 
     hasStrategyChart(): Observable<boolean> {
@@ -362,7 +375,7 @@ export class RobotLogService {
     }
 
     updateStrategyCharts(charts: Observable<Highcharts.ChartObject[]>): Subscription {
-        const flatten = (acc: ChartUpdateIndicator[], cur: ChartUpdateIndicator[]) => [...acc, ...cur];
+        const flatten = <T>(acc: T[], cur: T[]) => [...acc, ...cur];
 
         const getChartIndex = (data: ChartUpdateIndicator) => data.chartIndex;
 
@@ -374,7 +387,8 @@ export class RobotLogService {
                 .mergeMap(obs => obs.filter(item => item.updated).reduce((acc, cur) => [...acc, cur], []))
                 .reduce(flatten)
             )
-            .withLatestFrom(charts)
+            .withLatestFrom(charts, this.canUpdateStrategyChart())
+            .filter(([result, charts, can]) => can)
             .subscribe(([result, charts]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => charts[idx].redraw()));
     }
 
@@ -404,6 +418,14 @@ export class RobotLogService {
             .bufferCount(2, 1);
     }
 
+    private canUpdateStrategyChart(): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotStrategyChartCurrentPage).map(this.isFirstPage);
+    }
+
+    getStrategyOffset(): Observable<number> {
+        return this.store.select(fromRoot.selectRobotStrategyChartCurrentPage)
+            .combineLatest(this.getRobotLogDefaultParams(), (page, { chartLimit }) => page * chartLimit);
+    }
     /* =======================================================Short cart method================================================== */
 
     //TODO: unused
@@ -423,7 +445,7 @@ export class RobotLogService {
      * @description Predicate whether the log can be synchronized.
      */
     private canSyncLogs(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotLogCurrentPage)
+        return this.store.select(fromRoot.selectRobotRunningLogCurrentPage)
             .map(page => page === 0)
             .combineLatest(
                 this.isInValidStatusToSyncLogs(),
@@ -465,6 +487,10 @@ export class RobotLogService {
         }
     }
 
+    private isFirstPage(page): boolean {
+        return page === 0;
+    }
+
     /* =======================================================Local state modify================================================== */
 
     modifyDefaultParam(size: number, path: string[]): void {
@@ -482,6 +508,14 @@ export class RobotLogService {
     changeLogPage(page: number): void {
         // page index start from 0, but nz-zorro pagination start from 1, so need to decrease 1.
         this.store.dispatch(new ChangeLogPageAction(page - 1));
+    }
+
+    changeProfitChartPage(page: number): void {
+        this.store.dispatch(new ChangeProfitChartPageAction(page - 1));
+    }
+
+    changeStrategyChartPage(page: number): void {
+        this.store.dispatch(new ChangeStrategyChartPageAction(page - 1));
     }
 
     /* =======================================================Error Handle======================================================= */

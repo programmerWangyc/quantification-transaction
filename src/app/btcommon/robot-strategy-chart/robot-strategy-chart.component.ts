@@ -1,4 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -6,6 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { RobotLogService } from '../providers/robot.log.service';
+import { SemanticsLog } from './../../interfaces/constant.interface';
 
 @Component({
     selector: 'app-robot-strategy-chart',
@@ -30,11 +32,18 @@ export class RobotStrategyChartComponent extends BusinessComponent {
 
     isShow: Observable<boolean>;
 
+    currentPage = 1;
+
+    logTotal: Observable<number>;
+
+    pageSize: Observable<number>;
+
     constructor(
         public eleRef: ElementRef,
         public render: Renderer2,
         private robotLog: RobotLogService,
         private translate: TranslateService,
+        private route: ActivatedRoute,
     ) {
         super(render, eleRef);
     }
@@ -52,15 +61,32 @@ export class RobotStrategyChartComponent extends BusinessComponent {
 
         this.isShow = this.robotLog.hasStrategyChart();
 
-        this.charts = this.chart$.scan((acc, cur) => [...acc, cur], [])
-            .withLatestFrom(this.options.map(options => options.length).take(1))
-            .filter(([charts, length]) => charts.length === length)
-            .map(([charts, _]) => charts);
+        this.charts = this.options.switchMap(options => this.chart$.bufferCount(options.length));
 
+        this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.strategyLog);
+
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().map(item => item.chartLimit);
     }
 
     launch() {
-        this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts);
+        const id = this.route.paramMap.map(param => +param.get('id'));
+
+        this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts)
+            .add(this.robotLog.launchRobotLogs(
+                this.robotLog.getStrategyOffset()
+                    .withLatestFrom(
+                        id,
+                        (chartOffset, robotId) => ({
+                            robotId,
+                            chartOffset,
+                            chartMinId: 0,
+                            chartMaxId: 0,
+                            chartUpdateBaseId: 0,
+                            chartUpdateTime: 0
+                        })
+                    )
+                    .skip(1))
+            )
     }
 
     toggleFold() {
@@ -69,10 +95,13 @@ export class RobotStrategyChartComponent extends BusinessComponent {
         this.toggle(this.isFold);
     }
 
-    ngOnDestroy() {
-        this.charts.subscribe(charts => charts.forEach(item => item.destroy()));
-        
-        this.subscription$$.unsubscribe();
+    changePage(page: number) {
+        this.robotLog.changeStrategyChartPage(page);
     }
 
+    ngOnDestroy() {
+        this.charts.subscribe(charts => charts.forEach(item => item.destroy()));
+
+        this.subscription$$.unsubscribe();
+    }
 }

@@ -499,6 +499,22 @@ export class ChangeLogPageAction implements Action {
     constructor(public payload: number) { }
 }
 
+export const CHANGE_PROFIT_CHART_PAGE = 'CHANGE_PROFIT_CHART_PAGE';
+
+export class ChangeProfitChartPageAction implements Action {
+    readonly type = CHANGE_PROFIT_CHART_PAGE;
+
+    constructor(public payload: number) { }
+}
+
+export const CHANGE_STRATEGY_CHART_PAGE = 'CHANGE_STRATEGY_CHART_PAGE';
+
+export class ChangeStrategyChartPageAction implements Action {
+    readonly type = CHANGE_STRATEGY_CHART_PAGE;
+
+    constructor(public payload: number) { }
+}
+
 export type ApiActions = GetRobotListRequestAction
     | GetRobotListFailAction
     | GetRobotListSuccessAction
@@ -534,6 +550,8 @@ export type Actions = ApiActions
     | MonitorSoundTypeAction
     | ToggleMonitorSoundAction
     | ChangeLogPageAction
+    | ChangeProfitChartPageAction
+    | ChangeStrategyChartPageAction
     | ReceiveServerSendRobotEventAction
 
 export const ResponseActions = {
