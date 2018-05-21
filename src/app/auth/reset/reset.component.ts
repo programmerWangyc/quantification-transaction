@@ -17,6 +17,8 @@ export class ResetComponent extends BusinessComponent {
 
     subscription$$: Subscription;
 
+    inputSize = 'large';
+
     constructor(
         private authService: AuthService,
     ) {

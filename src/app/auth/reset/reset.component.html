@@ -1,78 +1,30 @@
-<div
-    fxLayout="column"
-    fxLayoutAlign="center center"
-    class="reset-container"
->
+<div fxLayout="column" fxLayoutAlign="center center" class="reset-container">
     <div class="auth">
         <img src="../../../assets/images/auth.jpg">
     </div>
     <div class="reset-main">
-        <nz-card>
-            <ng-template #title>
-                <span style="font-size: 18px">{{'REGAIN_PASSWORD' | translate}}</span>
-            </ng-template>
-            <ng-template #body>
-                <form
-                    nz-form
-                    fxLayout="column"
-                    fxLayoutAlign="start stretch"
-                    #resetForm="ngForm"
-                    (ngSubmit)="resetPassword$.next(email)"
-                >
-                    <div nz-form-item>
-                        <div nz-form-label>
-                            <label
-                                for="email"
-                                nz-form-item-required
-                            >
-                                {{'EMAIL' | translate}}
-                            </label>
-                        </div>
-                        <div
-                            nz-form-control
-                            nzHasFeedback
-                        >
-                            <nz-input
-                                [nzType]="'email'"
-                                [(ngModel)]="email"
-                                [nzId]="'email'"
-                                [nzSize]="'large'"
-                                name="email"
-                                required
-                                email
-                                #spy="ngModel"
-                            >
-                                <ng-template #prefix>
-                                    <i class="anticon anticon-mail"></i>
-                                </ng-template>
-                            </nz-input>
-
-                            <div
-                                nz-form-explain
-                                *ngIf="spy.invalid && (spy.dirty  || spy.touched)"
-                            >
-                                <div *ngIf="spy.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
-                                <div *ngIf="!spy.errors.required && spy.errors.email">{{'EMAIL_FORMAT_ERROR' | translate}}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <button
-                        nz-button
-                        [nzSize]="'large'"
-                        [nzType]="'primary'"
-                        type="submit"
-                        [disabled]="resetForm.form.invalid"
-                        style="height: 46px;"
-                    >
-                        {{'REGAIN_PASSWORD' | translate}}
-                    </button>
-                </form>
-
-                <div class="bottom-text">
-                    <a routerLink="/auth/login">{{'LOGIN' | translate}}</a>
-                </div>
-            </ng-template>
-
+        <nz-card [nzTitle]="'REGAIN_PASSWORD' | translate">
+            <form nz-form fxLayout="column" fxLayoutAlign="start stretch" #resetForm="ngForm" (ngSubmit)="resetPassword$.next(email)">
+                <nz-form-item>
+                    <nz-form-label>{{'EMAIL' | translate}}</nz-form-label>
+                    <nz-form-control nzHasFeedback>
+                        <nz-input-group [nzPrefix]="prefix">
+                            <input nz-input type="email" [(ngModel)]="email" [nzSize]="inputSize" required email #spy="ngModel">
+                            <ng-template #prefix>
+                                <i class="anticon anticon-mail"></i>
+                            </ng-template>
+                        </nz-input-group>
+                        <nz-form-explain *ngIf="spy.invalid && (spy.dirty || spy.touched)">
+                            <div *ngIf="spy.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
+                            <div *ngIf="!spy.errors.required && spy.errors.email">{{'EMAIL_FORMAT_ERROR' | translate}}</div>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <button nz-button [nzSize]="'large'" [nzType]="'primary'" type="submit" [disabled]="resetForm.form.invalid" style="height: 46px;">{{'REGAIN_PASSWORD' | translate}}</button>
+            </form>
+            <div class="bottom-text">
+                <a routerLink="/auth/login">{{'LOGIN' | translate}}</a>
+            </div>
         </nz-card>
     </div>
 </div>

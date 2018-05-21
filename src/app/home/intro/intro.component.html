@@ -1,12 +1,6 @@
-<div
-    id="intro"
-    fxLayout="column"
->
+<div id="intro" fxLayout="column">
     <section>
-        <img
-            src="../../../assets/images/botvs.png"
-            alt="introduction"
-        >
+        <img src="../../../assets/images/botvs.png" alt="introduction">
         <p>{{'INTRODUCTION_TITLE' | translate}}</p>
     </section>
 
@@ -27,13 +21,7 @@
 
     <section>
         <nz-popover>
-            <button
-                nz-button
-                [nzType]="'primary'"
-                [nzSize]="'large'"
-                nz-popover
-                class="popover-button"
-            >
+            <button nz-button [nzType]="'primary'" [nzSize]="'large'" nz-popover class="popover-button">
                 <i class="anticon anticon-global"></i>
                 {{'FOLLOW_WECHART' | translate}}
             </button>
@@ -43,13 +31,7 @@
         </nz-popover>
 
         <nz-popover>
-            <button
-                nz-button
-                [nzType]="'default'"
-                [nzSize]="'large'"
-                nz-popover
-                class="popover-button"
-            >
+            <button nz-button [nzType]="'default'" [nzSize]="'large'" nz-popover class="popover-button">
                 <a href="//shang.qq.com/wpa/qunwpa?idkey=bfd30dcc563a4a14687967b51d5b9d11c8d227a0adf82a08e8a4e6bc1c647050">{{'JOIN_QQ_GROUP' | translate}}</a>
             </button>
             <ng-template #nzTemplate>

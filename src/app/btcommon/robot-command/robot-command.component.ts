@@ -57,7 +57,7 @@ export class RobotCommandComponent extends BusinessComponent {
 
     toggleFold() {
         this.isFold = !this.isFold;
-        
+
         this.toggle(this.isFold);
     }
 

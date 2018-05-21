@@ -30,6 +30,8 @@ export class SignupComponent extends BusinessComponent {
 
     tipPosition = 'after';
 
+    inputSize = 'large';
+
     toggleAgree$: Subject<boolean> = new Subject();
 
     dialog$: Subject<boolean> = new Subject();

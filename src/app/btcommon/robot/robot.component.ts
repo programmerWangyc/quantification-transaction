@@ -3,6 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 
 import { BusinessComponent } from '../../interfaces/business.interface';
+import { Breadcrumb } from '../../interfaces/constant.interface';
 import { Robot } from '../../interfaces/response.interface';
 import { GetRobotListRequest } from './../../interfaces/request.interface';
 import { RobotOperateService } from './../providers/robot.operate.service';
@@ -18,11 +19,21 @@ export class RobotComponent extends BusinessComponent {
 
     data: Observable<Robot[]>;
 
-    paths = ['CONTROL_CENTER', 'ROBOT'];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT' }];
+
+    tableHead: string[] = ['NAME', 'STRATEGY', 'STATUS', 'PROFIT', 'PUBLISH', 'CREATE_DATE', 'OPERATE'];
+
+    buttonType = 'primary';
+
+    buttonSize = 'large';
 
     publicRobot$: Subject<Robot> = new Subject();
 
     robotList$: Subject<GetRobotListRequest> = new Subject();
+
+    isLoading: Observable<boolean>;
+
+    currentPublicRobot: Robot;
 
     constructor(
         private robotService: RobotService,
@@ -41,13 +52,16 @@ export class RobotComponent extends BusinessComponent {
 
     initialModel() {
         this.data = this.robotService.getRobots().startWith([]);
+
+        this.isLoading = this.robotOperate.getPublicRobotLoadingState();
     }
 
     launch() {
         this.subscription$$ = this.robotService.launchRobotList(this.robotList$)
             .add(this.robotOperate.launchPublicRobot(this.publicRobot$))
+            .add(this.publicRobot$.subscribe(robot => this.currentPublicRobot = robot))
             .add(this.robotOperate.handlePublicRobotError())
-            .add(this.robotService.handleRobotListError())
+            .add(this.robotService.handleRobotListError());
     }
 
     ngOnDestroy() {

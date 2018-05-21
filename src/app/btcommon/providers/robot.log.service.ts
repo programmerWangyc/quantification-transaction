@@ -54,6 +54,14 @@ export class RobotLogService {
 
     /* =======================================================Serve Request======================================================= */
 
+    /**
+     * @description  Launch get robot logs request.
+     * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
+     * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
+     * 前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点是会导致再一次的刷新。
+     * 第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
+     * 最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
+     */
     launchRobotLogs(data: Observable<{ [key: string]: number }>, allowSeparateRequest = true, isSyncAction = false /* indicate the action is  sync action or not*/): Subscription {
         return this.process.processRobotLogs(
             data.withLatestFrom(
@@ -143,12 +151,18 @@ export class RobotLogService {
             .map(res => res.runningLog.Arr)
             .combineLatest(
                 this.getSyncRobotLogsResponse().map(res => res ? res.result.runningLog.Arr : []).scan((acc, cur) => [...cur, ...acc], []),
-                this.store.select(fromRoot.selectRobotRunningLogCurrentPage).map(this.isFirstPage),
+                this.canAddLogs(),
                 (logs, newLogs, isFirstPage) => newLogs.length && isFirstPage ? this.updateLogs(logs, newLogs) : logs
             );
     }
 
+
+    private canAddLogs(): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotRunningLogCurrentPage).map(this.isFirstPage);
+    }
+
     /**
+     * @description
      * 1、自动获取的不一定比手动获取的更新，如手动获取发生在自动获取之后恰好日志又有更新时。
      * 2、只有通过比较手动获取和自动获取的Max值，其中较大者才一定是客户端所知道的最新的ID。
      */
@@ -219,7 +233,6 @@ export class RobotLogService {
                 (manual, automatic) => automatic ? Math.max(manual.Max, automatic.Max) : manual.Max
             )
             .distinctUntilChanged()
-            // TODO:limit没有控制， 原代码的逻辑当前不是第一页时把它重置成0， strategy也一样。
             .withLatestFrom(this.getProfitMaxPoint(), (profitMinId, profitLimit) => ({ profitMinId, profitLimit }));
     }
 
@@ -428,7 +441,7 @@ export class RobotLogService {
     }
     /* =======================================================Short cart method================================================== */
 
-    //TODO: unused
+    //FIXME: unused
     isAlreadyRefreshed(): Observable<boolean> {
         return this.getRobotLogs().map(log => log.updateTime > 0);
     }
@@ -445,8 +458,9 @@ export class RobotLogService {
      * @description Predicate whether the log can be synchronized.
      */
     private canSyncLogs(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotRunningLogCurrentPage)
-            .map(page => page === 0)
+        return this.canAddLogs()
+            .combineLatest(this.canAddProfitPoint(), this.canUpdateStrategyChart())
+            .map(pages => pages.some(can => can))
             .combineLatest(
                 this.isInValidStatusToSyncLogs(),
                 (isFirstPage, allowAutoRefresh) => (isFirstPage && allowAutoRefresh)
@@ -463,7 +477,7 @@ export class RobotLogService {
     }
 
     /**
-     * 
+     *
      * @param headLog The first data of the log that user actively pulls.
      * @param compareLog After the server notification, the program automatically obtains information.
      * @description Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.

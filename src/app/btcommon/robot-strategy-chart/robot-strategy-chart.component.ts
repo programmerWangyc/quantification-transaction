@@ -1,4 +1,7 @@
-import { Component, ElementRef, Renderer2 } from '@angular/core';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/distinctUntilKeyChanged';
+
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
@@ -15,6 +18,7 @@ import { SemanticsLog } from './../../interfaces/constant.interface';
     styleUrls: ['./robot-strategy-chart.component.scss'],
 })
 export class RobotStrategyChartComponent extends BusinessComponent {
+    @ViewChild('container') chartEle: ElementRef;
 
     subscription$$: Subscription;
 
@@ -37,6 +41,8 @@ export class RobotStrategyChartComponent extends BusinessComponent {
     logTotal: Observable<number>;
 
     pageSize: Observable<number>;
+
+    width: number;
 
     constructor(
         public eleRef: ElementRef,
@@ -72,6 +78,17 @@ export class RobotStrategyChartComponent extends BusinessComponent {
         const id = this.route.paramMap.map(param => +param.get('id'));
 
         this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts)
+            .add(this.charts.delay(30).map(charts => {
+                const chart = document.getElementsByClassName('chart');
+
+                const target = window.getComputedStyle(chart[0]);
+
+                const width = parseInt(target.width);
+
+                const height = parseInt(target.height);
+
+                return { charts, width, height };
+            }).subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height))))
             .add(this.robotLog.launchRobotLogs(
                 this.robotLog.getStrategyOffset()
                     .withLatestFrom(

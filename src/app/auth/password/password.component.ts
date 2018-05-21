@@ -23,6 +23,8 @@ export class PasswordComponent extends BusinessComponent {
 
     tipPosition = 'after';
 
+    inputSize = 'large';
+
     constructor(
         private encrypt: EncryptService,
         private fb: FormBuilder,

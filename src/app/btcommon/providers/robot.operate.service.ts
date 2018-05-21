@@ -84,10 +84,10 @@ export class RobotOperateService {
 
     /**
      * @description 是否需要编码参数
-     * 1 不需要：直接发送； 
-     * 2 需要：是否需要验证密码 
-     *      3 不需要： 编码并发送 
-     *      4 需要： 验证密码 
+     * 1 不需要：直接发送；
+     * 2 需要：是否需要验证密码
+     *      3 不需要： 编码并发送
+     *      4 需要： 验证密码
      *          5 验证成功：编码并发送
      *          6 验证失败：不发送
      */
@@ -126,6 +126,10 @@ export class RobotOperateService {
     getPublicRobotResponse(): Observable<fromRes.PublicRobotResponse> {
         return this.store.select(fromRoot.selectPublicRobotResponse)
             .filter(res => !!res);
+    }
+
+    getPublicRobotLoadingState(): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotUiState).map(res => res.publicRobotLoading);
     }
 
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {

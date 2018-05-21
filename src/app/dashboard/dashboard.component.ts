@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Path } from '../interfaces/constant.interface';
@@ -85,8 +85,6 @@ export class DashboardComponent implements OnInit {
 
     currentPath: string;
 
-    @ViewChild('header') header: HTMLElement;
-
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
@@ -108,4 +106,5 @@ export class DashboardComponent implements OnInit {
 
         return paths.indexOf(this.currentPath) !== -1;
     }
+
 }

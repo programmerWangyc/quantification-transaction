@@ -19,6 +19,8 @@ export class VerifyPasswordComponent extends BusinessComponent {
 
     password: string;
 
+    size = 'large';
+
     constructor(
         private authService: AuthService,
         private encryptService: EncryptService,

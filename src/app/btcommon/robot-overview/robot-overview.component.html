@@ -1,121 +1,65 @@
-<nz-card *ngIf="robot | async; let robot">
-    <ng-template #title>{{'ROBOT_OVERVIEW' | translate}}</ng-template>
-    <ng-template #extra>
-        <a (click)="toggleFold()">
-            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
-        </a>
-    </ng-template>
-    <ng-template #body>
-        <div
-            nz-row
-            [nzGutter]="16"
-        >
-            <div
-                nz-col
-                [nzSpan]="10"
-                class="row"
-            >
-                <h6>{{'NAME' | translate}}:</h6>
-                <span>{{robot.name}}</span>
+<nz-card *ngIf="robot | async; let robot" [nzExtra]="extra" [nzTitle]="'ROBOT_OVERVIEW' | translate">
+    <nz-row [nzGutter]="16">
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'NAME' | translate}}:</h6>
+            <span>{{robot.name}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" fxLayout="row" class="row">
+            <h6 fxFlexAlign="center">{{'STRATEGY' | translate}}:</h6>
+            <div>
+                <p>{{'NAME' | translate}}</p>
+                <span>{{robot.strategy_name}}</span>
             </div>
-            <div
-                nz-col
-                [nzSpan]="10"
-                fxLayout="row"
-                class="row"
-            >
-                <h6 fxFlexAlign="center">{{'STRATEGY' | translate}}:</h6>
-                <div>
-                    <p>{{'NAME' | translate}}</p>
-                    <span>{{robot.strategy_name}}</span>
-                </div>
-                <div>
-                    <p>{{'LATEST_UPDATE' | translate}}</p>
-                    <span>{{robot.strategy_last_modified}}</span>
-                </div>
+            <div>
+                <p>{{'LATEST_UPDATE' | translate}}</p>
+                <span>{{robot.strategy_last_modified}}</span>
             </div>
-            <div
-                nz-col
-                [nzSpan]="10"
-                class="row"
-            >
-                <h6>{{'CREATE_TIME' | translate}}:</h6>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'CREATE_TIME' | translate}}:</h6>
+            <span>{{robot.start_time}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" fxLayout="row" class="row">
+            <h6 fxFlexAlign="center">{{'LATEST_RUN' | translate}}:</h6>
+            <div>
+                <p>{{'START_TIME' | translate}}</p>
                 <span>{{robot.start_time}}</span>
             </div>
-            <div
-                nz-col
-                [nzSpan]="10"
-                fxLayout="row"
-                class="row"
-            >
-                <h6 fxFlexAlign="center">{{'LATEST_RUN' | translate}}:</h6>
-                <div>
-                    <p>{{'START_TIME' | translate}}</p>
-                    <span>{{robot.start_time}}</span>
-                </div>
-                <div>
-                    <p>{{'END_TIME' | translate}}</p>
-                    <span>{{robot.end_time}}</span>
-                </div>
+            <div>
+                <p>{{'END_TIME' | translate}}</p>
+                <span>{{robot.end_time}}</span>
             </div>
-            <div
-                nz-col
-                [nzSpan]="10"
-                class="row"
-            >
-                <h6 [nz-tooltip]="statusTip | async">{{'STATUS' | translate}}:</h6>
-                <span>
-                    {{robot.status | robotStatus | translate}}
-                </span>
-                <button
-                    nz-button
-                    [nzSize]="'small'"
-                    (click)="restart$.next(robot)"
-                    [disabled]="isLoading | async"
-                    *ngIf="robot.status > 2"
-                >
-                    {{operateBtnText| async | translate}}
-                </button>
-                <button
-                    nz-button
-                    [nzSize]="'small'"
-                    (click)="stop$.next(robot)"
-                    [disabled]="isLoading | async"
-                    *ngIf="robot.status <= 2"
-                >
-                    {{operateBtnText| async | translate}}
-                </button>
-                <button
-                    nz-button
-                    [nzSize]="'small'"
-                    *ngIf="robot.status <= 2"
-                    (click)="watchDot$.next(robot)"
-                >
-                    {{watchDogBtnText | async | translate}}
-                </button>
-            </div>
+        </nz-col>
 
-            <div
-                nz-col
-                [nzSpan]="10"
-                class="row"
-            >
-                <h6>{{'K_LINE_PERIOD' | translate}}:</h6>
-                <span>
-                    {{robot.strategy_exchange_pairs | fromJSON | kLinePeriod | translate}}
-                </span>
-            </div>
+        <nz-col [nzSpan]="10" class="row">
+            <h6 [nz-tooltip]="statusTip | async">{{'STATUS' | translate}}:</h6>
+            <span>{{robot.status | robotStatus | translate}}</span>
+            <button *ngIf="robot.status > 2; else elseBlock" [nzSize]="buttonSize" (click)="restart$.next(robot)" [disabled]="isLoading | async"
+                nz-button>{{operateBtnText| async | translate}}</button>
+            <ng-template #elseBlock>
+                <button nz-button [nzSize]="buttonSize" (click)="stop$.next(robot)" [disabled]="isLoading | async">{{operateBtnText| async | translate}}</button>
+                <button nz-button [nzSize]="buttonSize" (click)="watchDot$.next(robot)">{{watchDogBtnText | async | translate}}</button>
+            </ng-template>
+        </nz-col>
 
-            <div
-                nz-col
-                [nzSpan]="10"
-                class="row"
-            >
-                <h6>{{'EXCHANGE_PLATFORM' | translate}}:</h6>
-                <span fxLayout="column start">
-                    <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock">{{pair.platform}}/{{pair.stock}}</span>
-                </span>
-            </div>
-        </div>
-    </ng-template>
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'K_LINE_PERIOD' | translate}}:</h6>
+            <span>{{robot.strategy_exchange_pairs | fromJSON | kLinePeriod | translate}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'EXCHANGE_PLATFORM' | translate}}:</h6>
+            <span fxLayout="column start">
+                <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock">{{pair.platform}}/{{pair.stock}}</span>
+            </span>
+        </nz-col>
+
+    </nz-row>
 </nz-card>
+
+<ng-template #extra>
+    <a (click)="toggleFold()">{{(isFold ? 'UNFOLD' : 'FOLD') | translate}}</a>
+</ng-template>

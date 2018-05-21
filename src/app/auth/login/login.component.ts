@@ -26,6 +26,8 @@ export class LoginComponent extends BusinessComponent {
 
     tipPosition = 'after';
 
+    inputSize = 'large';
+
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,

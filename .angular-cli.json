@@ -20,9 +20,10 @@
       "prefix": "app",
       "styles": [
         "styles.scss",
-        "theme/dark.theme.scss"
+        "theme/dark.theme.scss",
+        "../node_modules/ng-zorro-antd/src/ng-zorro-antd.less"
       ],
-      "scripts": [], 
+      "scripts": [],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

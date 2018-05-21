@@ -1,5 +1,16 @@
 <div class="indicator">
-    <span *ngFor="let item of paths; last as isLast" [ngClass]="{'indicator-split': !isLast}">
-        {{item | translate}}
-    </span>
+    <nz-breadcrumb [nzSeparator]="iconTemplate">
+        <nz-breadcrumb-item *ngFor="let item of paths">
+            <span *ngIf="!item.path; else elseBlock">
+                {{ item.name | translate}}
+            </span>
+            <ng-template #elseBlock>
+                <a *ngIf="item.path" [routerLink]="item.path">{{item.name | translate}}</a>
+            </ng-template>
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
 </div>
+
+<ng-template #iconTemplate>
+    <i class="anticon anticon-arrow-right"></i>
+</ng-template>

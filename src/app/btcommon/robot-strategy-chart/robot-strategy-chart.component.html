@@ -1,44 +1,29 @@
-<nz-card *ngIf="isShow | async">
-    <ng-template #title>{{'STRATEGY_CHART' | translate}}</ng-template>
-    <ng-template #extra>
-        <a (click)="toggleFold()">
-            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
-        </a>
-    </ng-template>
-    <ng-template #body>
-        <!-- FIXME: nz-tab 有BUG -->
-        <nz-tabset>
-            <nz-tab *ngFor="let option of options | async index as idx">
-                <ng-template #nzTabHeading>{{option | strategyChartTitle: idx}}</ng-template>
-                <!-- <chart
-                    [type]="option.__isStock === false ? 'Chart' : 'StockChart'"
-                    [options]="option"
-                    (load)="chart$.next($event.context)"
-                    class="chart"
-                ></chart> -->
-            </nz-tab>
-        </nz-tabset>
-        <div *ngFor="let option of options | async index as idx">
-            <head>{{option | strategyChartTitle: idx}}</head>
-            <chart
-                [type]="option.__isStock === false ? 'Chart' : 'StockChart'"
-                [options]="option"
-                (load)="chart$.next($event.context)"
-                class="chart"
-            ></chart>
-        </div>
-        <div
-            fxLayoutAlign="space-between center"
-            class="pagination"
-        >
-            <div>{{statistics | async}}</div>
-            <nz-pagination
-                [(nzPageIndex)]="currentPage"
-                (nzPageIndexChange)="changePage(currentPage)"
-                [nzTotal]="logTotal | async"
-                [nzPageSize]="pageSize | async"
-                nzShowQuickJumper
-            ></nz-pagination>
-        </div>
-    </ng-template>
+<nz-card *ngIf="isShow | async" [nzTitle]="'STRATEGY_CHART' | translate" [nzExtra]="extra">
+    <nz-tabset>
+        <nz-tab *ngFor="let option of options | async; index as idx" [nzTitle]="option | strategyChartTitle: idx">
+            <div class="chart">
+                <chart [type]="option.__isStock === false ? 'Chart' : 'StockChart'" [options]="option" (load)="chart$.next($event.context)"></chart>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+
+    <!--留着调试时使用，省的来回切换图表-->
+    <!-- <div *ngFor="let option of options | async index as idx">
+
+        <head>{{option | strategyChartTitle: idx}}</head>
+        <chart [type]="option.__isStock === false ? 'Chart' : 'StockChart'" [options]="option" (load)="chart$.next($event.context)"
+            class="chart"></chart>
+    </div> -->
+
+    <div fxLayoutAlign="space-between center" class="pagination">
+        <div>{{statistics | async}}</div>
+        <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="changePage(currentPage)" [nzTotal]="logTotal | async" [nzPageSize]="pageSize | async"
+            nzShowQuickJumper></nz-pagination>
+    </div>
 </nz-card>
+
+<ng-template #extra>
+    <a (click)="toggleFold()">
+        {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+    </a>
+</ng-template>

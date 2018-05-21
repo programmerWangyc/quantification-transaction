@@ -126,7 +126,7 @@ export class RobotLogComponent extends BusinessComponent {
             .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()))
             .add(this.robotLog.handleRobotLogsError())
 
-        // FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
+        // FIXME: 这行加到上面时在组件销毁时没有取消掉, 然后每次进入时就会多出一条同步信息的流。why?
         this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
     }
 

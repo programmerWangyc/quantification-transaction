@@ -48,7 +48,7 @@ interface RequestParams {
     publicRobot: PublicRobotRequest;
     robotDetail: GetRobotDetailRequest; //
     subscribeRobot: SubscribeRobotRequest; //
-    robotLogs: GetRobotLogsRequest; // 
+    robotLogs: GetRobotLogsRequest; //
     isSyncLogs: boolean;
     restartRobot: RestartRobotRequest;
     stopRobot: StopRobotRequest;
@@ -72,6 +72,7 @@ interface UIState {
     currentRunningLogPage: number;
     currentProfitChartPage: number;
     currentStrategyChartPage: number;
+    publicRobotLoading: boolean;
 }
 
 export interface State {
@@ -148,6 +149,7 @@ const initialState: State = {
         currentRunningLogPage: 0,
         currentProfitChartPage: 0,
         currentStrategyChartPage: 0,
+        publicRobotLoading: false,
     },
     serverMessage: null,
     syncRobotLogsRes: null,
@@ -169,11 +171,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 requestParams: {
                     ...state.requestParams,
                     publicRobot: action.payload
-                }
+                },
+                uiState: { ...state.uiState, publicRobotLoading: true }
             }
 
         case actions.PUBLIC_ROBOT_FAIL:
-            return { ...state, publicRobotRes: action.payload };
+            return { ...state, publicRobotRes: action.payload, uiState: { ...state.uiState, publicRobotLoading: false } };
 
         case actions.PUBLIC_ROBOT_SUCCESS: {
             const { id, type } = state.requestParams.publicRobot;
@@ -184,7 +187,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = { ...state.robotList };
 
-            return { ...state, publicRobotRes: action.payload, robotList };
+            return { ...state, publicRobotRes: action.payload, robotList, uiState: { ...state.uiState, publicRobotLoading: false } };
         }
 
         // robot detail
@@ -241,9 +244,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // robot logs
         case actions.GET_ROBOT_LOGS: {
-            const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: action.isSyncAction || false };
+            if (!action.isSyncAction) {
+                const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: action.isSyncAction || false };
 
-            return { ...state, isLoading: true, requestParams };
+                return { ...state, isLoading: true, requestParams };
+            } else {
+                const requestParams = { ...state.requestParams, isSyncLogs: true };
+
+                return { ...state, isLoading: true, requestParams };
+            }
         }
 
         case actions.GET_ROBOT_LOGS_FAIL: {
@@ -365,7 +374,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.MODIFY_DEFAULT_PARAMS:
             return { ...state, defaultParams: modifyDefaultParams(state.defaultParams, action.payload) };
 
-        // monitoring message 
+        // monitoring message
         case actions.MONITOR_SOUND_TYPES:
             return { ...state, monitoringSound: { ...state.monitoringSound, logTypes: action.payload } };
 
@@ -428,7 +437,7 @@ function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverv
 
 /**
  * @function createScriptArgs;
- * @param args Strategy args or template args; 
+ * @param args Strategy args or template args;
  * @description This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
  */
 function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
@@ -442,7 +451,7 @@ function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
 }
 
 /**
- * @description Converting data structure from array to dictionary; 
+ * @description Converting data structure from array to dictionary;
  */
 function completionParams(arg: (string | number)[]): VariableOverview {
     if (arg.length === 3) {
@@ -542,7 +551,7 @@ function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
         runningLog: { ...run, Arr: runningLog },
         profitLog: { ...profit, Arr: profitLog },
         strategyLog: { ...strategy, Arr: strategyLog }
-    }; 
+    };
 }
 
 /**

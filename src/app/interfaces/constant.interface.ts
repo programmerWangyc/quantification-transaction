@@ -56,8 +56,8 @@ export enum LogTypes {
 
 export enum ServerSendRobotEventType {
     UPDATE_STATUS = 1 << 0, // 状态栏
-    UPDATE_PROFIT = 1 << 1, // 
-    UPDATE_SUMMARY = 1 << 2, // 
+    UPDATE_PROFIT = 1 << 1, //
+    UPDATE_SUMMARY = 1 << 2, //
     UPDATE_PUSH = 1 << 3, // none used
     UPDATE_REFRESH = 1 << 4, // 日志
     UPDATE_DEBUG = 1 << 5 //
@@ -76,6 +76,14 @@ export enum SemanticsLog {
     profitLog = 'profitLog',
     strategyLog = 'strategyLog'
 }
+
+/** ==========================================================Global======================================== **/
+
+export interface Breadcrumb {
+    name: string;
+    path?: string;
+}
+
 
 /** ==========================================================Front end custom data structure======================================== **/
 

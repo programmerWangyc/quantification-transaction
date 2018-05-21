@@ -1,30 +1,15 @@
-<nz-card *ngIf="isShow | async">
-    <ng-template #title>{{'PROFIT_CURVE' | translate}}</ng-template>
-    <ng-template #extra>
-        <a (click)="toggleFold()">
-            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
-        </a>
-    </ng-template>
-    <ng-template #body>
-        <chart
-            type="StockChart"
-            [options]="options | async"
-            (load)="chart$.next($event.context)"
-            class="chart"
-        ></chart>
+<nz-card *ngIf="isShow | async" [nzTitle]="'PROFIT_CURVE' | translate" [nzExtra]="extra">
+    <chart type="StockChart" [options]="options | async" (load)="chart$.next($event.context)" class="chart"></chart>
 
-        <div
-            fxLayoutAlign="space-between center"
-            class="pagination"
-        >
-            <div>{{statistics | async}}</div>
-            <nz-pagination
-                [(nzPageIndex)]="currentPage"
-                (nzPageIndexChange)="changePage(currentPage)"
-                [nzTotal]="logTotal | async"
-                [nzPageSize]="pageSize | async"
-                nzShowQuickJumper
-            ></nz-pagination>
-        </div>
-    </ng-template>
+    <div fxLayoutAlign="space-between center" class="pagination">
+        <div>{{statistics | async}}</div>
+        <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="changePage(currentPage)" [nzTotal]="logTotal | async" [nzPageSize]="pageSize | async"
+            nzShowQuickJumper></nz-pagination>
+    </div>
 </nz-card>
+
+<ng-template #extra>
+    <a (click)="toggleFold()">
+        {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
+    </a>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -50,7 +50,7 @@ export class RobotOverviewComponent extends BusinessComponent {
 
     isFold = false;
 
-    @ViewChild('body') body: TemplateRef<any>;
+    buttonSize = 'small';
 
     constructor(
         private robotService: RobotService,

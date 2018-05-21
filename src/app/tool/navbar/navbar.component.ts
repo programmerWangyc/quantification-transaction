@@ -56,8 +56,10 @@ export class NavbarComponent implements OnInit {
     searchValue: string;
 
     isCollapsed = true;
-    
-    isLogin: Observable<boolean>
+
+    isLogin: Observable<boolean>;
+
+    inputSize = 'large';
 
     constructor(
         private publicService: PublicService,

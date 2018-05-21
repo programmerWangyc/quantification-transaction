@@ -1,3 +1,4 @@
+import 'rxjs/add/observable/empty';
 import { TipService } from './../../providers/tip.service';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
@@ -12,7 +13,10 @@ import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as robotActions from './robot.action';
 import { ModifyRobotFailAction, CommandRobotSuccessAction, CommandRobotFailAction, ReceiveServerSendRobotEventAction } from './robot.action';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
+import { ActivatedRoute } from '@angular/router';
+import { AppState, selectRobotRequestParameters } from '../index.reducer';
+import { RobotService } from '../../btcommon/providers/robot.service';
 
 @Injectable()
 export class RobotEffect extends BaseEffect {
@@ -54,13 +58,16 @@ export class RobotEffect extends BaseEffect {
         });
 
     @Effect()
-    serverSendEvent$: Observable<ResponseAction> = this.ws.messages.filter(msg => msg.event && msg.event === ServerSendEventType.ROBOT)
-        .map(msg => new ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result));
+    serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
+        .switchMap(state => state ? this.ws.messages.filter(msg => msg.event && msg.event === ServerSendEventType.ROBOT)
+            .map(msg => new ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)) : Observable.empty()
+        );
 
     constructor(
         public ws: WebsocketService,
         public actions$: Actions,
         public tip: TipService,
+        public store: Store<AppState>,
     ) {
         super(ws, actions$);
     }
@@ -71,7 +78,17 @@ export class RobotEffect extends BaseEffect {
             this.actions$.ofType(robotActions.GET_ROBOT_LOGS).filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest),
             this.actions$.ofType(btNodeActions.GET_NODE_LIST),
             this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
-        ]
+        ];
+    }
+
+    /**
+     * @description 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时将不再处理网络推送中有关机器人的相关信息。
+     */
+    toggleResponsiveServerSendEvent(): Observable<boolean> {
+        return this.store.select(selectRobotRequestParameters)
+            .filter(v => !!v)
+            .map(res => res.subscribeRobot && res.subscribeRobot.id !== 0)
+            .distinctUntilChanged()
     }
 }
 

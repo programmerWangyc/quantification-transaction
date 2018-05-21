@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { RobotService } from '../../btcommon/providers/robot.service';
 import { BusinessComponent } from '../../interfaces/business.interface';
+import { Breadcrumb } from '../../interfaces/constant.interface';
 import { BtNodeService } from './../../providers/bt-node.service';
 import { PlatformService } from './../../providers/platform.service';
 import { PublicService } from './../../providers/public.service';
@@ -18,7 +19,7 @@ import { PublicService } from './../../providers/public.service';
 })
 export class RobotDetailComponent extends BusinessComponent {
 
-    paths: string[]
+    paths: Breadcrumb[]
 
     subscription$$: Subscription;
 
@@ -40,7 +41,7 @@ export class RobotDetailComponent extends BusinessComponent {
     initialModel() {
         const name = this.activatedRoute.snapshot.paramMap.get('name');
 
-        this.paths = ['CONTROL_CENTER', 'ROBOT', name];
+        this.paths = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name }];
     }
 
     launch() {

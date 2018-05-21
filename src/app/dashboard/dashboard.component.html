@@ -1,88 +1,45 @@
 <nz-layout id="dashboard">
-    <nz-sider
-        nzCollapsible
-        [(nzCollapsed)]="isCollapsed"
-        [nzTrigger]="null"
-    >
+    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
         <div class="logo">BotVS</div>
-        <ul
-            nz-menu
-            [nzInlineCollapsed]="isCollapsed"
-            [nzMode]="isCollapsed ? 'vertical':'inline'"
-        >
-            <li *ngFor="let nav of list">
-                <div
-                    *ngIf="nav.subNav"
-                    nz-submenu
-                    [nzOpen]="isActive(nav)"
-                >
-                    <span
-                        title
-                        style="font-size: 14px"
-                    >
-                        <i
-                            class="anticon"
-                            [ngClass]="'anticon-'+ nav.icon"
-                        ></i>
-                        <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
+        <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'">
+
+            <ng-container *ngFor="let nav of list">
+
+                <li *ngIf="nav.subNav;else elseBlock" [nzOpen]="isActive(nav)" nz-submenu>
+                    <span title>
+                        <i class="anticon" [ngClass]="'anticon-'+ nav.icon"></i>
+                        <span>{{nav.label | translate}}</span>
                     </span>
+
                     <ul>
-                        <li
-                            *ngFor="let item of nav.subNav"
-                            (click)="navigateTo(item)"
-                            style="font-size: 14px"
-                            nz-menu-item
-                            [ngClass]="{'ant-menu-item-selected': item.path === currentPath}"
-                        >
-                            <i
-                                class="anticon"
-                                [ngClass]="'anticon-'+item.icon"
-                            ></i>
-                            {{item.label | translate}}
+                        <li *ngFor="let item of nav.subNav" (click)="navigateTo(item)" nz-menu-item [ngClass]="{'ant-menu-item-selected': item.path === currentPath}">
+                            <i class="anticon" [ngClass]="'anticon-'+item.icon"></i>
+                            <span>{{item.label | translate}}</span>
                         </li>
                     </ul>
-                </div>
+                </li>
 
-                <div
-                    nz-menu-item
-                    *ngIf="!nav.subNav"
-                    (click)="navigateTo(nav)"
-                    [ngClass]="{'ant-menu-item-selected': nav.path === currentPath}"
-                >
-                    <span
-                        title
-                        style="font-size: 14px"
-                    >
-                        <i
-                            class="anticon"
-                            [ngClass]="'anticon-'+nav.icon"
-                        ></i>
-                        <span [style.display]="isCollapsed ? 'none': 'inherit'">{{nav.label | translate}}</span>
-                    </span>
-                </div>
-            </li>
+                <ng-template #elseBlock>
+                    <li [ngClass]="{'ant-menu-item-selected': nav.path === currentPath}" nz-menu-item>
+                        <span (click)="navigateTo(nav)" title>
+                            <i class="anticon" [ngClass]="'anticon-'+nav.icon"></i>
+                            <span>{{nav.label | translate}}</span>
+                        </span>
+                    </li>
+                </ng-template>
+            </ng-container>
+
         </ul>
     </nz-sider>
+
     <nz-layout>
-        <!--TODO:响应式布局还有问题-->
-        <nz-header 
-        [style.width]="isCollapsed ? 'calc(100% - 64px)' : 'calc(100% - 200px)'"
-        [style.left]="isCollapsed ? '64px' : '200px'"
-        >
-            <i
-                class="anticon trigger"
-                [class.anticon-menu-fold]="!isCollapsed"
-                [class.anticon-menu-unfold]="isCollapsed"
-                (click)="isCollapsed=!isCollapsed"
-            ></i>
-            <section fxLayoutAlign="center center">
-                <nz-avatar
-                    nzIcon="user"
-                    class="avatar"
-                ></nz-avatar>
+        <nz-header [ngClass]="{'head-collapsed': isCollapsed}">
+            <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
+            <section>
+                <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
             </section>
         </nz-header>
-        <nz-content [style.margin]="isCollapsed ? '48px 0 0 64px' : '48px 0 0 200px'">
+        <nz-content [style.margin]="isCollapsed ? '64px 0 0 80px' : '64px 0 0 200px'">
             <router-outlet></router-outlet>
         </nz-content>
     </nz-layout>

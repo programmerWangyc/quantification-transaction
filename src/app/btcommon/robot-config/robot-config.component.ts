@@ -30,6 +30,7 @@ import { RobotService } from './../providers/robot.service';
     styleUrls: ['./robot-config.component.scss']
 })
 export class RobotConfigComponent extends BusinessComponent {
+    size = 'large';
 
     subscription$$: Subscription;
 

@@ -1,16 +1,7 @@
-<nz-card *ngIf="hasArgs | async">
-    <ng-template #title>{{'STRATEGY_ALTERNATION' | translate}}</ng-template>
-    <ng-template #extra>
-        <a (click)="toggleFold()">
-            {{(isFold ? 'UNFOLD' : 'FOLD') | translate}}
-        </a>
-    </ng-template>
-    <ng-template #body>
-        <app-robot-arg
-            [args]="commandArgs | async"
-            [isAlternative]="true"
-            (change)="argChange($event)"
-            (command)="command$.next($event)"
-        ></app-robot-arg>
-    </ng-template>
+<nz-card *ngIf="hasArgs | async" [nzExtra]="extra" [nzTitle]="'STRATEGY_ALTERNATION' | translate">
+    <app-robot-arg [args]="commandArgs | async" [isAlternative]="true" (change)="argChange($event)" (command)="command$.next($event)"></app-robot-arg>
 </nz-card>
+
+<ng-template #extra>
+    <a (click)="toggleFold()">{{(isFold ? 'UNFOLD' : 'FOLD') | translate}}</a>
+</ng-template>
