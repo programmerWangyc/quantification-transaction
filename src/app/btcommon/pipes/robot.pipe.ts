@@ -2,8 +2,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString, last, zip } from 'lodash';
 
-import { RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
+import { RobotPublicStatus, RobotStatus, Robot } from '../../interfaces/response.interface';
 import { ConstantService } from './../../providers/constant.service';
+import { RobotOperateService } from '../providers/robot.operate.service';
+import { Observable } from 'rxjs/Observable';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 
 @Pipe({
@@ -239,5 +242,26 @@ export class StrategyChartTitlePipe implements PipeTransform {
 
             return str;
         }
+    }
+}
+
+@Pipe({
+    name: 'robotOperateBtnText'
+})
+export class RobotOperateBtnTextPipe implements PipeTransform {
+    constructor(
+        private robotOperate: RobotOperateService,
+        private constantService: ConstantService,
+    ) { }
+
+    transform(robot: Robot): Observable<string> {
+        return this.robotOperate.isCurrentRobotOperating(
+            robot,
+            robot.status > 2 ? RobotOperateType.restart : RobotOperateType.stop
+        ).map(loading => {
+            const btnTexts = this.constantService.getRobotOperateMap(robot.status).btnText;
+
+            return this.constantService.getRobotOperateBtnText(loading, btnTexts);
+        });
     }
 }

@@ -93,7 +93,7 @@ export const selectExchangeResponseState = createSelector(getExchangeState, exch
 
 const getRobotState = (state: AppState) => state.robot;
 
-// robot list 
+// robot list
 export const selectRobotListResState = createSelector(getRobotState, robot.getRobotListResState);
 export const selectRobotListData = createSelector(getRobotState, robot.getRobotData);
 
@@ -109,9 +109,6 @@ export const selectSubscribeRobotResponse = createSelector(getRobotState, robot.
 // robot logs
 export const selectRobotLogsResponse = createSelector(getRobotState, robot.getRobotLogsRes);
 export const selectSyncRobotLogsResponse = createSelector(getRobotState, robot.getSyncLogsResponse);
-
-// operate loading state
-export const selectRobotOperationLoadingState = createSelector(getRobotState, robot.getLoadingState);
 
 // restart robot
 export const selectRestartRobotResponse = createSelector(getRobotState, robot.getRestartRobotRes);
@@ -130,6 +127,9 @@ export const selectModifyRobotResponse = createSelector(getRobotState, robot.get
 
 // command robot
 export const selectCommandRobotResponse = createSelector(getRobotState, robot.getCommandRobotRes);
+
+// delete robot
+export const selectDeleteRobotResponse = createSelector(getRobotState, robot.getDeleteRobotRes);
 
 // default params
 export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
@@ -170,3 +170,4 @@ export const selectPlatformListResponse = createSelector(getPlatformState, platf
 const getWatchDogState = (state: AppState) => state.watchDog;
 
 export const selectSetWatchDogResponse = createSelector(getWatchDogState, watchDog.getSetWDResponse);
+export const selectSetWatchDogRequest = createSelector(getWatchDogState, watchDog.getSetWDRequest);

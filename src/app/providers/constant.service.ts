@@ -207,6 +207,10 @@ export class ConstantService {
         }
     }
 
+    getRobotOperateBtnText(isLoading: boolean, texts: string[]): string {
+        return isLoading ? texts[1] || texts[0] : texts[0];
+    }
+
     getArgSelectedItem = getArgSelectItem;
 
     getOptimizeSetting = getOptimizeSetting;

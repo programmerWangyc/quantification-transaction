@@ -41,7 +41,7 @@
                 nz-button>{{operateBtnText| async | translate}}</button>
             <ng-template #elseBlock>
                 <button nz-button [nzSize]="buttonSize" (click)="stop$.next(robot)" [disabled]="isLoading | async">{{operateBtnText| async | translate}}</button>
-                <button nz-button [nzSize]="buttonSize" (click)="watchDot$.next(robot)">{{watchDogBtnText | async | translate}}</button>
+                <button nz-button [nzSize]="buttonSize" (click)="watchDog$.next(robot)">{{watchDogBtnText | async | translate}}</button>
             </ng-template>
         </nz-col>
 

@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { SharedModule } from './../shared/shared.module';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { TextCenterDirective } from './directives/style.directive';
+import { TextCenterDirective, TextDirectionDirective } from './directives/style.directive';
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -23,6 +23,7 @@ import { OriginDataPipe } from './pipes/origin-data.pipe';
     declarations: [
         CustomSnackBarComponent,
         TextCenterDirective,
+        TextDirectionDirective,
         IndicatorComponent,
         NavbarComponent,
         FooterComponent,
@@ -32,7 +33,7 @@ import { OriginDataPipe } from './pipes/origin-data.pipe';
         SafeHtmlPipe,
         OriginDataPipe,
     ],
-    
+
     entryComponents: [
         CustomSnackBarComponent,
         ConfirmComponent,
@@ -40,6 +41,7 @@ import { OriginDataPipe } from './pipes/origin-data.pipe';
     ],
     exports: [
         TextCenterDirective,
+        TextDirectionDirective,
         IndicatorComponent,
         NavbarComponent,
         FooterComponent,

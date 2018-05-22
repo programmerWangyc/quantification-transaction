@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ResponseState, RestartRobotResult } from './../interfaces/response.interface';
 import { TipService } from './tip.service';
+import { isNumber } from 'lodash';
 
 @Injectable()
 export class ErrorService {
@@ -24,8 +25,8 @@ export class ErrorService {
     }
 
     getRestartRobotError(status: number | string): string {
-        if (typeof status === 'number') {
-            return RestartRobotResult[Math.abs(status)];
+        if (isNumber(status)) {
+            return status < 0 ? RestartRobotResult[Math.abs(status)] : '';
         } else {
             return status;
         }
@@ -33,5 +34,9 @@ export class ErrorService {
 
     getStopRobotError(result: any): string {
         return result ? '' : 'STOP_ROBOT_ERROR';
+    }
+
+    getDeleteRobotError(result: number): string {
+        return Math.abs(result) === 1 ? 'DELETE_ROBOT_ERROR' : '';
     }
 }

@@ -10,7 +10,7 @@ export interface WsRequest {
 export interface LoginRequest {
     username: string;
     password: string; // encoded password;
-    secondaryVerificationCode?: string; // google  secondary verification code  
+    secondaryVerificationCode?: string; // google  secondary verification code
 }
 
 // signup
@@ -35,7 +35,7 @@ export interface SetPasswordRequest {
 
 // verify password
 export interface VerifyPasswordRequest {
-    password: string; 
+    password: string;
 }
 
 /** ===================================================Setting========================================= **/
@@ -75,7 +75,7 @@ export interface PublicRobotRequest {
     type: number; // 0 放弃公开 1 公开
 }
 
-// robot detail 
+// robot detail
 export interface GetRobotDetailRequest {
     id: number;
 }
@@ -87,8 +87,8 @@ export interface GetRobotLogsRequest {
     logMinId: number;
     logMaxId: number;
     // 查询起点位置，和传page其实一样，只不过用这种方式需要前台把这个值计算出来，比如当前limit === 20, 当前页是3，那么查询下一页时这个值就应该是60;
-    logOffset: number; 
-    logLimit: number; 
+    logOffset: number;
+    logLimit: number;
     // Profit
     profitMinId: number;
     profitMaxId: number;
@@ -135,6 +135,12 @@ export interface CommandRobotRequest {
     command: string;
 }
 
+// delete robot
+export interface DeleteRobotRequest {
+    id: number;
+    checked: boolean;
+}
+
 /** ===================================================Node list========================================= **/
 
 export const getNodeList = 'GetNodeList';
@@ -154,5 +160,5 @@ export interface SetRobotWDRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 19
+ * 接口总数： 83， 已完成： 20
  */

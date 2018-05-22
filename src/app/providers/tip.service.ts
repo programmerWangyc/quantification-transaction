@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { NzNotificationService } from 'ng-zorro-antd';
+import { NzNotificationService, NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfirmOperateTipData } from '../interfaces/constant.interface';
@@ -30,6 +30,7 @@ export class TipService {
         private dialog: MatDialog,
         private notification: NzNotificationService,
         private translate: TranslateService,
+        private nzModal: NzModalService,
     ) { }
 
     showTip(data: string, duration = 3000): MatSnackBarRef<CustomSnackBarComponent> {
@@ -49,6 +50,15 @@ export class TipService {
     confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
         return this.dialog.open(component, { data, ...this.confirmConfig })
             .afterClosed();
+    }
+
+    getNzConfirmOperateConfig(): Observable<object> {
+        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).map(res => ({
+            nzTitle: res.OPERATE_CONFIRM,
+            nzOkText: res.CONFIRM,
+            nzCancelText: res.CANCEL,
+            nzOkType: 'primary',
+        }));
     }
 
     playAudio(src: string): void {

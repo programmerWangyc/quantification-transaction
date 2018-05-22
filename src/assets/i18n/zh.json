@@ -316,5 +316,12 @@
     "PROFIT_CURVE": "收益曲线",
     "ACCUMULATED_EARNINGS": "累计收益",
     "STRATEGY_CHART": "策略图表",
-    "STRATEGY_DEFAULT_TITLE": "图表-{{index}}"
+    "STRATEGY_DEFAULT_TITLE": "图表-{{index}}",
+    "DELETE_ROBOT_CONFIRM": "确定要删除此机器人吗？",
+    "DELETE_ROBOT_RELATED_LOG_CONFIRM": "同时删除此机器人的日志文件 {{id}}.db3",
+    "DELETE_ROBOT_ERROR": "删除失败，机器人可能还没有停止",
+    "DELETE_ROBOT_SUCCESS": "机器人删除成功",
+    "DELETE_ROBOT_SUCCESS_BUT_LOG": "删除成功, 但无法与机器人关联的托管联系, 请手动删除文件 {{id}}.db3!",
+    "OPERATE_SUCCESS": "操作成功！",
+    "OPERATE_FAIL": "操作失败！"
 }

@@ -38,7 +38,7 @@ export class RobotOverviewComponent extends BusinessComponent {
 
     stop$: Subject<RobotDetail> = new Subject();
 
-    watchDot$: Subject<RobotDetail> = new Subject();
+    watchDog$: Subject<RobotDetail> = new Subject();
 
     operateBtnText: Observable<string>;
 
@@ -71,7 +71,7 @@ export class RobotOverviewComponent extends BusinessComponent {
     launch() {
         this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
             .add(this.robotOperate.launchStopRobot(this.stop$))
-            .add(this.watchDogService.launchSetRobotWatchDog(this.watchDot$))
+            .add(this.watchDogService.launchSetRobotWatchDog(this.watchDog$))
             .add(this.robotOperate.handleRobotRestartError())
             .add(this.robotOperate.handleRobotStopError())
             .add(this.watchDogService.handleSetWatchDogError());

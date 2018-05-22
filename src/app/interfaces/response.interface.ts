@@ -62,7 +62,7 @@ export interface ServerSendRobotMessage {
 
 /* =======================================================Auth response========================================================= */
 
-// login 
+// login
 export interface LoginResponse extends ResponseUnit<number> { }
 
 // signup
@@ -127,6 +127,7 @@ export interface Robot {
     name: string;
     node_guid: string;
     node_id: number;
+    node_public?: number;
     profit: number;
     public: number;
     refresh: number;
@@ -164,7 +165,7 @@ export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { 
 // public robot
 export interface PublicRobotResponse extends ResponseUnit<boolean> { }
 
-// robot detail 
+// robot detail
 export interface RobotDebug {
     Nano: number;
     Stderr: string;
@@ -203,7 +204,7 @@ export interface RobotDetail {
     name: string;
     node_id: number;
     pexchanges: IdToName; // {id: exchangeName}
-    plabels: IdToName; // { id: customName } 
+    plabels: IdToName; // { id: customName }
     profit: number;
     public: number;
     refresh: number;
@@ -215,7 +216,7 @@ export interface RobotDetail {
     strategy_id: number;
     strategy_last_modified: string;
     strategy_name: string;
-    templates: RobotTemplate[]; // 
+    templates: RobotTemplate[]; //
     username: string;
     wd: number;
     summary?: string;
@@ -269,7 +270,7 @@ export interface ProfitLogOverview {
     Arr: ProfitLog[];
 }
 
-export interface StrategyLog { 
+export interface StrategyLog {
     id: number;
     seriesIdx: number;
     data: any;
@@ -332,6 +333,9 @@ export interface ModifyRobotResponse extends ResponseUnit<boolean> { }
 
 // command robot
 export interface CommandRobotResponse extends ResponseUnit<boolean> { }
+
+// delete robot
+export interface DeleteRobotResponse extends ResponseUnit<number> { }
 
 /** ===================================================Node list========================================= **/
 

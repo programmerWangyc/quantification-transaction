@@ -21,6 +21,7 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
 import { RobotComponent } from './robot/robot.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
 import { TrusteeComponent } from './trustee/trustee.component';
+import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 
 @NgModule({
     imports: [
@@ -46,9 +47,11 @@ import { TrusteeComponent } from './trustee/trustee.component';
         RobotStrategyChartComponent,
         RobotProfitChartComponent,
         PIPES,
+        DeleteRobotComponent,
     ],
 
     entryComponents: [
+        DeleteRobotComponent,
     ],
 
     providers: [

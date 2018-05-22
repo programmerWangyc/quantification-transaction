@@ -25,6 +25,7 @@ import {
     RestartRobotRequestAction,
     StopRobotRequestAction,
     SubscribeRobotRequestAction,
+    DeleteRobotRequestAction,
 } from './../store/robot/robot.action';
 import { TipService } from './tip.service';
 
@@ -104,6 +105,10 @@ export class ProcessService {
 
     processCommandRobot(params: Observable<Request.CommandRobotRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new CommandRobotRequestAction(params)));
+    }
+
+    processDeleteRobot(params: Observable<Request.DeleteRobotRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new DeleteRobotRequestAction(params)))
     }
 
     /** ===================================================Node list=================================================== */

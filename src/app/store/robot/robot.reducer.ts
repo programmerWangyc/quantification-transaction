@@ -1,7 +1,7 @@
 import { cloneDeep, partition } from 'lodash';
 import * as moment from 'moment';
 
-import { CommandRobotRequest, ModifyRobotRequest, PublicRobotRequest } from '../../interfaces/request.interface';
+import { CommandRobotRequest, ModifyRobotRequest, PublicRobotRequest, DeleteRobotRequest } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
     LogOverview,
@@ -12,6 +12,7 @@ import {
     ServerSendRobotMessage,
     StopRobotResponse,
     StrategyLog,
+    DeleteRobotResponse,
 } from '../../interfaces/response.interface';
 import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
 import {
@@ -44,6 +45,15 @@ interface LatestRobotInfo extends ServerSendRobotMessage {
     node_id?: number;
 }
 
+export const OPERATE_ROBOT_REQUEST_TAIL = 'Robot';
+
+export enum RobotOperateType {
+    stop = 'stop',
+    restart = 'restart',
+    delete = 'delete',
+    public = 'public',
+}
+
 interface RequestParams {
     publicRobot: PublicRobotRequest;
     robotDetail: GetRobotDetailRequest; //
@@ -54,6 +64,7 @@ interface RequestParams {
     stopRobot: StopRobotRequest;
     modifyRobot: ModifyRobotRequest;
     commandRobot: CommandRobotRequest;
+    deleteRobot: DeleteRobotRequest;
 }
 
 interface DefaultParams {
@@ -68,11 +79,16 @@ interface RobotArgs {
     templateArgs: TemplateVariableOverview[];
 }
 
+export const OPERATE_ROBOT_LOADING_TAIL = 'RobotLoading';
+
 interface UIState {
     currentRunningLogPage: number;
     currentProfitChartPage: number;
     currentStrategyChartPage: number;
+    isLoading: boolean;
     publicRobotLoading: boolean;
+    stopRobotLoading: boolean;
+    restartRobotLoading: boolean;
 }
 
 export interface State {
@@ -85,7 +101,7 @@ export interface State {
     robotLogsRes: GetRobotLogsResponse;
     restartRobotRes: RestartRobotResponse;
     stopRobotRes: StopRobotResponse;
-    isLoading: boolean;
+    deleteRobotRes: DeleteRobotResponse;
     robotArgs: RobotArgs; // created by 'strategy_args' and 'templates' field belongs to robot detail response;
     modifyRobotConfigRes: ModifyRobotResponse;
     commandRobotRes: CommandRobotResponse;
@@ -134,9 +150,9 @@ const initialState: State = {
     robotDetailRes: null,
     subscribeDetailRes: null,
     robotLogsRes: null,
-    isLoading: false,
     restartRobotRes: null,
     stopRobotRes: null,
+    deleteRobotRes: null,
     robotArgs: null,
     modifyRobotConfigRes: null,
     commandRobotRes: null,
@@ -149,7 +165,10 @@ const initialState: State = {
         currentRunningLogPage: 0,
         currentProfitChartPage: 0,
         currentStrategyChartPage: 0,
+        isLoading: false,
         publicRobotLoading: false,
+        stopRobotLoading: false,
+        restartRobotLoading: false,
     },
     serverMessage: null,
     syncRobotLogsRes: null,
@@ -244,22 +263,22 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // robot logs
         case actions.GET_ROBOT_LOGS: {
-            if (!action.isSyncAction) {
-                const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: action.isSyncAction || false };
-
-                return { ...state, isLoading: true, requestParams };
-            } else {
+            if (action.isSyncAction) {
                 const requestParams = { ...state.requestParams, isSyncLogs: true };
 
-                return { ...state, isLoading: true, requestParams };
+                return { ...state, requestParams };
+            } else {
+                const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: false };
+
+                return { ...state, uiState: { ...state.uiState, isLoading: true }, requestParams };
             }
         }
 
         case actions.GET_ROBOT_LOGS_FAIL: {
             if (state.requestParams.isSyncLogs) {
-                return { ...state, isLoading: false, syncRobotLogsRes: action.payload }
+                return { ...state, syncRobotLogsRes: action.payload }
             } else {
-                return { ...state, isLoading: false, robotLogsRes: action.payload };
+                return { ...state, uiState: { ...state.uiState, isLoading: false }, robotLogsRes: action.payload };
             }
         }
 
@@ -279,18 +298,18 @@ export function reducer(state = initialState, action: actions.Actions): State {
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
             if (state.requestParams.isSyncLogs) {
-                return { ...state, isLoading: false, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
+                return { ...state, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
             } else {
-                return { ...state, isLoading: false, robotLogsRes: action.payload, robotDetailRes, robotList };
+                return { ...state, uiState: { ...state.uiState, isLoading: false }, robotLogsRes: action.payload, robotDetailRes, robotList };
             }
         }
 
         // restart robot
         case actions.RESTART_ROBOT:
-            return { ...state, isLoading: true, requestParams: { ...state.requestParams, restartRobot: { ...action.payload } } };
+            return { ...state, uiState: { ...state.uiState, restartRobotLoading: true }, requestParams: { ...state.requestParams, restartRobot: { ...action.payload } } };
 
         case actions.RESTART_ROBOT_FAIL:
-            return { ...state, isLoading: false, restartRobotRes: action.payload };
+            return { ...state, uiState: { ...state.uiState, restartRobotLoading: false }, restartRobotRes: action.payload };
 
         case actions.RESTART_ROBOT_SUCCESS: {
             const status = <number>action.payload.result;
@@ -303,15 +322,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            return { ...state, isLoading: false, restartRobotRes: action.payload, robotDetailRes, robotList };
+            return { ...state, uiState: { ...state.uiState, restartRobotLoading: false }, restartRobotRes: action.payload, robotDetailRes, robotList };
         }
 
         // stop robot
         case actions.STOP_ROBOT:
-            return { ...state, isLoading: true, requestParams: { ...state.requestParams, stopRobot: { ...action.payload } } };
+            return { ...state, uiState: { ...state.uiState, stopRobotLoading: true }, requestParams: { ...state.requestParams, stopRobot: { ...action.payload } } };
 
         case actions.STOP_ROBOT_FAIL:
-            return { ...state, isLoading: false, stopRobotRes: action.payload };
+            return { ...state, uiState: { ...state.uiState, stopRobotLoading: false }, stopRobotRes: action.payload };
 
         case actions.STOP_ROBOT_SUCCESS: {
             const status = <number>action.payload.result;
@@ -324,7 +343,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            return { ...state, isLoading: false, stopRobotRes: action.payload, robotDetailRes, robotList };
+            return { ...state, uiState: { ...state.uiState, stopRobotLoading: false }, stopRobotRes: action.payload, robotDetailRes, robotList };
         }
 
         // modify robot config
@@ -342,6 +361,21 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.COMMAND_ROBOT_FAIL:
         case actions.COMMAND_ROBOT_SUCCESS:
             return { ...state, commandRobotRes: action.payload };
+
+        // delete robot:
+        case actions.DELETE_ROBOT:
+            return { ...state, requestParams: { ...state.requestParams, deleteRobot: action.payload } };
+
+        case actions.DELETE_ROBOT_FAIL:
+            return { ...state, deleteRobotRes: action.payload };
+
+        case actions.DELETE_ROBOT_SUCCESS: {
+            const id = state.requestParams.deleteRobot.id;
+
+            const robots = state.robotList.robots.filter(item => item.id !== id);
+
+            return { ...state, robotList: { ...state.robotList, robots }, deleteRobotRes: action.payload };
+        }
 
         /** ==============================================Local action===================================================== **/
 
@@ -370,6 +404,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, robotDetailRes: null, defaultParams: initialDefaultParams, syncRobotLogsRes: null, robotLogsRes: null, subscribeDetailRes: null, requestParams };
         }
 
+        case actions.RESET_ROBOT_OPERATE: {
+            return { ...state, restartRobotRes: null, stopRobotRes: null, deleteRobotRes: null, };
+        }
+
         // default params;
         case actions.MODIFY_DEFAULT_PARAMS:
             return { ...state, defaultParams: modifyDefaultParams(state.defaultParams, action.payload) };
@@ -391,6 +429,21 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.CHANGE_STRATEGY_CHART_PAGE:
             return { ...state, uiState: { ...state.uiState, currentStrategyChartPage: action.payload } };
 
+        // update robot watch dog state
+        case actions.UPDATE_ROBOT_WATCH_DOG_STATE: {
+            const { robotId, watchDogStatus } = action.payload;
+
+            const latestInfo: LatestRobotInfo = { flags: NaN, id: robotId, wd: watchDogStatus };
+
+            const keys = ['wd'];
+
+            return {
+                ...state,
+                robotList: updateRobotListRes(state.robotList, keys, latestInfo),
+                robotDetailRes: updateRobotDetailRes(state.robotDetailRes, keys, latestInfo),
+            };
+        }
+
         /** ==============================================Server send message===================================================== **/
 
         // server send message
@@ -401,7 +454,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 serverMessage: action.payload,
                 robotDetailRes: updateRobotDetailRes(state.robotDetailRes, keyNames, action.payload),
-                robotList: updateRobotListRes(state.robotList, keyNames, action.payload)
+                robotList: updateRobotListRes(state.robotList, keyNames, action.payload),
             };
         }
 
@@ -640,8 +693,6 @@ export const getSubscribeRobotRes = (state: State) => state.subscribeDetailRes;
 
 export const getRobotLogsRes = (state: State) => state.robotLogsRes;
 
-export const getLoadingState = (state: State) => state.isLoading;
-
 export const getRestartRobotRes = (state: State) => state.restartRobotRes;
 
 export const getStopRobotRes = (state: State) => state.stopRobotRes;
@@ -663,3 +714,5 @@ export const getServerSendMessage = (state: State) => state.serverMessage;
 export const getSyncLogsResponse = (state: State) => state.syncRobotLogsRes;
 
 export const getRequestParameter = (state: State) => state.requestParams;
+
+export const getDeleteRobotRes = (state: State) => state.deleteRobotRes;

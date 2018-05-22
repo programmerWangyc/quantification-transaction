@@ -4,11 +4,12 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { RobotDetail, SetRobotWDResponse } from './../../interfaces/response.interface';
+import { RobotDetail, SetRobotWDResponse, Robot } from './../../interfaces/response.interface';
 import { ErrorService } from './../../providers/error.service';
 import { ProcessService } from './../../providers/process.service';
 import { TipService } from './../../providers/tip.service';
-import { AppState, selectSetWatchDogResponse } from './../../store/index.reducer';
+import { AppState, selectSetWatchDogResponse, selectSetWatchDogRequest } from './../../store/index.reducer';
+import { SetRobotWDRequest } from '../../interfaces/request.interface';
 
 export enum SetWatchDogTip {
     CLOSE_ROBOT_MONITOR_CONFIRM,
@@ -27,13 +28,13 @@ export class WatchDogService {
 
     /* =======================================================Api request======================================================= */
 
-    launchSetRobotWatchDog(robot: Observable<RobotDetail>): Subscription {
+    launchSetRobotWatchDog(robot: Observable<RobotDetail | Robot>): Subscription {
         return this.process.processSetRobotWatchDog(robot.mergeMap(robot => {
             const watchDogStatus = robot.wd > 0 ? 0 : 1;
 
-            const request = { robotId: robot.id, watchDogStatus };
-
-            return this.tip.confirmOperateTip(ConfirmComponent, { message: SetWatchDogTip[watchDogStatus], needTranslate: true }).filter(sure => sure).mapTo(request);
+            return this.tip.confirmOperateTip(ConfirmComponent, { message: SetWatchDogTip[watchDogStatus], needTranslate: true })
+                .filter(sure => sure)
+                .mapTo({ robotId: robot.id, watchDogStatus });
         }));
     }
 
@@ -42,6 +43,12 @@ export class WatchDogService {
     private getSetWatchDogResponse(): Observable<SetRobotWDResponse> {
         return this.store.select(selectSetWatchDogResponse)
             .filter(v => !!v);
+    }
+
+    getLatestRobotWatchDogState(): Observable<SetRobotWDRequest> {
+        return this.getSetWatchDogResponse()
+            .filter(res => res.result)
+            .switchMapTo(this.store.select(selectSetWatchDogRequest));
     }
 
     /* =======================================================Local state change======================================================= */

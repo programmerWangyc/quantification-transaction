@@ -27,3 +27,5 @@ export function reducer(state = initialState, action: actions.Actions): State {
 }
 
 export const getSetWDResponse = (state: State) => state.response;
+
+export const getSetWDRequest = (state: State) => state.request;

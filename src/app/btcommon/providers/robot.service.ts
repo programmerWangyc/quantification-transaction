@@ -180,7 +180,7 @@ export class RobotService {
     /* =======================================================Local state modify================================================== */
 
     isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotOperationLoadingState);
+        return this.store.select(fromRoot.selectRobotUiState).map(state => state.isLoading);
     }
 
     resetRobotDetail(): void {

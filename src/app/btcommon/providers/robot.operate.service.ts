@@ -13,9 +13,9 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CommandRobotTip } from '../../interfaces/constant.interface';
+import { CommandRobotTip, ServerSendRobotEventType } from '../../interfaces/constant.interface';
 import { AuthService } from '../../shared/providers/auth.service';
-import { ModifyRobotArgAction } from '../../store/robot/robot.action';
+import { ModifyRobotArgAction, ResetRobotOperateAction, UpdateRobotWatchDogStateAction } from '../../store/robot/robot.action';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
 import {
@@ -35,6 +35,10 @@ import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
+import { NzModalService } from 'ng-zorro-antd';
+import { DeleteRobotComponent } from '../delete-robot/delete-robot.component';
+import { isDeleteRobotFail } from '../../store/robot/robot.effect';
+import { OPERATE_ROBOT_LOADING_TAIL, OPERATE_ROBOT_REQUEST_TAIL, RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Injectable()
 export class RobotOperateService {
@@ -50,6 +54,7 @@ export class RobotOperateService {
         private translate: TranslateService,
         private constantService: ConstantService,
         private encryptService: EncryptService,
+        private nzModel: NzModalService,
     ) {
     }
 
@@ -62,23 +67,40 @@ export class RobotOperateService {
     /**
      * @description 1、验证能否切换平台；2、提示用户进行操作确认；3、如果公有节点需要验证密码；
      */
-    launchRestartRobot(data: Observable<fromRes.RobotDetail>): Subscription {
-        const params = this.canChangePlatform()
-            .filter(sure => sure)
-            .switchMapTo(this.getRobotOperateConfirm(data).filter(sure => sure).mergeMapTo(this.isPublicNode()))
-            .switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : Observable.of(true))
-            .zip(data, (condition, data) => condition && data)
-            .filter(value => !!value)
-            .map(({ id }) => ({ id }));
+    launchRestartRobot(data: Observable<fromRes.RobotDetail | fromRes.Robot>, needVerifyPlatform = true): Subscription {
 
-        return this.process.processRestartRobot(params);
+        const param1 = this.canChangePlatform()
+            .filter(sure => sure)
+            .switchMapTo(this.getRobotOperateConfirm(data)
+                .filter(sure => sure)
+                .mergeMapTo(this.isPublicNode())
+                .switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : Observable.of(true))
+                .zip(data, (condition, data) => condition && data)
+                .filter(value => !!value)
+                .map(({ id }) => ({ id })));
+
+        /**
+         * FIXME: 这里如果调用 this.getRobotOperateConfirm 实测并不能取到第一个值， why?
+         */
+        const param2 = (<Observable<fromRes.Robot>>data)
+            .switchMap(({ id, node_public, status }) => this.tipService.confirmOperateTip(ConfirmComponent, { message: this.constantService.getRobotOperateMap(status).tip, needTranslate: true })
+                .filter(v => !!v)
+                .mergeMapTo(this.pubService.isLogin()
+                    .mergeMap(isLogin => !isLogin && node_public && node_public === 1 ? this.isSecurityVerifySuccess().filter(v => !!v).mapTo({ id }) : Observable.of({ id }))
+                )
+            );
+
+        return this.process.processRestartRobot(needVerifyPlatform ? param1 : param2);
     }
 
-    launchStopRobot(data: Observable<fromRes.RobotDetail>): Subscription {
+    launchStopRobot(data: Observable<fromRes.RobotDetail | fromRes.Robot>): Subscription {
         return this.process.processStopRobot(
-            this.getRobotOperateConfirm(data)
-                .filter(sure => !!sure)
-                .mergeMapTo(data)
+            data.switchMap(({ id, status }) => this.tipService.confirmOperateTip(
+                ConfirmComponent,
+                { message: this.constantService.getRobotOperateMap(status).tip, needTranslate: true })
+                .filter(sure => sure)
+                .mapTo({ id })
+            )
         );
     }
 
@@ -117,6 +139,21 @@ export class RobotOperateService {
                     .filter(confirm => confirm)
                     .mapTo(request)
                 )
+        );
+    }
+
+    launchDeleteRobot(data: Observable<fromRes.Robot>): Subscription {
+        return this.process.processDeleteRobot(
+            data.withLatestFrom(this.tipService.getNzConfirmOperateConfig())
+                .switchMap(([{ id }, config]) => {
+                    const modal = this.nzModel.confirm(Object.assign({
+                        nzContent: DeleteRobotComponent,
+                        nzComponentParams: { id },
+                        nzOnOk: component => modal.close(component.checked),
+                    }, config));
+
+                    return modal.afterClose.filter(res => !!res).map(checked => ({ id, checked }));
+                })
         );
     }
 
@@ -163,6 +200,7 @@ export class RobotOperateService {
             .filter(res => !!res);
     }
 
+    // stop robot
     private getStopRobotResponse(): Observable<fromRes.StopRobotResponse> {
         return this.store.select(fromRoot.selectStopRobotResponse)
             .filter(res => !!res);
@@ -267,17 +305,48 @@ export class RobotOperateService {
             .filter(v => !!v);
     }
 
+    // delete robot
+    getDeleteRobotResponse(): Observable<fromRes.DeleteRobotResponse> {
+        return this.store.select(fromRoot.selectDeleteRobotResponse)
+            .filter(v => !!v);
+    }
+
+    monitorDeleteRobotResult(): Subscription {
+        return this.getDeleteRobotResponse()
+            .filter(res => !isDeleteRobotFail(res))
+            .map(res => res.result)
+            .withLatestFrom(this.store.select(fromRoot.selectRobotRequestParameters).filter(params => !!params && !!params.deleteRobot).map(state => state.deleteRobot.id))
+            .mergeMap(([result, id]) => {
+                const message = this.deleteRobotLogFail(result) ? 'DELETE_ROBOT_SUCCESS_BUT_LOG' : 'DELETE_ROBOT_SUCCESS';
+
+                return this.translate.get(message, { id });
+            })
+            .subscribe(message => this.tipService.showTip(message));
+    }
+
+    deleteRobotLogFail(code: number): boolean {
+        return Math.abs(code) === 2;
+    }
+
     // ui state
-    isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotOperationLoadingState);
+    isLoading(type?: string): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.isLoading);
+    }
+
+    isCurrentRobotOperating(robot: fromRes.Robot, operateType: string): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotUiState).map(state => state[operateType + OPERATE_ROBOT_LOADING_TAIL])
+            .withLatestFrom(this.store.select(fromRoot.selectRobotRequestParameters).filter(res => !!res && !!res[operateType + OPERATE_ROBOT_REQUEST_TAIL]).map(res => res[operateType + OPERATE_ROBOT_REQUEST_TAIL].id))
+            .filter(([loading, id]) => robot.id === id)
+            .map(([loading, _]) => loading)
+            .startWith(false);
     }
 
     getOperateBtnText(): Observable<string> {
         return this.getRobotDetail()
             .map(robot => this.constantService.getRobotOperateMap(robot.status).btnText)
             .combineLatest(
-                this.isLoading(),
-                (btnTexts: string[], isLoading) => isLoading ? btnTexts[1] || btnTexts[0] : btnTexts[0]
+                this.isLoading(RobotOperateType.stop + OPERATE_ROBOT_LOADING_TAIL).merge(this.isLoading(RobotOperateType.restart + OPERATE_ROBOT_LOADING_TAIL)),
+                (btnTexts: string[], isLoading: boolean) => this.constantService.getRobotOperateBtnText(isLoading, btnTexts)
             );
     }
 
@@ -354,6 +423,8 @@ export class RobotOperateService {
 
     /* =======================================================Short cart method================================================== */
 
+
+
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
         return this.encryptService.transformStrategyArgsToEncryptType(this.store.select(fromRoot.selectRobotStrategyArgs).map(args => args || []), isEncrypt)
             .combineLatest(
@@ -378,7 +449,7 @@ export class RobotOperateService {
         );
     }
 
-    private getRobotOperateConfirm(robot: Observable<fromRes.RobotDetail>): Observable<boolean> {
+    private getRobotOperateConfirm(robot: Observable<fromRes.RobotDetail | fromRes.Robot>): Observable<boolean> {
         return robot.switchMap(robot => this.tipService.confirmOperateTip(
             ConfirmComponent,
             { message: this.constantService.getRobotOperateMap(robot.status).tip, needTranslate: true }
@@ -431,6 +502,14 @@ export class RobotOperateService {
         this.store.dispatch(new ModifyRobotArgAction(variable, templateFlag));
     }
 
+    resetRobotOperate(): void {
+        this.store.dispatch(new ResetRobotOperateAction());
+    }
+
+    updateRobotWDState(target: Observable<fromReq.SetRobotWDRequest>): Subscription {
+        return target.subscribe(request => this.store.dispatch(new UpdateRobotWatchDogStateAction(request)));
+    }
+
     /* =======================================================Error Handle======================================================= */
 
     handlePublicRobotError(): Subscription {
@@ -453,5 +532,12 @@ export class RobotOperateService {
 
     handleCommandRobotError(): Subscription {
         return this.error.handleResponseError(this.getCommandRobotResponse())
+    }
+
+    handleDeleteRobotError(): Subscription {
+        return this.error.handleError(
+            this.getDeleteRobotResponse()
+                .map(res => res.error || this.error.getDeleteRobotError(res.result))
+        )
     }
 }

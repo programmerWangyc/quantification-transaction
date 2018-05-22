@@ -6,6 +6,8 @@ import {
     ModifyRobotRequest,
     StopRobotRequest,
     SubscribeRobotRequest,
+    DeleteRobotRequest,
+    SetRobotWDRequest,
 } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
@@ -14,6 +16,7 @@ import {
     ServerSendRobotMessage,
     StopRobotResponse,
     SubscribeRobotResponse,
+    DeleteRobotResponse,
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { ImportedArg, VariableOverview } from './../../interfaces/constant.interface';
@@ -448,12 +451,66 @@ export class CommandRobotSuccessAction extends CommandRobotAction implements Act
     constructor(public payload: CommandRobotResponse) { super() }
 }
 
+/** ======================================================Delete robot========================================= **/
+
+export enum DeleteRobotOrder {
+    id,
+    checked,
+    length
+}
+
+export class DeleteRobotAction extends ApiAction {
+    isSingleParams = false;
+
+    order = DeleteRobotOrder;
+
+    noneParams = false;
+
+    command = 'DeleteRobot';
+
+    constructor() { super() };
+}
+
+export const DELETE_ROBOT = 'DELETE_ROBOT';
+
+export class DeleteRobotRequestAction extends DeleteRobotAction implements Action {
+    readonly type = DELETE_ROBOT;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: DeleteRobotRequest) { super() }
+}
+
+export const DELETE_ROBOT_FAIL = 'DELETE_ROBOT_FAIL';
+
+export class DeleteRobotFailAction extends DeleteRobotAction implements Action {
+    readonly type = DELETE_ROBOT_FAIL;
+
+    constructor(public payload: DeleteRobotResponse) { super() }
+}
+
+export const DELETE_ROBOT_SUCCESS = 'DELETE_ROBOT_SUCCESS';
+
+export class DeleteRobotSuccessAction extends DeleteRobotAction implements Action {
+    readonly type = DELETE_ROBOT_SUCCESS;
+
+    constructor(public payload: DeleteRobotResponse) { super() }
+}
+
 /** ======================================================Local action========================================= **/
 
 export const RESET_ROBOT_DETAIL = 'RESET_ROBOT_DETAIL';
 
 export class ResetRobotDetailAction implements Action {
     readonly type = RESET_ROBOT_DETAIL;
+
+    constructor() { }
+}
+
+export const RESET_ROBOT_OPERATE = 'RESET_ROBOT_OPERATE';
+
+export class ResetRobotOperateAction implements Action {
+    readonly type = RESET_ROBOT_OPERATE;
 
     constructor() { }
 }
@@ -515,62 +572,77 @@ export class ChangeStrategyChartPageAction implements Action {
     constructor(public payload: number) { }
 }
 
+export const UPDATE_ROBOT_WATCH_DOG_STATE = 'UPDATE_ROBOT_WATCH_DOG_STATE';
+
+export class UpdateRobotWatchDogStateAction implements Action {
+    readonly type = UPDATE_ROBOT_WATCH_DOG_STATE;
+
+    constructor(public payload: SetRobotWDRequest) { }
+}
+
 export type ApiActions = GetRobotListRequestAction
+    | CommandRobotFailAction
+    | CommandRobotRequestAction
+    | CommandRobotSuccessAction
+    | DeleteRobotFailAction
+    | DeleteRobotRequestAction
+    | DeleteRobotSuccessAction
+    | GetRobotDetailFailAction
+    | GetRobotDetailRequestAction
+    | GetRobotDetailSuccessAction
     | GetRobotListFailAction
     | GetRobotListSuccessAction
-    | PublicRobotRequestAction
-    | PublicRobotFailAction
-    | PublicRobotSuccessAction
-    | GetRobotDetailRequestAction
-    | GetRobotDetailFailAction
-    | GetRobotDetailSuccessAction
-    | SubscribeRobotRequestAction
-    | SubscribeRobotFailAction
-    | SubscribeRobotSuccessAction
-    | GetRobotLogsRequestAction
     | GetRobotLogsFailAction
+    | GetRobotLogsRequestAction
     | GetRobotLogsSuccessAction
-    | RestartRobotRequestAction
-    | RestartRobotFailAction
-    | RestartRobotSuccessAction
-    | StopRobotRequestAction
-    | StopRobotFailAction
-    | StopRobotSuccessAction
-    | ModifyRobotRequestAction
     | ModifyRobotFailAction
+    | ModifyRobotRequestAction
     | ModifyRobotSuccessAction
-    | CommandRobotRequestAction
-    | CommandRobotFailAction
-    | CommandRobotSuccessAction
+    | PublicRobotFailAction
+    | PublicRobotRequestAction
+    | PublicRobotSuccessAction
+    | RestartRobotFailAction
+    | RestartRobotRequestAction
+    | RestartRobotSuccessAction
+    | StopRobotFailAction
+    | StopRobotRequestAction
+    | StopRobotSuccessAction
+    | SubscribeRobotFailAction
+    | SubscribeRobotRequestAction
+    | SubscribeRobotSuccessAction
 
 export type Actions = ApiActions
-    | ResetRobotDetailAction
-    | ModifyRobotArgAction
-    | ModifyDefaultParamsAction
-    | MonitorSoundTypeAction
-    | ToggleMonitorSoundAction
     | ChangeLogPageAction
     | ChangeProfitChartPageAction
     | ChangeStrategyChartPageAction
+    | ModifyDefaultParamsAction
+    | ModifyRobotArgAction
+    | MonitorSoundTypeAction
     | ReceiveServerSendRobotEventAction
+    | ResetRobotDetailAction
+    | ResetRobotOperateAction
+    | ToggleMonitorSoundAction
+    | UpdateRobotWatchDogStateAction
 
 export const ResponseActions = {
-    GetRobotListFailAction,
-    GetRobotListSuccessAction,
-    PublicRobotFailAction,
-    PublicRobotSuccessAction,
+    CommandRobotFailAction,
+    CommandRobotSuccessAction,
+    DeleteRobotFailAction,
+    DeleteRobotSuccessAction,
     GetRobotDetailFailAction,
     GetRobotDetailSuccessAction,
-    SubscribeRobotFailAction,
-    SubscribeRobotSuccessAction,
+    GetRobotListFailAction,
+    GetRobotListSuccessAction,
     GetRobotLogsFailAction,
     GetRobotLogsSuccessAction,
+    ModifyRobotFailAction,
+    ModifyRobotSuccessAction,
+    PublicRobotFailAction,
+    PublicRobotSuccessAction,
     RestartRobotFailAction,
     RestartRobotSuccessAction,
     StopRobotFailAction,
     StopRobotSuccessAction,
-    ModifyRobotFailAction,
-    ModifyRobotSuccessAction,
-    CommandRobotFailAction,
-    CommandRobotSuccessAction,
+    SubscribeRobotFailAction,
+    SubscribeRobotSuccessAction,
 }
