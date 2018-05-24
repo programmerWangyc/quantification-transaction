@@ -5,12 +5,15 @@ import { ChartModule } from 'angular2-highcharts';
 
 import { SharedModule } from './../shared/shared.module';
 import { ToolModule } from './../tool/tool.module';
+import { CreateRobotComponent } from './create-robot/create-robot.component';
+import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { PIPES } from './pipes/index.pipes';
 import { RobotLogService } from './providers/robot.log.service';
 import { RobotOperateService } from './providers/robot.operate.service';
 import { RobotService } from './providers/robot.service';
-import { RobotArgComponent } from './robot-arg/robot-arg.component';
+import { StrategyService } from './providers/strategy.service';
+import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
 import { RobotCommandComponent } from './robot-command/robot-command.component';
 import { RobotConfigComponent } from './robot-config/robot-config.component';
 import { RobotLogComponent } from './robot-log/robot-log.component';
@@ -21,7 +24,7 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
 import { RobotComponent } from './robot/robot.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
 import { TrusteeComponent } from './trustee/trustee.component';
-import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
+import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
 
 @NgModule({
     imports: [
@@ -41,23 +44,27 @@ import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
         RobotOverviewComponent,
         RobotConfigComponent,
         RobotLogComponent,
-        RobotArgComponent,
+        StrategyArgComponent,
         RobotCommandComponent,
         RobotStatusComponent,
         RobotStrategyChartComponent,
         RobotProfitChartComponent,
         PIPES,
         DeleteRobotComponent,
+        CreateRobotComponent,
+        ExchangePairComponent,
     ],
 
     entryComponents: [
         DeleteRobotComponent,
+        CreateRobotComponent,
     ],
 
     providers: [
         RobotService,
         RobotLogService,
         RobotOperateService,
+        StrategyService,
     ],
     exports: [
         TrusteeComponent,
@@ -72,6 +79,8 @@ import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
         RobotStrategyChartComponent,
         RobotProfitChartComponent,
         PIPES,
+        DeleteRobotComponent,
+        CreateRobotComponent,
     ],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA

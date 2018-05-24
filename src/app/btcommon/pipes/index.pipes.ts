@@ -17,7 +17,9 @@ import {
     VariableToSelectListPipe,
     VariableTypePipe,
     RobotOperateBtnTextPipe,
+    RemoveMd5Pipe,
 } from './robot.pipe';
+import { StrategyNamePipe } from './strategy.pipe';
 
 export const PIPES = [
     KLinePeriodPipe,
@@ -38,4 +40,6 @@ export const PIPES = [
     ExtraColorPickerPipe,
     StrategyChartTitlePipe,
     RobotOperateBtnTextPipe,
+    StrategyNamePipe,
+    RemoveMd5Pipe
 ]

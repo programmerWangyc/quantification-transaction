@@ -2,21 +2,23 @@ import { Action } from '@ngrx/store';
 
 import {
     CommandRobotRequest,
+    DeleteRobotRequest,
     GetRobotListRequest,
     ModifyRobotRequest,
+    SaveRobotRequest,
+    SetRobotWDRequest,
     StopRobotRequest,
     SubscribeRobotRequest,
-    DeleteRobotRequest,
-    SetRobotWDRequest,
 } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
+    DeleteRobotResponse,
     GetRobotListResponse,
     ModifyRobotResponse,
+    SaveRobotResponse,
     ServerSendRobotMessage,
     StopRobotResponse,
     SubscribeRobotResponse,
-    DeleteRobotResponse,
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { ImportedArg, VariableOverview } from './../../interfaces/constant.interface';
@@ -497,6 +499,57 @@ export class DeleteRobotSuccessAction extends DeleteRobotAction implements Actio
     constructor(public payload: DeleteRobotResponse) { super() }
 }
 
+/** ======================================================Create robot========================================= **/
+
+export enum SaveRobotOrder {
+    name,
+    args,
+    strategyId,
+    kLineId,
+    pairExchanges,
+    pairStocks,
+    nodeId,
+    length
+}
+
+export class SaveRobotAction extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    order = SaveRobotOrder;
+
+    command = 'SaveRobot';
+
+    constructor() { super() };
+}
+
+export const SAVE_ROBOT = 'SAVE_ROBOT';
+
+export class SaveRobotRequestAction extends SaveRobotAction implements Action {
+    readonly type = SAVE_ROBOT;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: SaveRobotRequest) { super() }
+}
+
+export const SAVE_ROBOT_FAIL = 'SAVE_ROBOT_FAIL';
+
+export class SaveRobotFailAction extends SaveRobotAction implements Action {
+    readonly type = 'SAVE_ROBOT_FAIL';
+
+    constructor(public payload: SaveRobotResponse) { super() }
+}
+
+export const SAVE_ROBOT_SUCCESS = 'SAVE_ROBOT_SUCCESS';
+
+export class SaveRobotSuccessAction extends SaveRobotAction implements Action {
+    readonly type = 'SAVE_ROBOT_SUCCESS';
+
+    constructor(public payload: SaveRobotResponse) { super() }
+}
+
 /** ======================================================Local action========================================= **/
 
 export const RESET_ROBOT_DETAIL = 'RESET_ROBOT_DETAIL';
@@ -604,6 +657,9 @@ export type ApiActions = GetRobotListRequestAction
     | RestartRobotFailAction
     | RestartRobotRequestAction
     | RestartRobotSuccessAction
+    | SaveRobotRequestAction
+    | SaveRobotFailAction
+    | SaveRobotSuccessAction
     | StopRobotFailAction
     | StopRobotRequestAction
     | StopRobotSuccessAction
@@ -641,6 +697,8 @@ export const ResponseActions = {
     PublicRobotSuccessAction,
     RestartRobotFailAction,
     RestartRobotSuccessAction,
+    SaveRobotFailAction,
+    SaveRobotSuccessAction,
     StopRobotFailAction,
     StopRobotSuccessAction,
     SubscribeRobotFailAction,

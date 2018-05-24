@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { FoldableBusinessComponent } from '../../interfaces/business.interface';
 import { SemanticsLog } from '../../interfaces/constant.interface';
 import { RobotLogService } from './../providers/robot.log.service';
 
@@ -14,7 +14,7 @@ import { RobotLogService } from './../providers/robot.log.service';
     templateUrl: './robot-profit-chart.component.html',
     styleUrls: ['./robot-profit-chart.component.scss']
 })
-export class RobotProfitChartComponent extends BusinessComponent {
+export class RobotProfitChartComponent extends FoldableBusinessComponent {
 
     subscription$$: Subscription;
 
@@ -67,12 +67,6 @@ export class RobotProfitChartComponent extends BusinessComponent {
 
         this.subscription$$ = this.robotLog.addProfitPoints(this.chart$)
             .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset().withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })).skip(1)));
-    }
-
-    toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
     }
 
     changePage(page) {

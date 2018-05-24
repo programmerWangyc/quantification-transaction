@@ -1,0 +1,15 @@
+@import '../../../theme/_variable.theme';
+
+.alternative {
+    display: inline-block;
+    min-width: 70%;
+}
+
+.title {
+    background-color: #e6f7ff;
+    border-radius: 4px;
+    text-indent: 1em;
+    color: $gray;
+    min-height: 39px;
+    line-height: 39px;
+}

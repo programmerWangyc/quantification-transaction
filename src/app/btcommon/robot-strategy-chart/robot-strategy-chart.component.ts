@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { FoldableBusinessComponent } from '../../interfaces/business.interface';
 import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from './../../interfaces/constant.interface';
 
@@ -17,7 +17,7 @@ import { SemanticsLog } from './../../interfaces/constant.interface';
     templateUrl: './robot-strategy-chart.component.html',
     styleUrls: ['./robot-strategy-chart.component.scss'],
 })
-export class RobotStrategyChartComponent extends BusinessComponent {
+export class RobotStrategyChartComponent extends FoldableBusinessComponent {
     @ViewChild('container') chartEle: ElementRef;
 
     subscription$$: Subscription;
@@ -104,12 +104,6 @@ export class RobotStrategyChartComponent extends BusinessComponent {
                     )
                     .skip(1))
             );
-    }
-
-    toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
     }
 
     changePage(page: number) {

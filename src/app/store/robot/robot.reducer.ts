@@ -1,18 +1,25 @@
 import { cloneDeep, partition } from 'lodash';
 import * as moment from 'moment';
 
-import { CommandRobotRequest, ModifyRobotRequest, PublicRobotRequest, DeleteRobotRequest } from '../../interfaces/request.interface';
+import {
+    CommandRobotRequest,
+    DeleteRobotRequest,
+    ModifyRobotRequest,
+    PublicRobotRequest,
+    SaveRobotRequest,
+} from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
+    DeleteRobotResponse,
     LogOverview,
     ModifyRobotResponse,
     RestartRobotResponse,
     RunningLog,
+    SaveRobotResponse,
     SemanticsLogsOverview,
     ServerSendRobotMessage,
     StopRobotResponse,
     StrategyLog,
-    DeleteRobotResponse,
 } from '../../interfaces/response.interface';
 import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
 import {
@@ -65,6 +72,7 @@ interface RequestParams {
     modifyRobot: ModifyRobotRequest;
     commandRobot: CommandRobotRequest;
     deleteRobot: DeleteRobotRequest;
+    saveRobot: SaveRobotRequest;
 }
 
 interface DefaultParams {
@@ -113,6 +121,7 @@ export interface State {
     uiState: UIState;
     serverMessage: ServerSendRobotMessage;
     syncRobotLogsRes: GetRobotLogsResponse;
+    saveRobotRes: SaveRobotResponse;
 }
 
 const robotLogsDefaultParams = {
@@ -172,6 +181,7 @@ const initialState: State = {
     },
     serverMessage: null,
     syncRobotLogsRes: null,
+    saveRobotRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -283,6 +293,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.GET_ROBOT_LOGS_SUCCESS: {
+            if(!state.requestParams.robotLogs) break; // 自动获取日志后，如果用户已经退出，停止操作。
+
             const result = pickUpLogs(action.payload.result.logs);
 
             action.payload.result = { ...action.payload.result, ...result };
@@ -376,6 +388,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             return { ...state, robotList: { ...state.robotList, robots }, deleteRobotRes: action.payload };
         }
+
+        // create robot
+        case actions.SAVE_ROBOT:
+            return { ...state, requestParams: { ...state.requestParams, saveRobot: action.payload } };
+
+        case actions.SAVE_ROBOT_FAIL:
+        case actions.SAVE_ROBOT_SUCCESS:
+            return { ...state, saveRobotRes: action.payload };
 
         /** ==============================================Local action===================================================== **/
 
@@ -493,7 +513,7 @@ function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverv
  * @param args Strategy args or template args;
  * @description This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
  */
-function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
+export function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
     return args.map(ary => {
         const variable = completionParams(ary);
 
@@ -506,7 +526,7 @@ function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
 /**
  * @description Converting data structure from array to dictionary;
  */
-function completionParams(arg: (string | number)[]): VariableOverview {
+export function completionParams(arg: (string | number)[]): VariableOverview {
     if (arg.length === 3) {
         const [name, des, variableValue] = arg;
 
@@ -716,3 +736,5 @@ export const getSyncLogsResponse = (state: State) => state.syncRobotLogsRes;
 export const getRequestParameter = (state: State) => state.requestParams;
 
 export const getDeleteRobotRes = (state: State) => state.deleteRobotRes;
+
+export const getSaveRobotRes = (state: State) => state.saveRobotRes;

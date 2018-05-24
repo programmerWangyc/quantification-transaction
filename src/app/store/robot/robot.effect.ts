@@ -1,23 +1,27 @@
 import 'rxjs/add/observable/empty';
-import { TipService } from './../../providers/tip.service';
+
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
 import { isString } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
+import { ServerSendRobotEventType } from '../../interfaces/constant.interface';
 import { ResponseAction } from '../base.action';
 import * as btNodeActions from '../bt-node/bt-node.action';
+import { AppState, selectRobotRequestParameters } from '../index.reducer';
 import * as platformActions from '../platform/platform.action';
-import { RestartRobotResponse, CommandRobotResponse, ServerSendEventType, ServerSendRobotMessage, DeleteRobotResponse } from './../../interfaces/response.interface';
+import {
+    CommandRobotResponse,
+    DeleteRobotResponse,
+    RestartRobotResponse,
+    ServerSendEventType,
+    ServerSendRobotMessage,
+} from './../../interfaces/response.interface';
+import { TipService } from './../../providers/tip.service';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as robotActions from './robot.action';
-import { ModifyRobotFailAction, CommandRobotSuccessAction, CommandRobotFailAction, ReceiveServerSendRobotEventAction, DeleteRobotSuccessAction } from './robot.action';
-import { Action, Store } from '@ngrx/store';
-import { ActivatedRoute } from '@angular/router';
-import { AppState, selectRobotRequestParameters } from '../index.reducer';
-import { RobotService } from '../../btcommon/providers/robot.service';
-import { ServerSendRobotEventType } from '../../interfaces/constant.interface';
 
 @Injectable()
 export class RobotEffect extends BaseEffect {
@@ -48,12 +52,12 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     modifyRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.MODIFY_ROBOT, robotActions.ResponseActions)
-        .do(action => !(<ModifyRobotFailAction>action).payload.error && this.tip.showTip('ROBOT_CONFIG_UPDATE_SUCCESS'))
+        .do(action => !(<robotActions.ModifyRobotFailAction>action).payload.error && this.tip.showTip('ROBOT_CONFIG_UPDATE_SUCCESS'))
 
     @Effect()
     commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail)
         .do(action => {
-            const message = (<CommandRobotSuccessAction | CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
+            const message = (<robotActions.CommandRobotSuccessAction | robotActions.CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
 
             this.tip.showTip(message);
         });
@@ -62,13 +66,21 @@ export class RobotEffect extends BaseEffect {
     deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail)
 
     @Effect()
+    saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions)
+        .do(action => {
+            const message = (<robotActions.SaveRobotSuccessAction | robotActions.SaveRobotFailAction>action).payload.result ? 'CREATE_ROBOT_SUCCESS' : 'CREATE_ROBOT_FAIL';
+
+            this.tip.showTip(message);
+        })
+
+    @Effect()
     serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
         .switchMap(state => this.ws.messages.filter(msg => {
             const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
 
             return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS)
         })
-            .map(msg => new ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result))
+            .map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result))
         );
 
     constructor(

@@ -246,7 +246,7 @@ export interface GetBindGoogleAuth {
     key: string;
 }
 
-// shadow member 
+// shadow member
 export const getShadowMember = 'GetShadowMember';
 
 export interface GetShadowMember {
@@ -275,7 +275,7 @@ export interface UpdateShadowMember {
     status: number;
 }
 
-// account 
+// account
 export const getAccount = 'GetAccount';
 
 export interface GetAccount {
@@ -312,7 +312,7 @@ export interface getChangePassword {
     newPassword: string;
 }
 
-// api key 
+// api key
 
 export const addApiKey = 'CreateApiKey';
 
@@ -339,7 +339,7 @@ export interface GetNodeHash {
 
 }
 
-// platform 
+// platform
 export const getPlatformDetail = 'GetPlatformDetail';
 
 export interface GetPlatformDetail {
@@ -379,11 +379,11 @@ export interface GetExchangeList {
 export const getStrategyList = 'GetStrategyList';
 
 export interface GetStrategyList {
-    magic1: number;
-    magic2: number;
-    magic3: number;
-    magic4: number;
-    magic5: number;
+    offset: number;
+    limit: number;
+    strategyType: number;
+    category: number;
+    args: number;
 }
 
 export const getStrategyListByName = 'GetStrategyListByName';
@@ -524,7 +524,7 @@ export interface SetNodeWD {
     watchDogStatus: number;
 }
 
-// verify key 
+// verify key
 export const verifyKey = 'VerifyKey';
 
 export interface VerifyKey {

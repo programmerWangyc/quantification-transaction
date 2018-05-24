@@ -141,6 +141,17 @@ export interface DeleteRobotRequest {
     checked: boolean;
 }
 
+// create robot
+export interface SaveRobotRequest {
+    name: string;
+    args: string; // JSON type string;
+    strategyId: number;
+    kLineId: number;
+    pairExchanges: number[];
+    pairStocks: string[]; // string ? number?
+    nodeId: number;
+}
+
 /** ===================================================Node list========================================= **/
 
 export const getNodeList = 'GetNodeList';
@@ -159,6 +170,31 @@ export interface SetRobotWDRequest {
     watchDogStatus: number;
 }
 
+/** ===================================================Strategy============================================== **/
+
+export enum CategoryType {
+    GENERAL_STRATEGY,
+    COMMODITY_FUTURES,
+    STOCK_SECURITY,
+    DIGITAL_CURRENCY = 9,
+    TEMPLATE_LIBRARY = 20,
+    TEMPLATE_SNAPSHOT = 30,
+}
+
+export enum needArgsType {
+    none,  // need not args
+    onlyStrategyArg, // only need current strategy args
+    all // need all args ,include template info args
+}
+
+export interface GetStrategyListRequest {
+    offset: number;
+    limit: number;
+    strategyType: number;
+    categoryType: number;
+    needArgsType: number;
+}
+
 /**
- * 接口总数： 83， 已完成： 20
+ * 接口总数： 83， 已完成： 21
  */

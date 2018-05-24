@@ -11,6 +11,7 @@ import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { SquareComponent } from './square/square.component';
+import { CreateRobotComponent } from '../btcommon/create-robot/create-robot.component';
 
 const routs: Routes = [
     {
@@ -18,14 +19,15 @@ const routs: Routes = [
         component: DashboardComponent,
         children: [
             { path: Path.robot, component: RobotComponent },
+            { path: Path.robot + '/' + Path.createRobot, component: CreateRobotComponent },
             { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
             { path: Path.strategy, component: StrategyLibComponent },
             { path: Path.exchange, component: ExchangeComponent },
             { path: Path.trustee, component: TrusteeComponent },
-            { path: Path.square, component: SquareComponent},
-            { path: Path.community, component: CommunityComponent},
-            { path: Path.doc, component: DocComponent},
-            { path: Path.fact, component: FactComponent},
+            { path: Path.square, component: SquareComponent },
+            { path: Path.community, component: CommunityComponent },
+            { path: Path.doc, component: DocComponent },
+            { path: Path.fact, component: FactComponent },
             { path: '', redirectTo: Path.robot, pathMatch: 'full' },
         ]
     },

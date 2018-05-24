@@ -1,13 +1,13 @@
 import { Action } from '@ngrx/store';
 
-import { Referrer } from '../../interfaces/business.interface';
+import { Referrer } from '../../interfaces/constant.interface';
 import { PublicResponse, SettingsResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SettingsRequest } from './../../interfaces/request.interface';
 
 /* ===========================================Api action=================================== */
 
-// public 
+// public
 export const SET_PUBLIC_INFORMATION = 'SET_PUBLIC_INFORMATION';
 
 export class SetPublicInformationAction implements Action {
@@ -91,5 +91,5 @@ export type Actions = ApiActions
 
 export const ResponseActions = {
     GetSettingsFailAction,
-    GetSettingsSuccessAction, 
+    GetSettingsSuccessAction,
 }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { FoldableBusinessComponent } from '../../interfaces/business.interface';
 import { RobotLogService } from './../providers/robot.log.service';
 import { RobotService } from './../providers/robot.service';
 import { flatten, isString } from 'lodash';
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs/Observable';
     templateUrl: './robot-status.component.html',
     styleUrls: ['./robot-status.component.scss']
 })
-export class RobotStatusComponent extends BusinessComponent {
+export class RobotStatusComponent extends FoldableBusinessComponent {
     isFold = false;
 
     subscription$$: Subscription;
@@ -63,11 +63,5 @@ export class RobotStatusComponent extends BusinessComponent {
 
     ngOnDestroy() {
 
-    }
-
-    toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
     }
 }

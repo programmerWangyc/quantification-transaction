@@ -2,20 +2,10 @@
 <mat-dialog-content *ngIf="data.needTranslate">{{ data.message | translate}}</mat-dialog-content>
 <mat-dialog-content *ngIf="!data.needTranslate">{{ data.message }}</mat-dialog-content>
 <mat-dialog-actions>
-    <button
-        nz-button
-        [nzSize]="'large'"
-        [mat-dialog-close]="false"
-        style="margin-right: 20px;"
-    >
+    <button nz-button [nzSize]="'large'" [mat-dialog-close]="false" style="margin-right: 20px;">
         {{'CANCEL' | translate}}
     </button>
-    <button
-        nz-button
-        [nzType]="'primary'"
-        [nzSize]="'large'"
-        [mat-dialog-close]="true"
-    >
-        {{'CONFIRM' | translate}}
+    <button nz-button [nzType]="'primary'" [nzSize]="'large'" [mat-dialog-close]="true">
+        {{(data.confirmBtnText || 'CONFIRM') | translate}}
     </button>
 </mat-dialog-actions>

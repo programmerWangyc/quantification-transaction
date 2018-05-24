@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { FoldableBusinessComponent } from '../../interfaces/business.interface';
 import { RobotDetail } from '../../interfaces/response.interface';
 import { WatchDogService } from './../../shared/providers/watch-dog.service';
 import { RobotOperateService } from './../providers/robot.operate.service';
@@ -26,7 +26,7 @@ interface RobotStatusBtn {
     //     transition('fold => unfold', animate(250, style({ height: '*' }))),
     // ]
 })
-export class RobotOverviewComponent extends BusinessComponent {
+export class RobotOverviewComponent extends FoldableBusinessComponent {
 
     robot: Observable<RobotDetail>
 
@@ -94,11 +94,4 @@ export class RobotOverviewComponent extends BusinessComponent {
 
         this.robotService.resetRobotDetail();
     }
-
-    toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
-    }
-
 }

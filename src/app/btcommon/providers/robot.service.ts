@@ -20,6 +20,11 @@ import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
 import { ServerSendRobotMessage, RobotStatus } from './../../interfaces/response.interface';
+import { NzModalService } from 'ng-zorro-antd';
+import { CreateRobotComponent } from '../create-robot/create-robot.component';
+import { TranslateService } from '@ngx-translate/core';
+import { BtNodeService } from '../../providers/bt-node.service';
+import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 
 @Injectable()
 export class RobotService {
@@ -30,6 +35,9 @@ export class RobotService {
         private error: ErrorService,
         private tipService: TipService,
         private pubService: PublicService,
+        private nzModel: NzModalService,
+        private translate: TranslateService,
+        private nodeService: BtNodeService,
     ) {
     }
 
@@ -45,6 +53,17 @@ export class RobotService {
 
     launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>, allowSeparateRequest = true): Subscription {
         return this.process.processSubscribeRobot(data, allowSeparateRequest);
+    }
+
+    launchCreateRobot(data: Observable<fromReq.SaveRobotRequest>): Subscription {
+        return this.process.processSaveRobot(
+            data.switchMap(data => this.nodeService.isPublicNode(data.nodeId)
+                .mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(
+                    ConfirmComponent,
+                    { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' }
+                ).map(sure => sure ? data : null) : Observable.of(data)))
+                .filter(v => !!v)
+        );
     }
 
     /* =======================================================Date Acquisition======================================================= */

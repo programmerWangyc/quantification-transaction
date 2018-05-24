@@ -1,5 +1,5 @@
 import { PublicResponse, ResponseState, SettingsResponse } from '../../interfaces/response.interface';
-import { Referrer } from './../../interfaces/business.interface';
+import { Referrer } from './../../interfaces/constant.interface';
 import { LocalStorageKey } from './../../interfaces/constant.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';

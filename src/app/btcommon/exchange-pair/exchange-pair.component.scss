@@ -1,0 +1,30 @@
+@import '../../../theme/_variable.theme';
+.exchange-pair {
+    margin: 0 0 20px 0;
+    .pairs {
+        border: 1px dashed $blue;
+        border-radius: 4px;
+        height: 32px;
+        text-align: center;
+        line-height: 32px;
+        position: relative;
+        padding: 0 1em;
+        margin: 0 2em 1em 0;
+        i {
+            $size: 8px;
+            font-size: $size*2;
+            cursor: pointer;
+            position: absolute;
+            top: (-$size);
+            right: (-$size);
+            background-color: #fff;
+            border-radius: $size;
+            color: $warn;
+        }
+    }
+}
+
+.main-exchange {
+    background-color: $nattier-blue;
+    color: $gray;
+}

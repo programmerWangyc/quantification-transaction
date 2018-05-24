@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { FoldableBusinessComponent } from '../../interfaces/business.interface';
 import { VariableOverview } from './../../interfaces/constant.interface';
 import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
@@ -13,7 +13,7 @@ import { RobotService } from './../providers/robot.service';
     templateUrl: './robot-command.component.html',
     styleUrls: ['./robot-command.component.scss'],
 })
-export class RobotCommandComponent extends BusinessComponent {
+export class RobotCommandComponent extends FoldableBusinessComponent {
 
     isFold = false;
 
@@ -53,12 +53,6 @@ export class RobotCommandComponent extends BusinessComponent {
 
     argChange(arg: VariableOverview): void {
         arg.variableName && this.robotOperate.updateRobotArg(arg);
-    }
-
-    toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
     }
 
     ngOnDestroy() {

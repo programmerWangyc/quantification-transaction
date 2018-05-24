@@ -19,6 +19,7 @@ export enum Path {
     exchange = 'exchange',
     simulate = 'simulate',
     dashboard = 'dashboard',
+    createRobot = 'create_robot',
 }
 
 export enum VariableType {
@@ -84,8 +85,21 @@ export interface Breadcrumb {
     path?: string;
 }
 
-
 /** ==========================================================Front end custom data structure======================================== **/
+
+export interface Referrer {
+   refUser: string;
+   refUrl: string;
+}
+
+export interface SignupFormModel {
+    username: string;
+    email: string;
+    passwordInfo: {
+        password: string;
+        confirmPassword: string;
+    }
+}
 
 export interface RobotOperateMap {
     tip: string;
@@ -128,6 +142,14 @@ export interface RobotConfigForm {
     agent: number;
 }
 
+export interface RobotCreationForm {
+    robotName: string;
+    agent: number;
+    strategy: number;
+    kLinePeriod: number;
+    args: string;
+}
+
 export interface SelectedPair {
     platformId: number;
     stock: string;
@@ -143,6 +165,7 @@ export interface ImportedArg {
 export interface ConfirmOperateTipData {
     message: string;
     needTranslate: boolean;
+    confirmBtnText?: string;
 }
 
 export interface RobotStatusTable {

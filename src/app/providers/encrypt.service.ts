@@ -50,11 +50,7 @@ export class EncryptService {
     transformStrategyArgsToEncryptType(data: Observable<VariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
         return data.mergeMap(variables => Observable.from(variables)
             .mergeMap(item => this.transformArgs(item, isEncrypt))
-            .reduce((acc: Array<string | number>[], cur: Array<string | number>) => {
-                acc.push(cur);
-
-                return acc;
-            }, [])
+            .reduce(this.putInArray, [])
         );
     }
 
@@ -63,14 +59,13 @@ export class EncryptService {
             .mergeMap(variable => Observable.from(variable.variables)
                 .mergeMap(item => this.transformArgs(item, isEncrypt).map(res => [...res, variable.id]))
             )
-            .reduce((acc: Array<string | number>[], cur: Array<string | number>) => {
-                acc.push(cur);
-
-                return acc;
-            }, [])
+            .reduce(this.putInArray, [])
         );
     }
 
+    /**
+     * @description Transform data to ary structure, usually for api interactive purpose;
+     */
     private transformArgs(data: VariableOverview, isEncrypt = true): Observable<Array<string | number | boolean>> {
         const { variableName, variableValue, variableTypeId, originValue } = data;
 
@@ -88,5 +83,11 @@ export class EncryptService {
         } else {
             return Observable.of([name, variableValue]);
         }
+    }
+
+    private putInArray(acc: Array<string | number>[], cur: Array<string | number>): Array<string | number>[] {
+        acc.push(cur);
+
+        return acc;
     }
 }

@@ -5,11 +5,12 @@ import { Observable } from 'rxjs/Observable';
 import { BusinessComponent } from '../../interfaces/business.interface';
 import { Breadcrumb } from '../../interfaces/constant.interface';
 import { Robot } from '../../interfaces/response.interface';
+import { PublicService } from '../../providers/public.service';
+import { WatchDogService } from '../../shared/providers/watch-dog.service';
 import { GetRobotListRequest } from './../../interfaces/request.interface';
 import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
-import { PublicService } from '../../providers/public.service';
-import { WatchDogService } from '../../shared/providers/watch-dog.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-robot',
@@ -52,6 +53,8 @@ export class RobotComponent extends BusinessComponent {
         private robotOperate: RobotOperateService,
         private pubService: PublicService,
         private watchDogService: WatchDogService,
+        private router: Router,
+        private activatedRoute: ActivatedRoute
     ) {
         super();
     }
@@ -88,6 +91,10 @@ export class RobotComponent extends BusinessComponent {
             .add(this.robotOperate.handleDeleteRobotError())
             .add(this.robotOperate.handleRobotStopError())
             .add(this.watchDogService.handleSetWatchDogError())
+    }
+
+    navigateTo(path: string): void {
+        this.router.navigate([path], { relativeTo: this.activatedRoute });
     }
 
     ngOnDestroy() {

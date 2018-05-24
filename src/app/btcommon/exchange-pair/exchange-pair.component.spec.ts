@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RobotArgComponent } from './robot-arg.component';
+import { ExchangePairComponent } from './exchange-pair.component';
 
-describe('RobotArgComponent', () => {
-  let component: RobotArgComponent;
-  let fixture: ComponentFixture<RobotArgComponent>;
+describe('ExchangePairComponent', () => {
+  let component: ExchangePairComponent;
+  let fixture: ComponentFixture<ExchangePairComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RobotArgComponent ]
+      declarations: [ ExchangePairComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RobotArgComponent);
+    fixture = TestBed.createComponent(ExchangePairComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

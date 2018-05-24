@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { ExchangePairBusinessComponent } from '../../interfaces/business.interface';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import {
     RobotConfigForm,
@@ -29,9 +29,7 @@ import { RobotService } from './../providers/robot.service';
     templateUrl: './robot-config.component.html',
     styleUrls: ['./robot-config.component.scss']
 })
-export class RobotConfigComponent extends BusinessComponent {
-    size = 'large';
-
+export class RobotConfigComponent extends ExchangePairBusinessComponent {
     subscription$$: Subscription;
 
     isFold = false;
@@ -131,30 +129,6 @@ export class RobotConfigComponent extends BusinessComponent {
         const { robotName, agent, kLinePeriod } = formValue;
 
         return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotOperate.getPairsParams(this.selectedPairs) }
-    }
-
-   toggleFold() {
-        this.isFold = !this.isFold;
-
-        this.toggle(this.isFold);
-    }
-
-    addPair(platformId: number, stock: string) {
-        if (!platformId || !stock) return;
-
-        const { name } = this.platforms.find(item => item.id === platformId);
-
-        if (!this.selectedPairs.find(item => item.platformId === platformId && item.stock === stock)) {
-            this.selectedPairs.push({ platformId, stock, platformName: name });
-        } else {
-            /**
-             * do nothing;
-             */
-        }
-    }
-
-    removePair(index: number) {
-        this.selectedPairs.splice(index, 1);
     }
 
     exportArgs(): void {

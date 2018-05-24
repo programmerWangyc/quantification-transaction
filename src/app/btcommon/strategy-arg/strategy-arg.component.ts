@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { VariableOverview } from './../../interfaces/constant.interface';
 
 @Component({
-    selector: 'app-robot-arg',
-    templateUrl: './robot-arg.component.html',
-    styleUrls: ['./robot-arg.component.scss'],
+    selector: 'app-strategy-arg',
+    templateUrl: './strategy-arg.component.html',
+    styleUrls: ['./strategy-arg.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RobotArgComponent implements OnInit {
+export class StrategyArgComponent implements OnInit {
     @Input() isAlternative = false;
 
     @Input() title: string;
@@ -17,6 +18,8 @@ export class RobotArgComponent implements OnInit {
     @Output() change: EventEmitter<VariableOverview> = new EventEmitter();
 
     @Output() command: EventEmitter<VariableOverview> = new EventEmitter();
+
+    @Input() titleClass = 'title';
 
     constructor() { }
 

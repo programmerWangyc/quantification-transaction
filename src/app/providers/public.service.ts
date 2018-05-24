@@ -21,7 +21,7 @@ import {
     selectUsernameFromPublic,
 } from '../store/index.reducer';
 import { Settings, settings } from './../../../request.interface';
-import { Referrer } from './../interfaces/business.interface';
+import { Referrer } from './../interfaces/constant.interface';
 import { LocalStorageKey } from './../interfaces/constant.interface';
 import { ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';

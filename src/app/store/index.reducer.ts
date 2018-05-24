@@ -10,6 +10,7 @@ import * as exchange from './exchange/exchange.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
+import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
 
 export interface AppState {
@@ -24,6 +25,7 @@ export interface AppState {
     platform: platform.State,
     verifyPwd: verifyPwd.State,
     watchDog: watchDog.State,
+    strategy: strategy.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -38,6 +40,7 @@ export const reducers: ActionReducerMap<AppState> = {
     platform: platform.reducer,
     verifyPwd: verifyPwd.reducer,
     watchDog: watchDog.reducer,
+    strategy: strategy.reducer,
 }
 
 
@@ -131,6 +134,9 @@ export const selectCommandRobotResponse = createSelector(getRobotState, robot.ge
 // delete robot
 export const selectDeleteRobotResponse = createSelector(getRobotState, robot.getDeleteRobotRes);
 
+// create robot
+export const selectSaveRobotResponse = createSelector(getRobotState, robot.getSaveRobotRes);
+
 // default params
 export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
 export const selectRobotDefaultLogParams =createSelector(selectRobotDefaultParams, state => state.robotLogs);
@@ -171,3 +177,13 @@ const getWatchDogState = (state: AppState) => state.watchDog;
 
 export const selectSetWatchDogResponse = createSelector(getWatchDogState, watchDog.getSetWDResponse);
 export const selectSetWatchDogRequest = createSelector(getWatchDogState, watchDog.getSetWDRequest);
+
+/** ===================================================Strategy====================================================== */
+
+const getStrategyState = (state: AppState) => state.strategy;
+
+// strategy list
+export const selectStrategyListResponse = createSelector(getStrategyState, strategy.getStrategyListRes);
+
+// strategy request params
+export const selectStrategyRequestParams = createSelector(getStrategyState, strategy.getRequestParams);

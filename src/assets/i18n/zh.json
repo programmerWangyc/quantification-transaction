@@ -143,11 +143,13 @@
     "RESET_ZOOM_TITLE": "恢复图表",
     "ACCUMULATE_PROFIT": "累计收益",
     "RANGE": "范围",
+    "ARGUMENTS": "参数",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
     "NEXT_PAGE": "下一页",
     "PREVIOUS_PAGE": "上一页",
+    "GO_BACK": "返回",
 
     "HOME": "首页",
     "STRATEGY_SQUARE": "策略广场",
@@ -240,6 +242,8 @@
     "STOCK_SECURITY": "股票证券",
     "DIGITAL_CURRENCY": "数字货币",
     "TEMPLATE_LIBRARY": "模板类库",
+    "TEMPLATE_SNAPSHOT": "模板快照",
+    "UNKNOWN_TYPE": "未知类型",
 
     "ENGLISH": "English",
     "SIMPLE_CHINESE": "简体中文",
@@ -282,6 +286,7 @@
     "ROBOT_NAME_REQUIRED": "请输入机器人名称",
     "PLEASE_SELECT_AGENT": "请选择托管者",
     "PLEASE_SELECT_PLATFORM": "请选择交易平台",
+    "PLEASE_SELECT_KLINE_PERIOD": "请选择K线周期",
     "UPDATE_CONFIG": "更新配置",
     "USE_EXIST": "使用现有",
     "EXCHANGE_NAME": "交易名称",
@@ -317,11 +322,22 @@
     "ACCUMULATED_EARNINGS": "累计收益",
     "STRATEGY_CHART": "策略图表",
     "STRATEGY_DEFAULT_TITLE": "图表-{{index}}",
+
     "DELETE_ROBOT_CONFIRM": "确定要删除此机器人吗？",
     "DELETE_ROBOT_RELATED_LOG_CONFIRM": "同时删除此机器人的日志文件 {{id}}.db3",
     "DELETE_ROBOT_ERROR": "删除失败，机器人可能还没有停止",
     "DELETE_ROBOT_SUCCESS": "机器人删除成功",
     "DELETE_ROBOT_SUCCESS_BUT_LOG": "删除成功, 但无法与机器人关联的托管联系, 请手动删除文件 {{id}}.db3!",
     "OPERATE_SUCCESS": "操作成功！",
-    "OPERATE_FAIL": "操作失败！"
+    "OPERATE_FAIL": "操作失败！",
+
+    "PUBLIC_AGENT": "公有托管者",
+    "PRIVATE_AGENT": "私有托管者",
+    "PLEASE_SELECT_STRATEGY": "请选择策略",
+    "NONE_ARGUMENTS_TIP": "无参数",
+    "CREATE_ROBOT_FAIL": "机器人创建失败",
+    "CREATE_ROBOT_SUCCESS": "机器人创建成功",
+    "MAIN_EXCHANGE_TIP": "第一个标签是主交易所",
+    "RECOMMENDED_USE_PRIVATE_NODE": "您现在使用的是公用免费服务器托管, 为了更加稳定, 请尽快布署自己的私有托管服务!",
+    "GO_ON": "继续"
 }

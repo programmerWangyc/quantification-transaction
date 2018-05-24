@@ -1,3 +1,5 @@
+import { TemplateVariableOverview, VariableOverview } from './constant.interface';
+
 /* =======================================================Abstract response========================================================= */
 
 export type ResponseItem = string | number | boolean | { [key: string]: any } | JSON;
@@ -337,6 +339,9 @@ export interface CommandRobotResponse extends ResponseUnit<boolean> { }
 // delete robot
 export interface DeleteRobotResponse extends ResponseUnit<number> { }
 
+// create robot
+export interface SaveRobotResponse extends ResponseUnit<number | string> { };
+
 /** ===================================================Node list========================================= **/
 
 // node list
@@ -387,44 +392,10 @@ export interface GetPlatformListResponse extends ResponseUnit<PlatformListRespon
 // robot watch dog
 export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ======================================= */
-export interface SomethingResponse extends ResponseUnit<Something> { }
-
-export interface Something {
-    all: number;
-    strategies: Strategy[];
-}
+/** ===================================================Strategy============================================== **/
 
 export interface Strategy {
-    args: string;
+    args: string; // JSON type string
     category: number;
     date: string;
     forked: number;
@@ -432,10 +403,21 @@ export interface Strategy {
     id: number;
     is_buy: boolean;
     is_owner: boolean;
-    language: boolean;
+    language: number;
     last_modified: string;
-    name: string;
+    name: string
     public: number;
+    templates?: number[]; //模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
     username: string;
+    // 以下两个字段是自定义字段
+    semanticArgs?: VariableOverview[]; // from args field
+    semanticTemplateArgs?: TemplateVariableOverview[]; // form template snapshot
 }
-/* ======================================= */
+
+
+export interface StrategyListResponse {
+    all: number;
+    strategies: Strategy[];
+}
+
+export interface GetStrategyListResponse extends ResponseUnit<StrategyListResponse> { }

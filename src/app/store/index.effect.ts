@@ -3,6 +3,7 @@ import { BtNodeEffect } from './bt-node/bt-node.effect';
 import { PlatformEffect } from './platform/platform.effect';
 import { PublicEffect } from './public/public.effect';
 import { RobotEffect } from './robot/robot.effect';
+import { StrategyEffect } from './strategy/strategy.effect';
 import { WatchDogEffect } from './watch-dog/watch-dog.effect';
 
 export const EFFECTS = [
@@ -15,4 +16,5 @@ export const DASHBOARD_EFFECTS = [
     BtNodeEffect,
     PlatformEffect,
     WatchDogEffect,
+    StrategyEffect,
 ]

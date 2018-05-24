@@ -265,3 +265,18 @@ export class RobotOperateBtnTextPipe implements PipeTransform {
         });
     }
 }
+
+@Pipe({
+    name: 'removeMD5'
+})
+export class RemoveMd5Pipe implements PipeTransform {
+    transform(name: string): string {
+        const index = name.indexOf('-');
+
+        if(index > 0) {
+            return name.substring(index + 1);
+        }else {
+            return name;
+        }
+    }
+}

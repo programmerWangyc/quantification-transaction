@@ -9,6 +9,7 @@ import { VerifyPasswordRequestAction } from '../store/auth/verify-password.actio
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
+import { GetStrategyListRequestAction } from '../store/strategy/strategy.action';
 import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
@@ -17,15 +18,16 @@ import { GetNodeListRequestAction } from './../store/bt-node/bt-node.action';
 import { GetSettingsRequestAction } from './../store/public/public.action';
 import {
     CommandRobotRequestAction,
+    DeleteRobotRequestAction,
     GetRobotDetailRequestAction,
     GetRobotListRequestAction,
     GetRobotLogsRequestAction,
     ModifyRobotRequestAction,
     PublicRobotRequestAction,
     RestartRobotRequestAction,
+    SaveRobotRequestAction,
     StopRobotRequestAction,
     SubscribeRobotRequestAction,
-    DeleteRobotRequestAction,
 } from './../store/robot/robot.action';
 import { TipService } from './tip.service';
 
@@ -111,6 +113,10 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new DeleteRobotRequestAction(params)))
     }
 
+    processSaveRobot(params: Observable<Request.SaveRobotRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new SaveRobotRequestAction(params)))
+    }
+
     /** ===================================================Node list=================================================== */
 
     processGetNodeList(params: Observable<Request.GetNodeListRequest>): Subscription {
@@ -127,5 +133,11 @@ export class ProcessService {
 
     processSetRobotWatchDog(params: Observable<Request.SetRobotWDRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new SetRobotWDRequestAction(params)));
+    }
+
+    /** ===================================================Strategy====================================================== */
+
+    processStrategyList(params: Observable<Request.GetStrategyListRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new GetStrategyListRequestAction(params)));
     }
 }

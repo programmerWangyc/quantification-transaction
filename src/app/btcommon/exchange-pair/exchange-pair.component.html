@@ -1,0 +1,6 @@
+<div class="exchange-pair" fxLayout="row wrap" fxLayoutAlign="start center">
+    <span *ngFor="let item of pairs; index as idx; first as isFirst;" class="pairs" [ngClass]="{'main-exchange': isFirst}">
+        {{item.platformName}} / {{item.stock}}
+        <i class="anticon anticon-close" (click)="remove.next(idx);"></i>
+    </span>
+</div>

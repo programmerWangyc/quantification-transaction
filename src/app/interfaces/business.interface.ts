@@ -1,5 +1,7 @@
 import { Renderer2, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { SelectedPair } from './constant.interface';
+import { Platform } from './response.interface';
 
 /**
  * 每个组件通常情况下都只一个subscription负责在组件销毁时清理相关订阅，这个subscription的实现有2种方式，
@@ -8,8 +10,6 @@ import { Subscription } from 'rxjs/Subscription';
  * 2、将每一个subscription 都放置在一个数组中，组件销毁时遍历此数组依次销毁订阅。
  */
 export abstract class BusinessComponent {
-
-    constructor(public render?: Renderer2, public eleRef?: ElementRef) { }
 
     abstract subscription$$: Subscription;
 
@@ -20,28 +20,54 @@ export abstract class BusinessComponent {
     abstract ngOnInit(): void;
 
     abstract ngOnDestroy(): void;
+}
 
-    toggle(isFold: boolean) {
-        const ele: HTMLElement = this.eleRef.nativeElement.querySelector('.ant-card-body');
+function toggle() {
+    this.isFold = !this.isFold;
 
-        if (isFold) {
-            this.render.setStyle(ele, 'display', 'none');
+    const ele: HTMLElement = this.eleRef.nativeElement.querySelector('.ant-card-body');
+
+    if (this.isFold) {
+        this.render.setStyle(ele, 'display', 'none');
+    } else {
+        this.render.removeStyle(ele, 'display');
+    }
+}
+
+export abstract class FoldableBusinessComponent extends BusinessComponent {
+    isFold: boolean;
+
+    constructor(public render: Renderer2, public eleRef: ElementRef) { super() }
+
+    toggle = toggle
+}
+
+export abstract class ExchangePairBusinessComponent extends BusinessComponent implements FoldableBusinessComponent {
+    selectedPairs: SelectedPair[];
+
+    platforms: Platform[];
+
+    isFold = false;
+
+    constructor(public render: Renderer2, public eleRef: ElementRef) { super() }
+
+    addPair(platformId: number, stock: string) {
+        if (!platformId || !stock) return;
+
+        const { name } = this.platforms.find(item => item.id === platformId);
+
+        if (!this.selectedPairs.find(item => item.platformId === platformId && item.stock === stock)) {
+            this.selectedPairs.push({ platformId, stock, platformName: name });
         } else {
-            this.render.removeStyle(ele, 'display');
+            /**
+             * do nothing;
+             */
         }
     }
-}
 
-export interface Referrer {
-   refUser: string;
-   refUrl: string; 
-}
-
-export interface SignupFormModel {
-    username: string;
-    email: string;
-    passwordInfo: {
-        password: string;
-        confirmPassword: string;
+    removePair(index: number) {
+        this.selectedPairs.splice(index, 1);
     }
+
+    toggle = toggle;
 }
