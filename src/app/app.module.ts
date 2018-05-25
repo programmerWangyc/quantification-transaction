@@ -13,9 +13,9 @@ import { NgZorroAntdModule, NzNotificationService } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
-import { BtCommonModule } from './btcommon/bt.common.module';
 import { HomeModule } from './home/home.module';
 import { GLOBAL_SERVICES } from './providers/service.import';
+import { RobotModule } from './robot/robot.module';
 import { SharedModule } from './shared/shared.module';
 import { EFFECTS } from './store/index.effect';
 import { reducers } from './store/index.reducer';
@@ -53,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         MatSnackBarModule,
         ToolModule,
         NgZorroAntdModule.forRoot(),
-        BtCommonModule,
+        RobotModule,
     ],
     providers: [
         Store,

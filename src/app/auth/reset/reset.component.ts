@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { AuthService } from '../../shared/providers/auth.service';
     templateUrl: './reset.component.html',
     styleUrls: ['./reset.component.scss']
 })
-export class ResetComponent extends BusinessComponent {
+export class ResetComponent extends BaseComponent {
 
     email: string;
 

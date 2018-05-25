@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { BaseComponent } from '../../base/base.component';
 import { LoginRequest } from '../../interfaces/request.interface';
 import { AuthService } from '../../shared/providers/auth.service';
 import { passwordValidator, usernameValidator } from '../../validators/validators';
@@ -15,7 +15,7 @@ import { EncryptService } from './../../providers/encrypt.service';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
-export class LoginComponent extends BusinessComponent {
+export class LoginComponent extends BaseComponent {
     loginForm: FormGroup;
 
     subscription$$: Subscription;

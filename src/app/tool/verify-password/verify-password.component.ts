@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { BaseComponent } from '../../base/base.component';
 import { EncryptService } from './../../providers/encrypt.service';
 import { AuthService } from './../../shared/providers/auth.service';
 
@@ -11,7 +11,7 @@ import { AuthService } from './../../shared/providers/auth.service';
     templateUrl: './verify-password.component.html',
     styleUrls: ['./verify-password.component.scss']
 })
-export class VerifyPasswordComponent extends BusinessComponent {
+export class VerifyPasswordComponent extends BaseComponent {
 
     verify$: Subject<string> = new Subject();
 

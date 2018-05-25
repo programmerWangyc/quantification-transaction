@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';
 import { passwordMatchValidator, passwordValidator } from '../../validators/validators';
 import { EncryptService } from './../../providers/encrypt.service';
@@ -13,7 +13,7 @@ import { EncryptService } from './../../providers/encrypt.service';
     templateUrl: './password.component.html',
     styleUrls: ['./password.component.scss']
 })
-export class PasswordComponent extends BusinessComponent {
+export class PasswordComponent extends BaseComponent {
 
     subscription$$: Subscription;
 

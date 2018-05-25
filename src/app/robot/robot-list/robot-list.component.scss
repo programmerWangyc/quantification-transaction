@@ -1,0 +1,14 @@
+.ant-table-thead>tr>th,
+tr {
+    text-align: center;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+.unstable {
+    display: inline-block;
+    min-width: 3em;
+}

@@ -1,0 +1,39 @@
+<h6 *ngIf="!!title" [ngClass]="titleClass">{{title | removeMD5}}</h6>
+
+<form nz-form [nzLayout]="'horizontal'" fxLayout="row wrap">
+    <nz-form-item *ngFor="let item of args" style="width: 50%;">
+        <nz-form-label [nzSpan]="8">{{item.variableDes}}</nz-form-label>
+        <nz-form-control [nzSpan]="16">
+
+            <div [ngSwitch]="item.variableTypeId">
+                <div *ngSwitchCase="1"> <!--boolean type-->
+                    <nz-tooltip [nzTitle]="item.variableComment">
+                        <label nz-checkbox [(ngModel)]="item.variableValue" (ngModelChange)="change.next(item)" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+                            nz-tooltip class="alternative"></label>
+                    </nz-tooltip>
+                    <button nz-button *ngIf="isAlternative" (click)="command.next(item)">{{item.variableName | commandButtonText}}</button>
+                </div>
+
+                <div *ngSwitchCase="3"> <!--select type-->
+                    <nz-tooltip [nzTitle]="item.variableComment" [ngClass]="{'alternative': isAlternative}">
+                        <nz-select [(ngModel)]="item.variableValue" (ngModelChange)="change.next(item)" [ngModelOptions]="{standalone: true}" [nzPlaceHolder]="'PLEASE_SELECT' | translate"
+                            nz-tooltip>
+                            <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt" [nzValue]="opt"></nz-option>
+                        </nz-select>
+                    </nz-tooltip>
+                    <button nz-button *ngIf="isAlternative" (click)="command.next(item)">{{item.variableName | commandButtonText}}</button>
+                </div>
+
+                <div *ngSwitchDefault> <!--number string encryptString button-->
+                    <nz-tooltip [nzTitle]="item.variableComment" [ngClass]="{'alternative': isAlternative}">
+                        <input *ngIf="item.originValue !== '__button__'" [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue"
+                            (ngModelChange)="change.next(item)" [ngModelOptions]="{standalone: true, updateOn: 'blur'}" nz-tooltip
+                            nz-input>
+                    </nz-tooltip>
+                    <button nz-button *ngIf="isAlternative" (click)="command.next(item)">{{item.variableName | commandButtonText}}</button>
+                </div>
+            </div>
+        </nz-form-control>
+    </nz-form-item>
+    <label *ngIf="!args.length">{{'NONE_ARGUMENTS_TIP' | translate}}</label>
+</form>

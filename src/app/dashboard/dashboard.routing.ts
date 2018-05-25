@@ -1,17 +1,17 @@
 import { RouterModule, Routes } from '@angular/router';
 
-import { ExchangeComponent } from '../btcommon/exchange/exchange.component';
-import { RobotComponent } from '../btcommon/robot/robot.component';
-import { StrategyLibComponent } from '../btcommon/strategy-lib/strategy-lib.component';
-import { TrusteeComponent } from '../btcommon/trustee/trustee.component';
 import { Path } from '../interfaces/constant.interface';
+import { ExchangeComponent } from '../robot/exchange/exchange.component';
+import { TrusteeComponent } from '../robot/trustee/trustee.component';
+import { StrategyLibComponent } from '../strategy/strategy-lib/strategy-lib.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
+import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
+import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
-import { CreateRobotComponent } from '../btcommon/create-robot/create-robot.component';
 
 const routs: Routes = [
     {
@@ -19,7 +19,7 @@ const routs: Routes = [
         component: DashboardComponent,
         children: [
             { path: Path.robot, component: RobotComponent },
-            { path: Path.robot + '/' + Path.createRobot, component: CreateRobotComponent },
+            { path: Path.robot + '/' + Path.createRobot, component: RobotCreationComponent },
             { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
             { path: Path.strategy, component: StrategyLibComponent },
             { path: Path.exchange, component: ExchangeComponent },

@@ -5,9 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { RobotService } from '../../btcommon/providers/robot.service';
-import { BusinessComponent } from '../../interfaces/business.interface';
+import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/constant.interface';
+import { RobotService } from '../../robot/providers/robot.service';
 import { BtNodeService } from './../../providers/bt-node.service';
 import { PlatformService } from './../../providers/platform.service';
 import { PublicService } from './../../providers/public.service';
@@ -17,7 +17,7 @@ import { PublicService } from './../../providers/public.service';
     templateUrl: './robot-detail.component.html',
     styleUrls: ['./robot-detail.component.scss']
 })
-export class RobotDetailComponent extends BusinessComponent {
+export class RobotDetailComponent extends BaseComponent {
 
     paths: Breadcrumb[]
 

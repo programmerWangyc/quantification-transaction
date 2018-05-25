@@ -183,7 +183,7 @@ export class ChartService {
             updateIndicator = flatten(result);
 
         } else {
-            // nothing to do 
+            // nothing to do
         }
 
         return updateIndicator;
@@ -286,6 +286,7 @@ export class ChartService {
 
         return updateIndicator;
     }
+
     // 这个东西是调试发现的，从ChartObject上取系列时，有导航的图表会多出这么一个系列。
     private isValidSeries(series): boolean {
         return series.name !== 'Navigator 1';
