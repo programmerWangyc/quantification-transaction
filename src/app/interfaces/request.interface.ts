@@ -195,6 +195,16 @@ export interface GetStrategyListRequest {
     needArgsType: number;
 }
 
+/** ===================================================Charge============================================== **/
+
+export interface GetPayOrdersRequest { }
+
+export interface GetPaymentArgRequest {
+    payMethod: number;
+    strategyId: number; // If not strategy case, pass 0;
+    chargeAmount: number;
+}
+
 /**
- * 接口总数： 83， 已完成： 21
+ * 接口总数： 83， 已完成： 23
  */

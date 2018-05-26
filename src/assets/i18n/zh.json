@@ -150,6 +150,7 @@
     "NEXT_PAGE": "下一页",
     "PREVIOUS_PAGE": "上一页",
     "GO_BACK": "返回",
+    "SEQUENCE_NUMBER": "序号",
 
     "HOME": "首页",
     "STRATEGY_SQUARE": "策略广场",
@@ -339,5 +340,21 @@
     "CREATE_ROBOT_SUCCESS": "机器人创建成功",
     "MAIN_EXCHANGE_TIP": "第一个标签是主交易所",
     "RECOMMENDED_USE_PRIVATE_NODE": "您现在使用的是公用免费服务器托管, 为了更加稳定, 请尽快布署自己的私有托管服务!",
-    "GO_ON": "继续"
+    "GO_ON": "继续",
+
+    "ACCOUNT_RECHARGE": "帐户充值",
+    "RECHARGE_AMOUNT": "充值金额（元）",
+    "PAYMENT_STEP": "充值步骤",
+    "ALIPAY": "支付宝",
+    "WECHART": "微信",
+    "PAY_PAL": "payPal",
+    "RECHARGE_HISTORY": "支付历史",
+    "SELECT_PAYMENT_METHOD": "选择支付方式",
+    "PAY": "支付",
+    "INPUT_AMOUNT": "输入金额",
+    "PAYMENT_METHOD": "支付方式",
+    "CONFIRM_PAY_ACTION": "确认支付",
+    "SCAN_QR_CODE_TO_PAY": "请使用微信扫描右侧二维码以完成支付",
+    "RECHARGE_SUCCESS": "充值成功！",
+    "HISTORY_TOTAL_PAY": "历史支付总金额: {{total}}元"
 }

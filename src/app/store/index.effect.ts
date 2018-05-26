@@ -1,5 +1,6 @@
 import { AuthEffect } from './auth/auth.effect';
 import { BtNodeEffect } from './bt-node/bt-node.effect';
+import { ChargeEffect } from './charge/charge.effect';
 import { PlatformEffect } from './platform/platform.effect';
 import { PublicEffect } from './public/public.effect';
 import { RobotEffect } from './robot/robot.effect';
@@ -17,4 +18,5 @@ export const DASHBOARD_EFFECTS = [
     PlatformEffect,
     WatchDogEffect,
     StrategyEffect,
+    ChargeEffect,
 ]

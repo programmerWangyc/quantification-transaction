@@ -20,6 +20,7 @@ export enum Path {
     simulate = 'simulate',
     dashboard = 'dashboard',
     createRobot = 'create_robot',
+    charge = 'charge',
 }
 
 export enum VariableType {
@@ -78,6 +79,28 @@ export enum SemanticsLog {
     strategyLog = 'strategyLog'
 }
 
+export enum PaymentMethod {
+    ALIPAY,
+    WECHART,
+    PAY_PAL,
+}
+
+export enum RentPaymentInfo {
+    timestamp,
+    strategyId,
+    rentPeriod,
+    uid,
+    paymentMethod
+}
+
+export enum ChargePaymentInfo {
+    timestamp,
+    days,
+    amount,
+    uid,
+    paymentMethod
+}
+
 /** ==========================================================Global======================================== **/
 
 export interface Breadcrumb {
@@ -88,8 +111,8 @@ export interface Breadcrumb {
 /** ==========================================================Front end custom data structure======================================== **/
 
 export interface Referrer {
-   refUser: string;
-   refUrl: string;
+    refUser: string;
+    refUrl: string;
 }
 
 export interface SignupFormModel {
@@ -199,4 +222,15 @@ export interface ChartUpdateIndicator {
     updated: boolean;
     chartIndex: number;
     feedback: string;
+}
+
+export interface PayMethod {
+    name: string;
+    id: number;
+    redirectTo?: string;
+}
+
+export interface RechargeFormModal {
+    payMethod: number;
+    chargeAmount: number;
 }

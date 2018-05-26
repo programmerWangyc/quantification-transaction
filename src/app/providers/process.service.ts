@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import * as Request from '../interfaces/request.interface';
 import { LoginRequestAction } from '../store/auth/login.action';
 import { VerifyPasswordRequestAction } from '../store/auth/verify-password.action';
+import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/charge/charge.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
@@ -139,5 +140,15 @@ export class ProcessService {
 
     processStrategyList(params: Observable<Request.GetStrategyListRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new GetStrategyListRequestAction(params)));
+    }
+
+    /** ===================================================Charge====================================================== */
+
+    processPayOrders(params: Observable<any>): Subscription {
+        return params.subscribe(_ => this.store.dispatch(new GetPayOrdersRequestAction()));
+    }
+
+    processPaymentArg(params: Observable<Request.GetPaymentArgRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new GetPaymentArgRequestAction(params)));
     }
 }

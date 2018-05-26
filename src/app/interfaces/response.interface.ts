@@ -62,6 +62,10 @@ export interface ServerSendRobotMessage {
     summary?: string;
 }
 
+export interface ServerSendPaymentMessage {
+    orderId?: string; // TODO: ensure field
+}
+
 /* =======================================================Auth response========================================================= */
 
 // login
@@ -421,3 +425,43 @@ export interface StrategyListResponse {
 }
 
 export interface GetStrategyListResponse extends ResponseUnit<StrategyListResponse> { }
+
+/** ===================================================Charge============================================== **/
+
+export interface PayOrder {
+    date: string;
+    id: number;
+    order_guid: string;
+}
+
+export interface PayOrdersResponse {
+    balance: number;
+    consumed: number;
+    items: PayOrder[];
+}
+
+export interface GetPayOrdersResponse extends ResponseUnit<PayOrdersResponse> { }
+
+// payment arg
+export interface PaymentArg {
+    body: string;
+    notify_url: string;
+    out_trade_no: string;
+    partner: string;
+    payment_type: string;
+    return_url: string;
+    seller_email: string;
+    service: string;
+    sign: string;
+    sign_type: string;
+    subject: string;
+    total_fee: string;
+    _input_charset: string;
+}
+
+export interface PaymentArgResponse {
+    form?: PaymentArg;
+    code_url?: string;
+}
+
+export interface GetPaymentArgResponse extends ResponseUnit<PaymentArgResponse> { }

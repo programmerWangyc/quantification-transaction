@@ -1,0 +1,22 @@
+<head fxLayoutAlign="space-between center">
+    <h3>{{'RECHARGE_HISTORY' | translate}}</h3>
+    <div>{{statistics | async}}</div>
+</head>
+
+<nz-table #nzTable [nzData]="historyRecords| async" [nzPageSize]="20" [nzShowSizeChanger]="true">
+    <thead>
+        <tr>
+            <th *ngFor="let item of tableHead" bt-text-center>
+                <span>{{item | translate}}</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of nzTable.data; index as idx;">
+            <td>{{nzTable.data.length - idx}}</td>
+            <td>{{item.date}}</td>
+            <td>{{item.order_guid | chargeMethod | translate}}</td>
+            <td>{{item.order_guid | chargePrice}}</td>
+        </tr>
+    </tbody>
+</nz-table>

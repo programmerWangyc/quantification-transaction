@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 
-import { LogTypes, RobotOperateMap, VariableType, VariableTypeDes } from '../interfaces/constant.interface';
+import {
+    LogTypes,
+    PaymentMethod,
+    PayMethod,
+    RobotOperateMap,
+    VariableType,
+    VariableTypeDes,
+} from '../interfaces/constant.interface';
 import { ArgOptimizeSetting } from './../interfaces/constant.interface';
 
 
@@ -128,6 +135,16 @@ export const COINS = {
 
 export const PAGE_SIZE_SELECT_VALUES = [20, 50, 100, 500];
 
+export const PAY_METHODS: PayMethod[] = [
+    { name: PaymentMethod[0], id: 0, redirectTo: '' },
+    { name: PaymentMethod[1], id: 1, redirectTo: '' },
+    { name: PaymentMethod[2], id: 2, redirectTo: '' },
+];
+
+export const RENT_PAYMENT_FLAG = 'R';
+
+export const RECHARGE_PAYMENT_FLAG = 'N';
+
 export function getArgSelectItem(id: number): VariableTypeDes {
     if (id > 5 || id < 0) {
         throw new RangeError('Range error: ID passed in is out of range;');
@@ -195,6 +212,12 @@ export class ConstantService {
 
     PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
+    PAY_METHODS = PAY_METHODS;
+
+    RENT_PAYMENT_FLAG = RENT_PAYMENT_FLAG;
+
+    RECHARGE_PAYMENT_FLAG = RECHARGE_PAYMENT_FLAG;
+
     constructor() { }
 
     getRobotOperateMap(status: number): RobotOperateMap {
@@ -209,7 +232,7 @@ export class ConstantService {
 
     getRobotOperateBtnText(isLoading: boolean, texts: string[]): string {
         return isLoading ? texts[1] || texts[0] : texts[0];
-    }
+    /*  */}
 
     getArgSelectedItem = getArgSelectItem;
 

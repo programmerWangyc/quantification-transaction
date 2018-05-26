@@ -1,0 +1,46 @@
+<h3>{{'PAYMENT_STEP' | translate}}</h3>
+
+<nz-steps>
+    <nz-step [nzTitle]="'INPUT_AMOUNT' | translate" nzStatus="finish" nzIcon="anticon anticon-plus-circle-o"></nz-step>
+    <nz-step [nzTitle]="'SELECT_PAYMENT_METHOD' | translate" nzStatus="finish" nzIcon="anticon anticon-pay-circle-o"></nz-step>
+    <nz-step [nzTitle]="'PAY' | translate" [nzStatus]="processState | async" [nzIcon]="iconTemplate"></nz-step>
+    <nz-step [nzTitle]="'COMPLETE' | translate" [nzStatus]="completeState | async" nzIcon="anticon anticon-smile-o"></nz-step>
+    <ng-template #iconTemplate>
+        <i class="anticon" [ngClass]="paymentStateIcon | async"></i>
+    </ng-template>
+</nz-steps>
+
+<div nz-row [nzAlign]="'middle'">
+    <div nz-col [nzSpan]="12">
+        <form [formGroup]="form" nz-form>
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'RECHARGE_AMOUNT' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <nz-input-number formControlName="chargeAmount" required [nzMax]="100000" [nzMin]="1"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'PAYMENT_METHOD' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <nz-select formControlName="payMethod" [(ngModel)]="selectedPayMethod" required>
+                        <nz-option *ngFor="let item of payMethods" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-control [nzXs]="{span:24,offset:0}" [nzSm]="{span:14,offset:6}" class="pay-btn">
+                    <button nz-button [nzSize]="'large'" [nzType]="'primary'" [disabled]="form.invalid || selectedPayMethod === 1" (click)="pay$.next(form.value)">
+                        {{'CONFIRM_PAY_ACTION' | translate}}
+                    </button>
+                    <span *ngIf="selectedPayMethod === 1 && chargeAmount.valid">{{'SCAN_QR_CODE_TO_PAY' | translate}}</span>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </div>
+
+    <div *ngIf="selectedPayMethod === 1 && chargeAmount.valid" nz-col [nzSpan]="6" [nzOffset]="4" class="qr-code">
+        <qr-code [value]="wechartQRCode | async" [size]="150"></qr-code>
+    </div>
+</div>

@@ -6,6 +6,7 @@ import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as verifyPwd from './auth/verify-password.reducer';
 import * as btNode from './bt-node/bt-node.reducer';
+import * as charge from './charge/charge.reducer';
 import * as exchange from './exchange/exchange.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
@@ -14,33 +15,35 @@ import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
 
 export interface AppState {
-    pub: pub.State,
-    login: login.State,
-    signup: signup.State,
-    reset: reset.State,
-    pwd: pwd.State,
-    exchange: exchange.State,
-    robot: robot.State,
     btNode: btNode.State,
+    charge: charge.State,
+    exchange: exchange.State,
+    login: login.State,
     platform: platform.State,
+    pub: pub.State,
+    pwd: pwd.State,
+    reset: reset.State,
+    robot: robot.State,
+    signup: signup.State,
+    strategy: strategy.State,
     verifyPwd: verifyPwd.State,
     watchDog: watchDog.State,
-    strategy: strategy.State,
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-    pub: pub.reducer,
-    login: login.reducer,
-    signup: signup.reducer,
-    reset: reset.reducer,
-    pwd: pwd.reducer,
-    exchange: exchange.reducer,
-    robot: robot.reducer,
     btNode: btNode.reducer,
+    charge: charge.reducer,
+    exchange: exchange.reducer,
+    login: login.reducer,
     platform: platform.reducer,
+    pub: pub.reducer,
+    pwd: pwd.reducer,
+    reset: reset.reducer,
+    robot: robot.reducer,
+    signup: signup.reducer,
+    strategy: strategy.reducer,
     verifyPwd: verifyPwd.reducer,
     watchDog: watchDog.reducer,
-    strategy: strategy.reducer,
 }
 
 
@@ -187,3 +190,20 @@ export const selectStrategyListResponse = createSelector(getStrategyState, strat
 
 // strategy request params
 export const selectStrategyRequestParams = createSelector(getStrategyState, strategy.getRequestParams);
+
+/** ===================================================Charge====================================================== */
+
+const getChargeState = (state: AppState) => state.charge;
+
+// payment args
+export const selectPaymentArgResponse = createSelector(getChargeState, charge.getPaymentArgRes);
+
+// pay orders
+export const selectPayOrdersResponse = createSelector(getChargeState, charge.getPayOrdersRes);
+
+// request parameters
+export const selectChargeRequestParams = createSelector(getChargeState, charge.getRequestArgs);
+export const selectPaymentArgRequestParams = createSelector(selectChargeRequestParams, state => state && state.paymentArg);
+
+// server send payment message
+export const selectServerSendRechargeMessage = createSelector(getChargeState, charge.getServerSendMessage);
