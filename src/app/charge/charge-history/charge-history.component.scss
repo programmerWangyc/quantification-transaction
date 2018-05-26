@@ -1,3 +1,4 @@
+@import '../_charge';
 head {
-    margin: 2em 0 1em 0;
+    @include section-head()
 }

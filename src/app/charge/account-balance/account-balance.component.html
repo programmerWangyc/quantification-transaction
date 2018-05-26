@@ -1,0 +1,18 @@
+<h3>{{'ACCOUNT_BALANCE' | translate}}</h3>
+
+<ul>
+    <li>
+        <span>{{'BALANCE' | translate}}</span>
+        <span [translate]="unit" [translateParams]="{amount: balance | async | balance}" style='color: red'></span>
+    </li>
+
+    <li>
+        <span>{{'CONSUMED' | translate}}</span>
+        <span [translate]="unit" [translateParams]="{amount: consumed | async | balance}"></span>
+    </li>
+
+    <li>
+        <span>{{'BILLING_RULES' | translate}}</span>
+        <span>{{'BILLING_RULE_1' | translate}}</span>
+    </li>
+</ul>

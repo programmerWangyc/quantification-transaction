@@ -1,0 +1,16 @@
+@import '../_charge';
+@import '../../../theme/_variable.theme';
+h3 {
+    @include section-head();
+}
+
+li {
+    list-style: none;
+    margin: 1em 0;
+    & span:first-child {
+        font-weight: 500;
+        &::after {
+            content: ':'
+        }
+    }
+}

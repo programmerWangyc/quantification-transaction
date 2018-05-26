@@ -356,5 +356,11 @@
     "CONFIRM_PAY_ACTION": "确认支付",
     "SCAN_QR_CODE_TO_PAY": "请使用微信扫描右侧二维码以完成支付",
     "RECHARGE_SUCCESS": "充值成功！",
-    "HISTORY_TOTAL_PAY": "历史支付总金额: {{total}}元"
+    "HISTORY_TOTAL_PAY": "历史支付总金额: {{total}}元",
+    "BILLING_RULES": "计费规则",
+    "BILLING_RULE_1": "每个机器人, 每小时 0.125 元, 不足1小时按1小时计费。",
+    "ACCOUNT_BALANCE": "帐户余额",
+    "BALANCE":"余额",
+    "CONSUMED": "已消费",
+    "YUAN": "{{amount}}元"
 }

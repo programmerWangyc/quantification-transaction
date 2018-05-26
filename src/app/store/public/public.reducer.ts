@@ -1,6 +1,5 @@
 import { PublicResponse, ResponseState, SettingsResponse } from '../../interfaces/response.interface';
-import { Referrer } from './../../interfaces/constant.interface';
-import { LocalStorageKey } from './../../interfaces/constant.interface';
+import { LocalStorageKey, Referrer } from './../../interfaces/constant.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';
 
@@ -99,6 +98,8 @@ function updateSettings(settings: Settings, key: string, data: any): Settings {
 }
 
 export const getBalance = (state: State) => state.balance;
+
+export const getConsumed = (state: State) => state.consumed;
 
 export const getUsername = (state: State) => state.username || localStorage.getItem(LocalStorageKey.username);
 

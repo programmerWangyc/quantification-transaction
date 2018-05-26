@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs/Subscription';
 
 import {
     AppState,
+    selectBalance,
+    selectConsumed,
     selectError,
     selectFooterState,
     selectIsAdmin,
@@ -21,8 +23,7 @@ import {
     selectUsernameFromPublic,
 } from '../store/index.reducer';
 import { Settings, settings } from './../../../request.interface';
-import { Referrer } from './../interfaces/constant.interface';
-import { LocalStorageKey } from './../interfaces/constant.interface';
+import { LocalStorageKey, Referrer } from './../interfaces/constant.interface';
 import { ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
 import { SetLanguageAction, SetReferrerAction, ToggleFooterAction } from './../store/public/public.action';
@@ -60,7 +61,7 @@ export class PublicService {
         return this.store.select(selectSettings)
             .do(settings => (!settings || !settings.agreement) && this.launchGetSettings(Settings.agreement))
             .filter(settings => !!settings && !!settings.agreement)
-            .map(settings => settings.agreement)
+            .map(settings => settings.agreement);
     }
 
     getAgreementState(): Observable<boolean> {
@@ -92,6 +93,14 @@ export class PublicService {
 
     getError(): Observable<string> {
         return this.store.select(selectError);
+    }
+
+    getBalance(): Observable<number> {
+        return this.store.select(selectBalance);
+    }
+
+    getConsumed(): Observable<number> {
+        return this.store.select(selectConsumed);
     }
 
     // ui state

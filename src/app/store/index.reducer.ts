@@ -52,6 +52,7 @@ export const getPublicInformationState = (state: AppState) => state.pub;
 export const selectUsernameFromPublic = createSelector(getPublicInformationState, pub.getUsername);
 export const selectToken = createSelector(getPublicInformationState, pub.getToken);
 export const selectBalance = createSelector(getPublicInformationState, pub.getBalance);
+export const selectConsumed = createSelector(getPublicInformationState, pub.getConsumed);
 export const selectVersion = createSelector(getPublicInformationState, pub.getVersion);
 export const selectIsAdmin = createSelector(getPublicInformationState, pub.getIsAdmin);
 export const selectReferrer = createSelector(getPublicInformationState, pub.getReferrer);
