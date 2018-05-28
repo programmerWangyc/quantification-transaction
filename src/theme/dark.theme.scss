@@ -1,4 +1,6 @@
 @import '~@angular/material/theming';
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/material.css";
 @include mat-core();
 $candy-app-primary: mat-palette($mat-blue-grey);
 $candy-app-accent: mat-palette($mat-brown, A200, A100, A400);

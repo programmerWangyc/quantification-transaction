@@ -10,14 +10,23 @@ import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
 import { flatten, isEmpty, isNaN } from 'lodash';
 import * as moment from 'moment';
+import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CommandRobotTip, ServerSendRobotEventType } from '../../interfaces/constant.interface';
+import { BaseService } from '../../base/base.service';
+import { CommandRobotTip, RobotDebugFormModal } from '../../interfaces/constant.interface';
 import { AuthService } from '../../shared/providers/auth.service';
-import { ModifyRobotArgAction, ResetRobotOperateAction, UpdateRobotWatchDogStateAction } from '../../store/robot/robot.action';
+import {
+    ModifyRobotArgAction,
+    ResetRobotOperateAction,
+    UpdateRobotWatchDogStateAction,
+} from '../../store/robot/robot.action';
+import { isDeleteRobotFail } from '../../store/robot/robot.effect';
+import { OPERATE_ROBOT_LOADING_TAIL, OPERATE_ROBOT_REQUEST_TAIL, RobotOperateType } from '../../store/robot/robot.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
+import { DeleteRobotComponent } from '../delete-robot/delete-robot.component';
 import {
     ImportedArg,
     SelectedPair,
@@ -35,13 +44,9 @@ import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
-import { NzModalService } from 'ng-zorro-antd';
-import { DeleteRobotComponent } from '../delete-robot/delete-robot.component';
-import { isDeleteRobotFail } from '../../store/robot/robot.effect';
-import { OPERATE_ROBOT_LOADING_TAIL, OPERATE_ROBOT_REQUEST_TAIL, RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Injectable()
-export class RobotOperateService {
+export class RobotOperateService extends BaseService{
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -56,6 +61,7 @@ export class RobotOperateService {
         private encryptService: EncryptService,
         private nzModel: NzModalService,
     ) {
+        super();
     }
 
     /* =======================================================Serve Request======================================================= */
@@ -155,6 +161,15 @@ export class RobotOperateService {
                     return modal.afterClose.filter(res => !!res).map(checked => ({ id, checked }));
                 })
         );
+    }
+
+    launchDebugRobot(data: Observable<{ options: RobotDebugFormModal, content: string }>): Subscription {
+        return this.process.processDebugRobot(data.map(({ options, content }) => ({
+            period: 60,
+            node: options.agent,
+            exchanges: [{ pid: options.platform, pair: options.stock }],
+            source: content
+        })));
     }
 
     /* =======================================================Date Acquisition======================================================= */
@@ -326,6 +341,21 @@ export class RobotOperateService {
 
     deleteRobotLogFail(code: number): boolean {
         return Math.abs(code) === 2;
+    }
+
+    // plugin run
+    private getPluginRunResponse(): Observable<fromRes.PluginRunResult> {
+        return this.store.select(fromRoot.selectPluginRunResponse)
+            .filter(this.isTruth)
+            .map(res => JSON.parse(res.result));
+    }
+
+    getPluginRunResult(): Observable<any> {
+        return this.getPluginRunResponse().map(res => JSON.parse(res.result));
+    }
+
+    getPluginRunLogs(): Observable<fromRes.DebugLog[]> {
+        return this.getPluginRunResponse().map(res => res.logs);
     }
 
     // ui state

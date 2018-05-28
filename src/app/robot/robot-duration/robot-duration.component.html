@@ -1,0 +1,37 @@
+<h3>{{'OVERVIEW' | translate}}</h3>
+
+<ul>
+    <li>
+        <span>{{'BALANCE' | translate}}</span>
+        <span [translate]="unit" [translateParams]="{amount: balance | async | balance}" style='color: red'></span>
+    </li>
+
+    <li>
+        <span>{{'CONSUMED' | translate}}</span>
+        <span [translate]="unit" [translateParams]="{amount: consumed | async | balance}"></span>
+    </li>
+
+    <li>
+        <span>{{'ROBOT_TOTAL' | translate}}</span>
+        <span>{{robotTotal | async}}</span>
+    </li>
+
+    <li>
+        <span>{{'RUNNING' | translate}}</span>
+        <span>{{runningRobotCount | async}}</span>
+    </li>
+
+    <li>
+        <span>{{'GROSS_PROFIT' | translate}}</span>
+        <span>{{grossProfit | async | number: '1.0-5'}}</span>
+    </li>
+
+    <li>
+        <span>{{'USABLE_OVERVIEW' | translate }}</span>
+        <span> {{info | async}} </span>
+        <a nz-button [nzType]="'secondary'" [routerLink]="['../','charge']">
+            <i class="anticon anticon-bank"></i>
+            {{'RECHARGE' | translate}}
+        </a>
+    </li>
+</ul>

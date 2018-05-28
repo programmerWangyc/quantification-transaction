@@ -4,7 +4,7 @@ import { WsRequest } from '../interfaces/request.interface';
 
 /**
  * @class ApiAction
- * @description Base class of the interface-related actions. All the classes that are related to the request action, include the request-action 
+ * @description Base class of the interface-related actions. All the classes that are related to the request action, include the request-action
  * fail-action success-action, must be derive from this base class.
  */
 export abstract class ApiAction {
@@ -16,7 +16,7 @@ export abstract class ApiAction {
     abstract isSingleParams: boolean;
 
     /**
-     * @property command 
+     * @property command
      * @description Commands that communicate with server to indicate the type of data that this request wishes to obtain.
      */
     abstract command: string;
@@ -52,7 +52,7 @@ export abstract class ApiAction {
     }
 
     /**
-     * @method getParam  
+     * @method getParam
      * @param payload Source data of the request parameters.
      * @description If the request has one parameter only, use this method to generate parameters that communicate with the server.
      */
@@ -91,11 +91,11 @@ export abstract class ApiAction {
  * These two classes below have none instance, just used to indicate the type.
  */
 /**
- * @class RequestAction 
+ * @class RequestAction
  * @description Base class of all request actions.
  */
 export abstract class RequestAction extends ApiAction implements Action {
-    type: string;
+    abstract readonly type: string;
 
     abstract allowSeparateRequest: boolean;
 
@@ -107,7 +107,7 @@ export abstract class RequestAction extends ApiAction implements Action {
  * @description Base class of all response actions.
  */
 export abstract class ResponseAction implements Action {
-    readonly type: string;
+    abstract readonly type: string;
 
     constructor(payload: any) { }
 }

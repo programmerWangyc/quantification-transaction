@@ -24,6 +24,7 @@ import {
     GetRobotListRequestAction,
     GetRobotLogsRequestAction,
     ModifyRobotRequestAction,
+    PluginRunRequestAction,
     PublicRobotRequestAction,
     RestartRobotRequestAction,
     SaveRobotRequestAction,
@@ -116,6 +117,10 @@ export class ProcessService {
 
     processSaveRobot(params: Observable<Request.SaveRobotRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new SaveRobotRequestAction(params)))
+    }
+
+    processDebugRobot(params: Observable<Request.PluginRunRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new PluginRunRequestAction(params)));
     }
 
     /** ===================================================Node list=================================================== */

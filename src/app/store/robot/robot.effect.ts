@@ -34,7 +34,7 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).zip(...this.getOtherObs()),
+        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).zip(...this.getOtherObsOfRobotDetail()),
         { ...robotActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 
@@ -83,6 +83,15 @@ export class RobotEffect extends BaseEffect {
             .map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result))
         );
 
+    @Effect()
+    robotDebug$: Observable<ResponseAction> = this.getMultiResponseActions(
+        this.actions$.ofType(btNodeActions.GET_NODE_LIST).zip(this.actions$.ofType(platformActions.GET_PLATFORM_LIST)),
+        { ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
+    );
+
+    @Effect()
+    runPlugin$: Observable<ResponseAction> = this.getResponseAction(robotActions.RUN_PLUGIN, robotActions.ResponseActions);
+
     constructor(
         public ws: WebsocketService,
         public actions$: Actions,
@@ -92,7 +101,7 @@ export class RobotEffect extends BaseEffect {
         super(ws, actions$);
     }
 
-    getOtherObs(): Observable<Action>[] {
+    getOtherObsOfRobotDetail(): Observable<Action>[] {
         return [
             this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT).filter((action: robotActions.SubscribeRobotRequestAction) => action.payload.id !== 0),
             this.actions$.ofType(robotActions.GET_ROBOT_LOGS).filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest),

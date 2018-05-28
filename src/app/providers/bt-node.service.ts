@@ -13,7 +13,11 @@ import { GroupedList, UtilService } from './util.service';
 
 export interface GroupedNode extends GroupedList<BtNode> {
     groupNameValue?: any;
- }
+}
+
+export interface NodeFilterFn {
+    (node: BtNode): boolean;
+}
 
 @Injectable()
 export class BtNodeService {
@@ -62,6 +66,20 @@ export class BtNodeService {
 
                 return !!target.public;
             })
+    }
+
+    getSpecificNodeList(...conditions: NodeFilterFn[]): Observable<BtNode[]> {
+        return this.getNodeList().map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true)));
+    }
+
+    /* =======================================================Shortcut methods======================================================= */
+
+    isMineNode(node: BtNode): boolean {
+        return node.is_owner;
+    }
+
+    isLatestFunctionalNode(node: BtNode): boolean {
+        return node.version.indexOf('plugin') !== -1;
     }
 
     /* =======================================================Error Handle======================================================= */

@@ -263,6 +263,7 @@
     "ROBOT": "机器人",
 
     "CREATE_ROBOT": "创建机器人",
+    "ROBOT_TOTAL": "机器人总数",
     "CANCEL_PUBLISH_ROBOT_CONFIRM": "确定要取消公开这个机器人的交易日志吗?",
     "PUBLISH_ROBOT_CONFIRM": "确定要公开这个机器人的交易日志吗?",
     "RESTART_ROBOT_CONFIRM": "确定要重启这个机器人吗?",
@@ -362,5 +363,17 @@
     "ACCOUNT_BALANCE": "帐户余额",
     "BALANCE":"余额",
     "CONSUMED": "已消费",
-    "YUAN": "{{amount}}元"
+    "YUAN": "{{amount}}元",
+    "ROBOTS_AVAILABLE_STATE_STATISTICS": "当前共{{count}}个机器人参与计费，大约可使用{{hours}}小时，预计可使用至{{datetime}}。",
+    "USABLE_OVERVIEW": "使用情况",
+    "GROSS_PROFIT": "总利润",
+
+    "CAN_NOT_USE_FUNCTION": "无法使用此功能",
+    "NEED_LATEST_AGENT_VERSION": "此功能需要最新托管者支持, 请更新或布署自己的私有托管者!",
+    "I_KNOWN": "我知道了",
+    "DEBUG_NEED_KNOWS": "调试须知",
+    "DEBUG_TIPS": "调试的代码, 直接在指定的托管者上与绑定的交易所运行, 立即返回执行结果. 超时时间为3分钟, 可以调用API里的任何函数。",
+    "START_DEBUG": "开始调试",
+
+    "DEBUG_RESULT": "函数结果"
 }

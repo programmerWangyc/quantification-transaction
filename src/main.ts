@@ -1,3 +1,5 @@
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/markdown/markdown';
 import 'hammerjs';
 
 import { enableProdMode } from '@angular/core';

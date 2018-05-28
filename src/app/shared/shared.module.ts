@@ -35,6 +35,7 @@ import {
     MatToolbarModule,
     MatTooltipModule,
 } from '@angular/material';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { FileUploadModule } from 'ng2-file-upload';
@@ -44,7 +45,7 @@ import { WatchDogService } from './providers/watch-dog.service';
 
 @NgModule({
     exports: [
-        FlexLayoutModule, // flex layout 
+        FlexLayoutModule, // flex layout
         TranslateModule,
         MatAutocompleteModule,
         MatButtonModule,
@@ -82,6 +83,7 @@ import { WatchDogService } from './providers/watch-dog.service';
         FormsModule,
         ReactiveFormsModule,
         FileUploadModule,
+        CodemirrorModule,
     ]
 })
 export class SharedModule {

@@ -5,6 +5,7 @@ import {
     CommandRobotRequest,
     DeleteRobotRequest,
     ModifyRobotRequest,
+    PluginRunRequest,
     PublicRobotRequest,
     SaveRobotRequest,
 } from '../../interfaces/request.interface';
@@ -13,6 +14,7 @@ import {
     DeleteRobotResponse,
     LogOverview,
     ModifyRobotResponse,
+    PluginRunResponse,
     RestartRobotResponse,
     RunningLog,
     SaveRobotResponse,
@@ -73,6 +75,7 @@ interface RequestParams {
     commandRobot: CommandRobotRequest;
     deleteRobot: DeleteRobotRequest;
     saveRobot: SaveRobotRequest;
+    pluginRun: PluginRunRequest;
 }
 
 interface DefaultParams {
@@ -122,6 +125,7 @@ export interface State {
     serverMessage: ServerSendRobotMessage;
     syncRobotLogsRes: GetRobotLogsResponse;
     saveRobotRes: SaveRobotResponse;
+    pluginRunRes: PluginRunResponse;
 }
 
 const robotLogsDefaultParams = {
@@ -182,6 +186,7 @@ const initialState: State = {
     serverMessage: null,
     syncRobotLogsRes: null,
     saveRobotRes: null,
+    pluginRunRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -293,7 +298,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.GET_ROBOT_LOGS_SUCCESS: {
-            if(!state.requestParams.robotLogs) break; // 自动获取日志后，如果用户已经退出，停止操作。
+            if (!state.requestParams.robotLogs) break; // 自动获取日志后，如果用户已经退出，停止操作。
 
             const result = pickUpLogs(action.payload.result.logs);
 
@@ -396,6 +401,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.SAVE_ROBOT_FAIL:
         case actions.SAVE_ROBOT_SUCCESS:
             return { ...state, saveRobotRes: action.payload };
+
+        // run plugin
+        case actions.RUN_PLUGIN:
+            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload } };
+
+        case actions.RUN_PLUGIN_FAIL:
+        case actions.RUN_PLUGIN_SUCCESS:
+            return { ...state, pluginRunRes: action.payload };
 
         /** ==============================================Local action===================================================== **/
 
@@ -738,3 +751,5 @@ export const getRequestParameter = (state: State) => state.requestParams;
 export const getDeleteRobotRes = (state: State) => state.deleteRobotRes;
 
 export const getSaveRobotRes = (state: State) => state.saveRobotRes;
+
+export const getPluginRunRes = (state: State) => state.pluginRunRes;

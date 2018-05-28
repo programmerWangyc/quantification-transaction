@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
-import { Breadcrumb, RobotCreationForm, SelectedPair, VariableOverview } from '../../interfaces/constant.interface';
+import { RobotCreationForm, SelectedPair, VariableOverview } from '../../interfaces/constant.interface';
 import { CategoryType, needArgsType, SaveRobotRequest } from '../../interfaces/request.interface';
 import { Platform } from '../../interfaces/response.interface';
 import { BtNodeService, GroupedNode } from '../../providers/bt-node.service';
@@ -34,7 +34,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
     xs = 24;
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name: 'CREATE_ROBOT' }];
 
     subscription$$: Subscription;
 

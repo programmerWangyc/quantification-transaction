@@ -1,7 +1,6 @@
-@import '../_charge';
 @import '../../../theme/_variable.theme';
 h3 {
-    @include section-head();
+    margin: 2em 0 1em 0;
 }
 
 ul {

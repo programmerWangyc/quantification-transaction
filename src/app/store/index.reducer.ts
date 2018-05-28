@@ -141,6 +141,9 @@ export const selectDeleteRobotResponse = createSelector(getRobotState, robot.get
 // create robot
 export const selectSaveRobotResponse = createSelector(getRobotState, robot.getSaveRobotRes);
 
+// plugin run
+export const selectPluginRunResponse = createSelector(getRobotState, robot.getPluginRunRes);
+
 // default params
 export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
 export const selectRobotDefaultLogParams =createSelector(selectRobotDefaultParams, state => state.robotLogs);

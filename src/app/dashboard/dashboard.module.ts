@@ -12,11 +12,12 @@ import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
+import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
+import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
-import { RechargeComponent } from './recharge/recharge.component';
 
 @NgModule({
     imports: [
@@ -38,6 +39,7 @@ import { RechargeComponent } from './recharge/recharge.component';
         RobotComponent,
         RobotCreationComponent,
         RechargeComponent,
+        RobotDebugComponent,
     ],
 })
 export class DashboardModule { }

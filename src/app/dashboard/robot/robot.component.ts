@@ -14,8 +14,6 @@ export class RobotComponent implements OnInit {
 
     buttonType = 'primary';
 
-    buttonSize = 'large';
-
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute

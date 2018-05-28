@@ -152,6 +152,19 @@ export interface SaveRobotRequest {
     nodeId: number;
 }
 
+// plugin run
+export interface ExchangePair {
+    pid: number; // platform id;
+    pair: string; // stock name;
+}
+
+export interface PluginRunRequest {
+    period: number;
+    source: string; // codemirror content
+    node: number; // node id
+    exchanges: ExchangePair[];
+}
+
 /** ===================================================Node list========================================= **/
 
 export const getNodeList = 'GetNodeList';
@@ -206,5 +219,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 23
+ * 接口总数： 83， 已完成： 24
  */

@@ -21,6 +21,7 @@ export enum Path {
     dashboard = 'dashboard',
     createRobot = 'create_robot',
     charge = 'charge',
+    debug = 'debug',
 }
 
 export enum VariableType {
@@ -233,4 +234,10 @@ export interface PayMethod {
 export interface RechargeFormModal {
     payMethod: number;
     chargeAmount: number;
+}
+
+export interface RobotDebugFormModal {
+    agent: number;
+    platform: number;
+    stock: string;
 }

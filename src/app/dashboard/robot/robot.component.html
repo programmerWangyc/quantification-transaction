@@ -1,13 +1,14 @@
 <app-indicator [paths]="paths"></app-indicator>
 
+<app-robot-duration></app-robot-duration>
+
 <div class="button-group">
-    <button nz-button [nzType]="buttonType" [nzSize]="buttonSize" (click)="navigateTo('create_robot')">
-        {{'ADD' | translate}}
+    <button nz-button [nzType]="buttonType" (click)="navigateTo('create_robot')">
+        <i class="anticon anticon-plus"></i>
+        {{'CREATE_ROBOT' | translate}}
     </button>
-    <a nz-button [nzType]="buttonType" [nzSize]="buttonSize" [routerLink]="['../','charge']">
-        {{'RECHARGE' | translate}}
-    </a>
-    <button nz-button [nzType]="buttonType" [nzSize]="buttonSize">
+    <button nz-button [nzType]="buttonType" (click)="navigateTo('debug')">
+        <i class="anticon anticon-twitter"></i>
         {{'DEBUG' | translate}}
     </button>
 </div>

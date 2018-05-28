@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { includes, isEmpty } from 'lodash';
 
+import * as moment from 'moment';
 import { ResetRobotDetailAction } from '../../store/robot/robot.action';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
@@ -94,6 +95,32 @@ export class RobotService {
             .filter(res => !!res);
     }
 
+    getRobotCountByStatus(predicate: (robot: fromRes.Robot) => boolean): Observable<fromRes.Robot[]> {
+        return this.getRobots()
+            .map(robots => robots.filter(predicate));
+    }
+
+    getRobotDeadLine(): Observable<string> {
+        return this.getRobotCountByStatus(this.isNormalStatus)
+            .withLatestFrom(this.pubService.getBalance())
+            .map(([robots, balance]) => {
+                const now = parseInt(new Date().getTime() / 10000 + '') * 10000;
+
+                const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
+
+                const count = Math.max(1, robots.length);
+
+                const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '');
+
+                return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
+            });
+    }
+
+    getGrossProfit(): Observable<number> {
+        return this.getRobots()
+            .map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0));
+    }
+
     // robot detail
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.select(fromRoot.selectRobotDetailResponse)
@@ -160,18 +187,18 @@ export class RobotService {
 
     monitorServerSendRobotStatus(): Subscription {
         const param = this.getServerSendRobotMessage()
-            .filter(data => data.status && this.isOverStatus(data.status))
+            .filter(data => data.status && this.isOverStatus(data))
             .switchMap(data => this.getRobotDetail().map(({ id }) => ({ id })).filter(({ id }) => id === data.id));
 
         return this.launchRobotDetail(param);
     }
 
-    isOverStatus(status: number): boolean {
-        return includes([RobotStatus.COMPLETE, RobotStatus.STOPPED, RobotStatus.ERROR], status);
+    isOverStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
+        return includes([RobotStatus.COMPLETE, RobotStatus.STOPPED, RobotStatus.ERROR], robot.status);
     }
 
-    isNormalStatus(status: number): boolean {
-        return includes([RobotStatus.QUEUEING, RobotStatus.RUNNING, RobotStatus.STOPPING], status);
+    isNormalStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
+        return includes([RobotStatus.QUEUEING, RobotStatus.RUNNING, RobotStatus.STOPPING], robot.status);
     }
 
     private getSummary(source: string): any {

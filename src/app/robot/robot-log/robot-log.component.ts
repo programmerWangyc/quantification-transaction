@@ -15,21 +15,6 @@ import { TipService } from './../../providers/tip.service';
 import { RobotLogService } from './../providers/robot.log.service';
 import { RobotService } from './../providers/robot.service';
 
-interface FilterType {
-    type: number;
-    selected: boolean;
-}
-
-const filterTypes: FilterType[] = [
-    { type: LogTypes.BUY, selected: true },
-    { type: LogTypes.SALE, selected: true },
-    { type: LogTypes.RETRACT, selected: true },
-    { type: LogTypes.ERROR, selected: true },
-    { type: LogTypes.PROFIT, selected: true },
-    { type: LogTypes.MESSAGE, selected: true },
-    { type: LogTypes.RESTART, selected: true },
-];
-
 const soundTypes: string[] = [
     LogTypes[0],
     LogTypes[1],
@@ -61,11 +46,9 @@ export class RobotLogComponent extends BaseComponent {
 
     statistics: Observable<string>;
 
-    filterTypes = filterTypes;
-
     soundTypes = soundTypes;
 
-    search$: Subject<FilterType[]> = new Subject();
+    search$: Subject<number[]> = new Subject();
 
     refresh$: Subject<boolean> = new Subject();
 
@@ -102,8 +85,8 @@ export class RobotLogComponent extends BaseComponent {
     initialModel() {
         this.logs = this.robotLog.getSemanticsRobotRunningLogs()
             .combineLatest(
-                this.search$.startWith(this.filterTypes).map(types => types.filter(type => type.selected).map(item => item.type)),
-                (logs, selectedTypes) => logs.filter(log => includes(selectedTypes, log.logType))
+                this.search$,
+                (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
             )
             .startWith([]);
 
@@ -111,7 +94,7 @@ export class RobotLogComponent extends BaseComponent {
 
         this.pageSize = this.robotLog.getRobotLogDefaultParams().map(params => params.logLimit).startWith(20);
 
-        this.statistics = this.robotLog.getRobotLogPaginationStatistics();
+        this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize);
 
         this.isLoading = this.robotService.isLoading();
     }
@@ -131,14 +114,8 @@ export class RobotLogComponent extends BaseComponent {
     }
 
     onPageSizeChange(size: number): void {
-        // Seconde params comes from the reducer data structure ,indicates the path of the target data which would be changed.
+        // Second params comes from the reducer data structure ,indicates the path of the target data which would be changed.
         this.robotLog.modifyDefaultParam(size, ['robotLogs', 'logLimit']);
-    }
-
-    resetFilterTypes(): void {
-        this.filterTypes.forEach(item => item.selected = true);
-
-        this.search$.next(this.filterTypes);
     }
 
     updateMonitoringTypes(types: string[]): void {

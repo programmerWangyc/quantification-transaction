@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Breadcrumb } from '../../interfaces/constant.interface';
+
 @Component({
-  selector: 'app-robot-creation',
-  templateUrl: './robot-creation.component.html',
-  styleUrls: ['./robot-creation.component.scss']
+    selector: 'app-robot-creation',
+    templateUrl: './robot-creation.component.html',
+    styleUrls: ['./robot-creation.component.scss']
 })
 export class RobotCreationComponent implements OnInit {
 
-  constructor() { }
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name: 'CREATE_ROBOT' }];
 
-  ngOnInit() {
-  }
+    constructor() { }
+
+    ngOnInit() {
+    }
 
 }

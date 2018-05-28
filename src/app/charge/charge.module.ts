@@ -28,6 +28,7 @@ import { ChargeService } from './providers/charge.service';
         ChargeComponent,
         ChargeHistoryComponent,
         AccountBalanceComponent,
+        PIPES,
     ],
     entryComponents: [
 

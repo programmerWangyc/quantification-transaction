@@ -5,16 +5,19 @@ import {
     DeleteRobotRequest,
     GetRobotListRequest,
     ModifyRobotRequest,
+    PluginRunRequest,
     SaveRobotRequest,
     SetRobotWDRequest,
     StopRobotRequest,
     SubscribeRobotRequest,
+    WsRequest,
 } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
     DeleteRobotResponse,
     GetRobotListResponse,
     ModifyRobotResponse,
+    PluginRunResponse,
     SaveRobotResponse,
     ServerSendRobotMessage,
     StopRobotResponse,
@@ -550,6 +553,50 @@ export class SaveRobotSuccessAction extends SaveRobotAction implements Action {
     constructor(public payload: SaveRobotResponse) { super() }
 }
 
+/** ======================================================Plugin run========================================= **/
+
+export class PluginRunAction extends ApiAction {
+    isSingleParams = true;
+
+    noneParams = false;
+
+    command = 'PluginRun';
+
+    order = null;
+
+    getParams(params: any): WsRequest {
+        return { method: [this.command], params: [[JSON.stringify(params)]] };
+    }
+
+    constructor() { super() };
+}
+
+export const RUN_PLUGIN = 'RUN_PLUGIN';
+
+export class PluginRunRequestAction extends PluginRunAction implements Action {
+    readonly type = RUN_PLUGIN;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: PluginRunRequest) { super() }
+}
+
+export const RUN_PLUGIN_FAIL = 'RUN_PLUGIN_FAIL';
+
+export class PluginRunFailAction extends PluginRunAction implements Action {
+    readonly type = RUN_PLUGIN_FAIL;
+
+    constructor(public payload: PluginRunResponse) { super() }
+}
+
+export const RUN_PLUGIN_SUCCESS = 'RUN_PLUGIN_SUCCESS';
+
+export class PluginRunSuccessAction extends PluginRunAction implements Action {
+    readonly type = RUN_PLUGIN_SUCCESS;
+
+    constructor(public payload: PluginRunResponse) { super() }
+}
+
 /** ======================================================Local action========================================= **/
 
 export const RESET_ROBOT_DETAIL = 'RESET_ROBOT_DETAIL';
@@ -651,6 +698,9 @@ export type ApiActions = GetRobotListRequestAction
     | ModifyRobotFailAction
     | ModifyRobotRequestAction
     | ModifyRobotSuccessAction
+    | PluginRunRequestAction
+    | PluginRunFailAction
+    | PluginRunSuccessAction
     | PublicRobotFailAction
     | PublicRobotRequestAction
     | PublicRobotSuccessAction
@@ -693,6 +743,8 @@ export const ResponseActions = {
     GetRobotLogsSuccessAction,
     ModifyRobotFailAction,
     ModifyRobotSuccessAction,
+    PluginRunFailAction,
+    PluginRunSuccessAction,
     PublicRobotFailAction,
     PublicRobotSuccessAction,
     RestartRobotFailAction,

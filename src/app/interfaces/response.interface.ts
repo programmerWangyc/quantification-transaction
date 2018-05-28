@@ -344,7 +344,27 @@ export interface CommandRobotResponse extends ResponseUnit<boolean> { }
 export interface DeleteRobotResponse extends ResponseUnit<number> { }
 
 // create robot
-export interface SaveRobotResponse extends ResponseUnit<number | string> { };
+export interface SaveRobotResponse extends ResponseUnit<number | string> { }
+
+// plugin run
+export interface DebugLog {
+    PlatformId: string;
+    OrderId: string;
+    LogType: number;
+    Price: number;
+    Amount:number;
+    Extra: string;
+    Instrument:string;
+    Direction: string;
+    Time: number;
+}
+
+export interface PluginRunResult {
+    result: string; // JSON type string;
+    logs: DebugLog[];
+}
+
+export interface PluginRunResponse extends ResponseUnit<string> { }
 
 /** ===================================================Node list========================================= **/
 

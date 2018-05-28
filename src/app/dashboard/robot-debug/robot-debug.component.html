@@ -1,0 +1,28 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div class="debugger" nz-row>
+    <app-robot-debugger (debug)="debug$.next($event)" [platforms]="platforms | async" [agents]="agents | async" nz-col [nzSpan]="12"></app-robot-debugger>
+
+    <div nz-col [nzSpan]="12">
+        <nz-alert nzType="error" *ngIf="!(hasAgents | async)" [nzMessage]="'CAN_NOT_USE_FUNCTION' | translate" [nzDescription]="'NEED_LATEST_AGENT_VERSION' | translate"
+            nzShowIcon [nzCloseText]="'I_KNOWN' | translate">
+        </nz-alert>
+        <nz-alert nzType="info" [nzMessage]="'DEBUG_NEED_KNOWS' | translate" [nzDescription]="'DEBUG_TIPS' | translate" [nzCloseText]="'I_KNOWN' | translate"
+            nzShowIcon></nz-alert>
+    </div>
+</div>
+
+<div id="codemirror">
+    <ngx-codemirror [(ngModel)]="content" [options]="editorOptions"></ngx-codemirror>
+</div>
+
+<div class="debug-info">
+    <h3>{{'DEBUG_RESULT' | translate}}</h3>
+    <textarea row="6" nz-input [ngModel]="debugResult | async"></textarea>
+</div>
+
+<div class="debug-info">
+    <h3>{{'LOG-INFORMATION' | translate}}</h3>
+    <app-robot-log-table [logs]="logs | async" [pageSize]="pageSize | async" [logTotal]="logTotal | async" [statistics]="statistics | async"
+        (pageSizeChange)="pageSize$.next($event)" (search)="filter$.next($event)"></app-robot-log-table>
+</div>

@@ -22,7 +22,7 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ChartUpdateIndicator, SemanticsLog, ServerSendRobotEventType } from '../../interfaces/constant.interface';
+import { ChartUpdateIndicator, ServerSendRobotEventType } from '../../interfaces/constant.interface';
 import {
     ChangeLogPageAction,
     ChangeProfitChartPageAction,
@@ -41,6 +41,8 @@ import { RobotService } from './robot.service';
 
 @Injectable()
 export class RobotLogService {
+
+    timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -188,9 +190,8 @@ export class RobotLogService {
     /**
      * @description Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
      */
-    getRobotLogPaginationStatistics(): Observable<string> {
-        return this.getLogsTotal(SemanticsLog.runningLog)
-            .combineLatest(this.getRobotLogDefaultParams().map(param => param.logLimit), (total, page) => ({ total, page: Math.ceil(total / page) }))
+    getRobotLogPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
+        return total.combineLatest(pageSize, (total, page) => ({ total, page: Math.ceil(total / page) }))
             .switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page }))
             .distinctUntilChanged();
     }
@@ -353,7 +354,7 @@ export class RobotLogService {
     getStrategyUpdateTime(): Observable<string> {
         return this.getRobotLogs()
             .merge(this.getSyncRobotLogs().filter(res => !!res.chartTime))
-            .map(res => moment(res.chartTime).format('YYYY-MM-DD HH:mm:ss'));
+            .map(res => moment(res.chartTime).format(this.timeFormat));
     }
 
     getStrategyChartTotal(): Observable<number> {
@@ -451,7 +452,7 @@ export class RobotLogService {
      */
     private isInValidStatusToSyncLogs(): Observable<boolean> {
         return this.robotService.getRobotDetail()
-            .map(robot => this.robotService.isNormalStatus(robot.status))
+            .map(robot => this.robotService.isNormalStatus(robot));
     }
 
     /**
@@ -503,6 +504,22 @@ export class RobotLogService {
 
     private isFirstPage(page): boolean {
         return page === 0;
+    }
+
+    transformDebugLogToRunningLog(data: fromRes.DebugLog, id: number): fromRes.RunningLog {
+        const { LogType, PlatformId, OrderId, Price, Amount, Extra, Time, Instrument, Direction } = data;
+        return {
+            id,
+            logType: LogType,
+            eid: PlatformId,
+            orderId: OrderId,
+            price: parseFloat(Price.toFixed(12)),
+            amount: parseFloat(Amount.toFixed(6)),
+            extra: Extra,
+            date: moment(Time).format(this.timeFormat),
+            contractType: Instrument,
+            direction: Direction,
+        }
     }
 
     /* =======================================================Local state modify================================================== */
