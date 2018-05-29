@@ -96,7 +96,7 @@ export class RobotLogComponent extends BaseComponent {
 
         this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize);
 
-        this.isLoading = this.robotService.isLoading();
+        this.isLoading = this.robotService.isLoading('logsLoading');
     }
 
     launch() {

@@ -23,6 +23,8 @@ export class RobotDetailComponent extends BaseComponent {
 
     subscription$$: Subscription;
 
+    isLoading: Observable<boolean>;
+
     constructor(
         private robotService: RobotService,
         private activatedRoute: ActivatedRoute,
@@ -42,6 +44,8 @@ export class RobotDetailComponent extends BaseComponent {
         const name = this.activatedRoute.snapshot.paramMap.get('name');
 
         this.paths = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name }];
+
+        this.isLoading = this.robotService.isLoading();
     }
 
     launch() {

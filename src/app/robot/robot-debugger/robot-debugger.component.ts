@@ -24,6 +24,8 @@ export class RobotDebuggerComponent implements OnInit {
 
     @Input() controlSpan = 16;
 
+    @Input() isDebugging = false;
+
     @Output() debug: EventEmitter<RobotDebugFormModal> = new EventEmitter();
 
     constructor(

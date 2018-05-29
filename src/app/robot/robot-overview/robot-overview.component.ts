@@ -26,7 +26,7 @@ interface RobotStatusBtn {
     //     transition('fold => unfold', animate(250, style({ height: '*' }))),
     // ]
 })
-export class RobotOverviewComponent extends FoldableBusinessComponent implements BaseComponent{
+export class RobotOverviewComponent extends FoldableBusinessComponent implements BaseComponent {
 
     robot: Observable<RobotDetail>
 
@@ -44,7 +44,9 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
 
     watchDogBtnText: Observable<string>;
 
-    isLoading: Observable<boolean>;
+    isStopLoading: Observable<boolean>;
+
+    isRestartLoading: Observable<boolean>;
 
     statusTip: Observable<string>;
 
@@ -80,7 +82,9 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
     initialModel() {
         this.robot = this.robotService.getRobotDetail();
 
-        this.isLoading = this.robotOperate.isLoading();
+        this.isStopLoading = this.robotOperate.isLoading('stop');
+
+        this.isRestartLoading = this.robotOperate.isLoading('restart');
 
         this.operateBtnText = this.robotOperate.getOperateBtnText();
 

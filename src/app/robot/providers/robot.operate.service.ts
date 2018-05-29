@@ -46,7 +46,7 @@ import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
 
 @Injectable()
-export class RobotOperateService extends BaseService{
+export class RobotOperateService extends BaseService {
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -360,15 +360,20 @@ export class RobotOperateService extends BaseService{
 
     // ui state
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.isLoading);
+        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.loading);
     }
 
     isCurrentRobotOperating(robot: fromRes.Robot, operateType: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(state => state[operateType + OPERATE_ROBOT_LOADING_TAIL])
+        return this.isLoading(operateType + OPERATE_ROBOT_LOADING_TAIL)
             .withLatestFrom(this.store.select(fromRoot.selectRobotRequestParameters).filter(res => !!res && !!res[operateType + OPERATE_ROBOT_REQUEST_TAIL]).map(res => res[operateType + OPERATE_ROBOT_REQUEST_TAIL].id))
             .filter(([loading, id]) => robot.id === id)
             .map(([loading, _]) => loading)
             .startWith(false);
+    }
+
+    isDebugLoading(): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotUiState)
+            .map(state => state.debugLoading);
     }
 
     getOperateBtnText(): Observable<string> {

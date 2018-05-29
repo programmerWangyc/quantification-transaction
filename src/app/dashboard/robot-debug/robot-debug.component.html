@@ -1,7 +1,8 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <div class="debugger" nz-row>
-    <app-robot-debugger (debug)="debug$.next($event)" [platforms]="platforms | async" [agents]="agents | async" nz-col [nzSpan]="12"></app-robot-debugger>
+    <app-robot-debugger (debug)="debug$.next($event)" [platforms]="platforms | async" [isDebugging]="isDebugging | async" [agents]="agents | async"
+        nz-col [nzSpan]="12"></app-robot-debugger>
 
     <div nz-col [nzSpan]="12">
         <nz-alert nzType="error" *ngIf="!(hasAgents | async)" [nzMessage]="'CAN_NOT_USE_FUNCTION' | translate" [nzDescription]="'NEED_LATEST_AGENT_VERSION' | translate"

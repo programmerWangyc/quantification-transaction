@@ -100,7 +100,7 @@ export class RobotLogService {
         const syncNotify = this.needSyncLogs()
             .withLatestFrom(
                 this.canSyncLogs(),
-                this.robotService.isLoading(),
+                this.robotService.isLoading('logsLoading'),
                 (need, can, isLoading) => need && can && !isLoading
             )
             .filter(v => v)

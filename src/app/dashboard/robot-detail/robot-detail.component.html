@@ -1,29 +1,33 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<div class="part">
-    <app-robot-overview></app-robot-overview>
-</div>
+<nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
 
-<div class="part">
-    <app-robot-config></app-robot-config>
-</div>
+    <div class="part">
+        <app-robot-overview></app-robot-overview>
+    </div>
 
-<div class="part">
-    <app-robot-command></app-robot-command>
-</div>
+    <div class="part">
+        <app-robot-config></app-robot-config>
+    </div>
 
-<div class="part">
-    <app-robot-status></app-robot-status>
-</div>
+    <div class="part">
+        <app-robot-command></app-robot-command>
+    </div>
 
-<div class="part">
-    <app-robot-profit-chart></app-robot-profit-chart>
-</div>
+    <div class="part">
+        <app-robot-status></app-robot-status>
+    </div>
 
-<div class="part">
-    <app-robot-strategy-chart></app-robot-strategy-chart>
-</div>
+    <div class="part">
+        <app-robot-profit-chart></app-robot-profit-chart>
+    </div>
 
-<div class="part">
-    <app-robot-log [allowSeparateRequest]="false"></app-robot-log>
-</div>
+    <div class="part">
+        <app-robot-strategy-chart></app-robot-strategy-chart>
+    </div>
+
+    <div class="part">
+        <app-robot-log [allowSeparateRequest]="false"></app-robot-log>
+    </div>
+
+</nz-spin>

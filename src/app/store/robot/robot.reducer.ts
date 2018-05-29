@@ -96,10 +96,12 @@ interface UIState {
     currentRunningLogPage: number;
     currentProfitChartPage: number;
     currentStrategyChartPage: number;
-    isLoading: boolean;
+    loading: boolean;
+    logsLoading: boolean;
     publicRobotLoading: boolean;
     stopRobotLoading: boolean;
     restartRobotLoading: boolean;
+    debugLoading: boolean;
 }
 
 export interface State {
@@ -178,10 +180,12 @@ const initialState: State = {
         currentRunningLogPage: 0,
         currentProfitChartPage: 0,
         currentStrategyChartPage: 0,
-        isLoading: false,
+        loading: false,
+        logsLoading: false,
         publicRobotLoading: false,
         stopRobotLoading: false,
         restartRobotLoading: false,
+        debugLoading: false,
     },
     serverMessage: null,
     syncRobotLogsRes: null,
@@ -228,19 +232,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_ROBOT_DETAIL: {
             const requestParams = { ...state.requestParams, robotDetail: action.payload };
 
-            return { ...state, requestParams };
+            return { ...state, requestParams, uiState: { ...state.uiState, loading: true } };
         }
 
         case actions.GET_ROBOT_DETAIL_FAIL:
-            return {
-                ...state,
-                robotDetailRes: action.payload,
-                robotArgs: {
-                    ...state.robotArgs,
-                    strategyArgs: null,
-                    templateArgs: null,
-                }
-            };
+            return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null, }, uiState: { ...state.uiState, loading: false }, };
 
         case actions.GET_ROBOT_DETAIL_SUCCESS: {
             const { strategy_args, templates } = action.payload.result.robot;
@@ -261,6 +257,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
                         return { id, name, category, variables };
                     })
+                },
+                uiState: {
+                    ...state.uiState,
+                    loading: false,
                 }
             };
         }
@@ -285,7 +285,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             } else {
                 const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: false };
 
-                return { ...state, uiState: { ...state.uiState, isLoading: true }, requestParams };
+                return { ...state, uiState: { ...state.uiState, logsLoading: true }, requestParams };
             }
         }
 
@@ -293,7 +293,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             if (state.requestParams.isSyncLogs) {
                 return { ...state, syncRobotLogsRes: action.payload }
             } else {
-                return { ...state, uiState: { ...state.uiState, isLoading: false }, robotLogsRes: action.payload };
+                return { ...state, uiState: { ...state.uiState, logsLoading: false }, robotLogsRes: action.payload };
             }
         }
 
@@ -317,7 +317,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             if (state.requestParams.isSyncLogs) {
                 return { ...state, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
             } else {
-                return { ...state, uiState: { ...state.uiState, isLoading: false }, robotLogsRes: action.payload, robotDetailRes, robotList };
+                return { ...state, uiState: { ...state.uiState, logsLoading: false }, robotLogsRes: action.payload, robotDetailRes, robotList };
             }
         }
 
@@ -404,11 +404,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // run plugin
         case actions.RUN_PLUGIN:
-            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload }, uiState: { ...state.uiState, debugLoading: true } };
 
         case actions.RUN_PLUGIN_FAIL:
         case actions.RUN_PLUGIN_SUCCESS:
-            return { ...state, pluginRunRes: action.payload };
+            return { ...state, pluginRunRes: action.payload, uiState: { ...state.uiState, debugLoading: false } };
 
         /** ==============================================Local action===================================================== **/
 

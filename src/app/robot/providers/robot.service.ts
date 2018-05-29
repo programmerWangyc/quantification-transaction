@@ -26,6 +26,7 @@ import { CreateRobotComponent } from '../create-robot/create-robot.component';
 import { TranslateService } from '@ngx-translate/core';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
+import { OPERATE_ROBOT_LOADING_TAIL } from '../../store/robot/robot.reducer';
 
 @Injectable()
 export class RobotService {
@@ -225,8 +226,8 @@ export class RobotService {
 
     /* =======================================================Local state modify================================================== */
 
-    isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(state => state.isLoading);
+    isLoading(type?: string): Observable<boolean> {
+        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.loading);
     }
 
     resetRobotDetail(): void {

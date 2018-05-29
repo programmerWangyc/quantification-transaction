@@ -69,6 +69,8 @@ export class RobotDebugComponent implements BaseComponent {
 
     debugResult: Observable<any>;
 
+    isDebugging: Observable<boolean>;
+
     constructor(
         private nodeService: BtNodeService,
         private platformService: PlatformService,
@@ -105,6 +107,8 @@ export class RobotDebugComponent implements BaseComponent {
         this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize.concat(this.pageSize$));
 
         this.debugResult = this.robotOperate.getPluginRunResult();
+
+        this.isDebugging = this.robotOperate.isDebugLoading();
     }
 
     launch() {
