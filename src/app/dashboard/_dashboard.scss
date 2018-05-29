@@ -1,6 +1,28 @@
+@import '../../theme/_variable.theme';
 $side-width: 240px;
 $header-height: 64px;
-
 @mixin head-section {
     margin: 2em 0 1em 0;
+}
+
+@mixin header-section {
+    h3 {
+        margin: 2em 0 1em 0;
+    }
+    ul {
+        background-color: $nattier-blue;
+        border-radius: 4px;
+        padding: 1em;
+        margin: 0;
+    }
+    li {
+        list-style: none;
+        margin: 1em 0;
+        & span:first-child {
+            font-weight: 500;
+            &::after {
+                content: ':'
+            }
+        }
+    }
 }

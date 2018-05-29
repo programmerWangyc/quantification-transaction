@@ -1,0 +1,56 @@
+<nz-table #nzTable [nzData]="list" [nzPageSize]="10" [nzShowSizeChanger]="true">
+    <thead>
+        <tr>
+            <th *ngFor="let item of tableHead" bt-text-center>
+                <span>{{item | translate}}</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let strategy of nzTable.data">
+            <td bt-text-direction direction="left">
+                <a [routerLink]="[strategy.id, strategy.name]">{{strategy.name}}</a>
+            </td>
+            <td>
+                <span *ngIf="strategy.is_owner; else buyerBlock">
+                    <span *ngIf="strategy.public === 0; else cancelBlock">
+                        <a>{{'PUBLISH' | translate}}</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a>{{'SELL' | translate}}</a>
+                    </span>
+                    <ng-template #cancelBlock>
+                        <a>{{'CANCEL' | translate}}</a>
+                    </ng-template>
+
+                    <span *ngIf="strategy.public === 3">
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a>{{'MAKE_CODE' | translate}}</a>
+                    </span>
+                </span>
+
+                <ng-template #buyerBlock>
+                    <span [nz-tooltip]="'EXPIRE_TIME' | translate: {time: strategy.expire_date}">{{strategy.expire_date | expireStatus | translate}}</span>
+                </ng-template>
+            </td>
+            <td>{{strategy.date}}</td>
+            <td>{{strategy.last_modified | latestModifyDes}}</td>
+            <td>
+                <!-- 没有click事件的 a 标签都需要向下跳转-->
+                <a href="javascript: void 0" (click)="delete.next(strategy)">{{'DELETE' | translate}}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <span *ngIf="strategy.is_owner; else elseBlock">
+                    <a>{{'COPY' | translate}}</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a>{{'EDIT' | translate}}</a>
+                </span>
+
+                <ng-template #elseBlock>
+                    <a href="javascript: void 0" (click)="renewal.next(strategy)">{{'RENEWAL' | translate}}</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a href="javascript: void 0">{{'BACKTEST' | translate}}</a>
+                </ng-template>
+
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

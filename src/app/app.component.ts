@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
+import * as moment from 'moment';
 
 import { PublicService } from './providers/public.service';
 
@@ -38,6 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
         const actualLanguage = this.translate.getBrowserLang() || 'zh';
 
         this.translate.use(actualLanguage);
+
+        actualLanguage === 'zh' && moment.locale('zh-cn');
+
     }
 
     ngOnDestroy() {

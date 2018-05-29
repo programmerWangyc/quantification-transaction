@@ -418,8 +418,16 @@ export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 
 /** ===================================================Strategy============================================== **/
 
+export enum StrategyPublicState{
+    UNDISCLOSED, // 未公开
+    DISCLOSED,
+    VERIFY,
+    PREMIUM
+}
+
 export interface Strategy {
-    args: string; // JSON type string
+    args?: string; // JSON type string
+    buy_count?: number;
     category: number;
     date: string;
     forked: number;
@@ -429,10 +437,11 @@ export interface Strategy {
     is_owner: boolean;
     language: number;
     last_modified: string;
-    name: string
+    name: string;
     public: number;
     templates?: number[]; //模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
     username: string;
+    expire_date?: string;
     // 以下两个字段是自定义字段
     semanticArgs?: VariableOverview[]; // from args field
     semanticTemplateArgs?: TemplateVariableOverview[]; // form template snapshot

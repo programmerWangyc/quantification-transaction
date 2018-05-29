@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Path } from '../interfaces/constant.interface';
+import { PublicService } from '../providers/public.service';
+import { Subscription } from 'rxjs/Subscription';
+import { RoutingService } from '../providers/routing.service';
 
 export interface SideNavItem {
     label: string;
@@ -76,25 +79,30 @@ const simulation: SideNav = {
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
     isCollapsed = false;
 
     searchValue: string;
 
     list: SideNav[] = [controlCenter, simulation, square, factFinder, community, documentation, market, analyzing];
 
-    currentPath: string;
+    currentModule: string;
+
+    subscription$$: Subscription;
 
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        private routing: RoutingService,
     ) {
     }
 
     ngOnInit() {
-        const url = this.router.url.split('/');
+        this.subscription$$ = this.routing.getCurrentUrl().subscribe(url => {
+            const ary = url.split('/'); // ary : ['', 'dashboard', moduleName, ...params etc.]
 
-        this.currentPath = url[url.length - 1];
+            this.currentModule = ary[2];
+        });
     }
 
     navigateTo(target: SideNav): void {
@@ -104,7 +112,11 @@ export class DashboardComponent implements OnInit {
     isActive(source: SideNav): boolean {
         const paths = source.subNav.map(item => item.path);
 
-        return paths.indexOf(this.currentPath) !== -1;
+        return paths.indexOf(this.currentModule) !== -1;
+    }
+
+    ngOnDestroy() {
+        this.subscription$$.unsubscribe();
     }
 
 }

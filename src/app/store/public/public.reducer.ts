@@ -74,7 +74,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, language: action.payload };
 
         case actions.TOGGLE_FOOTER:
-
             return { ...state, needFooter: !state.needFooter };
 
         default:

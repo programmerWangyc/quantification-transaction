@@ -8,6 +8,8 @@ import { PIPES } from './pipes/index.pipe';
 import { StrategyService } from './providers/strategy.service';
 import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
+import { StrategyListComponent } from './strategy-list/strategy-list.component';
+import { StrateOverviewComponent } from './strate-overview/strate-overview.component';
 
 @NgModule({
     imports: [
@@ -20,6 +22,8 @@ import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
         StrategyArgComponent,
         StrategyLibComponent,
         PIPES,
+        StrategyListComponent,
+        StrateOverviewComponent,
     ],
     providers: [
         StrategyService,
@@ -28,6 +32,8 @@ import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
         StrategyArgComponent,
         StrategyLibComponent,
         PIPES,
+        StrategyListComponent,
+        StrateOverviewComponent,
     ]
 })
 export class StrategyModule { }

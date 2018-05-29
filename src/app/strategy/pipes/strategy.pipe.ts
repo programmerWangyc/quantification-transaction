@@ -3,6 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
 import { ConstantService } from '../../providers/constant.service';
+import * as moment from 'moment';
 
 
 @Pipe({
@@ -62,5 +63,23 @@ export class VariableToSelectListPipe implements PipeTransform {
 
     transform(value: string): string[] {
         return this.constantService.transformStringToList(value);
+    }
+}
+
+@Pipe({
+    name: 'latestModifyDes'
+})
+export class LatestModifyDesPipe implements PipeTransform {
+    transform(value: string): string {
+        return moment(value).fromNow();
+    }
+}
+
+@Pipe({
+    name: 'expireStatus'
+})
+export class ExpireStatusPipe implements PipeTransform {
+    transform(value: string): string {
+        return moment(value).diff(moment()) < 0 ? 'EXPIRED' : 'ALREADY_PURCHASE';
     }
 }

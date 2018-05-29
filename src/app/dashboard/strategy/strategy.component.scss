@@ -1,0 +1,12 @@
+#table-head {
+    margin: 2em 0;
+    position: relative;
+    button {
+        margin-right: 20px;
+    }
+    nz-input-group {
+        position: absolute;
+        right: 0;
+        width: 200px;
+    }
+}

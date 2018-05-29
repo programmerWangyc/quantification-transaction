@@ -34,7 +34,7 @@ export class StrategyService extends BaseService {
 
     /* =======================================================Serve Request======================================================= */
 
-    launchStrategy(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
+    launchStrategyList(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
         return this.process.processStrategyList(source);
     }
 
@@ -83,6 +83,10 @@ export class StrategyService extends BaseService {
         const id = fromReq.CategoryType[str];
 
         return isNumber(id) ? id : void 0;
+    }
+
+    getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
+        return this.getStrategies().map(strategies => strategies.filter(predicate));
     }
 
     /* =======================================================Error handler======================================================= */

@@ -1,3 +1,5 @@
+import { NavigationExtras } from "@angular/router";
+
 export enum LocalStorageKey {
     username = 'username',
     token = 'missionId',
@@ -107,6 +109,12 @@ export enum ChargePaymentInfo {
 export interface Breadcrumb {
     name: string;
     path?: string;
+}
+
+export interface RouterInfo {
+    path: any[];
+    query?: object;
+    extras?: NavigationExtras;
 }
 
 /** ==========================================================Front end custom data structure======================================== **/

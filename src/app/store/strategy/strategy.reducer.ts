@@ -24,6 +24,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.GET_STRATEGY_LIST_FAIL:
             return { ...state, strategyListRes: action.payload };
+
         case actions.GET_STRATEGY_LIST_SUCCESS: {
             const { all, strategies } = action.payload.result;
 
@@ -42,7 +43,7 @@ function addCustomFields(data: Strategy[]): Strategy[] {
 
     return data.map(strategy => strategy.category === CategoryType.TEMPLATE_SNAPSHOT ? strategy : {
         ...strategy,
-        semanticArgs: createScriptArgs(JSON.parse(strategy.args)),
+        semanticArgs: strategy.args ? createScriptArgs(JSON.parse(strategy.args)) : null,
         semanticTemplateArgs: strategy.templates ? strategy.templates.map(tplId => {
             const template = templateSnapshots.find(snapshot => snapshot.id === tplId);
 

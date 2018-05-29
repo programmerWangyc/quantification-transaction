@@ -114,9 +114,11 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             .add(this.strategyService.getStrategyArgs(this.selectedStrategy$).subscribe(args => this.selectedStrategyArgs = args))
             // .add(this.robotService.launchCreateRobot(this.create$.map(form => this.createSaveParams(form))))
             .add(this.strategyService.handleStrategyListError())
+            .add(this.btNodeService.handleNodeListError())
+            .add(this.platformService.handlePlatformListError())
             .add(this.btNodeService.launchGetNodeList(Observable.of(true)))
             .add(this.platformService.launchGetPlatformList(Observable.of(true)))
-            .add(this.strategyService.launchStrategy(Observable.of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
+            .add(this.strategyService.launchStrategyList(Observable.of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
 
         // FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
         this.create$$ = this.robotService.launchCreateRobot(this.create$.map(form => this.createSaveParams(form)));

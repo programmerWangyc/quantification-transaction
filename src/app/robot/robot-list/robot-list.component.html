@@ -8,10 +8,12 @@
     </thead>
     <tbody>
         <tr *ngFor="let robot of nzTable.data">
-            <td>
+            <td bt-text-direction direction="left">
                 <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
             </td>
-            <td>{{robot.strategy_name}}</td>
+            <td>
+                <a [routerLink]="['../', 'strategy', robot.strategy_id, robot.strategy_name]">{{robot.strategy_name}}</a>
+            </td>
             <td>{{robot.status | robotStatus | translate}}</td>
             <td>{{robot.profit | number: '1.0-5'}}</td>
             <td>

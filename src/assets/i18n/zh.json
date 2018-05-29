@@ -26,6 +26,9 @@
     "SALE": "卖出",
     "RETRACT": "撤消",
     "RESET": "重置",
+    "RENEWAL": "续费",
+    "BACKTEST": "回测",
+    "MAKE_CODE": "制码",
 
     "STATUS": "状态",
     "STATUS_INFORMATION": "状态信息",
@@ -45,6 +48,8 @@
     "WAIT": "等待",
     "OPEN": "开",
     "CLOSE": "关",
+    "SHARE": "分享",
+    "ALREADY_PURCHASE": "已购买",
 
     "DATE": "日期",
     "TIME": "时间",
@@ -85,6 +90,9 @@
     "THURSDAY": "星期四",
     "FRIDAY": "星期五",
     "SATURDAY": "星期六",
+    "LATEST_MODIFY": "最近更新",
+    "EXPIRED": "已过期",
+    "EXPIRE_TIME": "过期时间：{{time}}",
 
     "SECURITY_VERIFY": "安全验证",
     "PASSWORD_VERIFY_FAILED": "密码验证失败",
@@ -375,5 +383,14 @@
     "DEBUG_TIPS": "调试的代码, 直接在指定的托管者上与绑定的交易所运行, 立即返回执行结果. 超时时间为3分钟, 可以调用API里的任何函数。",
     "START_DEBUG": "开始调试",
 
-    "DEBUG_RESULT": "函数结果"
+    "DEBUG_RESULT": "函数结果",
+
+    "STRATEGY_TOTAL": "策略总数",
+    "SELL_COUNT": "出售数量",
+    "PUBLISH_COUNT": "公开数量",
+    "EXPIRE_COUNT": "过期数量",
+    "GO_TO_STRATEGY_SQUARE": "去策略广场看看",
+    "VIEW_SOLD_RECORDS": "查看出售记录",
+    "CREATE_STRATEGY": "编写新策略",
+    "DISPLAY_BY_KEYWORD": "搜索包含关键字的策略"
 }

@@ -1,0 +1,29 @@
+<h3>{{'OVERVIEW' | translate}}</h3>
+
+<ul>
+    <li>
+        <span>{{'STRATEGY_TOTAL' | translate}}</span>
+        <span>{{total | async}}</span>
+    </li>
+
+    <li>
+        <span>{{'SELL_COUNT' | translate}}</span>
+        <span>{{soldCount | async}}</span>
+        <a nz-button [nzType]="'secondary'">
+            <i class="anticon anticon-shopping-cart"></i>
+            {{'VIEW_SOLD_RECORDS' | translate}}
+        </a>
+
+    </li>
+
+    <li>
+        <span>{{'PUBLISH_COUNT' | translate}}</span>
+        <span>{{publishCount | async}}</span>
+    </li>
+
+    <li>
+        <span>{{'EXPIRE_COUNT' | translate}}</span>
+        <span>{{expireCount | async}}</span>
+    </li>
+
+</ul>

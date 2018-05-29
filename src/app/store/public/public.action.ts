@@ -78,7 +78,6 @@ export class ToggleFooterAction implements Action {
 
     constructor() { }
 }
-
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction

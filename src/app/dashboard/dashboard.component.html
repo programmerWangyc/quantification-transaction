@@ -12,7 +12,7 @@
                     </span>
 
                     <ul>
-                        <li *ngFor="let item of nav.subNav" (click)="navigateTo(item)" nz-menu-item [ngClass]="{'ant-menu-item-selected': item.path === currentPath}">
+                        <li *ngFor="let item of nav.subNav" (click)="navigateTo(item)" nz-menu-item [ngClass]="{'ant-menu-item-selected': item.path === currentModule}">
                             <i class="anticon" [ngClass]="'anticon-'+item.icon"></i>
                             <span>{{item.label | translate}}</span>
                         </li>
@@ -20,7 +20,7 @@
                 </li>
 
                 <ng-template #elseBlock>
-                    <li [ngClass]="{'ant-menu-item-selected': nav.path === currentPath}" nz-menu-item>
+                    <li [ngClass]="{'ant-menu-item-selected': nav.path === currentModule}" nz-menu-item>
                         <span (click)="navigateTo(nav)" title>
                             <i class="anticon" [ngClass]="'anticon-'+nav.icon"></i>
                             <span>{{nav.label | translate}}</span>

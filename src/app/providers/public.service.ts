@@ -29,9 +29,10 @@ import { selectSettingsResponse } from './../store/index.reducer';
 import { SetLanguageAction, SetReferrerAction, ToggleFooterAction } from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
+import { BaseService } from '../base/base.service';
 
 @Injectable()
-export class PublicService {
+export class PublicService extends BaseService {
 
     refUser$$: Subject<string> = new Subject();
 
@@ -40,6 +41,7 @@ export class PublicService {
         private process: ProcessService,
         private error: ErrorService,
     ) {
+        super();
         this.checkReferrerUser();
     }
 
@@ -193,6 +195,9 @@ export class PublicService {
             .distinctUntilChanged()
             .subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
     }
+
+    /* =======================================================Local state change======================================================= */
+
 
     /* =======================================================Error Handle======================================================= */
 

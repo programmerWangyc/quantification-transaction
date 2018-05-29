@@ -13,6 +13,8 @@ import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
+import { routerReducer, RouterReducerState  } from '@ngrx/router-store'
+import { RouterStateUrl } from './router/router.reducer';
 
 export interface AppState {
     btNode: btNode.State,
@@ -24,6 +26,7 @@ export interface AppState {
     pwd: pwd.State,
     reset: reset.State,
     robot: robot.State,
+    route: RouterReducerState<RouterStateUrl>,
     signup: signup.State,
     strategy: strategy.State,
     verifyPwd: verifyPwd.State,
@@ -40,6 +43,7 @@ export const reducers: ActionReducerMap<AppState> = {
     pwd: pwd.reducer,
     reset: reset.reducer,
     robot: robot.reducer,
+    route: routerReducer,
     signup: signup.reducer,
     strategy: strategy.reducer,
     verifyPwd: verifyPwd.reducer,
@@ -61,6 +65,10 @@ export const selectSettingsResponse = createSelector(getPublicInformationState, 
 export const selectLanguage = createSelector(getPublicInformationState, pub.getLanguage);
 export const selectFooterState = createSelector(getPublicInformationState, pub.getFooterState);
 export const selectError = createSelector(getPublicInformationState, pub.getError);
+
+// router
+const getRouteState = (state: AppState) => state.route;
+export const selectRouteState = createSelector(getRouteState, (state) => state.state);
 
 /** ===================================================Auth=================================================== */
 

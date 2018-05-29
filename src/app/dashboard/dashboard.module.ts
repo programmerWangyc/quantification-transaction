@@ -18,6 +18,10 @@ import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
+import { StrategyComponent } from './strategy/strategy.component';
+import { StrategyModule } from '../strategy/strategy.module';
+import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
+import { CustomSerializer } from '../store/router/router.reducer';
 
 @NgModule({
     imports: [
@@ -28,6 +32,8 @@ import { SquareComponent } from './square/square.component';
         EffectsModule.forFeature(DASHBOARD_EFFECTS),
         ToolModule,
         ChargeModule,
+        StrategyModule,
+        StoreRouterConnectingModule,
     ],
     declarations: [
         DashboardComponent,
@@ -40,6 +46,8 @@ import { SquareComponent } from './square/square.component';
         RobotCreationComponent,
         RechargeComponent,
         RobotDebugComponent,
+        StrategyComponent,
     ],
+    providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
 })
 export class DashboardModule { }
