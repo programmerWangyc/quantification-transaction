@@ -1,4 +1,5 @@
 import { NavigationExtras } from "@angular/router";
+import { ShareStrategyRequest } from "./request.interface";
 
 export enum LocalStorageKey {
     username = 'username',
@@ -24,6 +25,9 @@ export enum Path {
     createRobot = 'create_robot',
     charge = 'charge',
     debug = 'debug',
+    edit = 'edit',
+    backtest = 'backtest',
+    verify = 'verify'
 }
 
 export enum VariableType {
@@ -248,4 +252,8 @@ export interface RobotDebugFormModal {
     agent: number;
     platform: number;
     stock: string;
+}
+
+export interface ShareStrategyStateSnapshot extends ShareStrategyRequest {
+    currentType: number; // strategy's public field;
 }

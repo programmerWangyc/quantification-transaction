@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { NzNotificationService, NzModalService } from 'ng-zorro-antd';
+import { NzNotificationService, NzModalService, NzMessageService, NzMessageDataOptions } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfirmOperateTipData } from '../interfaces/constant.interface';
@@ -31,8 +31,13 @@ export class TipService {
         private notification: NzNotificationService,
         private translate: TranslateService,
         private nzModal: NzModalService,
+        private message: NzMessageService,
     ) { }
 
+
+    /**
+     * @description angular material related methods;
+     */
     showTip(data: string, duration = 3000): MatSnackBarRef<CustomSnackBarComponent> {
         return this.snackBar.openFromComponent(CustomSnackBarComponent, {
             data,
@@ -41,17 +46,34 @@ export class TipService {
         });
     }
 
+    confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
+        return this.dialog.open(component, { data, ...this.confirmConfig })
+            .afterClosed();
+    }
+
+    /**
+     * @description NzNotificationService secondary wrap.
+     */
     success(content: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
         this.translate.get(content).subscribe(content => {
             this.notification.success(title, content, option)
         }, error => console.log(error), () => console.log('translate complete'));
     }
 
-    confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
-        return this.dialog.open(component, { data, ...this.confirmConfig })
-            .afterClosed();
+    /**
+     * @description NzMessageService secondary wrap.
+     */
+    messageSuccess(content: string, options?: NzMessageDataOptions): void {
+        this.translate.get(content).subscribe(content => this.message.success(content, options));
     }
 
+    messageError(content: string, options?: NzMessageDataOptions): void {
+        this.translate.get(content).subscribe(content => this.message.error(content, options));
+    }
+
+    /**
+     * @description NzModalService secondary wrap.
+     */
     getNzConfirmOperateConfig(): Observable<object> {
         return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).map(res => ({
             nzTitle: res.OPERATE_CONFIRM,
@@ -61,6 +83,9 @@ export class TipService {
         }));
     }
 
+    /**
+     * @description Custom method related with tip functional.
+     */
     playAudio(src: string): void {
         const audio = new Audio();
 

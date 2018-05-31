@@ -9,22 +9,39 @@
     <tbody>
         <tr *ngFor="let strategy of nzTable.data">
             <td bt-text-direction direction="left">
-                <a [routerLink]="[strategy.id, strategy.name]">{{strategy.name}}</a>
+                <a (click)="navigateTo(strategy)">{{strategy.name}}</a>
+                <nz-tag *ngIf="strategy.category === 20" [nzColor]="'magenta'">{{'TEMPLATE_LIBRARY' | translate}}</nz-tag>
+
+                <nz-tag *ngIf="strategy.hasToken" [nzColor]="'red'">{{'REMOTE_EDIT' | translate}}</nz-tag>
+
+                <span *ngIf="strategy.is_owner; else notOwnerBlock">
+                    <nz-tag *ngIf="strategy.public === 1" [nzColor]="'cyan'">{{'DISCLOSED' | translate}}</nz-tag>
+                    <nz-tag *ngIf="strategy.public === 2" [nzColor]="'orange'">{{'PENDING_REVIEW' | translate}}</nz-tag>
+                    <nz-tag *ngIf="strategy.public === 3 || strategy.buy_count" [nzColor]="'volcano'">
+                        <span translate="SOLD_COUNT" [translateParams]="{count: strategy.buy_count || 0}"></span>
+                    </nz-tag>
+                </span>
+                <ng-template #notOwnerBlock>
+                    <nz-tag *ngIf="strategy.is_deleted" [nzColor]="'gold'">{{'DELETED' | translate}}</nz-tag>
+                    <nz-tag *ngIf="!strategy.is_deleted && strategy.public !== 3" [nzColor]="'lime'">{{'INNER_PREMIUM' | translate}}</nz-tag>
+                </ng-template>
             </td>
+
             <td>
                 <span *ngIf="strategy.is_owner; else buyerBlock">
                     <span *ngIf="strategy.public === 0; else cancelBlock">
-                        <a>{{'PUBLISH' | translate}}</a>
+                        <a (click)="publish(strategy)">{{'PUBLISH' | translate}}</a>
                         <nz-divider nzType="vertical"></nz-divider>
-                        <a>{{'SELL' | translate}}</a>
+                        <a (click)="sell(strategy)">{{'SELL' | translate}}</a>
                     </span>
+
                     <ng-template #cancelBlock>
-                        <a>{{'CANCEL' | translate}}</a>
+                        <a (click)="cancel(strategy)">{{(strategy.public === 1 ? 'CANCEL_PUBLISH': 'CANCEL_SELL') | translate}}</a>
                     </ng-template>
 
                     <span *ngIf="strategy.public === 3">
                         <nz-divider nzType="vertical"></nz-divider>
-                        <a>{{'MAKE_CODE' | translate}}</a>
+                        <a (click)="createKey(strategy)">{{'MAKE_CODE' | translate}}</a>
                     </span>
                 </span>
 
@@ -32,12 +49,17 @@
                     <span [nz-tooltip]="'EXPIRE_TIME' | translate: {time: strategy.expire_date}">{{strategy.expire_date | expireStatus | translate}}</span>
                 </ng-template>
             </td>
+
             <td>{{strategy.date}}</td>
+
             <td>{{strategy.last_modified | latestModifyDes}}</td>
+
             <td>
                 <!-- 没有click事件的 a 标签都需要向下跳转-->
                 <a href="javascript: void 0" (click)="delete.next(strategy)">{{'DELETE' | translate}}</a>
+
                 <nz-divider nzType="vertical"></nz-divider>
+
                 <span *ngIf="strategy.is_owner; else elseBlock">
                     <a>{{'COPY' | translate}}</a>
                     <nz-divider nzType="vertical"></nz-divider>

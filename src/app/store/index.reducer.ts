@@ -13,7 +13,7 @@ import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
-import { routerReducer, RouterReducerState  } from '@ngrx/router-store'
+import { routerReducer, RouterReducerState } from '@ngrx/router-store'
 import { RouterStateUrl } from './router/router.reducer';
 
 export interface AppState {
@@ -154,8 +154,8 @@ export const selectPluginRunResponse = createSelector(getRobotState, robot.getPl
 
 // default params
 export const selectRobotDefaultParams = createSelector(getRobotState, robot.getDefaultParams);
-export const selectRobotDefaultLogParams =createSelector(selectRobotDefaultParams, state => state.robotLogs);
-export const selectRobotProfitMaxPoint =createSelector(selectRobotDefaultParams, state => state.PROFIT_MAX_POINTS);
+export const selectRobotDefaultLogParams = createSelector(selectRobotDefaultParams, state => state.robotLogs);
+export const selectRobotProfitMaxPoint = createSelector(selectRobotDefaultParams, state => state.PROFIT_MAX_POINTS);
 export const selectRobotStrategyMaxPoint = createSelector(selectRobotDefaultParams, state => state.STRATEGY_MAX_POINTS);
 
 // monitoring message type
@@ -202,6 +202,15 @@ export const selectStrategyListResponse = createSelector(getStrategyState, strat
 
 // strategy request params
 export const selectStrategyRequestParams = createSelector(getStrategyState, strategy.getRequestParams);
+
+// share strategy
+export const selectShareStrategyResponse = createSelector(getStrategyState, strategy.getShareStrategyRes);
+
+// gen key
+export const selectGenKeyResponse = createSelector(getStrategyState, strategy.getGenKeyResponse);
+
+// verify gen key
+export const selectVerifyKeyResponse = createSelector(getStrategyState, strategy.getVerifyKeyRes);
 
 /** ===================================================Charge====================================================== */
 

@@ -12,6 +12,7 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { GroupedList, UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
+import { RequestParams } from '../../store/strategy/strategy.reducer';
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
     groupNameValue?: any;
@@ -26,10 +27,10 @@ export interface SemanticArg {
 export class StrategyService extends BaseService {
 
     constructor(
-        private store: Store<fromRoot.AppState>,
-        private error: ErrorService,
-        private process: ProcessService,
-        private utilService: UtilService,
+        public store: Store<fromRoot.AppState>,
+        public error: ErrorService,
+        public process: ProcessService,
+        public utilService: UtilService,
     ) { super() }
 
     /* =======================================================Serve Request======================================================= */
@@ -42,6 +43,11 @@ export class StrategyService extends BaseService {
 
     private getStrategyResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.select(fromRoot.selectStrategyListResponse)
+            .filter(this.isTruth);
+    }
+
+    protected getRequestParams(): Observable<RequestParams> {
+        return this.store.select(fromRoot.selectStrategyRequestParams)
             .filter(this.isTruth);
     }
 

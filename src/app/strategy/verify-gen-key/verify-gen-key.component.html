@@ -1,0 +1,16 @@
+<h3>{{text.title| translate}}</h3>
+
+<form nz-form #verifyForm="ngForm" (ngSubmit)="verify.next(code)" [nzLayout]="'inline'" fxLayoutAlign="left center">
+    <nz-form-item style="margin-right: 20px;">
+        <nz-form-control>
+            <nz-input-group [nzAddOnBefore]="text.name | translate">
+                <input nz-input type="text" [(ngModel)]="code" name="verifyCode" required>
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <button nz-button [nzType]="'primary'" type="submit" [disabled]="verifyForm.form.invalid">{{text.buttonText | translate}}</button>
+    </nz-form-item>
+</form>
+
+<p>{{text.tip | translate}}</p>

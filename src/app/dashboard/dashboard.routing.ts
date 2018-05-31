@@ -13,6 +13,7 @@ import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
 import { StrategyComponent } from './strategy/strategy.component';
 import { StrategyLibComponent } from '../strategy/strategy-lib/strategy-lib.component';
+import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 
 const routs: Routes = [
     {
@@ -24,7 +25,10 @@ const routs: Routes = [
             { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
             { path: Path.robot + '/' + Path.debug, component: RobotDebugComponent },
             { path: Path.strategy, component: StrategyComponent },
-            { path: Path.strategy + '/:id/:name', component: StrategyLibComponent},
+            { path: Path.strategy + '/' + Path.edit + '/:id', component: SquareComponent },
+            { path: Path.strategy + '/' + Path.backtest + '/:id', component: DocComponent },
+            { path: Path.strategy + '/:id/:name', component: StrategyLibComponent },
+            { path: Path.strategy + '/'+ Path.verify + '/:id/:codeType', component: StrategyVerifyCodeComponent},
             { path: Path.charge, component: RechargeComponent },
             // { path: Path.exchange, component: ExchangeComponent },
             // { path: Path.trustee, component: TrusteeComponent },

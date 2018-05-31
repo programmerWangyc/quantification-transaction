@@ -10,7 +10,7 @@ import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
-import { GetStrategyListRequestAction } from '../store/strategy/strategy.action';
+import { GetStrategyListRequestAction, ShareStrategyRequestAction, GenKeyRequestAction, VerifyKeyRequestAction } from '../store/strategy/strategy.action';
 import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
@@ -145,6 +145,18 @@ export class ProcessService {
 
     processStrategyList(params: Observable<Request.GetStrategyListRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new GetStrategyListRequestAction(params)));
+    }
+
+    processShareStrategy(params: Observable<Request.ShareStrategyRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new ShareStrategyRequestAction(params)));
+    }
+
+    processGenKey(params: Observable<Request.GenKeyRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new GenKeyRequestAction(params)));
+    }
+
+    processVerifyKey(params: Observable<Request.VerifyKeyRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new VerifyKeyRequestAction(params)));
     }
 
     /** ===================================================Charge====================================================== */

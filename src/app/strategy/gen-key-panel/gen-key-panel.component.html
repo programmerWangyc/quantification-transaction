@@ -1,0 +1,11 @@
+<div *ngIf="isShare; else elseBlock">
+    <p>{{'COPY_ADDRESS' | translate}}: {{url + '/' + strategyId + '/' + type}}</p>
+    <p>{{'COPY_CODE' | translate}}: {{code}}</p>
+</div>
+
+<p class="tip">{{'REMIND_STORE_TIP' | translate}}</p>
+
+<ng-template #elseBlock>
+    <p>{{'PURCHASE_ADDRESS' | translate}}: {{url + '/' + strategyId + '/' + type}}</p>
+    <p>{{'REGISTER_CODE' | translate}}: {{code}}</p>
+</ng-template>

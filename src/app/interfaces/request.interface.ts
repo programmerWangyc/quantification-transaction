@@ -185,6 +185,7 @@ export interface SetRobotWDRequest {
 
 /** ===================================================Strategy============================================== **/
 
+// strategy list
 export enum CategoryType {
     GENERAL_STRATEGY,
     COMMODITY_FUTURES,
@@ -208,6 +209,37 @@ export interface GetStrategyListRequest {
     needArgsType: number;
 }
 
+// share strategy
+export enum StrategyShareType {
+    CANCEL_PUBLISH,
+    PUBLISH,
+    SELL
+}
+
+export interface ShareStrategyRequest {
+    id: number; // strategy id
+    type: number; // Strategy share type;
+}
+
+// gen key
+export enum GenKeyType {
+    PUBLISH,
+    SELL
+}
+
+export interface GenKeyRequest {
+    type: number; // gen key type: 0 publish, 1, sell
+    strategyId: number;
+    days: number;
+    concurrent: number;
+}
+
+// verify gen key
+export interface VerifyKeyRequest {
+    strategyId: number;
+    verifyCode: string;
+}
+
 /** ===================================================Charge============================================== **/
 
 export interface GetPayOrdersRequest { }
@@ -219,5 +251,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 24
+ * 接口总数： 83， 已完成： 27
  */

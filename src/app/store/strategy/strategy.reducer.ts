@@ -1,24 +1,34 @@
-import { CategoryType, GetStrategyListRequest } from '../../interfaces/request.interface';
+import { CategoryType, GetStrategyListRequest, ShareStrategyRequest, GenKeyRequest, VerifyKeyRequest } from '../../interfaces/request.interface';
 import { createScriptArgs } from '../robot/robot.reducer';
-import { GetStrategyListResponse, Strategy } from './../../interfaces/response.interface';
+import { GetStrategyListResponse, Strategy, ShareStrategyResponse, GenKeyResponse, VerifyKeyResponse } from './../../interfaces/response.interface';
 import * as actions from './strategy.action';
 
 export interface RequestParams {
     strategyList: GetStrategyListRequest;
+    shareStrategy: ShareStrategyRequest;
+    genKey: GenKeyRequest;
+    verifyKey: VerifyKeyRequest;
 }
 
 export interface State {
     requestParams: RequestParams;
     strategyListRes: GetStrategyListResponse;
+    shareStrategyRes: ShareStrategyResponse;
+    genKeyRes: GenKeyResponse;
+    verifyKeyRes: VerifyKeyResponse;
 }
 
 const initialState: State = {
     requestParams: null,
     strategyListRes: null,
+    shareStrategyRes: null,
+    genKeyRes: null,
+    verifyKeyRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
+        // strategy list
         case actions.GET_STRATEGY_LIST:
             return { ...state, requestParams: { ...state.requestParams, strategyList: action.payload } };
 
@@ -32,6 +42,41 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             return { ...state, strategyListRes: { ...action.payload, result: { ...action.payload.result, strategies: result } } };
         }
+
+        // share strategy
+        case actions.SHARE_STRATEGY:
+            return { ...state, requestParams: { ...state.requestParams, shareStrategy: action.payload } };
+
+        case actions.SHARE_STRATEGY_FAIL:
+            return { ...state, shareStrategyRes: action.payload };
+
+        case actions.SHARE_STRATEGY_SUCCESS: {
+            const { result } = state.strategyListRes
+
+            let { all, strategies } = result;
+
+            const { shareStrategy } = state.requestParams
+
+            strategies = strategies.map(strategy => strategy.id === shareStrategy.id ? { ...strategy, public: shareStrategy.type } : strategy);
+
+            return { ...state, shareStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
+        }
+
+        // gen key
+        case actions.GEN_KEY:
+            return { ...state, requestParams: { ...state.requestParams, genKey: action.payload } };
+
+        case actions.GEN_KEY_FAIL:
+        case actions.GEN_KEY_SUCCESS:
+            return { ...state, genKeyRes: action.payload };
+
+        // verify gen key
+        case actions.VERIFY_KEY:
+            return { ...state, requestParams: { ...state.requestParams, verifyKey: action.payload } };
+
+        case actions.VERIFY_KEY_FAIL:
+        case actions.VERIFY_KEY_SUCCESS:
+            return { ...state, verifyKeyRes: action.payload };
 
         default:
             return state;
@@ -55,3 +100,9 @@ function addCustomFields(data: Strategy[]): Strategy[] {
 export const getStrategyListRes = (state: State) => state.strategyListRes;
 
 export const getRequestParams = (state: State) => state.requestParams;
+
+export const getShareStrategyRes = (state: State) => state.shareStrategyRes;
+
+export const getGenKeyResponse = (state: State) => state.genKeyRes;
+
+export const getVerifyKeyRes = (state: State) => state.verifyKeyRes;

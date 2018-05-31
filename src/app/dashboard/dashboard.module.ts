@@ -22,6 +22,7 @@ import { StrategyComponent } from './strategy/strategy.component';
 import { StrategyModule } from '../strategy/strategy.module';
 import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 import { CustomSerializer } from '../store/router/router.reducer';
+import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 
 @NgModule({
     imports: [
@@ -47,6 +48,7 @@ import { CustomSerializer } from '../store/router/router.reducer';
         RechargeComponent,
         RobotDebugComponent,
         StrategyComponent,
+        StrategyVerifyCodeComponent,
     ],
     providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
 })

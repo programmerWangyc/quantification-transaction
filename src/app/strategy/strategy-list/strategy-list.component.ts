@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { Strategy } from '../../interfaces/response.interface';
+import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Path, ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
+import { ShareStrategyRequest, StrategyShareType } from '../../interfaces/request.interface';
 
 @Component({
     selector: 'app-strategy-list',
@@ -15,9 +18,42 @@ export class StrategyListComponent implements OnInit {
 
     @Output() renewal: EventEmitter<Strategy> = new EventEmitter();
 
-    constructor() { }
+    @Output() share: EventEmitter<ShareStrategyStateSnapshot> = new EventEmitter();
+
+    constructor(
+        private router: Router,
+        private activatedRoute: ActivatedRoute
+    ) { }
 
     ngOnInit() {
+    }
+
+    navigateTo(strategy: Strategy): void {
+        if (strategy.is_owner) {
+            this.router.navigate([Path.edit, strategy.id], { relativeTo: this.activatedRoute });
+        } else {
+            if (strategy.public === StrategyPublicState.UNDISCLOSED || strategy.public === StrategyPublicState.DISCLOSED) {
+                this.router.navigate([Path.backtest, strategy.id], { relativeTo: this.activatedRoute });
+            } else {
+                this.router.navigate([strategy.id, strategy.name], { relativeTo: this.activatedRoute });
+            }
+        }
+    }
+
+    publish(strategy: Strategy): void {
+        this.share.next({ id: strategy.id, type: StrategyShareType.PUBLISH, currentType: strategy.public });
+    }
+
+    sell(strategy: Strategy): void {
+        this.share.next({ id: strategy.id, type: StrategyShareType.SELL, currentType: strategy.public });
+    }
+
+    cancel(strategy: Strategy): void {
+        this.share.next({ id: strategy.id, type: StrategyShareType.CANCEL_PUBLISH, currentType: strategy.public });
+    }
+
+    createKey(strategy: Strategy): void {
+
     }
 
 }

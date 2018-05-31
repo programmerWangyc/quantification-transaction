@@ -1,0 +1,24 @@
+<div id="content">
+    <i class="anticon anticon-question-circle"></i>
+    <h3>{{'OPERATE_CONFIRM' | translate}}</h3>
+    <p>{{ msg | async}}</p>
+</div>
+
+<div class="button-group" bt-text-direction direction="right">
+    <button nz-button (click)="close()">{{'CANCEL' | translate}}</button>
+
+    <span [ngSwitch]="targetType">
+        <!--param of click event correspond to confirmType enum-->
+        <span *ngSwitchCase="1">
+            <button nz-button (click)="close(2)" [nzType]="'primary'">{{'INNER_SHARE' | translate}}</button>
+            <button nz-button (click)="close(3)" [nzType]="'primary'">{{'PUBLIC_SHARE' | translate}}</button>
+        </span>
+        <span *ngSwitchCase="2">
+            <button nz-button (click)="close(2)" [nzType]="'primary'">{{'INNER_PREMIUM' | translate}}</button>
+            <button nz-button (click)="close(3)" [nzType]="'primary'">{{'PUBLIC_PREMIUM' | translate}}</button>
+        </span>
+        <span *ngSwitchDefault>
+            <button nz-button (click)="close(1)" [nzType]="'primary'">{{'CONFIRM' | translate}}</button>
+        </span>
+    </span>
+</div>

@@ -9,6 +9,7 @@ import * as platformActions from '../platform/platform.action';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as strategyActions from './strategy.action';
+import { TipService } from '../../providers/tip.service';
 
 
 @Injectable()
@@ -20,9 +21,20 @@ export class StrategyEffect extends BaseEffect {
         { ...strategyActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 
+    @Effect()
+    share$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SHARE_STRATEGY, strategyActions.ResponseActions);
+
+    @Effect()
+    genKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GEN_KEY, strategyActions.ResponseActions);
+
+    @Effect()
+    verifyKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.VERIFY_KEY, strategyActions.ResponseActions)
+        .do((action: strategyActions.VerifyKeySuccessAction | strategyActions.VerifyKeyFailAction) => action.payload.result && this.tip.messageError('VERIFY_KEY_SUCCESS'));
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
+        public tip: TipService,
     ) {
         super(ws, actions$);
     }

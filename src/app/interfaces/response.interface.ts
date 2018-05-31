@@ -418,6 +418,7 @@ export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 
 /** ===================================================Strategy============================================== **/
 
+// strategy list
 export enum StrategyPublicState{
     UNDISCLOSED, // 未公开
     DISCLOSED,
@@ -454,6 +455,15 @@ export interface StrategyListResponse {
 }
 
 export interface GetStrategyListResponse extends ResponseUnit<StrategyListResponse> { }
+
+// share strategy
+export interface ShareStrategyResponse extends ResponseUnit<boolean> { }
+
+// gen key
+export interface GenKeyResponse extends ResponseUnit<string> { }
+
+// verify gen key
+export interface VerifyKeyResponse extends ResponseUnit<boolean> { }
 
 /** ===================================================Charge============================================== **/
 
