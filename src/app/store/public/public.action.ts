@@ -8,7 +8,7 @@ import { SettingsRequest } from './../../interfaces/request.interface';
 /* ===========================================Api action=================================== */
 
 // public
-export const SET_PUBLIC_INFORMATION = 'SET_PUBLIC_INFORMATION';
+export const SET_PUBLIC_INFORMATION = '[Public] SET_PUBLIC_INFORMATION';
 
 export class SetPublicInformationAction implements Action {
     readonly type = SET_PUBLIC_INFORMATION;
@@ -16,7 +16,7 @@ export class SetPublicInformationAction implements Action {
     constructor(public payload: PublicResponse) { }
 }
 
-export const SET_REFERRER = 'SET_REFERRER';
+export const SET_REFERRER = '[Public] SET_REFERRER';
 
 export class SetReferrerAction implements Action {
     readonly type = SET_REFERRER;
@@ -37,7 +37,7 @@ export class SettingsAction extends ApiAction {
     constructor() { super() }
 }
 
-export const GET_SETTINGS = 'GET_SETTINGS';
+export const GET_SETTINGS = '[Public] GET_SETTINGS';
 
 export class GetSettingsRequestAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS;
@@ -45,7 +45,7 @@ export class GetSettingsRequestAction extends SettingsAction implements Action {
     constructor(public payload: SettingsRequest, public allowSeparateRequest = true) { super() }
 }
 
-export const GET_SETTINGS_FAIL = 'GET_SETTINGS_FAIL';
+export const GET_SETTINGS_FAIL = '[Public] GET_SETTINGS_FAIL';
 
 export class GetSettingsFailAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS_FAIL;
@@ -53,7 +53,7 @@ export class GetSettingsFailAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super() }
 }
 
-export const GET_SETTINGS_SUCCESS = 'GET_SETTINGS_SUCCESS';
+export const GET_SETTINGS_SUCCESS = '[Public] GET_SETTINGS_SUCCESS';
 
 export class GetSettingsSuccessAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS_SUCCESS;
@@ -63,7 +63,7 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
 
 /* ===========================================Local action=================================== */
 
-export const SET_LANGUAGE = 'SET_LANGUAGE';
+export const SET_LANGUAGE = '[Public] SET_LANGUAGE';
 
 export class SetLanguageAction implements Action {
     readonly type = SET_LANGUAGE;
@@ -71,7 +71,7 @@ export class SetLanguageAction implements Action {
     constructor(public payload: string) { }
 }
 
-export const TOGGLE_FOOTER = 'TOGGLE_FOOTER';
+export const TOGGLE_FOOTER = '[Public] TOGGLE_FOOTER';
 
 export class ToggleFooterAction implements Action {
     readonly type = TOGGLE_FOOTER;

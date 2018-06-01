@@ -59,7 +59,7 @@ export class RobotOperateService extends BaseService {
         private translate: TranslateService,
         private constantService: ConstantService,
         private encryptService: EncryptService,
-        private nzModel: NzModalService,
+        private nzModal: NzModalService,
     ) {
         super();
     }
@@ -152,7 +152,7 @@ export class RobotOperateService extends BaseService {
         return this.process.processDeleteRobot(
             data.withLatestFrom(this.tipService.getNzConfirmOperateConfig())
                 .switchMap(([{ id }, config]) => {
-                    const modal = this.nzModel.confirm(Object.assign({
+                    const modal = this.nzModal.confirm(Object.assign({
                         nzContent: DeleteRobotComponent,
                         nzComponentParams: { id },
                         nzOnOk: component => modal.close(component.checked),

@@ -18,7 +18,7 @@ export class GetNodeListAction extends ApiAction {
     constructor() { super() };
 }
 
-export const GET_NODE_LIST = 'GET_NODE_LIST';
+export const GET_NODE_LIST = '[Node] GET_NODE_LIST';
 
 export class GetNodeListRequestAction extends GetNodeListAction implements Action {
     readonly type = GET_NODE_LIST;
@@ -28,7 +28,7 @@ export class GetNodeListRequestAction extends GetNodeListAction implements Actio
     constructor(public payload = {}) { super() }
 }
 
-export const GET_NODE_LIST_FAIL = 'GET_NODE_LIST_FAIL';
+export const GET_NODE_LIST_FAIL = '[Node] GET_NODE_LIST_FAIL';
 
 export class GetNodeListFailAction extends GetNodeListAction implements Action {
     readonly type = GET_NODE_LIST_FAIL;
@@ -36,7 +36,7 @@ export class GetNodeListFailAction extends GetNodeListAction implements Action {
     constructor(public payload: GetNodeListResponse) { super() }
 }
 
-export const GET_NODE_LIST_SUCCESS = 'GET_NODE_LIST_SUCCESS';
+export const GET_NODE_LIST_SUCCESS = '[Node] GET_NODE_LIST_SUCCESS';
 
 export class GetNodeListSuccessAction extends GetNodeListAction implements Action {
     readonly type = GET_NODE_LIST_SUCCESS;

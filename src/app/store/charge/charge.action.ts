@@ -30,7 +30,7 @@ export class GetPayOrders extends ApiAction {
     constructor() { super() };
 }
 
-export const GET_PAY_ORDERS = 'GET_PAY_ORDERS';
+export const GET_PAY_ORDERS = '[Charge] GET_PAY_ORDERS';
 
 export class GetPayOrdersRequestAction extends GetPayOrders implements Action {
     readonly type = GET_PAY_ORDERS;
@@ -40,7 +40,7 @@ export class GetPayOrdersRequestAction extends GetPayOrders implements Action {
     constructor(public payload = null) { super() }
 }
 
-export const GET_PAY_ORDERS_FAIL = 'GET_PAY_ORDERS_FAIL';
+export const GET_PAY_ORDERS_FAIL = '[Charge] GET_PAY_ORDERS_FAIL';
 
 export class GetPayOrdersFailAction extends GetPayOrders implements Action {
     readonly type = GET_PAY_ORDERS_FAIL;
@@ -48,7 +48,7 @@ export class GetPayOrdersFailAction extends GetPayOrders implements Action {
     constructor(public payload: GetPayOrdersResponse) { super() }
 }
 
-export const GET_PAY_ORDERS_SUCCESS = 'GET_PAY_ORDERS_SUCCESS';
+export const GET_PAY_ORDERS_SUCCESS = '[Charge] GET_PAY_ORDERS_SUCCESS';
 
 export class GetPayOrdersSuccessAction extends GetPayOrders implements Action {
     readonly type = GET_PAY_ORDERS_SUCCESS;

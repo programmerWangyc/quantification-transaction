@@ -1,6 +1,20 @@
-import { CategoryType, GetStrategyListRequest, ShareStrategyRequest, GenKeyRequest, VerifyKeyRequest } from '../../interfaces/request.interface';
+import {
+    CategoryType,
+    DeleteStrategyRequest,
+    GenKeyRequest,
+    GetStrategyListRequest,
+    ShareStrategyRequest,
+    VerifyKeyRequest,
+} from '../../interfaces/request.interface';
 import { createScriptArgs } from '../robot/robot.reducer';
-import { GetStrategyListResponse, Strategy, ShareStrategyResponse, GenKeyResponse, VerifyKeyResponse } from './../../interfaces/response.interface';
+import {
+    DeleteStrategyResponse,
+    GenKeyResponse,
+    GetStrategyListResponse,
+    ShareStrategyResponse,
+    Strategy,
+    VerifyKeyResponse,
+} from './../../interfaces/response.interface';
 import * as actions from './strategy.action';
 
 export interface RequestParams {
@@ -8,6 +22,7 @@ export interface RequestParams {
     shareStrategy: ShareStrategyRequest;
     genKey: GenKeyRequest;
     verifyKey: VerifyKeyRequest;
+    deleteStrategy: DeleteStrategyRequest;
 }
 
 export interface State {
@@ -16,6 +31,7 @@ export interface State {
     shareStrategyRes: ShareStrategyResponse;
     genKeyRes: GenKeyResponse;
     verifyKeyRes: VerifyKeyResponse;
+    deleteStrategyRes: DeleteStrategyResponse;
 }
 
 const initialState: State = {
@@ -24,6 +40,7 @@ const initialState: State = {
     shareStrategyRes: null,
     genKeyRes: null,
     verifyKeyRes: null,
+    deleteStrategyRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -78,6 +95,25 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.VERIFY_KEY_SUCCESS:
             return { ...state, verifyKeyRes: action.payload };
 
+        // delete strategy
+        case actions.DELETE_STRATEGY:
+            return { ...state, requestParams: { ...state.requestParams, deleteStrategy: action.payload } };
+
+        case actions.DELETE_STRATEGY_FAIL:
+            return { ...state, deleteStrategyRes: action.payload };
+
+        case actions.DELETE_STRATEGY_SUCCESS: {
+            const { id } = state.requestParams.deleteStrategy;
+
+            const { result } = state.strategyListRes;
+
+            let { strategies, all } = result;
+
+            strategies = strategies.filter(strategy => strategy.id !== id);
+
+            return { ...state, deleteStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
+        }
+
         default:
             return state;
     }
@@ -106,3 +142,5 @@ export const getShareStrategyRes = (state: State) => state.shareStrategyRes;
 export const getGenKeyResponse = (state: State) => state.genKeyRes;
 
 export const getVerifyKeyRes = (state: State) => state.verifyKeyRes;
+
+export const getDeleteStrategyRes = (state: State) => state.deleteStrategyRes;

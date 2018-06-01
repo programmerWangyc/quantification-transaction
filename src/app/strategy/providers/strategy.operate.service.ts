@@ -1,24 +1,24 @@
+import 'rxjs/add/operator/partition';
+
 import { Injectable } from '@angular/core';
-import { StrategyService } from './strategy.service';
 import { Store } from '@ngrx/store';
-import * as fromRoot from '../../store/index.reducer';
+import { TranslateService } from '@ngx-translate/core';
+import { NzModalService } from 'ng-zorro-antd';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+import { ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { UtilService } from '../../providers/util.service';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import { TipService } from '../../providers/tip.service';
-import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd';
-import { ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
-import { TranslateService } from '@ngx-translate/core';
-import { isEqual } from 'lodash';
-import { ShareConfirmComponent } from '../share-confirm/share-confirm.component';
-import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
-import { ConfirmType } from '../share-confirm/share-confirm.component';
-import { Subject } from 'rxjs/Subject';
+import * as fromRoot from '../../store/index.reducer';
 import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
+import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
+import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confirm.component';
+import { StrategyService } from './strategy.service';
 
 export enum GenKeyType {
     COPY_CODE,
@@ -46,7 +46,8 @@ export class StrategyOperateService extends StrategyService {
         return this.process.processShareStrategy(params.switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent)
             .do(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType]))
             .filter(confirmType => confirmType !== ConfirmType.INNER)
-            .mapTo({ id: params.id, type: params.type })))
+            .mapTo({ id: params.id, type: params.type }))
+        )
             .add(this.launchGenKey());
     }
 
@@ -57,11 +58,26 @@ export class StrategyOperateService extends StrategyService {
                 strategyId: params.id,
                 days: form.days,
                 concurrent: form.concurrent
-            }))));
+            })))
+        );
     }
 
     launchVerifyKey(params: Observable<fromReq.VerifyKeyRequest>): Subscription {
         return this.process.processVerifyKey(params);
+    }
+
+    launchDeleteStrategy(params: Observable<fromRes.Strategy>): Subscription {
+        return this.process.processDeleteStrategy(params.switchMap(params => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name })
+            .mergeMap(content => {
+                const modal = this.nzModal.confirm({
+                    nzContent: content,
+                    nzOnOk: () => modal.close(true),
+                })
+
+                return modal.afterClose.do(v => console.log(v)).filter(sure => sure);
+            })
+            .mapTo({ id: params.id }))
+        );
     }
 
     /* =======================================================Date acquisition======================================================= */
@@ -118,6 +134,11 @@ export class StrategyOperateService extends StrategyService {
             .map(res => res.result);
     }
 
+    private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {
+        return this.store.select(fromRoot.selectDeleteStrategyResponse)
+            .filter(this.isTruth);
+    }
+
     /* =======================================================Shortcut methods======================================================= */
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
@@ -145,5 +166,9 @@ export class StrategyOperateService extends StrategyService {
 
     handleVerifyKeyError(): Subscription {
         return this.error.handleResponseError(this.getVerifyKeyResponse());
+    }
+
+    handleDeleteStrategyError(): Subscription {
+        return this.error.handleResponseError(this.getDeleteStrategyResponse());
     }
 }

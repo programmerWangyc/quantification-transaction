@@ -1,6 +1,7 @@
-import { GetExchangeListResponse } from './../../interfaces/response.interface';
 import { Action } from '@ngrx/store';
-import { ApiAction } from "../base.action";
+
+import { ApiAction } from '../base.action';
+import { GetExchangeListResponse } from './../../interfaces/response.interface';
 
 /* ===========================================Api action=================================== */
 
@@ -17,7 +18,7 @@ export class GetExchangeListAction extends ApiAction {
     constructor() { super() };
 }
 
-export const GET_EXCHANGE_LIST = 'GET_EXCHANGE_LIST';
+export const GET_EXCHANGE_LIST = '[Exchange] GET_EXCHANGE_LIST';
 
 export class GetExchangeListRequestAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST;
@@ -25,7 +26,7 @@ export class GetExchangeListRequestAction extends GetExchangeListAction implemen
     constructor(public payload = {}) { super() }
 }
 
-export const GET_EXCHANGE_LIST_FAIL = 'GET_EXCHANGE_LIST_FAIL';
+export const GET_EXCHANGE_LIST_FAIL = '[Exchange] GET_EXCHANGE_LIST_FAIL';
 
 export class GetExchangeListFailAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST_FAIL;
@@ -33,7 +34,7 @@ export class GetExchangeListFailAction extends GetExchangeListAction implements 
     constructor(public payload: GetExchangeListResponse) { super() }
 }
 
-export const GET_EXCHANGE_LIST_SUCCESS = 'GET_EXCHANGE_LIST_SUCCESS';
+export const GET_EXCHANGE_LIST_SUCCESS = '[Exchange] GET_EXCHANGE_LIST_SUCCESS';
 
 export class GetExchangeListSuccessAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST_SUCCESS;

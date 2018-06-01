@@ -1,0 +1,35 @@
+<h3>{{'RENEWAL'| translate}}</h3>
+
+<form nz-form #verifyForm="ngForm">
+    <nz-form-item>
+        <nz-form-control>
+            <nz-input-group [nzAddOnBefore]="'REGISTER_CODE' | translate">
+                <input nz-input type="text" [(ngModel)]="code" name="verifyCode" required>
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+</form>
+
+<p [hidden]="!forbidden" translate="VERIFY_KEY_FAIL_TRY_TIP" [translateParams]="{time: timer | async}"></p>
+
+<ul class="info">
+    <li>
+        <span>{{'STRATEGY_NAME' | translate}}</span>
+        <a>{{name}}</a>
+    </li>
+
+    <li>
+        <span>{{'AUTHOR' | translate}}</span>
+        <a>{{author}}</a>
+    </li>
+
+    <li [hidden]="!email">
+        <span>{{'EMAIL' | translate}}</span>
+        <a>{{email}}</a>
+    </li>
+</ul>
+
+<div class="button-group" bt-text-direction direction="right">
+    <button nz-button (click)="close()">{{'CANCEL' | translate}}</button>
+    <button nz-button [nzType]="'primary'" type="submit" [disabled]="verifyForm.form.invalid || forbidden" (click)="verify.next(code)">{{'CONFIRM' | translate}}</button>
+</div>

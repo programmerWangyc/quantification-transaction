@@ -1,8 +1,20 @@
 import { Action } from '@ngrx/store';
 
-import { GetStrategyListRequest, ShareStrategyRequest, GenKeyRequest, VerifyKeyRequest } from '../../interfaces/request.interface';
+import {
+    DeleteStrategyRequest,
+    GenKeyRequest,
+    GetStrategyListRequest,
+    ShareStrategyRequest,
+    VerifyKeyRequest,
+} from '../../interfaces/request.interface';
 import { ApiAction } from '../base.action';
-import { GetStrategyListResponse, ShareStrategyResponse, GenKeyResponse, VerifyKeyResponse } from './../../interfaces/response.interface';
+import {
+    DeleteStrategyResponse,
+    GenKeyResponse,
+    GetStrategyListResponse,
+    ShareStrategyResponse,
+    VerifyKeyResponse,
+} from './../../interfaces/response.interface';
 
 /* ===========================================Api action=================================== */
 
@@ -167,7 +179,7 @@ export class VerifyKeyAction extends ApiAction {
     constructor() { super() }
 }
 
-export const VERIFY_KEY = 'VERIFY_KEY';
+export const VERIFY_KEY = '[Strategy] VERIFY_KEY';
 
 export class VerifyKeyRequestAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY;
@@ -175,7 +187,7 @@ export class VerifyKeyRequestAction extends VerifyKeyAction implements Action {
     constructor(public payload: VerifyKeyRequest) { super() };
 }
 
-export const VERIFY_KEY_FAIL = 'VERIFY_KEY_FAIL';
+export const VERIFY_KEY_FAIL = '[Strategy] VERIFY_KEY_FAIL';
 
 export class VerifyKeyFailAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY_FAIL;
@@ -183,7 +195,7 @@ export class VerifyKeyFailAction extends VerifyKeyAction implements Action {
     constructor(public payload: VerifyKeyResponse) { super() };
 }
 
-export const VERIFY_KEY_SUCCESS = 'VERIFY_KEY_SUCCESS';
+export const VERIFY_KEY_SUCCESS = '[Strategy] VERIFY_KEY_SUCCESS';
 
 export class VerifyKeySuccessAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY_SUCCESS;
@@ -191,11 +203,53 @@ export class VerifyKeySuccessAction extends VerifyKeyAction implements Action {
     constructor(public payload: VerifyKeyResponse) { super() };
 }
 
+// delete strategy
+export class DeleteStrategyAction extends ApiAction {
+    isSingleParams = true;
+
+    noneParams = false;
+
+    command = 'DeleteStrategy';
+
+    order = null;
+
+    allowSeparateRequest = true;
+
+    constructor() { super() }
+}
+
+export const DELETE_STRATEGY = '[Strategy] DELETE_STRATEGY '
+
+export class DeleteStrategyRequestAction extends DeleteStrategyAction implements Action {
+    readonly type = DELETE_STRATEGY;
+
+    constructor(public payload: DeleteStrategyRequest) { super() }
+}
+
+export const DELETE_STRATEGY_FAIL = '[Strategy] DELETE_STRATEGY_FAIL';
+
+export class DeleteStrategyFailAction extends DeleteStrategyAction implements Action {
+    readonly type = DELETE_STRATEGY_FAIL;
+
+    constructor(public payload: DeleteStrategyResponse) { super() }
+}
+
+export const DELETE_STRATEGY_SUCCESS = '[Strategy] DELETE_STRATEGY_SUCCESS';
+
+export class DeleteStrategySuccessAction extends DeleteStrategyAction implements Action {
+    readonly type = DELETE_STRATEGY_SUCCESS;
+
+    constructor(public payload: DeleteStrategyResponse) { super() }
+}
+
 /* ===========================================Local action=================================== */
 
 /* none local action */
 
 export type ApiActions = GetStrategyListRequestAction
+    | DeleteStrategyRequestAction
+    | DeleteStrategyFailAction
+    | DeleteStrategySuccessAction
     | GetStrategyListFailAction
     | GetStrategyListSuccessAction
     | ShareStrategyRequestAction
@@ -219,4 +273,6 @@ export const ResponseActions = {
     GenKeySuccessAction,
     VerifyKeyFailAction,
     VerifyKeySuccessAction,
+    DeleteStrategyFailAction,
+    DeleteStrategySuccessAction,
 }

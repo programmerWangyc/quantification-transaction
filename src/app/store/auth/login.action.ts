@@ -21,7 +21,7 @@ export enum LoginOrder {
 
 /**
  * @class LoginAction
- * @description The base class of login action. This class holds complete parameter configuration information 
+ * @description The base class of login action. This class holds complete parameter configuration information
  * and can convert the data carried in the action into a format that meets the communication requirements.
  */
 export class LoginAction extends ApiAction {
@@ -36,7 +36,7 @@ export class LoginAction extends ApiAction {
     constructor() { super() }
 }
 
-export const LOGIN = 'LOGIN';
+export const LOGIN = '[Login] LOGIN';
 
 export class LoginRequestAction extends LoginAction implements Action {
     readonly type = LOGIN;
@@ -46,7 +46,7 @@ export class LoginRequestAction extends LoginAction implements Action {
     constructor(public payload: LoginRequest) { super() }
 }
 
-export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const LOGIN_FAIL = '[Login] LOGIN_FAIL';
 
 export class LoginFailAction extends LoginAction implements Action {
     readonly type = LOGIN_FAIL;
@@ -54,7 +54,7 @@ export class LoginFailAction extends LoginAction implements Action {
     constructor(public payload: LoginResponse) { super() }
 }
 
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_SUCCESS = '[Login] LOGIN_SUCCESS';
 
 export class LoginSuccessAction extends LoginAction implements Action {
     readonly type = LOGIN_SUCCESS;
@@ -64,7 +64,7 @@ export class LoginSuccessAction extends LoginAction implements Action {
 
 /* ===========================================Local action=================================== */
 
-export const RESET_LOGIN_ERROR = 'RESET_LOGIN_ERROR';
+export const RESET_LOGIN_ERROR = '[Login] RESET_LOGIN_ERROR';
 
 export class ResetLoginErrorAction implements Action {
     readonly type = RESET_LOGIN_ERROR;

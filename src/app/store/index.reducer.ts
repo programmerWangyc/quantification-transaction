@@ -1,3 +1,4 @@
+import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, createSelector } from '@ngrx/store';
 
 import * as login from './auth/login.reducer';
@@ -11,10 +12,9 @@ import * as exchange from './exchange/exchange.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
+import { RouterStateUrl } from './router/router.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
-import { routerReducer, RouterReducerState } from '@ngrx/router-store'
-import { RouterStateUrl } from './router/router.reducer';
 
 export interface AppState {
     btNode: btNode.State,
@@ -211,6 +211,9 @@ export const selectGenKeyResponse = createSelector(getStrategyState, strategy.ge
 
 // verify gen key
 export const selectVerifyKeyResponse = createSelector(getStrategyState, strategy.getVerifyKeyRes);
+
+// delete strategy
+export const selectDeleteStrategyResponse = createSelector(getStrategyState, strategy.getDeleteStrategyRes);
 
 /** ===================================================Charge====================================================== */
 

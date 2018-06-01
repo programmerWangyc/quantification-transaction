@@ -19,17 +19,17 @@ export class VerifyPasswordAction extends ApiAction {
     constructor() { super() }
 }
 
-export const VERIFY_PASSWORD = 'VERIFY_PASSWORD';
+export const VERIFY_PASSWORD = '[Auth] VERIFY_PASSWORD';
 
 export class VerifyPasswordRequestAction extends VerifyPasswordAction implements Action {
     readonly type = VERIFY_PASSWORD;
 
     public allowSeparateRequest = true;
-    
+
     constructor(public payload: VerifyPasswordRequest) { super() }
 }
 
-export const VERIFY_PASSWORD_FAIL = 'VERIFY_PASSWORD_FAIL';
+export const VERIFY_PASSWORD_FAIL = '[Auth] VERIFY_PASSWORD_FAIL';
 
 export class VerifyPasswordFailAction extends VerifyPasswordAction implements Action {
     readonly type = VERIFY_PASSWORD_FAIL;
@@ -37,7 +37,7 @@ export class VerifyPasswordFailAction extends VerifyPasswordAction implements Ac
     constructor(public payload: VerifyPasswordResponse) { super() }
 }
 
-export const VERIFY_PASSWORD_SUCCESS = 'VERIFY_PASSWORD_SUCCESS';
+export const VERIFY_PASSWORD_SUCCESS = '[Auth] VERIFY_PASSWORD_SUCCESS';
 
 export class VerifyPasswordSuccessAction extends VerifyPasswordAction implements Action {
     readonly type = VERIFY_PASSWORD_SUCCESS;
@@ -47,7 +47,7 @@ export class VerifyPasswordSuccessAction extends VerifyPasswordAction implements
 
 /* ===========================================Local action=================================== */
 
-export const RESET_VERIFY_PASSWORD = 'RESET_VERIFY_PASSWORD';
+export const RESET_VERIFY_PASSWORD = '[Auth] RESET_VERIFY_PASSWORD';
 
 export class ResetVerifyPasswordResponseAction implements Action {
     readonly type = RESET_VERIFY_PASSWORD;
@@ -55,7 +55,7 @@ export class ResetVerifyPasswordResponseAction implements Action {
     constructor() { }
 }
 
-export const STORE_PWD_TEMPORARY = 'STORE_PWD_TEMPORARY';
+export const STORE_PWD_TEMPORARY = '[Auth] STORE_PWD_TEMPORARY';
 
 export class StorePwdTemporaryAction implements Action {
     readonly type = STORE_PWD_TEMPORARY;

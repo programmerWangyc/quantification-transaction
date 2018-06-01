@@ -240,6 +240,11 @@ export interface VerifyKeyRequest {
     verifyCode: string;
 }
 
+// delete strategy
+export interface DeleteStrategyRequest {
+    id: number;
+}
+
 /** ===================================================Charge============================================== **/
 
 export interface GetPayOrdersRequest { }
@@ -251,5 +256,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 27
+ * 接口总数： 83， 已完成： 28
  */

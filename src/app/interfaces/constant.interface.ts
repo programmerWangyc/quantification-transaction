@@ -27,7 +27,8 @@ export enum Path {
     debug = 'debug',
     edit = 'edit',
     backtest = 'backtest',
-    verify = 'verify'
+    verify = 'verify',
+    rent = 'rent',
 }
 
 export enum VariableType {

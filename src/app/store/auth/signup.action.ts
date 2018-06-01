@@ -28,7 +28,7 @@ export class SignupAction extends ApiAction {
     constructor() { super() }
 }
 
-export const SIGNUP = 'SIGNUP';
+export const SIGNUP = '[Signup] SIGNUP';
 
 export class SignupRequestAction extends SignupAction implements Action {
     readonly type = SIGNUP;
@@ -38,7 +38,7 @@ export class SignupRequestAction extends SignupAction implements Action {
     constructor(public payload: SignupRequest) { super() }
 }
 
-export const SIGNUP_FAIL = 'SIGNUP_FAIL';
+export const SIGNUP_FAIL = '[Signup] SIGNUP_FAIL';
 
 export class SignupFailAction extends SignupAction implements Action {
     readonly type = SIGNUP_FAIL;
@@ -46,7 +46,7 @@ export class SignupFailAction extends SignupAction implements Action {
     constructor(public payload: SignupResponse) { super() }
 }
 
-export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
+export const SIGNUP_SUCCESS = '[Signup] SIGNUP_SUCCESS';
 
 export class SignupSuccessAction extends SignupAction implements Action {
     readonly type = SIGNUP_SUCCESS;
@@ -56,7 +56,7 @@ export class SignupSuccessAction extends SignupAction implements Action {
 
 /* ===========================================Local action=================================== */
 
-export const TOGGLE_AGREE_STATE = 'TOGGLE_AGREE_STATE';
+export const TOGGLE_AGREE_STATE = '[Signup] TOGGLE_AGREE_STATE';
 
 export class ToggleAgreeStateAction implements Action {
     readonly type = TOGGLE_AGREE_STATE;
@@ -64,7 +64,7 @@ export class ToggleAgreeStateAction implements Action {
     constructor(public payload: boolean) { }
 }
 
-export const RESET_SIGNUP_RESPONSE_ACTION = 'RESET_SIGNUP_RESPONSE_ACTION';
+export const RESET_SIGNUP_RESPONSE_ACTION = '[Signup] RESET_SIGNUP_RESPONSE_ACTION';
 
 export class ResetSignupResponseAction implements Action {
     readonly type = RESET_SIGNUP_RESPONSE_ACTION;

@@ -15,6 +15,7 @@ import { ShareConfirmComponent } from './share-confirm/share-confirm.component';
 import { InnerShareConfirmComponent } from './inner-share-confirm/inner-share-confirm.component';
 import { GenKeyPanelComponent } from './gen-key-panel/gen-key-panel.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
+import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 
 @NgModule({
     imports: [
@@ -33,6 +34,7 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         InnerShareConfirmComponent,
         GenKeyPanelComponent,
         VerifyGenKeyComponent,
+        StrategyRenewalComponent,
     ],
     providers: [
         StrategyService,
@@ -42,6 +44,7 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         ShareConfirmComponent,
         InnerShareConfirmComponent,
         GenKeyPanelComponent,
+        StrategyRenewalComponent,
     ],
     exports: [
         StrategyArgComponent,

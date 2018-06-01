@@ -156,6 +156,7 @@
     "RANGE": "范围",
     "ARGUMENTS": "参数",
     "VERIFY_CODE": "验证码",
+    "AUTHOR": "作者",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
@@ -431,5 +432,10 @@
     "RENT_INNER_TIP": "此策略在内部出租界面不显示策略名称, 租用后可以在控制中心查看。",
     "INVALID_COPY_CODE_TIP": "复制码无效或已使用, 请重试!",
     "INVALID_REGISTER_CODE_TIP": "注册码无效或已使用, 请重试!",
-    "VERIFY_KEY_SUCCESS": "验证成功"
+    "VERIFY_KEY_SUCCESS": "验证成功",
+
+    "STRATEGY_NAME": "策略名称",
+    "VERIFY_KEY_FAIL_TRY_TIP": "验证失败，请在{{time}}秒后重试！",
+    "DELETE_ROBOT_RELATED_WITH_STRATEGY": "请先删除所有使用该策略的机器人!!",
+    "DELETE_STRATEGY_TIP": "确定要删除 {{name}} 策略吗？"
 }

@@ -18,7 +18,7 @@ export class GetPlatformListAction extends ApiAction {
     constructor() { super() };
 }
 
-export const GET_PLATFORM_LIST = 'GET_PLATFORM_LIST';
+export const GET_PLATFORM_LIST = '[Platform] GET_PLATFORM_LIST';
 
 export class GetPlatformListRequestAction extends GetPlatformListAction implements Action {
     readonly type = GET_PLATFORM_LIST;
@@ -28,7 +28,7 @@ export class GetPlatformListRequestAction extends GetPlatformListAction implemen
     constructor(public payload = {}) { super() }
 }
 
-export const GET_PLATFORM_LIST_FAIL = 'GET_PLATFORM_LIST_FAIL';
+export const GET_PLATFORM_LIST_FAIL = '[Platform] GET_PLATFORM_LIST_FAIL';
 
 export class GetPlatformListFailAction extends GetPlatformListAction implements Action {
     readonly type = GET_PLATFORM_LIST_FAIL;
@@ -36,7 +36,7 @@ export class GetPlatformListFailAction extends GetPlatformListAction implements 
     constructor(public payload: GetPlatformListResponse) { super() }
 }
 
-export const GET_PLATFORM_LIST_SUCCESS = 'GET_PLATFORM_LIST_SUCCESS';
+export const GET_PLATFORM_LIST_SUCCESS = '[Platform] GET_PLATFORM_LIST_SUCCESS';
 
 export class GetPlatformListSuccessAction extends GetPlatformListAction implements Action {
     readonly type = GET_PLATFORM_LIST_SUCCESS;

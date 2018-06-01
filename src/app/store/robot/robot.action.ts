@@ -41,7 +41,7 @@ import {
 
 /** =====================================================Server send event========================================= **/
 
-export const RECEIVE_SERVER_SEND_ROBOT_EVENT = 'RECEIVE_SERVER_SEND_ROBOT_EVENT';
+export const RECEIVE_SERVER_SEND_ROBOT_EVENT = '[Robot] RECEIVE_SERVER_SEND_ROBOT_EVENT';
 
 export class ReceiveServerSendRobotEventAction implements Action {
     readonly type = RECEIVE_SERVER_SEND_ROBOT_EVENT;
@@ -70,7 +70,7 @@ class GetRobotListAction extends ApiAction {
     constructor() { super() }
 }
 
-export const GET_ROBOT_LIST = 'GET_ROBOT_LIST';
+export const GET_ROBOT_LIST = '[Robot] GET_ROBOT_LIST';
 
 export class GetRobotListRequestAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST;
@@ -80,7 +80,7 @@ export class GetRobotListRequestAction extends GetRobotListAction implements Act
     constructor(public payload: GetRobotListRequest) { super() }
 }
 
-export const GET_ROBOT_LIST_FAIL = 'GET_ROBOT_LIST_FAIL';
+export const GET_ROBOT_LIST_FAIL = '[Robot] GET_ROBOT_LIST_FAIL';
 
 export class GetRobotListFailAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST_FAIL;
@@ -88,7 +88,7 @@ export class GetRobotListFailAction extends GetRobotListAction implements Action
     constructor(public payload: GetRobotListResponse) { super() }
 }
 
-export const GET_ROBOT_LIST_SUCCESS = 'GET_ROBOT_LIST_SUCCESS';
+export const GET_ROBOT_LIST_SUCCESS = '[Robot] GET_ROBOT_LIST_SUCCESS';
 
 export class GetRobotListSuccessAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST_SUCCESS;
@@ -116,7 +116,7 @@ class PublicRobotAction extends ApiAction {
     constructor() { super() };
 }
 
-export const PUBLIC_ROBOT = 'PUBLISH_ROBOT';
+export const PUBLIC_ROBOT = '[Robot] PUBLISH_ROBOT';
 
 export class PublicRobotRequestAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT;
@@ -126,7 +126,7 @@ export class PublicRobotRequestAction extends PublicRobotAction implements Actio
     constructor(public payload: PublicRobotRequest) { super() }
 }
 
-export const PUBLIC_ROBOT_FAIL = 'PUBLISH_ROBOT_FAIL';
+export const PUBLIC_ROBOT_FAIL = '[Robot] PUBLISH_ROBOT_FAIL';
 
 export class PublicRobotFailAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT_FAIL;
@@ -134,7 +134,7 @@ export class PublicRobotFailAction extends PublicRobotAction implements Action {
     constructor(public payload: PublicRobotResponse) { super() }
 }
 
-export const PUBLIC_ROBOT_SUCCESS = 'PUBLISH_ROBOT_SUCCESS';
+export const PUBLIC_ROBOT_SUCCESS = '[Robot] PUBLISH_ROBOT_SUCCESS';
 
 export class PublicRobotSuccessAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT_SUCCESS;
@@ -156,7 +156,7 @@ class GetRobotDetailAction extends ApiAction {
     constructor() { super() }
 }
 
-export const GET_ROBOT_DETAIL = 'GET_ROBOT_DETAIL';
+export const GET_ROBOT_DETAIL = '[Robot] GET_ROBOT_DETAIL';
 
 export class GetRobotDetailRequestAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL;
@@ -166,7 +166,7 @@ export class GetRobotDetailRequestAction extends GetRobotDetailAction implements
     constructor(public payload: GetRobotDetailRequest) { super() }
 }
 
-export const GET_ROBOT_DETAIL_FAIL = 'GET_ROBOT_DETAIL_FAIL';
+export const GET_ROBOT_DETAIL_FAIL = '[Robot] GET_ROBOT_DETAIL_FAIL';
 
 export class GetRobotDetailFailAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL_FAIL;
@@ -174,7 +174,7 @@ export class GetRobotDetailFailAction extends GetRobotDetailAction implements Ac
     constructor(public payload: GetRobotDetailResponse) { super() }
 }
 
-export const GET_ROBOT_DETAIL_SUCCESS = 'GET_ROBOT_DETAIL_SUCCESS';
+export const GET_ROBOT_DETAIL_SUCCESS = '[Robot] GET_ROBOT_DETAIL_SUCCESS';
 
 export class GetRobotDetailSuccessAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL_SUCCESS;
@@ -196,7 +196,7 @@ class SubscribeRobotAction extends ApiAction {
     constructor() { super() }
 }
 
-export const SUBSCRIBE_ROBOT = 'SUBSCRIBE_ROBOT';
+export const SUBSCRIBE_ROBOT = '[Robot] SUBSCRIBE_ROBOT';
 
 export class SubscribeRobotRequestAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT;
@@ -206,7 +206,7 @@ export class SubscribeRobotRequestAction extends SubscribeRobotAction implements
     constructor(public payload: SubscribeRobotRequest, public allowSeparateRequest: boolean) { super() }
 }
 
-export const SUBSCRIBE_ROBOT_FAIL = 'SUBSCRIBE_ROBOT_FAIL';
+export const SUBSCRIBE_ROBOT_FAIL = '[Robot] SUBSCRIBE_ROBOT_FAIL';
 
 export class SubscribeRobotFailAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT_FAIL;
@@ -214,7 +214,7 @@ export class SubscribeRobotFailAction extends SubscribeRobotAction implements Ac
     constructor(public payload: SubscribeRobotResponse) { super() }
 }
 
-export const SUBSCRIBE_ROBOT_SUCCESS = 'SUBSCRIBE_ROBOT_SUCCESS';
+export const SUBSCRIBE_ROBOT_SUCCESS = '[Robot] SUBSCRIBE_ROBOT_SUCCESS';
 
 export class SubscribeRobotSuccessAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT_SUCCESS;
@@ -255,7 +255,7 @@ class GetRobotLogsAction extends ApiAction {
     constructor() { super() }
 }
 
-export const GET_ROBOT_LOGS = 'GET_ROBOT_LOGS';
+export const GET_ROBOT_LOGS = '[Robot] GET_ROBOT_LOGS';
 
 export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS;
@@ -263,7 +263,7 @@ export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Act
     constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean, public isSyncAction = false) { super() }
 }
 
-export const GET_ROBOT_LOGS_FAIL = 'GET_ROBOT_LOGS_FAIL';
+export const GET_ROBOT_LOGS_FAIL = '[Robot] GET_ROBOT_LOGS_FAIL';
 
 export class GetRobotLogsFailAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS_FAIL;
@@ -271,7 +271,7 @@ export class GetRobotLogsFailAction extends GetRobotLogsAction implements Action
     constructor(public payload: GetRobotLogsResponse) { super() }
 }
 
-export const GET_ROBOT_LOGS_SUCCESS = 'GET_ROBOT_LOGS_SUCCESS';
+export const GET_ROBOT_LOGS_SUCCESS = '[Robot] GET_ROBOT_LOGS_SUCCESS';
 
 export class GetRobotLogsSuccessAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS_SUCCESS;
@@ -293,7 +293,7 @@ class RestartRobotAction extends ApiAction {
     constructor() { super() }
 }
 
-export const RESTART_ROBOT = 'RESTART_ROBOT';
+export const RESTART_ROBOT = '[Robot] RESTART_ROBOT';
 
 export class RestartRobotRequestAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT;
@@ -303,7 +303,7 @@ export class RestartRobotRequestAction extends RestartRobotAction implements Act
     constructor(public payload: RestartRobotRequest) { super() }
 }
 
-export const RESTART_ROBOT_FAIL = 'RESTART_ROBOT_FAIL';
+export const RESTART_ROBOT_FAIL = '[Robot] RESTART_ROBOT_FAIL';
 
 export class RestartRobotFailAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT_FAIL;
@@ -311,7 +311,7 @@ export class RestartRobotFailAction extends RestartRobotAction implements Action
     constructor(public payload: RestartRobotResponse) { super() }
 }
 
-export const RESTART_ROBOT_SUCCESS = 'RESTART_ROBOT_SUCCESS';
+export const RESTART_ROBOT_SUCCESS = '[Robot] RESTART_ROBOT_SUCCESS';
 
 export class RestartRobotSuccessAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT_SUCCESS;
@@ -333,7 +333,7 @@ class StopRobotAction extends ApiAction {
     constructor() { super() }
 }
 
-export const STOP_ROBOT = 'STOP_ROBOT';
+export const STOP_ROBOT = '[Robot] STOP_ROBOT';
 
 export class StopRobotRequestAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT;
@@ -343,7 +343,7 @@ export class StopRobotRequestAction extends StopRobotAction implements Action {
     constructor(public payload: StopRobotRequest) { super() }
 }
 
-export const STOP_ROBOT_FAIL = 'STOP_ROBOT_FAIL';
+export const STOP_ROBOT_FAIL = '[Robot] STOP_ROBOT_FAIL';
 
 export class StopRobotFailAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT_FAIL;
@@ -351,7 +351,7 @@ export class StopRobotFailAction extends StopRobotAction implements Action {
     constructor(public payload: StopRobotResponse) { super() }
 }
 
-export const STOP_ROBOT_SUCCESS = 'STOP_ROBOT_SUCCESS';
+export const STOP_ROBOT_SUCCESS = '[Robot] STOP_ROBOT_SUCCESS';
 
 export class StopRobotSuccessAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT_SUCCESS;
@@ -384,7 +384,7 @@ class ModifyRobotAction extends ApiAction {
     constructor() { super() }
 }
 
-export const MODIFY_ROBOT = 'MODIFY_ROBOT';
+export const MODIFY_ROBOT = '[Robot] MODIFY_ROBOT';
 
 export class ModifyRobotRequestAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT;
@@ -394,7 +394,7 @@ export class ModifyRobotRequestAction extends ModifyRobotAction implements Actio
     constructor(public payload: ModifyRobotRequest) { super() };
 }
 
-export const MODIFY_ROBOT_FAIL = 'MODIFY_ROBOT_FAIL';
+export const MODIFY_ROBOT_FAIL = '[Robot] MODIFY_ROBOT_FAIL';
 
 export class ModifyRobotFailAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT_FAIL;
@@ -402,7 +402,7 @@ export class ModifyRobotFailAction extends ModifyRobotAction implements Action {
     constructor(public payload: ModifyRobotResponse) { super() }
 }
 
-export const MODIFY_ROBOT_SUCCESS = 'MODIFY_ROBOT_SUCCESS';
+export const MODIFY_ROBOT_SUCCESS = '[Robot] MODIFY_ROBOT_SUCCESS';
 
 export class ModifyRobotSuccessAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT_SUCCESS;
@@ -430,7 +430,7 @@ export class CommandRobotAction extends ApiAction {
     constructor() { super() };
 }
 
-export const COMMAND_ROBOT = 'COMMAND_ROBOT';
+export const COMMAND_ROBOT = '[Robot] COMMAND_ROBOT';
 
 export class CommandRobotRequestAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT;
@@ -440,7 +440,7 @@ export class CommandRobotRequestAction extends CommandRobotAction implements Act
     constructor(public payload: CommandRobotRequest) { super() }
 }
 
-export const COMMAND_ROBOT_FAIL = 'COMMAND_ROBOT_FAIL';
+export const COMMAND_ROBOT_FAIL = '[Robot] COMMAND_ROBOT_FAIL';
 
 export class CommandRobotFailAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT_FAIL;
@@ -448,7 +448,7 @@ export class CommandRobotFailAction extends CommandRobotAction implements Action
     constructor(public payload: CommandRobotResponse) { super() }
 }
 
-export const COMMAND_ROBOT_SUCCESS = 'COMMAND_ROBOT_SUCCESS';
+export const COMMAND_ROBOT_SUCCESS = '[Robot] COMMAND_ROBOT_SUCCESS';
 
 export class CommandRobotSuccessAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT_SUCCESS;
@@ -476,7 +476,7 @@ export class DeleteRobotAction extends ApiAction {
     constructor() { super() };
 }
 
-export const DELETE_ROBOT = 'DELETE_ROBOT';
+export const DELETE_ROBOT = '[Robot] DELETE_ROBOT';
 
 export class DeleteRobotRequestAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT;
@@ -486,7 +486,7 @@ export class DeleteRobotRequestAction extends DeleteRobotAction implements Actio
     constructor(public payload: DeleteRobotRequest) { super() }
 }
 
-export const DELETE_ROBOT_FAIL = 'DELETE_ROBOT_FAIL';
+export const DELETE_ROBOT_FAIL = '[Robot] DELETE_ROBOT_FAIL';
 
 export class DeleteRobotFailAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT_FAIL;
@@ -494,7 +494,7 @@ export class DeleteRobotFailAction extends DeleteRobotAction implements Action {
     constructor(public payload: DeleteRobotResponse) { super() }
 }
 
-export const DELETE_ROBOT_SUCCESS = 'DELETE_ROBOT_SUCCESS';
+export const DELETE_ROBOT_SUCCESS = '[Robot] DELETE_ROBOT_SUCCESS';
 
 export class DeleteRobotSuccessAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT_SUCCESS;
@@ -527,7 +527,7 @@ export class SaveRobotAction extends ApiAction {
     constructor() { super() };
 }
 
-export const SAVE_ROBOT = 'SAVE_ROBOT';
+export const SAVE_ROBOT = '[Robot] SAVE_ROBOT';
 
 export class SaveRobotRequestAction extends SaveRobotAction implements Action {
     readonly type = SAVE_ROBOT;
@@ -537,18 +537,18 @@ export class SaveRobotRequestAction extends SaveRobotAction implements Action {
     constructor(public payload: SaveRobotRequest) { super() }
 }
 
-export const SAVE_ROBOT_FAIL = 'SAVE_ROBOT_FAIL';
+export const SAVE_ROBOT_FAIL = '[Robot] SAVE_ROBOT_FAIL';
 
 export class SaveRobotFailAction extends SaveRobotAction implements Action {
-    readonly type = 'SAVE_ROBOT_FAIL';
+    readonly type = SAVE_ROBOT_FAIL;
 
     constructor(public payload: SaveRobotResponse) { super() }
 }
 
-export const SAVE_ROBOT_SUCCESS = 'SAVE_ROBOT_SUCCESS';
+export const SAVE_ROBOT_SUCCESS = '[Robot] SAVE_ROBOT_SUCCESS';
 
 export class SaveRobotSuccessAction extends SaveRobotAction implements Action {
-    readonly type = 'SAVE_ROBOT_SUCCESS';
+    readonly type = SAVE_ROBOT_SUCCESS;
 
     constructor(public payload: SaveRobotResponse) { super() }
 }
@@ -571,7 +571,7 @@ export class PluginRunAction extends ApiAction {
     constructor() { super() };
 }
 
-export const RUN_PLUGIN = 'RUN_PLUGIN';
+export const RUN_PLUGIN = '[Robot] RUN_PLUGIN';
 
 export class PluginRunRequestAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN;
@@ -581,7 +581,7 @@ export class PluginRunRequestAction extends PluginRunAction implements Action {
     constructor(public payload: PluginRunRequest) { super() }
 }
 
-export const RUN_PLUGIN_FAIL = 'RUN_PLUGIN_FAIL';
+export const RUN_PLUGIN_FAIL = '[Robot] RUN_PLUGIN_FAIL';
 
 export class PluginRunFailAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN_FAIL;
@@ -589,7 +589,7 @@ export class PluginRunFailAction extends PluginRunAction implements Action {
     constructor(public payload: PluginRunResponse) { super() }
 }
 
-export const RUN_PLUGIN_SUCCESS = 'RUN_PLUGIN_SUCCESS';
+export const RUN_PLUGIN_SUCCESS = '[Robot] RUN_PLUGIN_SUCCESS';
 
 export class PluginRunSuccessAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN_SUCCESS;
@@ -599,7 +599,7 @@ export class PluginRunSuccessAction extends PluginRunAction implements Action {
 
 /** ======================================================Local action========================================= **/
 
-export const RESET_ROBOT_DETAIL = 'RESET_ROBOT_DETAIL';
+export const RESET_ROBOT_DETAIL = '[Robot] RESET_ROBOT_DETAIL';
 
 export class ResetRobotDetailAction implements Action {
     readonly type = RESET_ROBOT_DETAIL;
@@ -607,7 +607,7 @@ export class ResetRobotDetailAction implements Action {
     constructor() { }
 }
 
-export const RESET_ROBOT_OPERATE = 'RESET_ROBOT_OPERATE';
+export const RESET_ROBOT_OPERATE = '[Robot] RESET_ROBOT_OPERATE';
 
 export class ResetRobotOperateAction implements Action {
     readonly type = RESET_ROBOT_OPERATE;
@@ -615,7 +615,7 @@ export class ResetRobotOperateAction implements Action {
     constructor() { }
 }
 
-export const MODIFY_ROBOT_ARG = 'MODIFY_ROBOT_ARG';
+export const MODIFY_ROBOT_ARG = '[Robot] MODIFY_ROBOT_ARG';
 
 export class ModifyRobotArgAction implements Action {
     readonly type = MODIFY_ROBOT_ARG;
@@ -623,7 +623,7 @@ export class ModifyRobotArgAction implements Action {
     constructor(public payload: VariableOverview | ImportedArg, public templateFlag?: string | number) { }
 }
 
-export const MODIFY_DEFAULT_PARAMS = 'MODIFY_DEFAULT_PARAMS';
+export const MODIFY_DEFAULT_PARAMS = '[Robot] MODIFY_DEFAULT_PARAMS';
 
 export class ModifyDefaultParamsAction implements Action {
     readonly type = MODIFY_DEFAULT_PARAMS;
@@ -632,7 +632,7 @@ export class ModifyDefaultParamsAction implements Action {
     constructor(public payload: Map<string[], any>) { }
 }
 
-export const MONITOR_SOUND_TYPES = 'MONITOR_SOUND_TYPES';
+export const MONITOR_SOUND_TYPES = '[Robot] MONITOR_SOUND_TYPES';
 
 export class MonitorSoundTypeAction implements Action {
     readonly type = MONITOR_SOUND_TYPES;
@@ -640,7 +640,7 @@ export class MonitorSoundTypeAction implements Action {
     constructor(public payload: number[]) { }
 }
 
-export const TOGGLE_MONITOR_SOUND = 'TOGGLE_MONITOR_SOUND';
+export const TOGGLE_MONITOR_SOUND = '[Robot] TOGGLE_MONITOR_SOUND';
 
 export class ToggleMonitorSoundAction implements Action {
     readonly type = TOGGLE_MONITOR_SOUND;
@@ -648,7 +648,7 @@ export class ToggleMonitorSoundAction implements Action {
     constructor(public payload: boolean) { }
 }
 
-export const CHANGE_LOG_PAGE = 'CHANGE_LOG_PAGE';
+export const CHANGE_LOG_PAGE = '[Robot] CHANGE_LOG_PAGE';
 
 export class ChangeLogPageAction implements Action {
     readonly type = CHANGE_LOG_PAGE;
@@ -656,7 +656,7 @@ export class ChangeLogPageAction implements Action {
     constructor(public payload: number) { }
 }
 
-export const CHANGE_PROFIT_CHART_PAGE = 'CHANGE_PROFIT_CHART_PAGE';
+export const CHANGE_PROFIT_CHART_PAGE = '[Robot] CHANGE_PROFIT_CHART_PAGE';
 
 export class ChangeProfitChartPageAction implements Action {
     readonly type = CHANGE_PROFIT_CHART_PAGE;
@@ -664,7 +664,7 @@ export class ChangeProfitChartPageAction implements Action {
     constructor(public payload: number) { }
 }
 
-export const CHANGE_STRATEGY_CHART_PAGE = 'CHANGE_STRATEGY_CHART_PAGE';
+export const CHANGE_STRATEGY_CHART_PAGE = '[Robot] CHANGE_STRATEGY_CHART_PAGE';
 
 export class ChangeStrategyChartPageAction implements Action {
     readonly type = CHANGE_STRATEGY_CHART_PAGE;
@@ -672,7 +672,7 @@ export class ChangeStrategyChartPageAction implements Action {
     constructor(public payload: number) { }
 }
 
-export const UPDATE_ROBOT_WATCH_DOG_STATE = 'UPDATE_ROBOT_WATCH_DOG_STATE';
+export const UPDATE_ROBOT_WATCH_DOG_STATE = '[Robot] UPDATE_ROBOT_WATCH_DOG_STATE';
 
 export class UpdateRobotWatchDogStateAction implements Action {
     readonly type = UPDATE_ROBOT_WATCH_DOG_STATE;

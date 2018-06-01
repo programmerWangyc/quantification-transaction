@@ -12,7 +12,7 @@ export enum SetRobotWDOrder {
     length
 }
 
-// set watch dog 
+// set watch dog
 export class SetRobotWDAction extends ApiAction {
     isSingleParams = false;
 
@@ -25,7 +25,7 @@ export class SetRobotWDAction extends ApiAction {
     constructor() { super() };
 }
 
-export const SET_ROBOT_WATCH_DOG = 'SET_ROBOT_WATCH_DOG';
+export const SET_ROBOT_WATCH_DOG = '[WatchDog] SET_ROBOT_WATCH_DOG';
 
 export class SetRobotWDRequestAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG;
@@ -35,7 +35,7 @@ export class SetRobotWDRequestAction extends SetRobotWDAction implements Action 
     constructor(public payload: SetRobotWDRequest) { super() }
 }
 
-export const SET_ROBOT_WATCH_DOG_FAIL = 'SET_ROBOT_WATCH_DOG_FAIL';
+export const SET_ROBOT_WATCH_DOG_FAIL = '[WatchDog] SET_ROBOT_WATCH_DOG_FAIL';
 
 export class SetRobotWDFailAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_FAIL;
@@ -43,7 +43,7 @@ export class SetRobotWDFailAction extends SetRobotWDAction implements Action {
     constructor(public payload: SetRobotWDResponse) { super() }
 }
 
-export const SET_ROBOT_WATCH_DOG_SUCCESS = 'SET_ROBOT_WATCH_DOG_SUCCESS';
+export const SET_ROBOT_WATCH_DOG_SUCCESS = '[WatchDog] SET_ROBOT_WATCH_DOG_SUCCESS';
 
 export class SetRobotWDSuccessAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_SUCCESS;

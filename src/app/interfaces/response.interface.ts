@@ -431,6 +431,8 @@ export interface Strategy {
     buy_count?: number;
     category: number;
     date: string;
+    email?: string;
+    expire_date?: string;
     forked: number;
     hasToken: boolean;
     id: number;
@@ -439,10 +441,10 @@ export interface Strategy {
     language: number;
     last_modified: string;
     name: string;
+    pricing?: string; // 斜线分割的自定义格式，天数/价格
     public: number;
     templates?: number[]; //模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
     username: string;
-    expire_date?: string;
     // 以下两个字段是自定义字段
     semanticArgs?: VariableOverview[]; // from args field
     semanticTemplateArgs?: TemplateVariableOverview[]; // form template snapshot
@@ -464,6 +466,9 @@ export interface GenKeyResponse extends ResponseUnit<string> { }
 
 // verify gen key
 export interface VerifyKeyResponse extends ResponseUnit<boolean> { }
+
+// delete strategy
+export interface DeleteStrategyResponse extends ResponseUnit<number | boolean> { } // true if delete success;
 
 /** ===================================================Charge============================================== **/
 

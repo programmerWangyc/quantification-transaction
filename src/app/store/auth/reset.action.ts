@@ -19,17 +19,17 @@ export class ResetPasswordAction extends ApiAction {
     constructor() { super() }
 }
 
-export const RESET_PASSWORD = 'RESET_PASSWORD';
+export const RESET_PASSWORD = '[Auth] RESET_PASSWORD';
 
 export class ResetPasswordRequestAction extends ResetPasswordAction implements Action {
     readonly type = RESET_PASSWORD;
 
     public allowSeparateRequest = true;
-    
+
     constructor(public payload: ResetPasswordRequest) { super() }
 }
 
-export const RESET_PASSWORD_FAIL = 'RESET_PASSWORD_FAIL';
+export const RESET_PASSWORD_FAIL = '[Auth] RESET_PASSWORD_FAIL';
 
 export class ResetPasswordFailAction extends ResetPasswordAction implements Action {
     readonly type = RESET_PASSWORD_FAIL;
@@ -37,7 +37,7 @@ export class ResetPasswordFailAction extends ResetPasswordAction implements Acti
     constructor(public payload: ResetPasswordResponse) { super() }
 }
 
-export const RESET_PASSWORD_SUCCESS = 'RESET_PASSWORD_SUCCESS';
+export const RESET_PASSWORD_SUCCESS = '[Auth] RESET_PASSWORD_SUCCESS';
 
 export class ResetPasswordSuccessAction extends ResetPasswordAction implements Action {
     readonly type = RESET_PASSWORD_SUCCESS;
@@ -47,7 +47,7 @@ export class ResetPasswordSuccessAction extends ResetPasswordAction implements A
 
 /* ===========================================Local action=================================== */
 
-export const RESET_RESET_PASSWORD = 'RESET_RESET_PASSWORD';
+export const RESET_RESET_PASSWORD = '[Auth] RESET_RESET_PASSWORD';
 
 export class ResetResetPasswordResponseAction implements Action {
     readonly type = RESET_RESET_PASSWORD;

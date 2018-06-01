@@ -10,7 +10,13 @@ import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
-import { GetStrategyListRequestAction, ShareStrategyRequestAction, GenKeyRequestAction, VerifyKeyRequestAction } from '../store/strategy/strategy.action';
+import {
+    DeleteStrategyRequestAction,
+    GenKeyRequestAction,
+    GetStrategyListRequestAction,
+    ShareStrategyRequestAction,
+    VerifyKeyRequestAction,
+} from '../store/strategy/strategy.action';
 import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
@@ -157,6 +163,10 @@ export class ProcessService {
 
     processVerifyKey(params: Observable<Request.VerifyKeyRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new VerifyKeyRequestAction(params)));
+    }
+
+    processDeleteStrategy(params: Observable<Request.DeleteStrategyRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new DeleteStrategyRequestAction(params)));
     }
 
     /** ===================================================Charge====================================================== */

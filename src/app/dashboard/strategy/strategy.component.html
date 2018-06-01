@@ -17,4 +17,4 @@
     </nz-input-group>
 </div>
 
-<app-strategy-list [list]="strategyList | async" (share)="share$.next($event)" ></app-strategy-list>
+<app-strategy-list [list]="strategyList | async" (share)="share$.next($event)" (renewal)="renewal$.next($event)" (delete)="delete$.next($event)"></app-strategy-list>
