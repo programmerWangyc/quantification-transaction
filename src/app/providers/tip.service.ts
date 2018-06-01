@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { NzNotificationService, NzModalService, NzMessageService, NzMessageDataOptions } from 'ng-zorro-antd';
+import { NzMessageDataOptions, NzMessageService, NzModalService, NzNotificationService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 
-import { ConfirmOperateTipData } from '../interfaces/constant.interface';
+import { ConfirmOperateTipData } from '../interfaces/app.interface';
 import { CustomSnackBarComponent } from '../tool/tool.components';
 
 @Injectable()

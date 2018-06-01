@@ -6,7 +6,7 @@ import { Action, Store } from '@ngrx/store';
 import { isString } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
-import { ServerSendRobotEventType } from '../../interfaces/constant.interface';
+import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ResponseAction } from '../base.action';
 import * as btNodeActions from '../bt-node/bt-node.action';
 import { AppState, selectRobotRequestParameters } from '../index.reducer';

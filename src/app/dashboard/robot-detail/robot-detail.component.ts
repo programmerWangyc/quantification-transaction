@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { Breadcrumb } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 import { RobotService } from '../../robot/providers/robot.service';
 import { BtNodeService } from './../../providers/bt-node.service';
 import { PlatformService } from './../../providers/platform.service';

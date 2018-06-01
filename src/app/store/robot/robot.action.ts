@@ -23,8 +23,9 @@ import {
     StopRobotResponse,
     SubscribeRobotResponse,
 } from '../../interfaces/response.interface';
+import { ImportedArg } from '../../robot/robot.interface';
 import { ApiAction } from '../base.action';
-import { ImportedArg, VariableOverview } from './../../interfaces/constant.interface';
+import { VariableOverview } from './../../interfaces/app.interface';
 import {
     GetRobotDetailRequest,
     GetRobotLogsRequest,

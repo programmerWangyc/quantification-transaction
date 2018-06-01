@@ -1,7 +1,7 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SelectedPair } from '../interfaces/constant.interface';
+import { SelectedPair } from '../interfaces/app.interface';
 import { Platform } from '../interfaces/response.interface';
 
 /**

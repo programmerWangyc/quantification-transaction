@@ -9,6 +9,8 @@ import { Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
+import { LocalStorageKey } from '../app.config';
+import { BaseService } from '../base/base.service';
 import {
     AppState,
     selectBalance,
@@ -23,13 +25,12 @@ import {
     selectUsernameFromPublic,
 } from '../store/index.reducer';
 import { Settings, settings } from './../../../request.interface';
-import { LocalStorageKey, Referrer } from './../interfaces/constant.interface';
+import { Referrer } from './../interfaces/app.interface';
 import { ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
 import { SetLanguageAction, SetReferrerAction, ToggleFooterAction } from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
-import { BaseService } from '../base/base.service';
 
 @Injectable()
 export class PublicService extends BaseService {

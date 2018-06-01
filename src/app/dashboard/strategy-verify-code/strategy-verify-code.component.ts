@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
-import { BaseComponent } from '../../base/base.component';
 import { Subscription } from 'rxjs/Subscription';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Breadcrumb } from '../../interfaces/constant.interface';
-import { StrategyOperateService, GenKeyType } from '../../strategy/providers/strategy.operate.service';
+
+import { BaseComponent } from '../../base/base.component';
+import { Breadcrumb } from '../../interfaces/app.interface';
 import { TipService } from '../../providers/tip.service';
-import { NzMessageService } from 'ng-zorro-antd';
+import { GenKeyType, StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 
 @Component({
     selector: 'app-strategy-verify-code',

@@ -6,12 +6,8 @@ import * as Highstock from 'highcharts/highstock';
 import { cloneDeep, compact, flatten, isArray, isEmpty, isEqual, isNumber, isObject, omit, orderBy, range } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
-import {
-    ChartUpdateIndicator,
-    StrategyChartData,
-    StrategyChartPoint,
-    StrategyChartSeriesData,
-} from './../interfaces/constant.interface';
+import { StrategyChartSeriesData } from '../robot/robot.config';
+import { ChartUpdateIndicator, StrategyChartData, StrategyChartPoint } from './../interfaces/app.interface';
 import { RobotLogs, StrategyLog } from './../interfaces/response.interface';
 import { UtilService } from './util.service';
 

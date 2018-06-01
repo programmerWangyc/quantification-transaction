@@ -6,13 +6,13 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { Breadcrumb, RobotDebugFormModal } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 import { BtNode, Platform, RunningLog } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
 import { TipService } from '../../providers/tip.service';
 import { RobotLogService } from '../../robot/providers/robot.log.service';
-import { RobotOperateService } from '../../robot/providers/robot.operate.service';
+import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/robot.operate.service';
 
 @Component({
     selector: 'app-robot-debug',

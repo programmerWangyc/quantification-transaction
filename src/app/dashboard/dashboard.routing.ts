@@ -1,6 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
 
-import { Path } from '../interfaces/constant.interface';
+import { Path } from '../app.config';
+import { StrategyLibComponent } from '../strategy/strategy-lib/strategy-lib.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
@@ -11,10 +12,9 @@ import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
-import { StrategyComponent } from './strategy/strategy.component';
-import { StrategyLibComponent } from '../strategy/strategy-lib/strategy-lib.component';
-import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
+import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
+import { StrategyComponent } from './strategy/strategy.component';
 
 const routs: Routes = [
     {

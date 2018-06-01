@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Path } from '../../interfaces/constant.interface';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { Path } from '../../app.config';
 
 @Component({
     selector: 'app-gen-key-panel',

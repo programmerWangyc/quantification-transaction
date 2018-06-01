@@ -1,4 +1,5 @@
-import { ServerSendRobotEventType, RobotStatusTable } from './../../interfaces/constant.interface';
+import { RobotStatusTable } from '../robot.interface';
+import { ServerSendRobotEventType } from '../robot.config';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/delayWhen';
 import 'rxjs/add/operator/merge';

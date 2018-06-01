@@ -5,8 +5,9 @@ import { Observable } from 'rxjs/Observable';
 
 import { Robot, RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
 import { RobotOperateType } from '../../store/robot/robot.reducer';
+import { RobotConstantService } from '../providers/robot.constant.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
-import { ConstantService } from './../../providers/constant.service';
+import { LogTypes } from '../robot.config';
 
 
 @Pipe({
@@ -46,7 +47,7 @@ export class PlatformStockPipe implements PipeTransform {
     name: 'eid2String'
 })
 export class Eid2StringPipe implements PipeTransform {
-    constructor(private constantService: ConstantService) { }
+    constructor(private constantService: RobotConstantService) { }
 
     transform(value: string): string {
         const coin = this.constantService.COINS[value];
@@ -59,10 +60,10 @@ export class Eid2StringPipe implements PipeTransform {
     name: 'logType'
 })
 export class LogTypePipe implements PipeTransform {
-    constructor(private constantService: ConstantService) { }
+    constructor() { }
 
     transform(value: number): string {
-        return this.constantService.LOG_TYPES[value];
+        return LogTypes[value];
     }
 }
 
@@ -97,16 +98,15 @@ export class DirectionTypePipe implements PipeTransform {
 })
 export class LogPricePipe implements PipeTransform {
     constructor(
-        private constantService: ConstantService,
         private translate: TranslateService,
     ) { }
 
     transform(price: number, logType: number): string | number {
-        const types = [this.constantService.LOG_TYPES.BUY, this.constantService.LOG_TYPES.SALE, this.constantService.LOG_TYPES.PROFIT];
+        const types = [LogTypes.BUY, LogTypes.SALE, LogTypes.PROFIT];
 
         if (types.indexOf(logType) !== -1) {
 
-            if (logType !== this.constantService.LOG_TYPES.PROFIT && price === -1) {
+            if (logType !== LogTypes.PROFIT && price === -1) {
 
                 let result = null;
 
@@ -217,7 +217,7 @@ export class StrategyChartTitlePipe implements PipeTransform {
 export class RobotOperateBtnTextPipe implements PipeTransform {
     constructor(
         private robotOperate: RobotOperateService,
-        private constantService: ConstantService,
+        private constantService: RobotConstantService,
     ) { }
 
     transform(robot: Robot): Observable<string> {

@@ -11,6 +11,7 @@ import { CreateRobotComponent } from './create-robot/create-robot.component';
 import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
 import { PIPES } from './pipes/index.pipes';
+import { RobotConstantService } from './providers/robot.constant.service';
 import { RobotLogService } from './providers/robot.log.service';
 import { RobotOperateService } from './providers/robot.operate.service';
 import { RobotService } from './providers/robot.service';
@@ -65,6 +66,7 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         RobotService,
         RobotLogService,
         RobotOperateService,
+        RobotConstantService,
     ],
     exports: [
         CreateRobotComponent,

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseService } from '../../base/base.service';
-import { TemplateVariableOverview, VariableOverview } from '../../interfaces/constant.interface';
+import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';

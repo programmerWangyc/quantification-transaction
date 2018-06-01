@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { Breadcrumb } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-indicator',

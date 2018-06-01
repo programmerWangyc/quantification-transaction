@@ -4,14 +4,12 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseService } from '../../base/base.service';
-import { PaymentMethod, RechargeFormModal } from '../../interfaces/constant.interface';
 import {
     GetPaymentArgResponse,
     GetPayOrdersResponse,
     PayOrder,
     ServerSendPaymentMessage,
 } from '../../interfaces/response.interface';
-import { ConstantService } from '../../providers/constant.service';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { ResetRechargeAction } from '../../store/charge/charge.action';
@@ -22,7 +20,13 @@ import {
     selectPayOrdersResponse,
     selectServerSendRechargeMessage,
 } from '../../store/index.reducer';
+import { PaymentMethod } from '../charge.config';
 import { getChargePrice } from '../pipes/charge.pipe';
+
+export interface RechargeFormModal {
+    payMethod: number;
+    chargeAmount: number;
+}
 
 @Injectable()
 export class ChargeService extends BaseService {
@@ -36,7 +40,6 @@ export class ChargeService extends BaseService {
         private error: ErrorService,
         private process: ProcessService,
         public rendererFactory: RendererFactory2,
-        private constantService: ConstantService,
     ) {
         super();
         this.renderer2 = this.rendererFactory.createRenderer(null, null);

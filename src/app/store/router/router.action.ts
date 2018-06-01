@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import { NavigationExtras } from '@angular/router';
-import { RouterInfo } from '../../interfaces/constant.interface';
+
+import { RouterInfo } from '../../interfaces/app.interface';
 
 export const GO = '[Router] Go';
 export const BACK = '[Router] Back';

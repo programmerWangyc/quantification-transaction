@@ -8,7 +8,6 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -18,6 +17,7 @@ import * as fromRoot from '../../store/index.reducer';
 import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
 import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
 import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confirm.component';
+import { ShareStrategyStateSnapshot } from '../strategy.interface';
 import { StrategyService } from './strategy.service';
 
 export enum GenKeyType {

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
 import { Observable } from 'rxjs/Observable';
 
-import { VariableType } from '../interfaces/constant.interface';
-import { TemplateVariableOverview, VariableOverview } from './../interfaces/constant.interface';
+import { VariableType } from '../app.config';
+import { TemplateVariableOverview, VariableOverview } from './../interfaces/app.interface';
 import { AuthService } from './../shared/providers/auth.service';
 import { ConstantService } from './constant.service';
 

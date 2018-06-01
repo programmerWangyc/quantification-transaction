@@ -1,14 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { ChargePaymentInfo, PaymentMethod } from '../../interfaces/constant.interface';
-import { RECHARGE_PAYMENT_FLAG } from '../../providers/constant.service';
+import { ChargePaymentInfo, PaymentMethod } from '../charge.config';
+import { ChargeConstantService } from '../providers/charge.constant.service';
 
 @Pipe({
     name: 'chargeMethod'
 })
 export class ChargeMethodPipe implements PipeTransform {
+    constructor(private constant: ChargeConstantService) { }
+
     transform(guid: string): string {
-        const ary = guid.split(RECHARGE_PAYMENT_FLAG);
+        const ary = guid.split(this.constant.RECHARGE_PAYMENT_FLAG);
 
         const length = ary.length;
 
@@ -19,7 +21,7 @@ export class ChargeMethodPipe implements PipeTransform {
 }
 
 export function getChargePrice(guid: string): number {
-    const ary = guid.split(RECHARGE_PAYMENT_FLAG);
+    const ary = guid.split(this.constant.RECHARGE_PAYMENT_FLAG);
 
     if (parseInt(ary[ChargePaymentInfo.days]) === 0) {
         return parseInt(ary[ChargePaymentInfo.amount]);

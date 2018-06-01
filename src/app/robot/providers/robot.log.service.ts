@@ -22,7 +22,7 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ChartUpdateIndicator, ServerSendRobotEventType } from '../../interfaces/constant.interface';
+import { ChartUpdateIndicator } from '../../interfaces/app.interface';
 import {
     ChangeLogPageAction,
     ChangeProfitChartPageAction,
@@ -30,6 +30,7 @@ import {
     MonitorSoundTypeAction,
     ToggleMonitorSoundAction,
 } from '../../store/robot/robot.action';
+import { ServerSendRobotEventType } from '../robot.config';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
 import { ChartService } from './../../providers/chart.service';

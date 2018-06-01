@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Breadcrumb } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-robot',

@@ -8,8 +8,8 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { LogTypes, SemanticsLog } from '../../interfaces/constant.interface';
 import { RunningLog } from '../../interfaces/response.interface';
+import { LogTypes, SemanticsLog } from '../robot.config';
 import { PAGE_SIZE_SELECT_VALUES } from './../../providers/constant.service';
 import { TipService } from './../../providers/tip.service';
 import { RobotLogService } from './../providers/robot.log.service';

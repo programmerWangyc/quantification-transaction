@@ -1,8 +1,10 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Path, ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
-import { ShareStrategyRequest, StrategyShareType } from '../../interfaces/request.interface';
+
+import { Path } from '../../app.config';
+import { StrategyShareType } from '../../interfaces/request.interface';
+import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
+import { ShareStrategyStateSnapshot } from '../strategy.interface';
 
 @Component({
     selector: 'app-strategy-list',

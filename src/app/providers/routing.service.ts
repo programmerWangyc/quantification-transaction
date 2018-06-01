@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BaseService } from '../base/base.service';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+
+import { BaseService } from '../base/base.service';
+import { RouterInfo } from '../interfaces/app.interface';
 import { AppState, selectRouteState } from '../store/index.reducer';
 import { Back, Forward, Go } from '../store/router/router.action';
-import { RouterInfo } from '../interfaces/constant.interface';
-import { Observable } from 'rxjs/Observable';
 import { RouterStateUrl } from '../store/router/router.reducer';
 
 @Injectable()

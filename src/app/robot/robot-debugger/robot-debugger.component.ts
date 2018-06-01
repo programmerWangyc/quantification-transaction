@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 
-import { RobotDebugFormModal } from '../../interfaces/constant.interface';
 import { BtNode, Platform } from '../../interfaces/response.interface';
 import { PlatformService } from '../../providers/platform.service';
+import { RobotDebugFormModal } from '../providers/robot.operate.service';
 
 @Component({
     selector: 'app-robot-debugger',

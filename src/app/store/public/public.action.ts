@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { Referrer } from '../../interfaces/constant.interface';
+import { Referrer } from '../../interfaces/app.interface';
 import { PublicResponse, SettingsResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SettingsRequest } from './../../interfaces/request.interface';

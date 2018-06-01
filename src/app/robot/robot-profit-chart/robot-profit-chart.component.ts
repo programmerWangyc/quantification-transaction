@@ -6,7 +6,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
-import { SemanticsLog } from '../../interfaces/constant.interface';
+import { SemanticsLog } from '../robot.config';
 import { RobotLogService } from './../providers/robot.log.service';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { Path } from '../../interfaces/constant.interface';
+import { Path } from '../../app.config';
 import { PublicService } from './../../providers/public.service';
 
 export interface Link {

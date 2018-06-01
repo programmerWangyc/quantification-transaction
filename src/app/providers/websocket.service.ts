@@ -12,7 +12,7 @@ import websocketConnect, { IWebSocket } from 'rxjs-websockets';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LocalStorageKey } from './../interfaces/constant.interface';
+import { LocalStorageKey } from '../app.config';
 import { WsRequest } from './../interfaces/request.interface';
 import { ResponseBody } from './../interfaces/response.interface';
 import { ConstantService } from './constant.service';
@@ -49,7 +49,7 @@ export class WebsocketService {
     }
 
     send(data: WsRequest): Observable<ResponseBody> {
-        
+
         const param = {
             method: data.method,
             params: data.params,
@@ -99,7 +99,7 @@ export class WebsocketService {
          * to keep at least one observer on this stream, the observer is the publicEffect observer provided by ngrx library. If no one plays this role, please
          * de-comment the code blow.
          */
-        this.msgSubscription = this.messages.subscribe(() => {});
+        this.msgSubscription = this.messages.subscribe(() => { });
     }
 
     deflate(source: Object): ArrayBuffer {

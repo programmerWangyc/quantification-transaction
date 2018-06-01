@@ -1,4 +1,4 @@
-import { TemplateVariableOverview, VariableOverview } from './constant.interface';
+import { TemplateVariableOverview, VariableOverview } from './app.interface';
 
 /* =======================================================Abstract response========================================================= */
 

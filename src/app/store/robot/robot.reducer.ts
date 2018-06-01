@@ -24,12 +24,9 @@ import {
     StrategyLog,
 } from '../../interfaces/response.interface';
 import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
-import {
-    ImportedArg,
-    ServerSendRobotEventType,
-    TemplateVariableOverview,
-    VariableOverview,
-} from './../../interfaces/constant.interface';
+import { ServerSendRobotEventType } from '../../robot/robot.config';
+import { ImportedArg } from '../../robot/robot.interface';
+import { TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
 import {
     GetRobotDetailRequest,
     GetRobotLogsRequest,

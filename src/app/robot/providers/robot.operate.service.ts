@@ -14,8 +14,8 @@ import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
+import { VariableType } from '../../app.config';
 import { BaseService } from '../../base/base.service';
-import { CommandRobotTip, RobotDebugFormModal } from '../../interfaces/constant.interface';
 import { AuthService } from '../../shared/providers/auth.service';
 import {
     ModifyRobotArgAction,
@@ -27,23 +27,25 @@ import { OPERATE_ROBOT_LOADING_TAIL, OPERATE_ROBOT_REQUEST_TAIL, RobotOperateTyp
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
 import { DeleteRobotComponent } from '../delete-robot/delete-robot.component';
-import {
-    ImportedArg,
-    SelectedPair,
-    TemplateVariableOverview,
-    VariableOverview,
-    VariableType,
-} from './../../interfaces/constant.interface';
+import { RobotConstantService } from '../providers/robot.constant.service';
+import { CommandRobotTip } from '../robot.config';
+import { ImportedArg } from '../robot.interface';
+import { SelectedPair, TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
 import { BtNodeService } from './../../providers/bt-node.service';
-import { ConstantService, LIST_PREFIX } from './../../providers/constant.service';
 import { EncryptService } from './../../providers/encrypt.service';
 import { ErrorService } from './../../providers/error.service';
 import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
+
+export interface RobotDebugFormModal {
+    agent: number;
+    platform: number;
+    stock: string;
+}
 
 @Injectable()
 export class RobotOperateService extends BaseService {
@@ -57,7 +59,7 @@ export class RobotOperateService extends BaseService {
         private btNodeService: BtNodeService,
         private authService: AuthService,
         private translate: TranslateService,
-        private constantService: ConstantService,
+        private constantService: RobotConstantService,
         private encryptService: EncryptService,
         private nzModal: NzModalService,
     ) {
@@ -244,7 +246,7 @@ export class RobotOperateService extends BaseService {
     }
 
     private setSelectDefaultValue(target: VariableOverview): VariableOverview {
-        if (target.variableTypeId === VariableType.SELECT_TYPE && (<string>target.variableValue).indexOf(LIST_PREFIX) === 0) {
+        if (target.variableTypeId === VariableType.SELECT_TYPE && (<string>target.variableValue).indexOf(this.constantService.LIST_PREFIX) === 0) {
             target.variableValue = this.constantService.transformStringToList(<string>target.originValue)[0];
         } else {
             // nothing to do;

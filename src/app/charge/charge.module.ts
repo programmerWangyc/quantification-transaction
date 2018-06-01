@@ -7,6 +7,7 @@ import { AccountBalanceComponent } from './account-balance/account-balance.compo
 import { ChargeHistoryComponent } from './charge-history/charge-history.component';
 import { ChargeComponent } from './charge/charge.component';
 import { PIPES } from './pipes/index.pipe';
+import { ChargeConstantService } from './providers/charge.constant.service';
 import { ChargeService } from './providers/charge.service';
 
 @NgModule({
@@ -23,6 +24,7 @@ import { ChargeService } from './providers/charge.service';
     ],
     providers: [
         ChargeService,
+        ChargeConstantService,
     ],
     exports: [
         ChargeComponent,

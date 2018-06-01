@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
-import { RobotStatusTable } from '../../interfaces/constant.interface';
+import { RobotStatusTable } from '../robot.interface';
 import { RobotLogService } from './../providers/robot.log.service';
 import { RobotService } from './../providers/robot.service';
 

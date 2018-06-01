@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { VariableOverview } from './../../interfaces/constant.interface';
+import { VariableOverview } from './../../interfaces/app.interface';
 
 @Component({
     selector: 'app-strategy-arg',

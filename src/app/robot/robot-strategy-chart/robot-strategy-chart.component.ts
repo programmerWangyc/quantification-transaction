@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotLogService } from '../providers/robot.log.service';
-import { SemanticsLog } from './../../interfaces/constant.interface';
+import { SemanticsLog } from '../robot.config';
 
 @Component({
     selector: 'app-robot-strategy-chart',

@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { SelectedPair } from '../../interfaces/constant.interface';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+import { SelectedPair } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-exchange-pair',

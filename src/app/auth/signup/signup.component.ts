@@ -7,12 +7,20 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { SignupFormModel } from '../../interfaces/constant.interface';
 import { AuthService } from '../../shared/providers/auth.service';
 import { emailValidator, passwordMatchValidator, passwordValidator, usernameValidator } from '../../validators/validators';
 import { AgreementComponent } from '../agreement/agreement.component';
 import { EncryptService } from './../../providers/encrypt.service';
 import { PublicService } from './../../providers/public.service';
+
+export interface SignupFormModel {
+    username: string;
+    email: string;
+    passwordInfo: {
+        password: string;
+        confirmPassword: string;
+    }
+}
 
 @Component({
     selector: 'app-signup',

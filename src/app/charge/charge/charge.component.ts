@@ -5,9 +5,9 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { PaymentMethod, RechargeFormModal } from '../../interfaces/constant.interface';
-import { PAY_METHODS } from '../../providers/constant.service';
-import { ChargeService } from '../providers/charge.service';
+import { PaymentMethod } from '../charge.config';
+import { PAY_METHODS } from '../providers/charge.constant.service';
+import { ChargeService, RechargeFormModal } from '../providers/charge.service';
 
 @Component({
     selector: 'app-charge',

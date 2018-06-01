@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import {
-    LogTypes,
-    PaymentMethod,
-    PayMethod,
-    RobotOperateMap,
-    VariableType,
-    VariableTypeDes,
-} from '../interfaces/constant.interface';
-import { ArgOptimizeSetting } from './../interfaces/constant.interface';
-
+import { VariableType } from '../app.config';
+import { VariableTypeDes } from '../interfaces/app.interface';
+import { ArgOptimizeSetting } from './../interfaces/app.interface';
 
 export const VERSION = 3.5;
-
 
 export interface KLinePeriod {
     period: string;
@@ -49,12 +41,6 @@ export const K_LINE_PERIOD: KLinePeriod[] = [{
     id: 10,
     minutes: 60 * 24
 }]
-
-export const ROBOT_OPERATE_MAP: RobotOperateMap[] = [
-    { btnText: ['RESTART', 'RESTARTING'], tip: 'RESTART_ROBOT_CONFIRM' },
-    { btnText: ['STOP', 'STOPPING'], tip: 'STOP_ROBOT_CONFIRM' },
-    { btnText: ['KILL'], tip: 'KILL_ROBOT_CONFIRM' },
-];
 
 export const VARIABLE_TYPES: VariableTypeDes[] = [{
     id: VariableType.NUMBER_TYPE,
@@ -135,66 +121,12 @@ export const COINS = {
 
 export const PAGE_SIZE_SELECT_VALUES = [20, 50, 100, 500];
 
-export const PAY_METHODS: PayMethod[] = [
-    { name: PaymentMethod[0], id: 0, redirectTo: '' },
-    { name: PaymentMethod[1], id: 1, redirectTo: '' },
-    { name: PaymentMethod[2], id: 2, redirectTo: '' },
-];
-
-export const RENT_PAYMENT_FLAG = 'R';
-
-export const RECHARGE_PAYMENT_FLAG = 'N';
-
-export function getArgSelectItem(id: number): VariableTypeDes {
-    if (id > 5 || id < 0) {
-        throw new RangeError('Range error: ID passed in is out of range;');
-    }
-    return VARIABLE_TYPES.find(item => item.id === id);
-}
-
-export function getArgCondition(value: string): any[] {
-    const condition = VARIABLE_NAME_REGEXPS.map((reg, index) => {
-        const result = value.match(reg);
-
-        if (result && index === 0) return result.slice(2, 5);
-
-        if (result && index === 1) return [result[2].replace(/!/g, ''), result[2][0] === '!' ? '!=' : '==', '1'];
-
-        return null;
-    }).find(item => !!item);
-
-    return condition || [];
-}
-
-export function getOptimizeSetting(value: number): ArgOptimizeSetting {
-    return value < 1 ? {
-        begin: 0.1,
-        end: 1.0,
-        step: 0.1
-    } : {
-            begin: Math.max(1, Math.round(value * 0.5)),
-            end: Math.max(2, Math.round(value * 1.5)),
-            step: Math.max(1, Math.round(value * 0.1))
-        };
-}
-export function transformStringToList(value: string): string[] {
-    const target = value.split(LIST_PREFIX)[1];
-
-    return target.split('|');
-}
-
-export function withoutPrefix(value: string, prefix: string): string {
-    return value.split(prefix)[1];
-}
-
 @Injectable()
 export class ConstantService {
 
     VERSION = VERSION;
 
     K_LINE_PERIOD = K_LINE_PERIOD;
-
-    ROBOT_OPERATE_MAP = ROBOT_OPERATE_MAP;
 
     VARIABLE_TYPES = VARIABLE_TYPES;
 
@@ -208,37 +140,46 @@ export class ConstantService {
 
     COINS = COINS;
 
-    LOG_TYPES = LogTypes;
-
     PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
-
-    PAY_METHODS = PAY_METHODS;
-
-    RENT_PAYMENT_FLAG = RENT_PAYMENT_FLAG;
-
-    RECHARGE_PAYMENT_FLAG = RECHARGE_PAYMENT_FLAG;
 
     constructor() { }
 
-    getRobotOperateMap(status: number): RobotOperateMap {
-        if (status > 2) {
-            return ROBOT_OPERATE_MAP[0];
-        } else if (status === 2) {
-            return ROBOT_OPERATE_MAP[2];
-        } else {
-            return ROBOT_OPERATE_MAP[1];
-        }
+    //FIXME: unused
+    getOptimizeSetting(value: number): ArgOptimizeSetting {
+        return value < 1 ? {
+            begin: 0.1,
+            end: 1.0,
+            step: 0.1
+        } : {
+                begin: Math.max(1, Math.round(value * 0.5)),
+                end: Math.max(2, Math.round(value * 1.5)),
+                step: Math.max(1, Math.round(value * 0.1))
+            };
+
     }
 
-    getRobotOperateBtnText(isLoading: boolean, texts: string[]): string {
-        return isLoading ? texts[1] || texts[0] : texts[0];
-    /*  */}
+    transformStringToList(value: string): string[] {
+        const target = value.split(this.LIST_PREFIX)[1];
 
-    getArgSelectedItem = getArgSelectItem;
+        return target.split('|');
+    }
 
-    getOptimizeSetting = getOptimizeSetting;
+    withoutPrefix(value: string, prefix: string): string {
+        return value.split(prefix)[1];
+    }
 
-    transformStringToList = transformStringToList;
+    // FIXME: unused;
+    getArgCondition(value: string): any[] {
+        const condition = this.VARIABLE_NAME_REGEXPS.map((reg, index) => {
+            const result = value.match(reg);
 
-    withoutPrefix = withoutPrefix;
+            if (result && index === 0) return result.slice(2, 5);
+
+            if (result && index === 1) return [result[2].replace(/!/g, ''), result[2][0] === '!' ? '!=' : '==', '1'];
+
+            return null;
+        }).find(item => !!item);
+
+        return condition || [];
+    }
 }

@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { Path } from '../interfaces/constant.interface';
-import { PublicService } from '../providers/public.service';
 import { Subscription } from 'rxjs/Subscription';
+
+import { Path } from '../app.config';
 import { RoutingService } from '../providers/routing.service';
 
 export interface SideNavItem {

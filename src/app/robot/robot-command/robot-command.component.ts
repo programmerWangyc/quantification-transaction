@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
-import { VariableOverview } from './../../interfaces/constant.interface';
+import { VariableOverview } from './../../interfaces/app.interface';
 import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 

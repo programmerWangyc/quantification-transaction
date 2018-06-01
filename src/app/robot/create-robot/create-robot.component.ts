@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
-import { RobotCreationForm, SelectedPair, VariableOverview } from '../../interfaces/constant.interface';
+import { SelectedPair, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveRobotRequest } from '../../interfaces/request.interface';
 import { Platform } from '../../interfaces/response.interface';
 import { BtNodeService, GroupedNode } from '../../providers/bt-node.service';
@@ -19,6 +19,14 @@ import { PlatformService } from '../../providers/platform.service';
 import { SemanticArg, StrategyService } from '../../strategy/providers/strategy.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
+
+export interface RobotCreationForm {
+    robotName: string;
+    agent: number;
+    strategy: number;
+    kLinePeriod: number;
+    args: string;
+}
 
 @Component({
     selector: 'app-create-robot',

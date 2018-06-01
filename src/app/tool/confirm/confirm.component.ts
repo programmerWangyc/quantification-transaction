@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
-import { ConfirmOperateTipData } from '../../interfaces/constant.interface';
+import { ConfirmOperateTipData } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-confirm',

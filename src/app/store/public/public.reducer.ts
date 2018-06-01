@@ -1,5 +1,6 @@
+import { LocalStorageKey } from '../../app.config';
 import { PublicResponse, ResponseState, SettingsResponse } from '../../interfaces/response.interface';
-import { LocalStorageKey, Referrer } from './../../interfaces/constant.interface';
+import { Referrer } from './../../interfaces/app.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';
 

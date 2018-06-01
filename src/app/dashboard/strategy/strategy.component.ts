@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
-import { Breadcrumb, ShareStrategyStateSnapshot } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 import { needArgsType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -15,6 +15,7 @@ import { PlatformService } from '../../providers/platform.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { StrategyService } from '../../strategy/providers/strategy.service';
 import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
+import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
 
 @Component({
     selector: 'app-strategy',

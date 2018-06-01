@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ChargeService } from '../../charge/providers/charge.service';
-import { Breadcrumb } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-recharge',

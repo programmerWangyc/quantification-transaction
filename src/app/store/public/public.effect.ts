@@ -5,12 +5,12 @@ import { Actions, Effect } from '@ngrx/effects';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
-import { LocalStorageKey } from './../../interfaces/constant.interface';
+import { LocalStorageKey } from '../../app.config';
+import { ResponseAction } from '../base.action';
 import { PublicResponse } from './../../interfaces/response.interface';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as pub from './public.action';
-import { ResponseAction } from '../base.action';
 
 @Injectable()
 export class PublicEffect extends BaseEffect {
@@ -35,7 +35,7 @@ export class PublicEffect extends BaseEffect {
         });
 
     @Effect()
-    sett$ = this.getResponseAction(pub.GET_SETTINGS, pub); 
+    sett$ = this.getResponseAction(pub.GET_SETTINGS, pub);
 
     constructor(
         public ws: WebsocketService,

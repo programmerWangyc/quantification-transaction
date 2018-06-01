@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 
-import { LogTypes } from '../../interfaces/constant.interface';
 import { RunningLog } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
+import { LogTypes } from '../robot.config';
 
 export interface FilterType {
     text: string;

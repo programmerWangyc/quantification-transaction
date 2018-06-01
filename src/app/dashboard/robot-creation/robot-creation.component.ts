@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Breadcrumb } from '../../interfaces/constant.interface';
+import { Breadcrumb } from '../../interfaces/app.interface';
 
 @Component({
     selector: 'app-robot-creation',

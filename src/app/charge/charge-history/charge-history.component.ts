@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { BaseComponent } from '../../base/base.component';
 import { PayOrder } from '../../interfaces/response.interface';
-import { RECHARGE_PAYMENT_FLAG } from '../../providers/constant.service';
+import { ChargeConstantService } from '../providers/charge.constant.service';
 import { ChargeService } from '../providers/charge.service';
 
 @Component({
@@ -24,7 +24,8 @@ export class ChargeHistoryComponent implements BaseComponent {
 
     constructor(
         private chargeService: ChargeService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private constant: ChargeConstantService,
     ) { }
 
     ngOnInit() {
@@ -34,7 +35,7 @@ export class ChargeHistoryComponent implements BaseComponent {
     }
 
     initialModel() {
-        this.historyRecords = this.chargeService.getSpecificHistoryOrders(RECHARGE_PAYMENT_FLAG);
+        this.historyRecords = this.chargeService.getSpecificHistoryOrders(this.constant.RECHARGE_PAYMENT_FLAG);
 
         this.statistics = this.chargeService.getHistoryOrderTotalAmount(this.historyRecords)
             .mergeMap(total => this.translate.get('HISTORY_TOTAL_PAY', { total }));

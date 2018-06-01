@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import * as moment from 'moment';
 
 import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
-import { ConstantService } from '../../providers/constant.service';
-import * as moment from 'moment';
+import { StrategyConstantService } from '../providers/strategy.constant.service';
 
 
 @Pipe({
@@ -21,7 +21,7 @@ export class StrategyNamePipe implements PipeTransform {
     name: 'commandButtonText'
 })
 export class CommandButtonTextPipe implements PipeTransform {
-    constructor(private constantService: ConstantService) { }
+    constructor(private constantService: StrategyConstantService) { }
 
     transform(value: string): string {
         return value.split(this.constantService.COMMAND_PREFIX)[1];
@@ -48,7 +48,7 @@ export class RemoveMd5Pipe implements PipeTransform {
 })
 export class VariableTypePipe implements PipeTransform {
 
-    constructor(private constantService: ConstantService) { }
+    constructor(private constantService: StrategyConstantService) { }
 
     transform(id: number): string {
         return this.constantService.getArgSelectedItem(id).inputType;
@@ -59,7 +59,7 @@ export class VariableTypePipe implements PipeTransform {
     name: 'variableToSelectList'
 })
 export class VariableToSelectListPipe implements PipeTransform {
-    constructor(private constantService: ConstantService) { }
+    constructor(private constantService: StrategyConstantService) { }
 
     transform(value: string): string[] {
         return this.constantService.transformStringToList(value);

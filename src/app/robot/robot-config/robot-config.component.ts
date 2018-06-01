@@ -10,12 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
-import {
-    RobotConfigForm,
-    SelectedPair,
-    TemplateVariableOverview,
-    VariableOverview,
-} from './../../interfaces/constant.interface';
+import { SelectedPair, TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
 import { ModifyRobotRequest } from './../../interfaces/request.interface';
 import { BtNode, Platform } from './../../interfaces/response.interface';
 import { BtNodeService } from './../../providers/bt-node.service';
@@ -23,6 +18,13 @@ import { PlatformService } from './../../providers/platform.service';
 import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
 
+export interface RobotConfigForm {
+    robotName: string;
+    kLinePeriod: number;
+    platform: number; // 交易平台，和 stock合成交易对
+    stock: string;
+    agent: number;
+}
 
 @Component({
     selector: 'app-robot-config',
