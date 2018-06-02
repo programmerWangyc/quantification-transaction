@@ -215,6 +215,9 @@ export const selectVerifyKeyResponse = createSelector(getStrategyState, strategy
 // delete strategy
 export const selectDeleteStrategyResponse = createSelector(getStrategyState, strategy.getDeleteStrategyRes);
 
+// op strategy token
+export const selectOpStrategyTokenResponse = createSelector(getStrategyState, strategy.getOpStrategyTokenRes);
+
 /** ===================================================Charge====================================================== */
 
 const getChargeState = (state: AppState) => state.charge;

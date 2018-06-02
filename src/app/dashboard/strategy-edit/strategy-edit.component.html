@@ -1,0 +1,33 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-tabset>
+    <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
+        <ng-template #titleTemplate>
+            <i class="anticon" [ngClass]="tab.icon"></i>{{ tab.name | translate }}
+        </ng-template>
+        <div [ngSwitch]="idx">
+            <div *ngSwitchCase="0">
+                <ng-content *ngTemplateOutlet="edit"></ng-content>
+            </div>
+            <div *ngSwitchCase="1">
+                <ng-content *ngTemplateOutlet="backtest"></ng-content>
+            </div>
+            <div *ngSwitchDefault>template not found</div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+
+<ng-template #edit>
+    <div class="section">
+        <app-strategy-des [name]='strategyName | async' [category]='category | async' [language]="language | async" (catChange)="category$.next($event)"
+            (langChange)="language$.next($event)" (nameUpdate)="name$.next($event)"></app-strategy-des>
+    </div>
+
+    <div class="section">
+        <app-strategy-remote-edit [key]="secretKey | async" (operateToken)="opToken$.next($event)" ></app-strategy-remote-edit>
+    </div>
+</ng-template>
+
+<ng-template #backtest>
+    this is backtest
+</ng-template>

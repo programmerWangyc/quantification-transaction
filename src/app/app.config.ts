@@ -19,6 +19,7 @@ export enum Path {
     backtest = 'backtest',
     verify = 'verify',
     rent = 'rent',
+    copy = 'copy',
 }
 
 export enum LocalStorageKey {

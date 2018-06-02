@@ -13,8 +13,10 @@ import { StrategyService } from './providers/strategy.service';
 import { ShareConfirmComponent } from './share-confirm/share-confirm.component';
 import { StrateOverviewComponent } from './strate-overview/strate-overview.component';
 import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
+import { StrategyDesComponent } from './strategy-des/strategy-des.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
 import { StrategyListComponent } from './strategy-list/strategy-list.component';
+import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
 
@@ -36,6 +38,8 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         GenKeyPanelComponent,
         VerifyGenKeyComponent,
         StrategyRenewalComponent,
+        StrategyDesComponent,
+        StrategyRemoteEditComponent,
     ],
     providers: [
         StrategyService,
@@ -55,6 +59,8 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         StrategyListComponent,
         StrateOverviewComponent,
         VerifyGenKeyComponent,
+        StrategyDesComponent,
+        StrategyRemoteEditComponent,
     ]
 })
 export class StrategyModule { }

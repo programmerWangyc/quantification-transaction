@@ -4,6 +4,7 @@ import {
     DeleteStrategyRequest,
     GenKeyRequest,
     GetStrategyListRequest,
+    OpStrategyTokenRequest,
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
@@ -12,6 +13,7 @@ import {
     DeleteStrategyResponse,
     GenKeyResponse,
     GetStrategyListResponse,
+    OpStrategyTokenResponse,
     ShareStrategyResponse,
     VerifyKeyResponse,
 } from './../../interfaces/response.interface';
@@ -242,9 +244,67 @@ export class DeleteStrategySuccessAction extends DeleteStrategyAction implements
     constructor(public payload: DeleteStrategyResponse) { super() }
 }
 
+// op strategy token
+export enum OpStrategyTokenOrder {
+    strategyId,
+    opCode,
+    length
+}
+
+export class OpStrategyTokenAction extends ApiAction {
+    order = OpStrategyTokenOrder;
+
+    command = 'OpStrategyToken';
+
+    isSingleParams = false;
+
+    noneParams = false;
+
+    allowSeparateRequest = true;
+
+    constructor() { super() }
+}
+
+export const GET_STRATEGY_TOKEN = '[Strategy] GET_STRATEGY_TOKEN';
+
+export class OpStrategyTokenRequestAction extends OpStrategyTokenAction implements Action {
+    readonly type = GET_STRATEGY_TOKEN;
+
+    constructor(public payload: OpStrategyTokenRequest) { super() }
+}
+
+export const GET_STRATEGY_TOKEN_FAIL = '[Strategy] GET_STRATEGY_TOKEN_FAIL';
+
+export class OpStrategyTokenFailAction extends OpStrategyTokenAction implements Action {
+    readonly type = GET_STRATEGY_TOKEN_FAIL;
+
+    constructor(public payload: OpStrategyTokenResponse) { super() }
+}
+
+export const GET_STRATEGY_TOKEN_SUCCESS = '[Strategy] GET_STRATEGY_TOKEN_SUCCESS';
+
+export class OpStrategyTokenSuccessAction extends OpStrategyTokenAction implements Action {
+    readonly type = GET_STRATEGY_TOKEN_SUCCESS;
+
+    constructor(public payload: OpStrategyTokenResponse) { super() }
+}
+
 /* ===========================================Local action=================================== */
 
-/* none local action */
+export const UPDATE_STRATEGY_SECRET_KEY_STATE = '[Strategy] UPDATE_STRATEGY_SECRET_KEY_STATE';
+
+export class UpdateStrategySecretKeyStateAction implements Action {
+    readonly type = UPDATE_STRATEGY_SECRET_KEY_STATE;
+
+    constructor(public payload: { id: number, hasToken: boolean }) { }
+}
+
+// reset state
+export const RESET_STATE = '[Strategy] RESET_STATE';
+
+export class ResetStateAction implements Action {
+    readonly type = RESET_STATE;
+}
 
 export type ApiActions = GetStrategyListRequestAction
     | DeleteStrategyRequestAction
@@ -261,8 +321,13 @@ export type ApiActions = GetStrategyListRequestAction
     | VerifyKeyRequestAction
     | VerifyKeyFailAction
     | VerifyKeySuccessAction
+    | OpStrategyTokenRequestAction
+    | OpStrategyTokenFailAction
+    | OpStrategyTokenSuccessAction
 
 export type Actions = ApiActions
+    | UpdateStrategySecretKeyStateAction
+    | ResetStateAction
 
 export const ResponseActions = {
     GetStrategyListFailAction,
@@ -275,4 +340,6 @@ export const ResponseActions = {
     VerifyKeySuccessAction,
     DeleteStrategyFailAction,
     DeleteStrategySuccessAction,
+    OpStrategyTokenFailAction,
+    OpStrategyTokenSuccessAction,
 }

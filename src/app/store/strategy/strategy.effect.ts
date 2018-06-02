@@ -36,6 +36,9 @@ export class StrategyEffect extends BaseEffect {
     delete$: Observable<ResponseAction> = this.getResponseAction(strategyActions.DELETE_STRATEGY, strategyActions.ResponseActions, isDeleteFail)
         .do((action: strategyActions.DeleteStrategyFailAction | strategyActions.DeleteStrategySuccessAction) => isDeleteFail(action.payload) && this.tip.showTip('DELETE_ROBOT_RELATED_WITH_STRATEGY'));
 
+    @Effect()
+    opToke$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_TOKEN, strategyActions.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,

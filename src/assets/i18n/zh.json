@@ -437,5 +437,20 @@
     "STRATEGY_NAME": "策略名称",
     "VERIFY_KEY_FAIL_TRY_TIP": "验证失败，请在{{time}}秒后重试！",
     "DELETE_ROBOT_RELATED_WITH_STRATEGY": "请先删除所有使用该策略的机器人!!",
-    "DELETE_STRATEGY_TIP": "确定要删除 {{name}} 策略吗？"
+    "DELETE_STRATEGY_TIP": "确定要删除 {{name}} 策略吗？",
+
+    "STRATEGY_EDIT": "策略编辑",
+    "SIMULATE_BACKTEST": "模拟回测",
+
+    "USAGE": "使用方法",
+    "EDITOR_PLUGIN_USAGE": "安装对应编辑器插件后, 下载保存策略源码, 并将密钥插入到本地源码第一行, 保存即可自动同步。",
+    "PLUGIN_ADDRESS": "插件地址",
+    "SECRET_KEY": "密钥",
+    "NO_SECRET_KEY": "当前密钥为空",
+    "CLICK_TO_GET": "点击获取",
+    "UPDATE_SECRET_KEY": "更新密钥",
+    "DELETE_SECRET_KEY": "删除密钥",
+
+    "UPDATE_SECRET_KEY_CONFIRM": "该操作会导致之前密钥失效, 确定要这样做吗?",
+    "GEN_SECRET_KEY_CONFIRM": "确定要生成密钥吗? 此秘钥可使第三方插件更新此策略源码。"
 }

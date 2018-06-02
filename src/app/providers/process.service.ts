@@ -14,6 +14,7 @@ import {
     DeleteStrategyRequestAction,
     GenKeyRequestAction,
     GetStrategyListRequestAction,
+    OpStrategyTokenRequestAction,
     ShareStrategyRequestAction,
     VerifyKeyRequestAction,
 } from '../store/strategy/strategy.action';
@@ -167,6 +168,10 @@ export class ProcessService {
 
     processDeleteStrategy(params: Observable<Request.DeleteStrategyRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new DeleteStrategyRequestAction(params)));
+    }
+
+    processOpStrategyToken(params: Observable<Request.OpStrategyTokenRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new OpStrategyTokenRequestAction(params)));
     }
 
     /** ===================================================Charge====================================================== */

@@ -3,6 +3,7 @@ import {
     DeleteStrategyRequest,
     GenKeyRequest,
     GetStrategyListRequest,
+    OpStrategyTokenRequest,
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
@@ -11,6 +12,7 @@ import {
     DeleteStrategyResponse,
     GenKeyResponse,
     GetStrategyListResponse,
+    OpStrategyTokenResponse,
     ShareStrategyResponse,
     Strategy,
     VerifyKeyResponse,
@@ -23,6 +25,7 @@ export interface RequestParams {
     genKey: GenKeyRequest;
     verifyKey: VerifyKeyRequest;
     deleteStrategy: DeleteStrategyRequest;
+    opStrategyToken: OpStrategyTokenRequest;
 }
 
 export interface State {
@@ -32,6 +35,7 @@ export interface State {
     genKeyRes: GenKeyResponse;
     verifyKeyRes: VerifyKeyResponse;
     deleteStrategyRes: DeleteStrategyResponse;
+    opStrategyTokenRes: OpStrategyTokenResponse;
 }
 
 const initialState: State = {
@@ -41,6 +45,7 @@ const initialState: State = {
     genKeyRes: null,
     verifyKeyRes: null,
     deleteStrategyRes: null,
+    opStrategyTokenRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -114,6 +119,31 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, deleteStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
 
+        // op strategy token
+        case actions.GET_STRATEGY_TOKEN:
+            return { ...state, requestParams: { ...state.requestParams, opStrategyToken: action.payload } };
+
+        case actions.GET_STRATEGY_TOKEN_FAIL:
+        case actions.GET_STRATEGY_TOKEN_SUCCESS:
+            return { ...state, opStrategyTokenRes: action.payload };
+
+        /**==================================================================Local State change=========================================== **/
+
+        // update strategy hasToken
+        case actions.UPDATE_STRATEGY_SECRET_KEY_STATE: {
+            const { result } = state.strategyListRes;
+
+            let { strategies, all } = result;
+
+            strategies = strategies.map(strategy => strategy.id === action.payload.id ? { ...strategy, hasToken: action.payload.hasToken } : strategy);
+
+            return { ...state, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
+        }
+
+        // reset state
+        case actions.RESET_STATE:
+            return { ...state, opStrategyTokenRes: null };
+
         default:
             return state;
     }
@@ -144,3 +174,5 @@ export const getGenKeyResponse = (state: State) => state.genKeyRes;
 export const getVerifyKeyRes = (state: State) => state.verifyKeyRes;
 
 export const getDeleteStrategyRes = (state: State) => state.deleteStrategyRes;
+
+export const getOpStrategyTokenRes = (state: State) => state.opStrategyTokenRes;

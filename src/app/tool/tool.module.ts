@@ -9,10 +9,11 @@ import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FromJSONPipe } from './pipes/from-json.pipe';
+import { OriginDataPipe } from './pipes/origin-data.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
-import { OriginDataPipe } from './pipes/origin-data.pipe';
 
 @NgModule({
     imports: [
@@ -32,12 +33,14 @@ import { OriginDataPipe } from './pipes/origin-data.pipe';
         FromJSONPipe,
         SafeHtmlPipe,
         OriginDataPipe,
+        SimpleNzConfirmWrapComponent,
     ],
 
     entryComponents: [
         CustomSnackBarComponent,
         ConfirmComponent,
         VerifyPasswordComponent,
+        SimpleNzConfirmWrapComponent,
     ],
     exports: [
         TextCenterDirective,
@@ -48,6 +51,7 @@ import { OriginDataPipe } from './pipes/origin-data.pipe';
         FromJSONPipe,
         SafeHtmlPipe,
         OriginDataPipe,
+        SimpleNzConfirmWrapComponent,
     ]
 })
 export class ToolModule { }

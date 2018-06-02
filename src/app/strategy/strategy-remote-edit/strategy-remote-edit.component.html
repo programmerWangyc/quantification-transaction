@@ -1,0 +1,45 @@
+<nz-collapse>
+    <nz-collapse-panel [nzHeader]="header" [nzActive]="panel.active">
+        <ul>
+            <li>
+                <span>{{'USAGE' | translate}}</span>
+                <span>{{'EDITOR_PLUGIN_USAGE' | translate}}</span>
+            </li>
+            <li>
+                <span>{{'PLUGIN_ADDRESS' | translate}}</span>
+                <a nz-button href="https://github.com/botvs/SublimeBotVS" target="_blank">
+                    <i class="anticon anticon-download"></i>
+                    Sublime Text 3 Plugin
+                </a>
+                <a nz-button href="https://github.com/botvs/AtomBotVS" target="_blank">
+                    <i class="anticon anticon-download"></i>
+                    Atom Plugin
+                </a>
+                <a nz-button href="https://github.com/botvs/VimBotVS" target="_blank">
+                    <i class="anticon anticon-download"></i>
+                    Vim Plugin
+                </a>
+            </li>
+
+            <li>
+                <span>{{'SECRET_KEY' | translate}}</span>
+                <span *ngIf="key; else elseBlock">
+                    {{key}}
+                    <!--enum OpStrategyTokenTypeAdapter {GET, UPDATE, DELETE, ADD}-->
+                    <button nz-button [nzType]="'primary'" (click)="operateToken.next(1)">{{'UPDATE_SECRET_KEY' | translate}}</button>
+                    <button nz-button (click)="operateToken.next(2)">{{'DELETE_SECRET_KEY' | translate}}</button>
+                </span>
+                <ng-template #elseBlock>
+                    <span>{{'NO_SECRET_KEY' | translate}}</span>
+                    <button nz-button [nzType]="'primary'" (click)="operateToken.next(3)">{{'CLICK_TO_GET' | translate}}</button>
+                </ng-template>
+            </li>
+        </ul>
+    </nz-collapse-panel>
+</nz-collapse>
+
+<ng-template #header>
+    <span>{{panel.name | translate}}</span>
+    <i class="anticon anticon-disconnect disconnect" *ngIf="!key"></i>
+    <i class="anticon anticon-link connect" *ngIf="key"></i>
+</ng-template>

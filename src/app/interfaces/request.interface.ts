@@ -245,6 +245,18 @@ export interface DeleteStrategyRequest {
     id: number;
 }
 
+// OpStrategyToken
+export enum OpStrategyTokenType {
+    GET,
+    UPDATE,
+    DELETE
+}
+
+export interface OpStrategyTokenRequest {
+    strategyId: number;
+    opCode: number; // indicate code operate
+}
+
 /** ===================================================Charge============================================== **/
 
 export interface GetPayOrdersRequest { }
@@ -256,5 +268,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 28
+ * 接口总数： 83， 已完成： 29
  */

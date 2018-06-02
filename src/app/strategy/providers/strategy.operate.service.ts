@@ -18,6 +18,7 @@ import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
 import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
 import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confirm.component';
 import { ShareStrategyStateSnapshot } from '../strategy.interface';
+import { StrategyConstantService } from './strategy.constant.service';
 import { StrategyService } from './strategy.service';
 
 export enum GenKeyType {
@@ -36,8 +37,9 @@ export class StrategyOperateService extends StrategyService {
         public utilService: UtilService,
         public nzModal: NzModalService,
         public translate: TranslateService,
+        public constant: StrategyConstantService,
     ) {
-        super(store, error, process, utilService);
+        super(store, error, process, utilService, nzModal, constant);
     }
 
     /* =======================================================Serve Request======================================================= */

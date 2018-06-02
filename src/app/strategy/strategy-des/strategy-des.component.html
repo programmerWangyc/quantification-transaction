@@ -1,0 +1,18 @@
+<nz-input-group [nzAddOnBefore]="addOnBeforeTemplate" [nzAddOnAfter]="addOnAfterTemplate">
+    <input type="text" nz-input [(ngModel)]="strategyName" (ngModelChange)="nameUpdate.next(strategyName)" [ngModelOptions]="{standalone: true, updateOn: 'blur'}">
+</nz-input-group>
+
+<ng-template #addOnBeforeTemplate>
+    <nz-select [(ngModel)]="language" (ngModelChange)="langChange.next(language)">
+        <nz-option nzCustomContent *ngFor="let lang of languages" [nzLabel]="lang.name | translate" [nzValue]="lang.id">
+            <i class="anticon" [ngClass]="lang.icon"></i>
+            {{ lang.name | translate}}
+        </nz-option>
+    </nz-select>
+</ng-template>
+
+<ng-template #addOnAfterTemplate>
+    <nz-select [(ngModel)]="category" (ngModelChange)="catChange.next(category)">
+        <nz-option *ngFor="let cat of categories" [nzLabel]="cat.name | translate" [nzValue]="cat.id"></nz-option>
+    </nz-select>
+</ng-template>

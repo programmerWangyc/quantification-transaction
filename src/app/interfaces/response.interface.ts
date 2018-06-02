@@ -434,7 +434,7 @@ export interface Strategy {
     email?: string;
     expire_date?: string;
     forked: number;
-    hasToken: boolean;
+    hasToken: boolean; // indicate has remote edit token;
     id: number;
     is_buy: boolean;
     is_owner: boolean;
@@ -469,6 +469,9 @@ export interface VerifyKeyResponse extends ResponseUnit<boolean> { }
 
 // delete strategy
 export interface DeleteStrategyResponse extends ResponseUnit<number | boolean> { } // true if delete success;
+
+// op strategy token
+export interface OpStrategyTokenResponse extends ResponseUnit<string> { }
 
 /** ===================================================Charge============================================== **/
 
