@@ -1,11 +1,12 @@
 import {
     CommandButtonTextPipe,
+    ExpireStatusPipe,
+    LatestModifyDesPipe,
     RemoveMd5Pipe,
     StrategyNamePipe,
     VariableToSelectListPipe,
+    VariableTypeNamePipe,
     VariableTypePipe,
-    LatestModifyDesPipe,
-    ExpireStatusPipe,
 } from './strategy.pipe';
 
 
@@ -18,4 +19,5 @@ export const PIPES = [
     VariableToSelectListPipe,
     LatestModifyDesPipe,
     ExpireStatusPipe,
+    VariableTypeNamePipe,
 ];

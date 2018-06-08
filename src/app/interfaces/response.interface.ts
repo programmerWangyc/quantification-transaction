@@ -352,9 +352,9 @@ export interface DebugLog {
     OrderId: string;
     LogType: number;
     Price: number;
-    Amount:number;
+    Amount: number;
     Extra: string;
-    Instrument:string;
+    Instrument: string;
     Direction: string;
     Time: number;
 }
@@ -419,7 +419,7 @@ export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 /** ===================================================Strategy============================================== **/
 
 // strategy list
-export enum StrategyPublicState{
+export enum StrategyPublicState {
     UNDISCLOSED, // 未公开
     DISCLOSED,
     VERIFY,
@@ -472,6 +472,45 @@ export interface DeleteStrategyResponse extends ResponseUnit<number | boolean> {
 
 // op strategy token
 export interface OpStrategyTokenResponse extends ResponseUnit<string> { }
+
+// strategy detail
+export interface StrategyTemplate {
+    args: string; // JSON type string;
+    category: number;
+    id: number;
+    language: number;
+    name: string;
+    source: string;
+}
+
+export interface StrategyDetail {
+    args: string;
+    category: number;
+    date: string;
+    description: string;
+    expire_date: string;
+    forked?: number;
+    id: number;
+    is_buy: boolean;
+    is_owner: boolean;
+    language: number;
+    last_modified: string;
+    manual: string;
+    name: string;
+    note?: string;
+    public: number;
+    source?: string;
+    templates?: any[];
+}
+
+export interface StrategyDetailResponse {
+    strategy: StrategyDetail;
+}
+
+export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailResponse> { }
+
+// save strategy
+export interface SaveStrategyResponse extends ResponseUnit<string | boolean> { }
 
 /** ===================================================Charge============================================== **/
 

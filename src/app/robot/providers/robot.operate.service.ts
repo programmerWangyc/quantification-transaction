@@ -182,6 +182,7 @@ export class RobotOperateService extends BaseService {
             .filter(res => !!res);
     }
 
+    // robot detail
     getPublicRobotLoadingState(): Observable<boolean> {
         return this.store.select(fromRoot.selectRobotUiState).map(res => res.publicRobotLoading);
     }
@@ -460,8 +461,6 @@ export class RobotOperateService extends BaseService {
 
     /* =======================================================Short cart method================================================== */
 
-
-
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
         return this.encryptService.transformStrategyArgsToEncryptType(this.store.select(fromRoot.selectRobotStrategyArgs).map(args => args || []), isEncrypt)
             .combineLatest(
@@ -471,18 +470,13 @@ export class RobotOperateService extends BaseService {
             .map(args => JSON.stringify(args));
     }
 
-    /**
-     * FIXME:switch组件在点击动作发生后立即进行了状态切换，所以需要在检查用户确认状态后再次检查开关的状态，如果用户放弃切换动作需要把
-     * 开关的状态切换回去。开关状态能否变更实际要等到服务器响应后，所以在接收到响应时还需要再次检查。
-     */
     private getPublicRobotRequest(robot: Observable<fromRes.Robot>): Observable<fromReq.PublicRobotRequest> {
         return robot.switchMap(robot => this.tipService.confirmOperateTip(
             ConfirmComponent,
-            { message: robot.public ? 'PUBLISH_ROBOT_CONFIRM' : 'CANCEL_PUBLISH_ROBOT_CONFIRM', needTranslate: true },
+            { message: robot.public ? 'CANCEL_PUBLISH_ROBOT_CONFIRM': 'PUBLISH_ROBOT_CONFIRM', needTranslate: true },
         )
-            .do(sure => !sure && (robot.public = Number(!robot.public)))
             .filter(sure => !!sure)
-            .mapTo({ id: robot.id, type: Number(robot.public) })
+            .mapTo({ id: robot.id, type: Number(!robot.public) })
         );
     }
 

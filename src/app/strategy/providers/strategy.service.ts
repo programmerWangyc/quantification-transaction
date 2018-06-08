@@ -1,4 +1,13 @@
+
 import { Injectable } from '@angular/core';
+import {
+    ActivatedRoute,
+    ActivatedRouteSnapshot,
+    CanActivate,
+    CanActivateChild,
+    Router,
+    RouterStateSnapshot,
+} from '@angular/router';
 import { Store } from '@ngrx/store';
 import { isNumber, sortBy } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
@@ -21,6 +30,7 @@ import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
+import { AppState } from '../../store/index.reducer';
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
     groupNameValue?: any;
@@ -56,9 +66,13 @@ export class StrategyService extends BaseService {
         );
     }
 
+    launchStrategyDetail(source: Observable<fromReq.GetStrategyDetailRequest>): Subscription {
+        return this.process.processStrategyDetail(source);
+    }
+
     /* =======================================================Date acquisition======================================================= */
 
-    private getStrategyResponse(): Observable<fromRes.GetStrategyListResponse> {
+    private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.select(fromRoot.selectStrategyListResponse)
             .filter(this.isTruth);
     }
@@ -69,7 +83,7 @@ export class StrategyService extends BaseService {
     }
 
     getStrategies(): Observable<fromRes.Strategy[]> {
-        return this.getStrategyResponse().map(res => res.result.strategies);
+        return this.getStrategyListResponse().map(res => res.result.strategies);
     }
 
     getGroupedStrategy(key: string, getName?: (arg: number | boolean) => string, getNameValue?: (arg: string) => number | boolean): Observable<GroupedStrategy[]> {
@@ -111,6 +125,14 @@ export class StrategyService extends BaseService {
     updateStrategySecretKeyState(id: number): Subscription {
         return this.getOpStrategyTokenResponse().map(res => !!res.result)
             .subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
+    }
+
+    private getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
+        return this.store.select(fromRoot.selectStrategyDetailResponse).filter(this.isTruth);
+    }
+
+    getStrategyDetail(): Observable<fromRes.StrategyDetail> {
+        return this.getStrategyDetailResponse().map(res => res.result.strategy);
     }
 
     /* =======================================================Local state change======================================================= */
@@ -157,11 +179,14 @@ export class StrategyService extends BaseService {
     /* =======================================================Error handler======================================================= */
 
     handleStrategyListError(): Subscription {
-        return this.error.handleResponseError(this.getStrategyResponse());
+        return this.error.handleResponseError(this.getStrategyListResponse());
     }
 
     handleOpStrategyTokenError(): Subscription {
         return this.error.handleResponseError(this.getOpStrategyTokenResponse());
     }
 
+    handleStrategyDetailError(): Subscription {
+        return this.error.handleResponseError(this.getStrategyDetailResponse());
+    }
 }

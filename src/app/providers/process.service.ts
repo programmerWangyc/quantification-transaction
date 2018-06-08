@@ -10,34 +10,14 @@ import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
-import {
-    DeleteStrategyRequestAction,
-    GenKeyRequestAction,
-    GetStrategyListRequestAction,
-    OpStrategyTokenRequestAction,
-    ShareStrategyRequestAction,
-    VerifyKeyRequestAction,
-} from '../store/strategy/strategy.action';
+import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
 import { SignupRequestAction } from './../store/auth/signup.action';
 import { GetNodeListRequestAction } from './../store/bt-node/bt-node.action';
 import { GetSettingsRequestAction } from './../store/public/public.action';
-import {
-    CommandRobotRequestAction,
-    DeleteRobotRequestAction,
-    GetRobotDetailRequestAction,
-    GetRobotListRequestAction,
-    GetRobotLogsRequestAction,
-    ModifyRobotRequestAction,
-    PluginRunRequestAction,
-    PublicRobotRequestAction,
-    RestartRobotRequestAction,
-    SaveRobotRequestAction,
-    StopRobotRequestAction,
-    SubscribeRobotRequestAction,
-} from './../store/robot/robot.action';
+import * as RobotActions from './../store/robot/robot.action';
 import { TipService } from './tip.service';
 
 @Injectable()
@@ -83,57 +63,57 @@ export class ProcessService {
     /** ===================================================Robot=================================================== */
 
     processRobotList(params: Observable<Request.GetRobotListRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetRobotListRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.GetRobotListRequestAction(params)));
     }
 
     processPublicRobot(params: Observable<Request.PublicRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new PublicRobotRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.PublicRobotRequestAction(params)));
     }
 
     processRobotDetail(params: Observable<Request.GetRobotDetailRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetRobotDetailRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.GetRobotDetailRequestAction(params)));
     }
 
     processSubscribeRobot(params: Observable<Request.SubscribeRobotRequest>, allowSeparateRequest: boolean): Subscription {
-        return params.subscribe(params => this.store.dispatch(new SubscribeRobotRequestAction(params, allowSeparateRequest)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.SubscribeRobotRequestAction(params, allowSeparateRequest)));
     }
 
     processRobotLogs(params: Observable<Request.GetRobotLogsRequest>, allSeparateRequest: boolean, isSyncAction): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetRobotLogsRequestAction(params, allSeparateRequest, isSyncAction)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.GetRobotLogsRequestAction(params, allSeparateRequest, isSyncAction)));
     }
 
     processRestartRobot(params: Observable<Request.RestartRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new RestartRobotRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.RestartRobotRequestAction(params)));
     }
 
     processStopRobot(params: Observable<Request.StopRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new StopRobotRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.StopRobotRequestAction(params)));
     }
 
     processModifyRobot(params: Observable<Request.ModifyRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new ModifyRobotRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.ModifyRobotRequestAction(params)));
     }
 
     processCommandRobot(params: Observable<Request.CommandRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new CommandRobotRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.CommandRobotRequestAction(params)));
     }
 
     processDeleteRobot(params: Observable<Request.DeleteRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new DeleteRobotRequestAction(params)))
+        return params.subscribe(params => this.store.dispatch(new RobotActions.DeleteRobotRequestAction(params)))
     }
 
     processSaveRobot(params: Observable<Request.SaveRobotRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new SaveRobotRequestAction(params)))
+        return params.subscribe(params => this.store.dispatch(new RobotActions.SaveRobotRequestAction(params)))
     }
 
     processDebugRobot(params: Observable<Request.PluginRunRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new PluginRunRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new RobotActions.PluginRunRequestAction(params)));
     }
 
     /** ===================================================Node list=================================================== */
 
-    processGetNodeList(params: Observable<Request.GetNodeListRequest>): Subscription {
-        return params.subscribe(_ => this.store.dispatch(new GetNodeListRequestAction()));
+    processGetNodeList(params: Observable<Request.GetNodeListRequest>, allowSeparateRequest = false): Subscription {
+        return params.subscribe(_ => this.store.dispatch(new GetNodeListRequestAction(null, allowSeparateRequest)));
     }
 
     /** ===================================================Platform list=================================================== */
@@ -151,29 +131,38 @@ export class ProcessService {
     /** ===================================================Strategy====================================================== */
 
     processStrategyList(params: Observable<Request.GetStrategyListRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GetStrategyListRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyListRequestAction(params)));
     }
 
     processShareStrategy(params: Observable<Request.ShareStrategyRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new ShareStrategyRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.ShareStrategyRequestAction(params)));
     }
 
     processGenKey(params: Observable<Request.GenKeyRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new GenKeyRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.GenKeyRequestAction(params)));
     }
 
     processVerifyKey(params: Observable<Request.VerifyKeyRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new VerifyKeyRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.VerifyKeyRequestAction(params)));
     }
 
     processDeleteStrategy(params: Observable<Request.DeleteStrategyRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new DeleteStrategyRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.DeleteStrategyRequestAction(params)));
     }
 
     processOpStrategyToken(params: Observable<Request.OpStrategyTokenRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new OpStrategyTokenRequestAction(params)));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.OpStrategyTokenRequestAction(params)));
     }
 
+    processStrategyDetail(params: Observable<Request.GetStrategyDetailRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyDetailRequestAction(params)));
+    }
+
+    processSaveStrategy(params: Observable<Request.SaveStrategyRequest>): Subscription {
+        // return params.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
+
+        return params.subscribe(params => console.log(params));
+    }
     /** ===================================================Charge====================================================== */
 
     processPayOrders(params: Observable<any>): Subscription {

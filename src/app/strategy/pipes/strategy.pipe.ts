@@ -56,6 +56,18 @@ export class VariableTypePipe implements PipeTransform {
 }
 
 @Pipe({
+    name: 'variableTypeName'
+})
+export class VariableTypeNamePipe implements PipeTransform {
+
+    constructor(private constantService: StrategyConstantService) { }
+
+    transform(id: number): string {
+        return this.constantService.getArgSelectedItem(id).name;
+    }
+}
+
+@Pipe({
     name: 'variableToSelectList'
 })
 export class VariableToSelectListPipe implements PipeTransform {

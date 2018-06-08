@@ -3,8 +3,10 @@ import { Action } from '@ngrx/store';
 import {
     DeleteStrategyRequest,
     GenKeyRequest,
+    GetStrategyDetailRequest,
     GetStrategyListRequest,
     OpStrategyTokenRequest,
+    SaveStrategyRequest,
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
@@ -12,8 +14,10 @@ import { ApiAction } from '../base.action';
 import {
     DeleteStrategyResponse,
     GenKeyResponse,
+    GetStrategyDetailResponse,
     GetStrategyListResponse,
     OpStrategyTokenResponse,
+    SaveStrategyResponse,
     ShareStrategyResponse,
     VerifyKeyResponse,
 } from './../../interfaces/response.interface';
@@ -47,7 +51,7 @@ export const GET_STRATEGY_LIST = '[Strategy] GET_STRATEGY_LIST';
 export class GetStrategyListRequestAction extends GetStrategyList implements Action {
     readonly type = GET_STRATEGY_LIST;
 
-    allowSeparateRequest = false;
+    allowSeparateRequest = true;
 
     constructor(public payload: GetStrategyListRequest) { super() }
 }
@@ -289,8 +293,101 @@ export class OpStrategyTokenSuccessAction extends OpStrategyTokenAction implemen
     constructor(public payload: OpStrategyTokenResponse) { super() }
 }
 
+// strategy detail
+export class GetStrategyDetailAction extends ApiAction {
+    isSingleParams = true;
+
+    noneParams = false;
+
+    command = 'GetStrategyDetail';
+
+    order = null;
+
+    constructor() { super() };
+}
+
+export const GET_STRATEGY_DETAIL = '[Strategy] GET_STRATEGY_DETAIL';
+
+export class GetStrategyDetailRequestAction extends GetStrategyDetailAction implements Action {
+    readonly type = GET_STRATEGY_DETAIL;
+
+    allowSeparateRequest = true;
+
+    constructor(public payload: GetStrategyDetailRequest) { super() };
+}
+
+export const GET_STRATEGY_DETAIL_FAIL = '[Strategy] GET_STRATEGY_DETAIL_FAIL';
+
+export class GetStrategyDetailFailAction extends GetStrategyDetailAction implements Action {
+    readonly type = GET_STRATEGY_DETAIL_FAIL;
+
+    constructor(public payload: GetStrategyDetailResponse) { super() };
+}
+
+export const GET_STRATEGY_DETAIL_SUCCESS = '[Strategy] GET_STRATEGY_DETAIL_SUCCESS';
+
+export class GetStrategyDetailSuccessAction extends GetStrategyDetailAction implements Action {
+    readonly type = GET_STRATEGY_DETAIL_SUCCESS;
+
+    constructor(public payload: GetStrategyDetailResponse) { super() };
+}
+
+// save strategy
+export enum SaveStrategyOrder {
+    id,
+    categoryId,
+    languageId,
+    name,
+    des,
+    args,
+    code,
+    note,
+    manual,
+    dependance,
+    length
+}
+
+export class SaveStrategyAction extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    command = 'SaveStrategy';
+
+    order = SaveStrategyOrder;
+
+    allowSeparateRequest = true;
+
+    constructor() { super() }
+}
+
+export const SAVE_STRATEGY = '[Strategy] SAVE_STRATEGY';
+
+export class SaveStrategyRequestAction extends SaveStrategyAction implements Action {
+    readonly type = SAVE_STRATEGY;
+
+    constructor(public payload: SaveStrategyRequest) { super() }
+}
+
+export const SAVE_STRATEGY_FAIL = '[Strategy] SAVE_STRATEGY_FAIL';
+
+export class SaveStrategyFailAction extends SaveStrategyAction implements Action {
+    readonly type = SAVE_STRATEGY_FAIL;
+
+    constructor(public payload: SaveStrategyResponse) { super() }
+}
+
+export const SAVE_STRATEGY_SUCCESS = '[Strategy] SAVE_STRATEGY_SUCCESS';
+
+export class SaveStrategySuccessAction extends SaveStrategyAction implements Action {
+    readonly type = SAVE_STRATEGY_SUCCESS;
+
+    constructor(public payload: SaveStrategyResponse) { super() }
+}
+
 /* ===========================================Local action=================================== */
 
+// update strategy hasToken field
 export const UPDATE_STRATEGY_SECRET_KEY_STATE = '[Strategy] UPDATE_STRATEGY_SECRET_KEY_STATE';
 
 export class UpdateStrategySecretKeyStateAction implements Action {
@@ -324,6 +421,12 @@ export type ApiActions = GetStrategyListRequestAction
     | OpStrategyTokenRequestAction
     | OpStrategyTokenFailAction
     | OpStrategyTokenSuccessAction
+    | GetStrategyDetailRequestAction
+    | GetStrategyDetailFailAction
+    | GetStrategyDetailSuccessAction
+    | SaveStrategyRequestAction
+    | SaveStrategyFailAction
+    | SaveStrategySuccessAction
 
 export type Actions = ApiActions
     | UpdateStrategySecretKeyStateAction
@@ -342,4 +445,8 @@ export const ResponseActions = {
     DeleteStrategySuccessAction,
     OpStrategyTokenFailAction,
     OpStrategyTokenSuccessAction,
+    GetStrategyDetailFailAction,
+    GetStrategyDetailSuccessAction,
+    SaveStrategyFailAction,
+    SaveStrategySuccessAction,
 }

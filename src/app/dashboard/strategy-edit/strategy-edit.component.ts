@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
-import { StrategyService } from '../../strategy/providers/strategy.service';
+import { BtNodeService } from '../../providers/bt-node.service';
+import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
 
 @Component({
@@ -20,9 +22,11 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
 
     constructor(
         public route: ActivatedRoute,
-        public strategyService: StrategyService,
+        public strategyService: StrategyOperateService,
+        public nodeService: BtNodeService,
+        public nzModal: NzModalService,
     ) {
-        super(route, strategyService);
+        super(route, strategyService, nodeService, nzModal);
     }
 
     ngOnInit() {
@@ -30,7 +34,7 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
 
         this.initialModel();
 
-        this.launch();
+        this.launch(false);
 
         this.initialPrivateModel();
 

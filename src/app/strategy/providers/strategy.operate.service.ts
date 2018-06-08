@@ -76,10 +76,14 @@ export class StrategyOperateService extends StrategyService {
                     nzOnOk: () => modal.close(true),
                 })
 
-                return modal.afterClose.do(v => console.log(v)).filter(sure => sure);
+                return modal.afterClose.filter(sure => sure);
             })
             .mapTo({ id: params.id }))
         );
+    }
+
+    launchSaveStrategy(params: Observable<fromReq.SaveStrategyRequest>): Subscription {
+        return this.process.processSaveStrategy(params);
     }
 
     /* =======================================================Date acquisition======================================================= */
@@ -141,6 +145,11 @@ export class StrategyOperateService extends StrategyService {
             .filter(this.isTruth);
     }
 
+    private getSaveStrategyResponse(): Observable<fromRes.SaveStrategyResponse> {
+        return this.store.select(fromRoot.selectSaveStrategyResponse)
+            .filter(this.isTruth);
+    }
+
     /* =======================================================Shortcut methods======================================================= */
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
@@ -172,5 +181,9 @@ export class StrategyOperateService extends StrategyService {
 
     handleDeleteStrategyError(): Subscription {
         return this.error.handleResponseError(this.getDeleteStrategyResponse());
+    }
+
+    handleSaveStrategyError(): Subscription {
+        return this.error.handleResponseError(this.getSaveStrategyResponse());
     }
 }

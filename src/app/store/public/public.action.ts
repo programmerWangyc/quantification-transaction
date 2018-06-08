@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { Referrer } from '../../interfaces/app.interface';
+import { EditorConfig, Referrer } from '../../interfaces/app.interface';
 import { PublicResponse, SettingsResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SettingsRequest } from './../../interfaces/request.interface';
@@ -78,6 +78,15 @@ export class ToggleFooterAction implements Action {
 
     constructor() { }
 }
+
+export const UPDATE_FAVORITE_EDITOR_CONFIG = '[Public] UPDATE_FAVORITE_EDITOR_CONFIG';
+
+export class UpdateFavoriteEditorConfigAction implements Action {
+    readonly type = UPDATE_FAVORITE_EDITOR_CONFIG;
+
+    constructor(public payload: EditorConfig) { }
+}
+
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
@@ -87,6 +96,7 @@ export type Actions = ApiActions
     | SetReferrerAction
     | SetLanguageAction
     | ToggleFooterAction
+    | UpdateFavoriteEditorConfigAction
 
 export const ResponseActions = {
     GetSettingsFailAction,

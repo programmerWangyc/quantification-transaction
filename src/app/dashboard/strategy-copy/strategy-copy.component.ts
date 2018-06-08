@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd';
 
-import { StrategyService } from '../../strategy/providers/strategy.service';
+import { BtNodeService } from '../../providers/bt-node.service';
+import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
 
 
@@ -14,15 +16,17 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
 
     constructor(
         public route: ActivatedRoute,
-        public strategyService: StrategyService,
+        public strategyService: StrategyOperateService,
+        public nodeService: BtNodeService,
+        public nzModal: NzModalService,
     ) {
-        super(route, strategyService);
+        super(route, strategyService, nodeService, nzModal);
     }
 
     ngOnInit() {
         this.initialModel();
 
-        this.launch();
+        this.launch(false);
 
         this.addCurrentPath('COPY');
     }

@@ -18,9 +18,8 @@
             <td>{{robot.profit | number: '1.0-5'}}</td>
             <td>
                 <!--1已公开，0未公开-->
-                <!--FIXME: 开关组件突变了robot的原始数据-->
                 <nz-switch [(ngModel)]="robot.public" (click)="publicRobot$.next(robot)" [nzCheckedChildren]="'DISCLOSED' | translate" [nzUnCheckedChildren]="'UNDISCLOSED' | translate"
-                    [nzLoading]="(isLoading | async) && currentPublicRobot?.id === robot.id">
+                    [nzLoading]="(isLoading | async) && currentPublicRobot?.id === robot.id" [nzControl]="true">
                 </nz-switch>
             </td>
             <td>{{robot.date}}</td>

@@ -1,6 +1,6 @@
 import { LocalStorageKey } from '../../app.config';
 import { PublicResponse, ResponseState, SettingsResponse } from '../../interfaces/response.interface';
-import { Referrer } from './../../interfaces/app.interface';
+import { EditorConfig, Referrer } from './../../interfaces/app.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';
 
@@ -14,32 +14,28 @@ export interface Settings {
     index: {}
 }
 
-export interface State extends PublicResponse {
+export interface State {
     referrer: Referrer;
     settings: Settings;
+    publicRes: PublicResponse;
     settingsResponse: ResponseState;
     settingsRequest: SettingsRequest;
     language: string;
     needFooter: boolean;
+    editorConfig: EditorConfig;
 }
 
+const editor = JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig));
+
 export const initialState: State = {
-    balance: null,
-    cached: null,
-    callbackId: null,
-    consumed: null,
-    error: null,
-    is_admin: null,
-    notify: null,
-    token: null,
-    username: null,
-    version: null,
     referrer: null,
+    publicRes: null,
     settings: null,
     settingsRequest: null,
     settingsResponse: null,
     language: 'zh',
     needFooter: false,
+    editorConfig: editor || null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -47,7 +43,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // public information
         case actions.SET_PUBLIC_INFORMATION:
-            return { ...state, ...action.payload };
+            return { ...state, publicRes: action.payload };
 
         // settings
         case actions.GET_SETTINGS:
@@ -77,6 +73,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.TOGGLE_FOOTER:
             return { ...state, needFooter: !state.needFooter };
 
+        case actions.UPDATE_FAVORITE_EDITOR_CONFIG: {
+            const editorConfig = { ...state.editorConfig, ...action.payload };
+
+            localStorage.setItem(LocalStorageKey.editorConfig, JSON.stringify(editorConfig));
+
+            return { ...state, editorConfig };
+        }
+
         default:
             return state;
     }
@@ -97,17 +101,7 @@ function updateSettings(settings: Settings, key: string, data: any): Settings {
     return result;
 }
 
-export const getBalance = (state: State) => state.balance;
-
-export const getConsumed = (state: State) => state.consumed;
-
-export const getUsername = (state: State) => state.username || localStorage.getItem(LocalStorageKey.username);
-
-export const getToken = (state: State) => state.token || localStorage.getItem(LocalStorageKey.token);
-
-export const getVersion = (state: State) => state.version;
-
-export const getIsAdmin = (state: State) => state.is_admin;
+export const getPublicResponse = (state: State) => state.publicRes;
 
 export const getReferrer = (state: State) => state.referrer;
 
@@ -119,4 +113,4 @@ export const getLanguage = (state: State) => state.language;
 
 export const getFooterState = (state: State) => state.needFooter;
 
-export const getError = (state: State) => state.error;
+export const getEditorConfig = (state: State) => state.editorConfig;

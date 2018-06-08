@@ -5,6 +5,7 @@ import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
+import { StrategyDetailGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
@@ -27,8 +28,8 @@ const routs: Routes = [
             { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
             { path: Path.robot + '/' + Path.debug, component: RobotDebugComponent },
             { path: Path.strategy, component: StrategyComponent },
-            { path: Path.strategy + '/' + Path.copy + '/:id', component: StrategyCopyComponent },
-            { path: Path.strategy + '/' + Path.edit + '/:id', component: StrategyEditComponent },
+            { path: Path.strategy + '/' + Path.copy + '/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
+            { path: Path.strategy + '/' + Path.edit + '/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
             { path: Path.strategy + '/' + Path.backtest + '/:id', component: DocComponent },
             // { path: Path.strategy + '/:id/:name', component: StrategyLibComponent },
             { path: Path.strategy + '/' + Path.verify + '/:id/:codeType', component: StrategyVerifyCodeComponent },

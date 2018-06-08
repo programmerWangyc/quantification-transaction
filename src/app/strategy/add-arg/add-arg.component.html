@@ -1,0 +1,85 @@
+<form nz-form [formGroup]="form" [nzLayout]="'inline'" fxLayoutAlign="space-between center">
+
+    <nz-form-item style="margin-bottom: 0;">
+        <nz-form-label nzRequired> {{ (isAlternation ? 'BUTTON_TYPE' :'VARIABLE') | translate}} </nz-form-label>
+        <nz-form-control>
+            <input formControlName="name" nz-input [placeholder]="(isAlternation ? '' :  'ENGLISH_TIP') | translate">
+            <nz-form-explain *ngIf="name.invalid && (name.dirty || name.touched)">
+                <div *ngIf="!name.errors.required">
+                    <div *ngIf="name.errors.variableNameFormat">{{form.getError('variableNameFormat', 'name') | translate}}</div>
+                    <div *ngIf="name.errors.containSpace">{{form.getError('containSpace', 'name')}}</div>
+                </div>
+            </nz-form-explain>
+        </nz-form-control>
+        <nz-popover [nzTitle]="'VARIABLE_NAME_RULE' | translate">
+            <i class="anticon anticon-question-circle" nz-popover style="color: #1890ff"></i>
+            <ng-template #nzTemplate>
+                <ul>
+                    <li translate="VARIABLE_NAME_RULE_0" [translateParams]="{type: variableType}"></li>
+                    <li translate="VARIABLE_NAME_RULE_1" [translateParams]="{type: variableType}"></li>
+                    <li translate="VARIABLE_NAME_RULE_2" [translateParams]="{type: variableType}"></li>
+                </ul>
+            </ng-template>
+        </nz-popover>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzRequired>{{ 'DESCRIPTION' | translate}}</nz-form-label>
+        <nz-form-control>
+            <input formControlName="des" nz-input [placeholder]="(isAlternation ? '' :  'VARIABLE_DESCRIPTION') | translate">
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>{{ 'COMMENT' | translate}}</nz-form-label>
+        <nz-form-control>
+            <input formControlName="comment" nz-input [placeholder]="(isAlternation ? '' :  'TIP') | translate">
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzRequired>{{ 'TYPE' | translate}}</nz-form-label>
+        <nz-form-control style="min-width: 8.5em;">
+            <nz-select formControlName="type" [(ngModel)]="selectedType" (ngModelChange)="resetDefaultValue()">
+                <nz-option *ngFor="let item of types" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzRequired>{{ 'DEFAULT_VALUE' | translate}}</nz-form-label>
+        <nz-form-control [ngSwitch]="selectedType">
+            <!--0: number type-->
+            <nz-input-number formControlName="defaultValue" nz-input *ngSwitchCase="0" style="min-width: 171px;"></nz-input-number>
+
+            <!--1: boolean type-->
+            <nz-select *ngSwitchCase="1" [ngModel]="defaultValue.value" formControlName="defaultValue" style="min-width: 171px;">
+                <nz-option [nzLabel]="'true' | translate" [nzValue]="1"></nz-option>
+                <nz-option [nzLabel]="'false' | translate" [nzValue]="0"></nz-option>
+            </nz-select>
+
+            <!--3: select type-->
+            <input formControlName="defaultValue" nz-input *ngSwitchDefault>
+        </nz-form-control>
+
+        <nz-popover [nzTitle]="'SELECT_TYPE_DATA_RULE' | translate">
+            <i *ngIf="selectedType === 3" class="anticon anticon-question-circle" nz-popover style="color: #1890ff"></i>
+            <ng-template #nzTemplate>
+                <ul>
+                    <li>{{'SELECT_TYPE_DATA_RULE_1' | translate}}</li>
+                    <li>{{'SELECT_TYPE_DATA_RULE_2' | translate}}</li>
+                    <li>{{'SELECT_TYPE_DATA_RULE_3' | translate}}</li>
+                </ul>
+            </ng-template>
+        </nz-popover>
+    </nz-form-item>
+
+    <nz-form-item fxFlexAlign="end">
+        <nz-form-control>
+            <button nz-button [nzType]="'primary'" (click)="add.next(form.value)" [disabled]="form.invalid">
+                <i class="anticon anticon-plus"></i>
+                {{'ADD' | translate}}
+            </button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

@@ -1,0 +1,113 @@
+<nz-table #nzTable [nzData]="data" [nzShowPagination]="false" nzBordered>
+    <thead>
+        <tr>
+            <th [nzWidth]="'5%'" bt-text-center style="white-space: nowrap;">{{'SEQUENCE_NUMBER' | translate}}</th>
+            <th [nzWidth]="'15%'" bt-text-center>{{(isAlternation ? 'BUTTON_TYPE' : 'VARIABLE') | translate}}</th>
+            <th [nzWidth]="'15%'" bt-text-center>{{'DESCRIPTION' | translate}}</th>
+            <th [nzWidth]="'15%'" bt-text-center>{{'COMMENT' | translate}} </th>
+            <th [nzWidth]="'15%'" bt-text-center>{{'TYPE' | translate}}</th>
+            <th [nzWidth]="'15%'" bt-text-center>{{'DEFAULT_VALUE' | translate}}</th>
+            <th [nzWidth]="'20%'" bt-text-center>{{'OPERATE' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr nz-tbody-tr *ngFor="let item of nzTable.data; index as idx">
+            <td bt-text-center>{{idx + 1}}</td>
+            <ng-container *ngIf="!item.editing; else elseBlock">
+                <td bt-text-center>{{item.name}}</td>
+                <td bt-text-center>{{item.des}}</td>
+                <td bt-text-center>{{item.comment}}</td>
+                <td bt-text-center>{{item.type | variableTypeName | translate}}</td>
+                <td bt-text-center>
+                    <span *ngIf="item.type === 1; else displayOriginBlock">{{item.defaultValue ? 'true' : 'false'}}</span>
+                    <ng-template #displayOriginBlock>{{item.defaultValue}}</ng-template>
+                </td>
+                <td bt-text-center>
+                    <a href="javascript: void 0" (click)="delete(item, idx)">{{'DELETE' | translate}}</a>
+
+                    <nz-divider nzType="vertical"></nz-divider>
+
+                    <a href="javascript: void 0 " (click)="startEdit(item, idx)">{{'EDIT' | translate}}</a>
+                </td>
+            </ng-container>
+
+            <ng-template #elseBlock>
+                <td>
+                    <nz-form-item style="margin: 0;">
+                        <nz-form-control>
+                            <input type="text" nz-input [(ngModel)]="item.name" name="name" #name="ngModel" required variableNameValidate>
+                        </nz-form-control>
+                    </nz-form-item>
+                </td>
+
+                <td>
+                    <nz-form-item style="margin: 0;">
+                        <nz-form-control>
+                            <input type="text" nz-input [(ngModel)]="item.des" name="des" #des="ngModel" required>
+                        </nz-form-control>
+                    </nz-form-item>
+                </td>
+
+                <td>
+                    <nz-form-item style="margin: 0;">
+                        <nz-form-control>
+                            <input type="text" nz-input [(ngModel)]="item.comment" name="comment">
+                        </nz-form-control>
+                    </nz-form-item>
+                </td>
+
+                <td>
+                    <nz-form-item style="margin: 0;">
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="item.type" (ngModelChange)="resetDefaultValue(idx)" name="type">
+                                <nz-option *ngFor="let type of types" [nzLabel]="type.name | translate" [nzValue]="type.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </td>
+
+                <td>
+                    <!--FIXME: 结构性指令加在表单控件时，验证有问题，貌似 ng-zorro 的BUG， 所以这里把需要验证的下拉框单独拿出来了。-->
+                    <nz-form-item *ngIf="item.type === 3" style="margin: 0;">
+                        <nz-form-control>
+                            <!--3: select type-->
+                            <input nz-input [(ngModel)]="item.defaultValue" name="defaultValue" #def="ngModel" required selectTypeValueValidate>
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item *ngIf="item.type !== 3" style="margin: 0;">
+                        <nz-form-control>
+                            <!--0: number type-->
+                            <nz-input-number nz-input *ngIf="item.type === 0" [(ngModel)]="item.defaultValue" name="defaultValue"></nz-input-number>
+
+                            <!--1: boolean type-->
+                            <nz-select *ngIf="item.type === 1" [(ngModel)]="item.defaultValue" name="default">
+                                <nz-option [nzLabel]="'true' | translate" [nzValue]="1"></nz-option>
+                                <nz-option [nzLabel]="'false' | translate" [nzValue]="0"></nz-option>
+                            </nz-select>
+
+                            <input nz-input *ngIf="item.type === 2 || item.type === 4  || item.type === 5" [(ngModel)]="item.defaultValue" name="defaultValue">
+                        </nz-form-control>
+                    </nz-form-item>
+                </td>
+
+                <td bt-text-center>
+                    <a href="javascript: void 0" (click)="delete(item, idx)">{{'DELETE' | translate}}</a>
+
+                    <nz-divider nzType="vertical"></nz-divider>
+
+                    <a href="javascript: void 0 " (click)="cancelEdit(item, idx)">{{'CANCEL' | translate}}</a>
+
+                    <nz-divider nzType="vertical"></nz-divider>
+
+                    <a href="javascript: void 0 " *ngIf="name.valid && des.valid && (item.type !== 3 || item.type === 3 && isSelectValueValid(item.defaultValue)); else forbiddenBlock" (click)="saveEdit(item, idx)">{{'SAVE' | translate}}</a>
+
+                    <ng-template #forbiddenBlock>
+                        <span>{{'SAVE' | translate}}</span>
+                    </ng-template>
+
+                </td>
+            </ng-template>
+        </tr>
+    </tbody>
+</nz-table>

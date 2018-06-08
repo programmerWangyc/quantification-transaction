@@ -13,22 +13,23 @@ import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
 import {
     AppState,
-    selectBalance,
-    selectConsumed,
-    selectError,
+    selectEditorConfig,
     selectFooterState,
-    selectIsAdmin,
     selectLanguage,
+    selectPublicResponse,
     selectReferrer,
     selectSettings,
-    selectToken,
-    selectUsernameFromPublic,
 } from '../store/index.reducer';
 import { Settings, settings } from './../../../request.interface';
-import { Referrer } from './../interfaces/app.interface';
-import { ResponseState } from './../interfaces/response.interface';
+import { EditorConfig, Referrer } from './../interfaces/app.interface';
+import { PublicResponse, ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
-import { SetLanguageAction, SetReferrerAction, ToggleFooterAction } from './../store/public/public.action';
+import {
+    SetLanguageAction,
+    SetReferrerAction,
+    ToggleFooterAction,
+    UpdateFavoriteEditorConfigAction,
+} from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 
@@ -73,8 +74,16 @@ export class PublicService extends BaseService {
     }
 
     // response body information
+    getPublicResponse(): Observable<PublicResponse> {
+        return this.store.select(selectPublicResponse);
+    }
+
+    private getSecurityPublicResponse(): Observable<PublicResponse> {
+        return this.getPublicResponse().filter(this.isTruth);
+    }
+
     getToken(): Observable<string> {
-        return this.store.select(selectToken);
+        return this.getPublicResponse().map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token));
     }
 
     isSubAccount(): Observable<boolean> {
@@ -83,11 +92,11 @@ export class PublicService extends BaseService {
     }
 
     getCurrentUser(): Observable<string> {
-        return this.store.select(selectUsernameFromPublic);
+        return this.getPublicResponse().map(res => res ? res.username : localStorage.getItem(LocalStorageKey.username));
     }
 
     isAdmin(): Observable<boolean> {
-        return this.store.select(selectIsAdmin);
+        return this.getSecurityPublicResponse().map(res => res.is_admin);
     }
 
     isLogin(): Observable<boolean> {
@@ -95,15 +104,15 @@ export class PublicService extends BaseService {
     }
 
     getError(): Observable<string> {
-        return this.store.select(selectError);
+        return this.getPublicResponse().filter(this.isTruth).map(res => res.error)
     }
 
     getBalance(): Observable<number> {
-        return this.store.select(selectBalance);
+        return this.getSecurityPublicResponse().map(res => res.balance);
     }
 
     getConsumed(): Observable<number> {
-        return this.store.select(selectConsumed);
+        return this.getSecurityPublicResponse().map(res => res.consumed);
     }
 
     // ui state
@@ -113,6 +122,13 @@ export class PublicService extends BaseService {
 
     getFooterState(): Observable<boolean> {
         return this.store.select(selectFooterState);
+    }
+
+    // editor config
+    getFavoriteEditorConfig(): Observable<EditorConfig> {
+        return this.store.select(selectEditorConfig)
+            .map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig)))
+            .filter(this.isTruth);
     }
 
     /* =======================================================Config operate======================================================= */
@@ -199,6 +215,9 @@ export class PublicService extends BaseService {
 
     /* =======================================================Local state change======================================================= */
 
+    updateEditorConfig(config: EditorConfig): void {
+        this.store.dispatch(new UpdateFavoriteEditorConfigAction(config));
+    }
 
     /* =======================================================Error Handle======================================================= */
 

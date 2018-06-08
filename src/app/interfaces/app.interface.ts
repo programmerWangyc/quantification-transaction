@@ -85,3 +85,7 @@ export interface ChartUpdateIndicator {
     chartIndex: number;
     feedback: string;
 }
+
+export interface EditorConfig {
+    [key: string]: string | number | boolean;
+}

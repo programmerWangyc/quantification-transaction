@@ -51,7 +51,7 @@ export class RobotDetailComponent extends BaseComponent {
     launch() {
         const id = this.activatedRoute.paramMap.map(param => +param.get('id'));
 
-        const isMainAccount = this.publicService.isSubAccount().filter(sure => !sure);
+        const isMainAccount = this.publicService.isSubAccount().filter(sure => !sure).distinctUntilChanged();
 
         this.subscription$$ = this.robotService.launchRobotDetail(id.map(id => ({ id })))
             .add(this.robotService.monitorServerSendRobotStatus())

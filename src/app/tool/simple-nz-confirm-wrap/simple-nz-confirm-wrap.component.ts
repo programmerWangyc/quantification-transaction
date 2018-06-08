@@ -8,6 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 export class SimpleNzConfirmWrapComponent implements OnInit {
     @Input() content: string;
 
+    @Input() params: Object;
+
     constructor() { }
 
     ngOnInit() {

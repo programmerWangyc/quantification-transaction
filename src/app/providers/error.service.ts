@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { isNumber } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ResponseState, RestartRobotResult } from './../interfaces/response.interface';
 import { TipService } from './tip.service';
-import { isNumber } from 'lodash';
 
 @Injectable()
 export class ErrorService {

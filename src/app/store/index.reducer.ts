@@ -52,19 +52,15 @@ export const reducers: ActionReducerMap<AppState> = {
 
 
 //public information
-export const getPublicInformationState = (state: AppState) => state.pub;
-export const selectUsernameFromPublic = createSelector(getPublicInformationState, pub.getUsername);
-export const selectToken = createSelector(getPublicInformationState, pub.getToken);
-export const selectBalance = createSelector(getPublicInformationState, pub.getBalance);
-export const selectConsumed = createSelector(getPublicInformationState, pub.getConsumed);
-export const selectVersion = createSelector(getPublicInformationState, pub.getVersion);
-export const selectIsAdmin = createSelector(getPublicInformationState, pub.getIsAdmin);
-export const selectReferrer = createSelector(getPublicInformationState, pub.getReferrer);
-export const selectSettings = createSelector(getPublicInformationState, pub.getSettings);
-export const selectSettingsResponse = createSelector(getPublicInformationState, pub.getSettingsResponse);
-export const selectLanguage = createSelector(getPublicInformationState, pub.getLanguage);
-export const selectFooterState = createSelector(getPublicInformationState, pub.getFooterState);
-export const selectError = createSelector(getPublicInformationState, pub.getError);
+export const getPubState = (state: AppState) => state.pub;
+
+export const selectPublicResponse = createSelector(getPubState, pub.getPublicResponse);
+export const selectReferrer = createSelector(getPubState, pub.getReferrer);
+export const selectSettings = createSelector(getPubState, pub.getSettings);
+export const selectSettingsResponse = createSelector(getPubState, pub.getSettingsResponse);
+export const selectLanguage = createSelector(getPubState, pub.getLanguage);
+export const selectFooterState = createSelector(getPubState, pub.getFooterState);
+export const selectEditorConfig = createSelector(getPubState, pub.getEditorConfig);
 
 // router
 const getRouteState = (state: AppState) => state.route;
@@ -217,6 +213,12 @@ export const selectDeleteStrategyResponse = createSelector(getStrategyState, str
 
 // op strategy token
 export const selectOpStrategyTokenResponse = createSelector(getStrategyState, strategy.getOpStrategyTokenRes);
+
+// strategy detail
+export const selectStrategyDetailResponse = createSelector(getStrategyState, strategy.getStrategyDetailRes);
+
+// save strategy
+export const selectSaveStrategyResponse = createSelector(getStrategyState, strategy.getSaveStrategyRes);
 
 /** ===================================================Charge====================================================== */
 

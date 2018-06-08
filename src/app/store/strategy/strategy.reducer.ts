@@ -2,8 +2,10 @@ import {
     CategoryType,
     DeleteStrategyRequest,
     GenKeyRequest,
+    GetStrategyDetailRequest,
     GetStrategyListRequest,
     OpStrategyTokenRequest,
+    SaveStrategyRequest,
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
@@ -11,8 +13,10 @@ import { createScriptArgs } from '../robot/robot.reducer';
 import {
     DeleteStrategyResponse,
     GenKeyResponse,
+    GetStrategyDetailResponse,
     GetStrategyListResponse,
     OpStrategyTokenResponse,
+    SaveStrategyResponse,
     ShareStrategyResponse,
     Strategy,
     VerifyKeyResponse,
@@ -26,6 +30,8 @@ export interface RequestParams {
     verifyKey: VerifyKeyRequest;
     deleteStrategy: DeleteStrategyRequest;
     opStrategyToken: OpStrategyTokenRequest;
+    strategyDetail: GetStrategyDetailRequest;
+    saveStrategy: SaveStrategyRequest;
 }
 
 export interface State {
@@ -36,6 +42,8 @@ export interface State {
     verifyKeyRes: VerifyKeyResponse;
     deleteStrategyRes: DeleteStrategyResponse;
     opStrategyTokenRes: OpStrategyTokenResponse;
+    strategyDetailRes: GetStrategyDetailResponse;
+    saveStrategyRes: SaveStrategyResponse;
 }
 
 const initialState: State = {
@@ -46,6 +54,8 @@ const initialState: State = {
     verifyKeyRes: null,
     deleteStrategyRes: null,
     opStrategyTokenRes: null,
+    strategyDetailRes: null,
+    saveStrategyRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -127,6 +137,21 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_STRATEGY_TOKEN_SUCCESS:
             return { ...state, opStrategyTokenRes: action.payload };
 
+        case actions.GET_STRATEGY_DETAIL:
+            return { ...state, requestParams: { ...state.requestParams, strategyDetail: action.payload } };
+
+        case actions.GET_STRATEGY_DETAIL_FAIL:
+        case actions.GET_STRATEGY_DETAIL_SUCCESS:
+            return { ...state, strategyDetailRes: action.payload };
+
+        // save strategy
+        case actions.SAVE_STRATEGY:
+            return { ...state, requestParams: { ...state.requestParams, saveStrategy: action.payload } };
+
+        case actions.SAVE_STRATEGY_FAIL:
+        case actions.SAVE_STRATEGY_SUCCESS:
+            return { ...state, saveStrategyRes: action.payload };
+
         /**==================================================================Local State change=========================================== **/
 
         // update strategy hasToken
@@ -176,3 +201,7 @@ export const getVerifyKeyRes = (state: State) => state.verifyKeyRes;
 export const getDeleteStrategyRes = (state: State) => state.deleteStrategyRes;
 
 export const getOpStrategyTokenRes = (state: State) => state.opStrategyTokenRes;
+
+export const getStrategyDetailRes = (state: State) => state.strategyDetailRes;
+
+export const getSaveStrategyRes = (state: State) => state.saveStrategyRes;

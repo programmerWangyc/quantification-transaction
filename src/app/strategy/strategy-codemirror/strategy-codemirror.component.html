@@ -1,0 +1,72 @@
+<nz-tabset [(nzSelectedIndex)]="activateTabIndex" [nzType]="'card'" [nzTabBarExtraContent]="!activateTabIndex ?  control : ''">
+    <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
+        <ng-template #titleTemplate>
+            <i class="anticon" [ngClass]="tab.icon"></i>{{ tab.name | translate }}
+        </ng-template>
+        <div [ngSwitch]="idx">
+            <div *ngSwitchCase="0">
+                <ng-content *ngTemplateOutlet="code"></ng-content>
+            </div>
+            <div *ngSwitchCase="1">
+                <ng-content *ngTemplateOutlet="note"></ng-content>
+            </div>
+            <div *ngSwitchCase="2">
+                <ng-content *ngTemplateOutlet="des"></ng-content>
+            </div>
+            <div *ngSwitchCase="3">
+                <ng-content *ngTemplateOutlet="manual"></ng-content>
+            </div>
+            <div *ngSwitchDefault>template not found</div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+
+<ng-template #code>
+    <div class="editor-area">
+        <ngx-codemirror [(ngModel)]="codeContent" [options]="codeOptions"></ngx-codemirror>
+    </div>
+</ng-template>
+
+<ng-template #note>
+    <div class="editor-area">
+        <textarea nz-input rows="30" [(ngModel)]="noteContent" [placeholder]="'NOTE_PLACEHOLDER' | translate"></textarea>
+    </div>
+</ng-template>
+
+<ng-template #des>
+    <div class="editor-area">
+        <textarea nz-input rows="30" [(ngModel)]="desContent" [placeholder]="'DES_PLACEHOLDER' | translate"></textarea>
+    </div>
+</ng-template>
+
+<ng-template #manual>
+    <div class="editor-area">
+        <textarea nz-input rows="30" [(ngModel)]="manualContent" [placeholder]="'MANUAL_PLACEHOLDER' | translate"></textarea>
+    </div>
+</ng-template>
+
+<ng-template #control>
+    <nz-button-group id="control">
+        <button nz-button (click)="save.next({ code: codeContent, note: noteContent, des: desContent, manual: manualContent})">{{'SAVE' | translate}}</button>
+        <button nz-button>{{'SAVE_BACKTEST_CONFIG' | translate}}</button>
+        <button nz-button (click)="export()">{{'DOWNLOAD' | translate}}</button>
+        <nz-input-number [(ngModel)]="fontSize" (ngModelChange)="setFontSize()" [nzMin]="12" [nzMax]="24" [nzStep]="1" [nzFormatter]="formatter"
+            [nzParser]="parser" class="input-number"></nz-input-number>
+        <nz-dropdown class="dropdown">
+            <button nz-button nz-dropdown>
+                {{codeOptions.theme}}
+                <i class="anticon anticon-down"></i>
+            </button>
+            <ul nz-menu style="height: 300px; overflow-y: scroll;">
+                <li nz-menu-item *ngFor="let item of editorThemes" (click)="setTheme(item)">
+                    <a>{{item}}</a>
+                </li>
+            </ul>
+        </nz-dropdown>
+        <button nz-button (click)="formatCode()">{{'CODE_BEAUTY' | translate}}</button>
+        <button nz-button (click)="toggleVimMode()">{{vimBtnText | translate}}</button>
+        <button nz-button (click)="toggleFullScreen()">
+            <i class="anticon" [ngClass]="isFullScreen ? 'anticon-shrink':  'anticon-arrows-alt'"></i>
+        </button>
+    </nz-button-group>
+</ng-template>

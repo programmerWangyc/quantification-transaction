@@ -23,8 +23,35 @@
             (langChange)="language$.next($event)" (nameUpdate)="name$.next($event)"></app-strategy-des>
     </div>
 
+    <div class="section">
+        <app-strategy-codemirror [strategy]="strategy | async" [language]="language$ | async" [category]="category$ | async" (save)="save$.next($event)"
+            (download)="export$.next($event)"></app-strategy-codemirror>
+    </div>
+
+    <div class="section">
+        <h3>{{'STRATEGY_ARGUMENTS' | translate}}</h3>
+
+        <app-add-arg [isAlternation]="false" (add)="args$.next($event)"></app-add-arg>
+
+        <div class="section">
+            <app-arg-list [isAlternation]="false" [param]="args | async" #strategyArgs></app-arg-list>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>{{'STRATEGY_ALTERNATION' | translate}}</h3>
+
+        <app-add-arg [isAlternation]="true" (add)="commandArgs$.next($event)"></app-add-arg>
+
+        <div class="section">
+            <app-arg-list [isAlternation]="false" [param]="commandArgs | async" #strategyCommandArgs></app-arg-list>
+        </div>
+    </div>
+
 </ng-template>
 
 <ng-template #backtest>
     this is backtest
 </ng-template>
+
+<button nz-button [nzType]="'primary'" (click)="save$.next(true)">{{'CREATE_STRATEGY' | translate}}</button>

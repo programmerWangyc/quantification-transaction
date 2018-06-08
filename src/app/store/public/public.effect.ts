@@ -22,7 +22,7 @@ export class PublicEffect extends BaseEffect {
     });
 
     @Effect()
-    referrer$: Observable<any> = this.actions$
+    referrer$: Observable<ResponseAction> = this.actions$
         .ofType(pub.SET_REFERRER)
         .mergeMap((action: pub.SetReferrerAction) => {
             const { refUrl, refUser } = action.payload;

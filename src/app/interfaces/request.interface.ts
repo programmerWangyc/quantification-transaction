@@ -257,6 +257,25 @@ export interface OpStrategyTokenRequest {
     opCode: number; // indicate code operate
 }
 
+// strategy detail
+export interface GetStrategyDetailRequest {
+    id: number;
+}
+
+// save strategy
+export interface SaveStrategyRequest {
+    id: number;
+    categoryId: number;
+    languageId: number;
+    name: string;
+    des: string;
+    args: string; // JSON type string;
+    code: string;
+    note: string;
+    manual: string;
+    dependance: number[]; // templateId[];
+}
+
 /** ===================================================Charge============================================== **/
 
 export interface GetPayOrdersRequest { }
@@ -268,5 +287,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 29
+ * 接口总数： 83， 已完成： 31
  */

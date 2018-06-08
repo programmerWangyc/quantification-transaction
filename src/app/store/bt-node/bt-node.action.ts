@@ -23,9 +23,7 @@ export const GET_NODE_LIST = '[Node] GET_NODE_LIST';
 export class GetNodeListRequestAction extends GetNodeListAction implements Action {
     readonly type = GET_NODE_LIST;
 
-    allowSeparateRequest = false;
-
-    constructor(public payload = {}) { super() }
+    constructor(public payload = {}, public allowSeparateRequest = false) { super() }
 }
 
 export const GET_NODE_LIST_FAIL = '[Node] GET_NODE_LIST_FAIL';

@@ -31,8 +31,8 @@ export class BtNodeService {
 
     /* =======================================================Serve Request======================================================= */
 
-    launchGetNodeList(data: Observable<any>): Subscription {
-        return this.process.processGetNodeList(data);
+    launchGetNodeList(data: Observable<any>, allowSeparateRequest?: boolean): Subscription {
+        return this.process.processGetNodeList(data, allowSeparateRequest);
     }
 
     /* =======================================================Date Acquisition======================================================= */

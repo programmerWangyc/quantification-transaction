@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { DeleteStrategyResponse } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { ResponseAction } from '../base.action';
-import * as btNodeActions from '../bt-node/bt-node.action';
-import * as platformActions from '../platform/platform.action';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as strategyActions from './strategy.action';
@@ -17,10 +14,7 @@ import * as strategyActions from './strategy.action';
 export class StrategyEffect extends BaseEffect {
 
     @Effect()
-    strategyList$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(strategyActions.GET_STRATEGY_LIST).zip(...this.getOtherObs()),
-        { ...strategyActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
-    );
+    strategyList$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_LIST, strategyActions.ResponseActions);
 
     @Effect()
     share$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SHARE_STRATEGY, strategyActions.ResponseActions);
@@ -39,19 +33,18 @@ export class StrategyEffect extends BaseEffect {
     @Effect()
     opToke$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_TOKEN, strategyActions.ResponseActions);
 
+    @Effect()
+    strategyDetail$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_DETAIL, strategyActions.ResponseActions);
+
+    @Effect()
+    saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
         public tip: TipService,
     ) {
         super(ws, actions$);
-    }
-
-    getOtherObs(): Observable<Action>[] {
-        return [
-            this.actions$.ofType(btNodeActions.GET_NODE_LIST),
-            this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
-        ];
     }
 }
 
