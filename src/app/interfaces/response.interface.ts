@@ -483,6 +483,17 @@ export interface StrategyTemplate {
     source: string;
 }
 
+export interface TemplateSnapshot {
+    args: string; // JSON type string;
+    category: number;
+    id: number;
+    language: number;
+    name: string;
+    source: string; // code
+    // custom args
+    semanticArgs?: VariableOverview[];
+}
+
 export interface StrategyDetail {
     args: string;
     category: number;
@@ -500,7 +511,9 @@ export interface StrategyDetail {
     note?: string;
     public: number;
     source?: string;
-    templates?: any[];
+    templates?: TemplateSnapshot[];
+    // custom filed
+    semanticArgs?: VariableOverview[];
 }
 
 export interface StrategyDetailResponse {

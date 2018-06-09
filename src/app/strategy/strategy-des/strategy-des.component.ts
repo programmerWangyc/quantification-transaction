@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { Category, StrategyConstantService, SupportedLanguage } from '../providers/strategy.constant.service';
+import { Strategy } from '../../interfaces/response.interface';
 
 @Component({
     selector: 'app-strategy-des',
@@ -8,15 +9,13 @@ import { Category, StrategyConstantService, SupportedLanguage } from '../provide
     styleUrls: ['./strategy-des.component.scss']
 })
 export class StrategyDesComponent implements OnInit {
-    @Input() set name(value) {
-        this.strategyName = value + '(copy)';
+    @Input() set strategy(value: Strategy) {
+        if (!value) return;
+
+        this._strategy = value;
+
+        this.strategyName = value.name + '(copy)';
     }
-
-    strategyName = '';
-
-    @Input() language = 0;
-
-    @Input() category = 0;
 
     @Output() langChange: EventEmitter<number> = new EventEmitter();
 
@@ -24,16 +23,24 @@ export class StrategyDesComponent implements OnInit {
 
     @Output() nameUpdate: EventEmitter<string> = new EventEmitter();
 
+    strategyName = '';
+
+    language = 0;
+
+    category = 0;
+
     languages: SupportedLanguage[] = [];
 
     categories: Category[] = [];
+
+    private _strategy: Strategy;
 
     constructor(
         private constant: StrategyConstantService,
     ) { }
 
     ngOnInit() {
-        this.categories = this.constant.STRATEGY_CATEGORIES;
+        this.categories = this.constant.STRATEGY_CATEGORIES.slice(0, -1);
 
         this.languages = this.constant.SUPPORTED_LANGUAGE;
     }

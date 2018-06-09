@@ -159,7 +159,11 @@ export class ConstantService {
     }
 
     transformStringToList(value: string): string[] {
-        const target = value.split(this.LIST_PREFIX)[1];
+        let target = value;
+
+        if (value.indexOf(this.LIST_PREFIX) === 0) {
+            target = value.split(this.LIST_PREFIX)[1];
+        }
 
         return target.split('|');
     }
@@ -181,5 +185,9 @@ export class ConstantService {
         }).find(item => !!item);
 
         return condition || [];
+    }
+
+    isCommandArg = (variableName: string): boolean => {
+        return variableName.indexOf(this.COMMAND_PREFIX) === 0;
     }
 }

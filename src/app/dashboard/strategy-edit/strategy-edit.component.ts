@@ -7,7 +7,9 @@ import { Subject } from 'rxjs/Subject';
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
+import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
+import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 
 @Component({
     selector: 'app-strategy-edit',
@@ -20,13 +22,16 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
 
     secretKey: Observable<string>;
 
+    templates: Observable<TemplateRefItem[]>;
+
     constructor(
         public route: ActivatedRoute,
         public strategyService: StrategyOperateService,
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
+        public constant: StrategyConstantService,
     ) {
-        super(route, strategyService, nodeService, nzModal);
+        super(route, strategyService, nodeService, nzModal, constant);
     }
 
     ngOnInit() {
@@ -43,6 +48,8 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
 
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
+
+        this.templates = this.strategyService.getStrategyDependance();
     }
 
     launchPrivate() {

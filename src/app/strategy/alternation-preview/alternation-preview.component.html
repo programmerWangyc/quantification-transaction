@@ -1,0 +1,42 @@
+<nz-table #nzTable [nzData]="data" [nzShowPagination]="false" nzBordered>
+    <thead>
+        <tr>
+            <th bt-text-center style="white-space: nowrap;">{{'SEQUENCE_NUMBER' | translate}}</th>
+            <th bt-text-center>{{'DESCRIPTION' | translate}}</th>
+            <th bt-text-center>{{'ARGUMENTS_CONFIG' | translate}} </th>
+            <th bt-text-center>{{'CLICK_EFFECT' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr nz-tbody-tr *ngFor="let item of nzTable.data; index as idx">
+            <td bt-text-center>{{idx + 1}}</td>
+            <td bt-text-center>{{item.des}}</td>
+            <td bt-text-center>
+                <div [ngSwitch]="item.type">
+
+                    <!--0: number type-->
+                    <nz-input-number nz-input *ngSwitchCase="0" [(ngModel)]="item.defaultValue"></nz-input-number>
+
+                    <!--1: boolean type-->
+                    <span *ngSwitchCase="1" nz-checkbox [(ngModel)]="item.defaultValue">{{'SELECTED_INDICATE_TRUE' | translate}}</span>
+
+                    <!--3: select type-->
+                    <ng-container *ngSwitchCase="3">
+                        <nz-select [(ngModel)]="item.selected">
+                            <nz-option *ngFor="let item of (item.defaultValue | variableToSelectList); index as idx" [nzLabel]="item" [nzValue]="idx"></nz-option>
+                        </nz-select>
+                    </ng-container>
+
+                    <!--5: button type-->
+                    <span *ngSwitchCase="5">{{'NONE_PARAMETERS' | translate}}</span>
+
+                    <!--2: string type-->
+                    <input nz-input *ngSwitchDefault [(ngModel)]="item.defaultValue">
+                </div>
+            </td>
+            <td bt-text-center>
+                <button (click)="preview(item)" nz-button [nzType]="'primary'" nzSize="small">{{item.name}}</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

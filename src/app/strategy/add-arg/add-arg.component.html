@@ -76,7 +76,7 @@
 
     <nz-form-item fxFlexAlign="end">
         <nz-form-control>
-            <button nz-button [nzType]="'primary'" (click)="add.next(form.value)" [disabled]="form.invalid">
+            <button nz-button [nzType]="'primary'" (click)="emit(form.value)" [disabled]="form.invalid">
                 <i class="anticon anticon-plus"></i>
                 {{'ADD' | translate}}
             </button>

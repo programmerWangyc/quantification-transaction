@@ -102,6 +102,8 @@ export const LANGUAGE_INITIAL_VALUE = new Map([
     [Language["C++"], { codeValue: 'void main() {\n    Log(exchange.GetAccount());\n}', templateValue: '// 策略引用该模板以后直接用 ext::Test() 调用此方法\nvoid Test() {\n    Log("template call");\n}', mode: 'text/x-c++src', extensionName: '.cpp' }]
 ]);
 
+export const BUTTON_TYPE_VARIABLE_DEFAULT_VALUE = '__button__';
+
 @Injectable()
 export class StrategyConstantService extends ConstantService {
 
@@ -112,6 +114,8 @@ export class StrategyConstantService extends ConstantService {
     EDITOR_THEMES = EDITOR_THEMES;
 
     LANGUAGE_INITIAL_VALUE = LANGUAGE_INITIAL_VALUE;
+
+    BUTTON_TYPE_VARIABLE_DEFAULT_VALUE = BUTTON_TYPE_VARIABLE_DEFAULT_VALUE;
 
     constructor() {
         super();

@@ -1,0 +1,6 @@
+<ul fxLayout="row wrap">
+    <li *ngFor="let item of data" nz-checkbox [(ngModel)]="item.checked" (ngModelChange)="warn(item)">
+        <span>{{item.name}}</span>
+        <i *ngIf="item.isSnapshot" class="anticon anticon-camera"></i>
+    </li>
+</ul>

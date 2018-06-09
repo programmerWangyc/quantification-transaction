@@ -494,5 +494,17 @@
     "SELECT_TYPE_DATA_RULE": "下拉框数据格式",
     "SELECT_TYPE_DATA_RULE_1": "下拉框的值以'|'分割，并且不能以'|'结尾，例如：apple|banana|orange。",
     "SELECT_TYPE_DATA_RULE_2": "下拉框的值至少应该包含2个选项，即至少应该有1个'|'。",
-    "SELECT_TYPE_DATA_RULE_3": "下拉框中不能有空选项，即不能存在连续的'|'。"
+    "SELECT_TYPE_DATA_RULE_3": "下拉框中不能有空选项，即不能存在连续的'|'。",
+
+    "TEMPLATE_REFERENCE": "模板引用",
+    "RELEASE_SNAPSHOT_TEMPLATE_REFERENCE_WARNING": "{{name}}的引用为快照模式, 取消引用并保存后将从列表中删除, 您将无法恢复引用 !",
+
+    "ALTERNATION_PREVIEW": "交互预览",
+    "ARGUMENTS_CONFIG": "参数配置",
+    "SELECTED_INDICATE_TRUE": "选中为true",
+    "NONE_PARAMETERS": "无参数",
+    "CLICK_EFFECT": "点击效果",
+    "SEND_COMMAND_TO_ROBOT": "实盘时会向机器人发送命令：{{command}}",
+
+    "TEMPLATE_ARGUMENTS": "模板参数"
 }

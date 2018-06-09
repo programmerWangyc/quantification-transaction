@@ -35,6 +35,8 @@ export class StrategyComponent implements BaseComponent {
 
     delete$: Subject<Strategy> = new Subject();
 
+    isLoading: Observable<boolean>;
+
     constructor(
         private strategyService: StrategyService,
         private btNodeService: BtNodeService,
@@ -53,6 +55,8 @@ export class StrategyComponent implements BaseComponent {
 
     initialModel() {
         this.strategyList = this.strategyService.getStrategies();
+
+        this.isLoading = this.strategyService.isLoading();
     }
 
     launch() {

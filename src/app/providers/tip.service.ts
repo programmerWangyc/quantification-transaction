@@ -71,6 +71,10 @@ export class TipService {
         this.translate.get(content).subscribe(content => this.message.error(content, options));
     }
 
+    messageInfo(content: string, params?: Object, option?: NzMessageDataOptions): void {
+        this.translate.get(content, params).subscribe(content => this.message.info(content, option));
+    }
+
     /**
      * @description NzModalService secondary wrap.
      */

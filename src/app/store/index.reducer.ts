@@ -220,6 +220,9 @@ export const selectStrategyDetailResponse = createSelector(getStrategyState, str
 // save strategy
 export const selectSaveStrategyResponse = createSelector(getStrategyState, strategy.getSaveStrategyRes);
 
+// ui state
+export const selectStrategyUIState = createSelector(getStrategyState, strategy.getUIState);
+
 /** ===================================================Charge====================================================== */
 
 const getChargeState = (state: AppState) => state.charge;

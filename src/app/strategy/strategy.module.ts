@@ -17,12 +17,14 @@ import { ShareConfirmComponent } from './share-confirm/share-confirm.component';
 import { StrateOverviewComponent } from './strate-overview/strate-overview.component';
 import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
 import { StrategyCodemirrorComponent } from './strategy-codemirror/strategy-codemirror.component';
+import { StrategyDependanceComponent } from './strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from './strategy-des/strategy-des.component';
 import { StrategyLibComponent } from './strategy-lib/strategy-lib.component';
 import { StrategyListComponent } from './strategy-list/strategy-list.component';
 import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
+import { AlternationPreviewComponent } from './alternation-preview/alternation-preview.component';
 
 @NgModule({
     imports: [
@@ -48,7 +50,8 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         StrategyCodemirrorComponent,
         AddArgComponent,
         ArgListComponent,
-
+        StrategyDependanceComponent,
+        AlternationPreviewComponent,
     ],
     providers: [
         StrategyService,
@@ -74,7 +77,8 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         StrategyCodemirrorComponent,
         AddArgComponent,
         ArgListComponent,
-
+        StrategyDependanceComponent,
+        AlternationPreviewComponent,
     ]
 })
 export class StrategyModule { }

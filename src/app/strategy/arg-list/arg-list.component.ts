@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { omit } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
 
@@ -28,29 +28,17 @@ export class ArgListComponent implements OnInit {
 
     @Input() isAlternation = false;
 
-    @Input() set param(value: StrategyMetaArg) {
+    @Input() set param(value: StrategyMetaArg | StrategyMetaArg[]) {
         if (!value) return;
 
-        const index = this.data.findIndex(item => item.name === value.name || item.des === value.des);
-
-        if (index < 0) {
-            this.data = [...this.data, value];
+        if (Array.isArray(value)) {
+            this.data = value;
         } else {
-            /**
-             * FIXME: Hack, because of the ExpressionChangedAfterIsHasBeenCheckedError.
-             */
-            setTimeout(() => {
-                this.nzModal.confirm({
-                    nzContent: SimpleNzConfirmWrapComponent,
-                    nzComponentParams: { content: 'REMOVE_VARIABLE_CONFIRM' },
-                    nzOnOk: () => {
-                        this.data[index] = value;
-                        this.data = [...this.data];
-                    }
-                });
-            }, 0);
+            this.addArg(value);
         }
     }
+
+    @Output() removeArg: EventEmitter<StrategyMetaArg> = new EventEmitter();
 
     data: EditableStrategyMetaArg[] = [];
 
@@ -121,15 +109,20 @@ export class ArgListComponent implements OnInit {
         }
     }
 
-    private deleteArg = index => {
-        return () => this.data = this.data.filter((_, idx) => idx !== index);
+    private deleteArg = index => () => {
+        this.removeArg.emit(this.data[index]);
+
+        this.data = this.data.filter((_, idx) => idx !== index);
     }
+
 
     resetDefaultValue(index: number): void {
         const target = this.data[index];
 
         if (target.type === VariableType.BOOLEAN_TYPE || target.type === VariableType.NUMBER_TYPE) {
             target.defaultValue = 0;
+        } else if (target.type === VariableType.BUTTON_TYPE) {
+            target.defaultValue = this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE;
         } else {
             target.defaultValue = '';
         }
@@ -143,6 +136,28 @@ export class ArgListComponent implements OnInit {
      */
     isSelectValueValid(str: string): boolean {
         return selectTypeValueFormat.test(str);
+    }
+
+    private addArg(value: StrategyMetaArg) {
+        const index = this.data.findIndex(item => item.name === value.name || item.des === value.des);
+
+        if (index < 0) {
+            this.data = [...this.data, value];
+        } else {
+            /**
+             * FIXME: Hack, because of the ExpressionChangedAfterIsHasBeenCheckedError.
+             */
+            setTimeout(() => {
+                this.nzModal.confirm({
+                    nzContent: SimpleNzConfirmWrapComponent,
+                    nzComponentParams: { content: 'REMOVE_VARIABLE_CONFIRM' },
+                    nzOnOk: () => {
+                        this.data[index] = value;
+                        this.data = [...this.data];
+                    }
+                });
+            }, 0);
+        }
     }
 
 }

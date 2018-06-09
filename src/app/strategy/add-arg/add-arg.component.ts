@@ -60,8 +60,17 @@ export class AddArgComponent implements OnInit {
     resetDefaultValue(): void {
         if (this.selectedType === VariableType.BOOLEAN_TYPE || this.selectedType === VariableType.NUMBER_TYPE) {
             this.form.patchValue({ defaultValue: 0 });
-        } else {
+        } else if (this.selectedType === VariableType.BUTTON_TYPE) {
+            this.form.patchValue({ defaultValue: this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE });
+        }
+        else {
             this.form.patchValue({ defaultValue: '' });
+        }
+
+        if(this.selectedType === VariableType.BUTTON_TYPE) {
+            this.defaultValue.disable();
+        }else {
+            this.defaultValue.enable();
         }
 
         if (this.selectedType === VariableType.SELECT_TYPE) {
@@ -71,6 +80,17 @@ export class AddArgComponent implements OnInit {
         }
 
         this.defaultValue.updateValueAndValidity();
+    }
+
+    emit(param: StrategyMetaArg): void {
+        /**
+         * @description 按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
+         */
+        if (param.type === VariableType.BUTTON_TYPE) {
+            this.add.next({ ...param, defaultValue: this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE });
+        } else {
+            this.add.next(param);
+        }
     }
 
     get name(): AbstractControl {

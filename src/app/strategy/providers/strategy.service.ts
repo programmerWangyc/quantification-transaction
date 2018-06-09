@@ -9,7 +9,7 @@ import {
     RouterStateSnapshot,
 } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { isNumber, sortBy } from 'lodash';
+import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { from } from 'rxjs/observable/from';
@@ -31,6 +31,8 @@ import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
 import { AppState } from '../../store/index.reducer';
+import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
+import { CategoryType } from '../../interfaces/request.interface';
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
     groupNameValue?: any;
@@ -135,6 +137,47 @@ export class StrategyService extends BaseService {
         return this.getStrategyDetailResponse().map(res => res.result.strategy);
     }
 
+    getStrategyDependance(): Observable<TemplateRefItem[]> {
+        return this.getAvailableDependance()
+            .combineLatest(this.getCurrentDependance(), (available, current) => {
+                const intersection = intersectionWith(available, current, (a, c) => a.id === c.id).map(item => item.id);
+
+                const result = uniqBy(available.concat(current), 'id');
+
+                return result.map(item => intersection.indexOf(item.id) === -1 ? item : { ...item, checked: true });
+            })
+    }
+
+    getAvailableDependance(): Observable<TemplateRefItem[]> {
+        return this.getStrategies()
+            .withLatestFrom(
+                this.getStrategyDetail().map(item => item.id),
+                (strategies, id) => strategies.map(({ name, id, category }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT })).filter(item => item.id !== id)
+            );
+    }
+
+    getCurrentDependance(): Observable<TemplateRefItem[]> {
+        return this.getStrategyDetail()
+            .map(detail => detail.templates ? detail.templates.map(tpl => {
+                let { name, id, category } = tpl;
+
+                if (category == CategoryType.TEMPLATE_SNAPSHOT) {
+                    return { name: name.split('-')[1], id, checked: true, isSnapshot: true };
+                } else {
+                    return { name, id, checked: true, isSnapshot: false }
+                }
+            }) : []);
+    }
+
+    isLoading(): Observable<boolean> {
+        return this.store.select(fromRoot.selectStrategyUIState).map(state => state.loading);
+    }
+
+    getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
+        return this.getStrategyDetail()
+            .map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
+    }
+
     /* =======================================================Local state change======================================================= */
 
     resetState(): void {
@@ -175,6 +218,8 @@ export class StrategyService extends BaseService {
             take(1)
         );
     }
+
+    isCommandArg = this.constant.isCommandArg
 
     /* =======================================================Error handler======================================================= */
 

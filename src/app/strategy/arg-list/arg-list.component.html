@@ -86,7 +86,7 @@
                                 <nz-option [nzLabel]="'false' | translate" [nzValue]="0"></nz-option>
                             </nz-select>
 
-                            <input nz-input *ngIf="item.type === 2 || item.type === 4  || item.type === 5" [(ngModel)]="item.defaultValue" name="defaultValue">
+                            <input nz-input *ngIf="item.type === 2 || item.type === 4  || item.type === 5" [(ngModel)]="item.defaultValue" name="defaultValue" [disabled]="item.type === 5">
                         </nz-form-control>
                     </nz-form-item>
                 </td>

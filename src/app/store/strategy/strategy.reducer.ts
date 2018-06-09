@@ -34,6 +34,10 @@ export interface RequestParams {
     saveStrategy: SaveStrategyRequest;
 }
 
+export interface UIState {
+    loading: boolean;
+}
+
 export interface State {
     requestParams: RequestParams;
     strategyListRes: GetStrategyListResponse;
@@ -44,6 +48,7 @@ export interface State {
     opStrategyTokenRes: OpStrategyTokenResponse;
     strategyDetailRes: GetStrategyDetailResponse;
     saveStrategyRes: SaveStrategyResponse;
+    UIState: UIState;
 }
 
 const initialState: State = {
@@ -56,23 +61,24 @@ const initialState: State = {
     opStrategyTokenRes: null,
     strategyDetailRes: null,
     saveStrategyRes: null,
+    UIState: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
         // strategy list
         case actions.GET_STRATEGY_LIST:
-            return { ...state, requestParams: { ...state.requestParams, strategyList: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, strategyList: action.payload }, UIState: { ...state.UIState, loading: true } };
 
         case actions.GET_STRATEGY_LIST_FAIL:
-            return { ...state, strategyListRes: action.payload };
+            return { ...state, strategyListRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
         case actions.GET_STRATEGY_LIST_SUCCESS: {
             const { all, strategies } = action.payload.result;
 
             const result = addCustomFields(strategies);
 
-            return { ...state, strategyListRes: { ...action.payload, result: { ...action.payload.result, strategies: result } } };
+            return { ...state, strategyListRes: { ...action.payload, result: { ...action.payload.result, strategies: result } }, UIState: { ...state.UIState, loading: false } };
         }
 
         // share strategy
@@ -137,12 +143,24 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_STRATEGY_TOKEN_SUCCESS:
             return { ...state, opStrategyTokenRes: action.payload };
 
+        // strategy detail
         case actions.GET_STRATEGY_DETAIL:
-            return { ...state, requestParams: { ...state.requestParams, strategyDetail: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, strategyDetail: action.payload }, UIState: { ...state.UIState, loading: true } };
 
         case actions.GET_STRATEGY_DETAIL_FAIL:
-        case actions.GET_STRATEGY_DETAIL_SUCCESS:
-            return { ...state, strategyDetailRes: action.payload };
+            return { ...state, strategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
+
+        case actions.GET_STRATEGY_DETAIL_SUCCESS: {
+            let { args, templates } = action.payload.result.strategy;
+
+            if (templates) {
+                action.payload.result.strategy.templates = templates.map(tpl => ({ ...tpl, semanticArgs: createScriptArgs(JSON.parse(tpl.args)) }));
+            }
+
+            action.payload.result.strategy.semanticArgs = createScriptArgs(JSON.parse(args));
+
+            return { ...state, strategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
+        }
 
         // save strategy
         case actions.SAVE_STRATEGY:
@@ -205,3 +223,5 @@ export const getOpStrategyTokenRes = (state: State) => state.opStrategyTokenRes;
 export const getStrategyDetailRes = (state: State) => state.strategyDetailRes;
 
 export const getSaveStrategyRes = (state: State) => state.saveStrategyRes;
+
+export const getUIState = (state: State) => state.UIState;
