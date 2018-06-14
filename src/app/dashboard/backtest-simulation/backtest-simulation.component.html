@@ -1,0 +1,37 @@
+<div class="section">
+    <h3>{{'ARGUMENTS_CONFIG' | translate}}</h3>
+
+    <div class="section form-item">
+        <h4>{{'TIME' | translate}}</h4>
+
+        <app-time-options [category]="category" [fixedKlinePeriod]="fixedKlinePeriodId$ | async"></app-time-options>
+    </div>
+
+    <div class="section form-item">
+        <h4>{{'OPTIONS' | translate}}</h4>
+
+        <app-advanced-options></app-advanced-options>
+    </div>
+
+    <div class="section form-item">
+        <h4>{{'PLATFORM' | translate}}</h4>
+
+        <app-exchange-options (fixKlinePeriod)="fixedKlinePeriodId$.next($event)"></app-exchange-options>
+    </div>
+
+    <div class="section form-item" *ngIf="language === 1">
+        <!--1: Python-->
+        <h4>{{'DISPENSE' | translate}}</h4>
+
+        <app-dispense-options></app-dispense-options>
+    </div>
+
+    <div class="section form-item">
+        <h4>{{'ARGUMENTS' | translate}}</h4>
+
+        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async"></app-backtest-strategy-args>
+
+        <!-- <app-strategy-arg *ngFor="let item of templateArgs | async"></app-strategy-arg> -->
+
+    </div>
+</div>

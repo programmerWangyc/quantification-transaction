@@ -27,7 +27,8 @@ export enum LocalStorageKey {
     token = 'missionId',
     refUrl = 'refUrl',
     refUser = 'refUser',
-    editorConfig = 'editorConfig'
+    editorConfig = 'editorConfig',
+    backtestAdvancedOptions = 'backtestAdvancedOptions',
 }
 
 export enum VariableType {

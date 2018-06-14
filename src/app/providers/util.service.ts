@@ -11,27 +11,17 @@ export class UtilService {
 
     constructor() { }
 
-    /**
-     * @deprecated Use translateService.get method instead.
-     */
-    replaceLabelVariable(label: string, obj: { [key: string]: any }): string {
-        const reg = /\{\{([\w\d]+)\}\}/;
-
-        let result = null;
-
-        while ((result = reg.exec(label)) !== null) {
-            const [matchString, key] = result;
-
-            label = label.replace(matchString, obj[key]);
-        }
-
-        return label;
-    }
-
     toArray<T>(value: T): T[] {
         return isArray(value) ? value : [value];
     }
 
+    /**
+     * @param source - Origin data would be grouped.
+     * @param distinctKey - The key used to distinct data.
+     * @param getGroupName - Get grouped group name;
+     * @returns Observable<GroupedList<T>[]> Grouped data.
+     * @description Save incoming data packets.
+     */
     getGroupedList<T>(source: Observable<T[]>, distinctKey: string, getGroupName = arg => String(arg)): Observable<GroupedList<T>[]> {
         return source.mergeMap(list => Observable.from(list).groupBy(item => item[distinctKey])
             .mergeMap(obs => obs.reduce((acc, cur) => [...acc, cur], [obs.key]))

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
+import { BacktestModule } from '../backtest/backtest.module';
 import { ChargeModule } from '../charge/charge.module';
 import { RobotModule } from '../robot/robot.module';
 import { DASHBOARD_EFFECTS } from '../store/index.effect';
@@ -28,6 +29,7 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
+import { BacktestSimulationComponent } from './backtest-simulation/backtest-simulation.component';
 
 @NgModule({
     imports: [
@@ -40,6 +42,7 @@ import { StrategyComponent } from './strategy/strategy.component';
         ChargeModule,
         StrategyModule,
         StoreRouterConnectingModule,
+        BacktestModule,
     ],
     declarations: [
         DashboardComponent,
@@ -58,6 +61,7 @@ import { StrategyComponent } from './strategy/strategy.component';
         StrategyCopyComponent,
         StrategyEditComponent,
         StrategyCreateMetaComponent,
+        BacktestSimulationComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

@@ -1,0 +1,20 @@
+<form nz-form [nzLayout]="'inline'">
+    <nz-form-item>
+        <nz-form-label>{{'BACKTEST_PERIOD' | translate}}</nz-form-label>
+
+        <nz-form-control>
+            <nz-range-picker [(ngModel)]="range" (nzOnOk)="emit()" [nzRenderExtraFooter]="rangeExtraMsg | translate" name="range"
+                [ngModelOptions]="{ standalone: true}" [nzDisabledDate]="disabledDate" [nzShowTime]="{ nzFormat: 'HH:mm' }"></nz-range-picker>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>{{'K_LINE_PERIOD' | translate}}</nz-form-label>
+
+        <nz-form-control>
+            <nz-select [(ngModel)]="selectedPeriodId" (ngModelChange)="updatePeriod()" [nzDisabled]="canSelectPeriod" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
+                <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+</form>

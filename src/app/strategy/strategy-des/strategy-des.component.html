@@ -12,7 +12,7 @@
 </ng-template>
 
 <ng-template #addOnAfterTemplate>
-    <nz-select [(ngModel)]="category" (ngModelChange)="catChange.next(category)">
+    <nz-select [(ngModel)]="category" (ngModelChange)="showCategoryChangeTip(category)">
         <nz-option *ngFor="let cat of categories" [nzLabel]="cat.name | translate" [nzValue]="cat.id"></nz-option>
     </nz-select>
 </ng-template>

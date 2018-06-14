@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { VariableType } from '../app.config';
 import { VariableTypeDes } from '../interfaces/app.interface';
+import { booleanableVariableNameFormat, comparableVariableNameFormat } from '../validators/validators';
 import { ArgOptimizeSetting } from './../interfaces/app.interface';
 
 export const VERSION = 3.5;
@@ -45,27 +46,27 @@ export const K_LINE_PERIOD: KLinePeriod[] = [{
 export const VARIABLE_TYPES: VariableTypeDes[] = [{
     id: VariableType.NUMBER_TYPE,
     name: 'NUMBER_TYPE',
-    inputType: 'number'
+    inputType: 'number' // number
 }, {
     id: VariableType.BOOLEAN_TYPE,
     name: 'BOOLEAN_TYPE',
-    inputType: 'checkbox'
+    inputType: 'checkbox' // boolean
 }, {
     id: VariableType.STRING_TYPE,
     name: 'STRING_TYPE',
-    inputType: 'text'
+    inputType: 'text' // string
 }, {
     id: VariableType.SELECT_TYPE,
     name: 'SELECT_TYPE',
-    inputType: 'selected'
+    inputType: 'selected' // string split with '|'
 }, {
     id: VariableType.ENCRYPT_STRING_TYPE,
     name: 'ENCRYPT_STRING_TYPE',
-    inputType: 'password'
+    inputType: 'password' // string
 }, {
     id: VariableType.BUTTON_TYPE,
     name: 'BUTTON_TYPE',
-    inputType: 'button'
+    inputType: 'button' // constant __button__
 }];
 
 export const LIST_PREFIX = '$$$__list__$$$';
@@ -74,10 +75,7 @@ export const COMMAND_PREFIX = '$$$__cmd__$$$';
 
 export const ENCRYPT_PREFIX = '$$$__enc__$$$';
 
-export const VARIABLE_NAME_REGEXPS: RegExp[] = [
-    /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([a-zA-Z_$][0-9a-zA-Z_$]*)([=!><]=|>|<)([0-9]*)$/,
-    /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([!]*[a-zA-Z_$][0-9a-zA-Z_$]*)$/
-];
+export const VARIABLE_NAME_REGEXPS: RegExp[] = [comparableVariableNameFormat, booleanableVariableNameFormat];
 
 export const COINS = {
     '-1': '',
@@ -142,9 +140,10 @@ export class ConstantService {
 
     PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
+    VALUE_OF_BUTTON_TYPE_ARG = '__button__';
+
     constructor() { }
 
-    //FIXME: unused
     getOptimizeSetting(value: number): ArgOptimizeSetting {
         return value < 1 ? {
             begin: 0.1,
@@ -155,7 +154,6 @@ export class ConstantService {
                 end: Math.max(2, Math.round(value * 1.5)),
                 step: Math.max(1, Math.round(value * 0.1))
             };
-
     }
 
     transformStringToList(value: string): string[] {
@@ -189,5 +187,9 @@ export class ConstantService {
 
     isCommandArg = (variableName: string): boolean => {
         return variableName.indexOf(this.COMMAND_PREFIX) === 0;
+    }
+
+    isButton = (value: any): boolean => {
+        return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
 }

@@ -71,6 +71,7 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
     exports: [
         CreateRobotComponent,
         DeleteRobotComponent,
+        ExchangePairComponent,
         PIPES,
         RobotCommandComponent,
         RobotListComponent,

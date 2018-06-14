@@ -1,4 +1,5 @@
 import { AuthEffect } from './auth/auth.effect';
+import { BacktestEffect } from './backtest/backtest.effect';
 import { BtNodeEffect } from './bt-node/bt-node.effect';
 import { ChargeEffect } from './charge/charge.effect';
 import { PlatformEffect } from './platform/platform.effect';
@@ -19,4 +20,5 @@ export const DASHBOARD_EFFECTS = [
     WatchDogEffect,
     StrategyEffect,
     ChargeEffect,
+    BacktestEffect,
 ]

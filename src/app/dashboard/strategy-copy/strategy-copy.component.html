@@ -69,7 +69,7 @@
 </ng-template>
 
 <ng-template #backtest>
-    this is backtest
+    <app-backtest-simulation [category]="category | async" [language]="language | async"></app-backtest-simulation>
 </ng-template>
 
 <button nz-button [nzType]="'primary'" (click)="save$.next(true)">{{'CREATE_STRATEGY' | translate}}</button>

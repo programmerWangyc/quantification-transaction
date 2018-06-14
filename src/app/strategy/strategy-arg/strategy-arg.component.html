@@ -26,7 +26,7 @@
 
                 <div *ngSwitchDefault> <!--number string encryptString button-->
                     <nz-tooltip [nzTitle]="item.variableComment" [ngClass]="{'alternative': isAlternative}">
-                        <input *ngIf="item.originValue !== '__button__'" [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue"
+                        <input *ngIf="!isButton(item.originValue)" [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue"
                             (ngModelChange)="change.next(item)" [ngModelOptions]="{standalone: true, updateOn: 'blur'}" nz-tooltip
                             nz-input>
                     </nz-tooltip>

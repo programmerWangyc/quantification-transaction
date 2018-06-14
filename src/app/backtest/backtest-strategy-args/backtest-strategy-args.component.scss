@@ -1,0 +1,14 @@
+@import '../_backtest';
+@import '../../../theme/_variable.theme';
+.help {
+    color: #1890ff;
+    margin: 0 0 0 1em;
+}
+
+.arg-title {
+    @include arg-title($weakBlue);
+}
+
+form {
+    border-radius: 0 0 4px 4px;
+}

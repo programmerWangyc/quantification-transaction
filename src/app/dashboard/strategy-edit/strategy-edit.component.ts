@@ -10,6 +10,7 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'app-strategy-edit',
@@ -23,6 +24,8 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     secretKey: Observable<string>;
 
     templates: Observable<TemplateRefItem[]>;
+
+    privateSub$$: Subscription;
 
     constructor(
         public route: ActivatedRoute,
@@ -53,7 +56,7 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     }
 
     launchPrivate() {
-        this.subscription$$.add(this.strategyService.handleOpStrategyTokenError())
+        this.privateSub$$ = this.strategyService.handleOpStrategyTokenError()
             /**
              * @description Besides user active acquisition, it needs to check the strategy whether has token already.
              */
@@ -67,5 +70,7 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.strategyService.resetState();
 
         this.subscription$$.unsubscribe();
+
+        this.privateSub$$.unsubscribe();
     }
 }

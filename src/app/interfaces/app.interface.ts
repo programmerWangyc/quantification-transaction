@@ -49,7 +49,7 @@ export interface TemplateVariableOverview {
 }
 
 export interface SelectedPair {
-    platformId: number;
+    platformId: number | string;
     stock: string;
     platformName: string;
 }

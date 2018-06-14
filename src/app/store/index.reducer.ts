@@ -6,6 +6,7 @@ import * as pwd from './auth/password.reducer';
 import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as verifyPwd from './auth/verify-password.reducer';
+import * as backtest from './backtest/backtest.reducer';
 import * as btNode from './bt-node/bt-node.reducer';
 import * as charge from './charge/charge.reducer';
 import * as exchange from './exchange/exchange.reducer';
@@ -17,6 +18,7 @@ import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
 
 export interface AppState {
+    backtest: backtest.State,
     btNode: btNode.State,
     charge: charge.State,
     exchange: exchange.State,
@@ -34,6 +36,7 @@ export interface AppState {
 }
 
 export const reducers: ActionReducerMap<AppState> = {
+    backtest: backtest.reducer,
     btNode: btNode.reducer,
     charge: charge.reducer,
     exchange: exchange.reducer,
@@ -239,3 +242,9 @@ export const selectPaymentArgRequestParams = createSelector(selectChargeRequestP
 
 // server send payment message
 export const selectServerSendRechargeMessage = createSelector(getChargeState, charge.getServerSendMessage);
+
+/** ===================================================Backtest====================================================== */
+
+const getBacktest = (state: AppState) => state.backtest;
+
+export const selectBacktestUIState = createSelector(getBacktest, backtest.getUIState);

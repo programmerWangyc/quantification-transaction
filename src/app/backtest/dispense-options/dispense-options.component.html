@@ -1,0 +1,11 @@
+<form nz-form [nzLayout]="'inline'">
+    <nz-form-item>
+        <nz-form-label>{{'AGENT' | translate}}</nz-form-label>
+        <nz-form-control>
+            <nz-select [(ngModel)]="selectedNode" (ngModelChange)="nodeChange.next(selectedNode)" name="node" [ngModelOptions]="{standalone: true}">
+                <nz-option *ngFor="let item of (nodes | async); first as isFirst" [nzLabel]=" isFirst ? (item.name | translate) : (item | btNodeName)"
+                    [nzValue]="item.id"></nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+</form>

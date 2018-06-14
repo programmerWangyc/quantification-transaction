@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { omit } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
 
@@ -32,9 +32,9 @@ export class ArgListComponent implements OnInit {
         if (!value) return;
 
         if (Array.isArray(value)) {
-            this.data = value;
+            this.data = value.map(item => this.optimizeArg(item));
         } else {
-            this.addArg(value);
+            this.addArg(this.optimizeArg(value));
         }
     }
 
@@ -157,6 +157,16 @@ export class ArgListComponent implements OnInit {
                     }
                 });
             }, 0);
+        }
+    }
+
+    private optimizeArg(arg: StrategyMetaArg): StrategyMetaArg {
+        if (arg.type === VariableType.SELECT_TYPE) {
+            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.LIST_PREFIX) };
+        } else if (arg.type === VariableType.ENCRYPT_STRING_TYPE) {
+            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.ENCRYPT_PREFIX) };
+        } else {
+            return arg;
         }
     }
 

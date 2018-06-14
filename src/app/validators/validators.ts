@@ -32,9 +32,9 @@ export function passwordMatchValidator(info: FormGroup): ValidatorResult {
     return password.value === confirmPassword.value ? null : { mismatch: 'PASSWORD_MISMATCH_ERROR' };
 }
 
-export const variableNameFormat1 = /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([a-zA-Z_$][0-9a-zA-Z_$]*)([=!><]=|>|<)([0-9]*)$/;
+export const comparableVariableNameFormat = /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([a-zA-Z_$][0-9a-zA-Z_$]*)([=!><]=|>|<)([0-9]*)$/;
 
-export const variableNameFormat2 = /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([!]*[a-zA-Z_$][0-9a-zA-Z_$]*)$/;
+export const booleanableVariableNameFormat = /^([a-zA-Z_$][0-9a-zA-Z_$]*)@([!]*[a-zA-Z_$][0-9a-zA-Z_$]*)$/;
 
 export const variableNameFormat = /^[a-zA-Z]\w{0,50}$/;
 
@@ -47,9 +47,9 @@ export function variableNameValidator(input: AbstractControl): ValidatorResult {
 
     const isNormalName = variableNameFormat.test(value);
 
-    const isLogicName1 = variableNameFormat1.test(value);
+    const isLogicName1 = comparableVariableNameFormat.test(value);
 
-    const isLogicName2 = variableNameFormat2.test(value);
+    const isLogicName2 = booleanableVariableNameFormat.test(value);
 
     if (hasSpace) {
         return { containSpace: 'VARIABLE_NAME_HAS_SPACE_TIP' };

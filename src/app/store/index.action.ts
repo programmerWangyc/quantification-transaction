@@ -3,6 +3,7 @@ import { Actions as pwd, ApiActions as apiPwd } from './auth/password.action';
 import { Actions as reset, ApiActions as apiReset } from './auth/reset.action';
 import { Actions as signup, ApiActions as apiSignup } from './auth/signup.action';
 import { Actions as verifyPassword, ApiActions as apiVerifyPassword } from './auth/verify-password.action';
+import { Actions as backtest, ApiActions as apiBacktest } from './backtest/backtest.action';
 import { Actions as btNode, ApiActions as apiBtNode } from './bt-node/bt-node.action';
 import { Actions as charge, ApiActions as apiCharge } from './charge/charge.action';
 import { Actions as exchange, ApiActions as apiExchange } from './exchange/exchange.action';
@@ -15,7 +16,6 @@ import { Actions as watchDog, ApiActions as apiWatchDog } from './watch-dog/watc
 export const failTail = 'FailAction';
 
 export const successTail = 'SuccessAction';
-
 
 export type Actions = pub
     | login
@@ -30,6 +30,7 @@ export type Actions = pub
     | watchDog
     | strategy
     | charge
+    | backtest
 
 export type ApiActions = apiLogin
     | apiSignup
@@ -44,3 +45,4 @@ export type ApiActions = apiLogin
     | apiWatchDog
     | apiStrategy
     | apiCharge
+    | apiBacktest

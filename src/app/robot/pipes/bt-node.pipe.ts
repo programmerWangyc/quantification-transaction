@@ -13,7 +13,7 @@ export class BtNodeNamePipe implements PipeTransform {
         if (source.public == 1 && !source.is_owner) {
             return `${region} : ${ip} - ${os}`
         } else {
-            return `${id} : ${ip} - ${os}${typeof name === 'string' ? name: ''}`
+            return `${id} : ${ip} - ${os}${typeof name === 'string' ? name: ''}`;
         }
     }
 }

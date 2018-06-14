@@ -1,0 +1,22 @@
+nz-form-label {
+    min-width: 8em;
+}
+
+nz-form-item {
+    margin: 10px 10px 10px 0;
+}
+
+form {
+    padding: 15px 0;
+    background: rgba(220, 245, 245, .2);
+    border-radius: 4px;
+}
+
+@mixin arg-title($bcg) {
+    text-indent: 2em;
+    background-color: $bcg;
+    border-radius: 4px 4px 0 0;
+    color: $gray;
+    margin-bottom: 0;
+    padding: 5px 0;
+}

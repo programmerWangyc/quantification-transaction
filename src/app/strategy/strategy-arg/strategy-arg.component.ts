@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+import { StrategyConstantService } from '../providers/strategy.constant.service';
 import { VariableOverview } from './../../interfaces/app.interface';
 
 @Component({
@@ -21,10 +22,16 @@ export class StrategyArgComponent implements OnInit {
 
     @Input() titleClass = 'title';
 
-    constructor() { }
+    constructor(
+        private constant: StrategyConstantService,
+    ) { }
 
     ngOnInit() {
 
+    }
+
+    isButton(value: any): boolean {
+        return this.constant.isButton(value);
     }
 
 }
