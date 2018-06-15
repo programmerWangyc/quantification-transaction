@@ -1,64 +1,66 @@
 <h5 class="arg-title">{{title}}</h5>
 
-<form nz-form [nzLayout]="'inline'">
-    <div nz-row>
-        <div nz-col *ngFor="let item of data" [nzSpan]="12">
-            <nz-form-item [hidden]="isHide(item)" fxLayoutAlign="row center">
-                <nz-form-label> {{item.variableDes}}</nz-form-label>
-                <nz-form-control>
-                    <ng-container [ngSwitch]="item.variableTypeId">
+<div class="container">
+    <form nz-form [nzLayout]="'inline'">
+        <div nz-row>
+            <div nz-col *ngFor="let item of data" [nzSpan]="12">
+                <nz-form-item [hidden]="isHide(item)" fxLayoutAlign="row center">
+                    <nz-form-label> {{item.variableDes}}</nz-form-label>
+                    <nz-form-control>
+                        <ng-container [ngSwitch]="item.variableTypeId">
 
-                        <ng-container *ngSwitchCase="0">
-                            <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
+                            <ng-container *ngSwitchCase="0">
+                                <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
 
-                            <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)">{{'OPTIMIZE' | translate}}</nz-tag>
+                                <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)">{{'OPTIMIZE' | translate}}</nz-tag>
 
-                            <ng-container *ngIf="item.isOptimizing" #optimizeBlock>
-                                <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto">
-                                    <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
-                                </nz-input-group>
+                                <ng-container *ngIf="item.isOptimizing" #optimizeBlock>
+                                    <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto">
+                                        <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                    </nz-input-group>
 
-                                <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto">
-                                    <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
-                                </nz-input-group>
+                                    <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto">
+                                        <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                    </nz-input-group>
 
-                                <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;">
-                                    <nz-input-number [(ngModel)]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
-                                </nz-input-group>
+                                    <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;">
+                                        <nz-input-number [(ngModel)]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                    </nz-input-group>
+                                </ng-container>
                             </ng-container>
-                        </ng-container>
 
-                        <ng-container *ngSwitchCase="1">
-                            <!--boolean type-->
-                            <label nz-checkbox [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}"></label>
-                        </ng-container>
-
-                        <ng-container *ngSwitchCase="3">
-                            <!--select type-->
-                            <nz-select [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}" [nzPlaceHolder]="'PLEASE_SELECT' | translate">
-                                <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt" [nzValue]="opt"></nz-option>
-                            </nz-select>
-                        </ng-container>
-
-                        <ng-container *ngSwitchDefault>
-                            <!--string encryptString button-->
-                            <ng-container *ngIf="!isButton(item.originValue)">
-                                <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
-                                    nz-input>
+                            <ng-container *ngSwitchCase="1">
+                                <!--boolean type-->
+                                <label nz-checkbox [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}"></label>
                             </ng-container>
-                        </ng-container>
 
-                    </ng-container>
-                </nz-form-control>
-                <i *ngIf="!!item.variableComment" class="anticon anticon-question-circle help" [nz-tooltip]="item.variableComment"></i>
-            </nz-form-item>
+                            <ng-container *ngSwitchCase="3">
+                                <!--select type-->
+                                <nz-select [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}" [nzPlaceHolder]="'PLEASE_SELECT' | translate">
+                                    <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt" [nzValue]="opt"></nz-option>
+                                </nz-select>
+                            </ng-container>
+
+                            <ng-container *ngSwitchDefault>
+                                <!--string encryptString button-->
+                                <ng-container *ngIf="!isButton(item.originValue)">
+                                    <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+                                        nz-input>
+                                </ng-container>
+                            </ng-container>
+
+                        </ng-container>
+                    </nz-form-control>
+                    <i *ngIf="!!item.variableComment && isHelpShow" class="anticon anticon-question-circle help" [nz-tooltip]="item.variableComment"></i>
+                </nz-form-item>
+            </div>
         </div>
-    </div>
-</form>
+        <p *ngIf="!data?.length" bt-text-center>{{'NONE_ARGUMENTS_TIP' | translate}}</p>
+    </form>
 
+    <i class="anticon anticon-eye eye" [ngClass]="{'help-active': isHelpShow}" (click)="isHelpShow = !isHelpShow"></i>
+</div>
 <!--优化过滤器-->
-<div *ngIf="optimizeData.length > 1">
+<div *ngIf="optimizeData.length > 1 && !isTemplate">
     <app-arg-optimizer [data]="optimizeData" (optimize)="addOptimizer($event)"></app-arg-optimizer>
 </div>
-
-<label *ngIf="!data?.length">{{'NONE_ARGUMENTS_TIP' | translate}}</label>

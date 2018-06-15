@@ -8,6 +8,7 @@ import { ProcessService } from '../../providers/process.service';
 import * as Actions from '../../store/backtest/backtest.action';
 import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { BacktestSelectedPair, TimeRange } from '../backtest.interface';
 import { AdvancedOptionConfig } from './backtest.constant.service';
 
 @Injectable()
@@ -30,7 +31,15 @@ export class BacktestService extends BaseService {
     }
 
     getSelectedKlinePeriod(): Observable<number> {
-        return this.getUIState().map(res => res.selectedKlinePeriod);
+        return this.getUIState().map(res => res.timeOptions.klinePeriodId);
+    }
+
+    getSelectedTimeRange(): Observable<TimeRange> {
+        return this.getUIState().map(res => {
+            const { start, end } = res.timeOptions;
+
+            return { start, end }; // may be null;
+        });
     }
 
     getAdvancedOptions(): Observable<AdvancedOption> {
@@ -38,6 +47,10 @@ export class BacktestService extends BaseService {
     }
 
     /* =======================================================Local state change======================================================= */
+
+    updateSelectedTimeRange(range: TimeRange): void {
+        this.store.dispatch(new Actions.UpdateSelectedTimeRangeAction(range));
+    }
 
     updateSelectedKlinePeriod(id: number): void {
         this.store.dispatch(new Actions.UpdateSelectedKlinePeriodAction(id));
@@ -49,6 +62,10 @@ export class BacktestService extends BaseService {
 
     updateFloorKlinePeriod(id: number): void {
         this.store.dispatch(new Actions.UpdateFloorKlinePeriodAction(id));
+    }
+
+    updatePlatformOptions(source: BacktestSelectedPair[]): void {
+        this.store.dispatch(new Actions.UpdateBacktestPlatformOptionAction(source));
     }
 
     /* =======================================================Shortcut methods======================================================= */

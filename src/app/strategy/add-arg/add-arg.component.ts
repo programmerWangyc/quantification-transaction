@@ -13,6 +13,7 @@ export interface StrategyMetaArg {
     comment: string;
     type: number;
     defaultValue: any;
+    _defaultValue?: any;
 }
 
 @Component({

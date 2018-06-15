@@ -1,101 +1,108 @@
-<form nz-form [nzLayout]="'inline'">
-    <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="6">
-            <nz-form-item>
-                <nz-form-label>{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-select [(ngModel)]="selectedPlatform" (ngModelChange)="resetSelectedStock()" name="platform" [ngModelOptions]="{standalone: true}"
-                        class="form-control">
-                        <nz-option-group *ngFor="let platform of platforms" [nzLabel]="platform.groupName | translate">
-                            <nz-option *ngFor="let item of platform.values" [nzLabel]="item.name | translate" [nzValue]="item.eid"></nz-option>
-                        </nz-option-group>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
+<div class="container">
+    <form nz-form [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label>{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-select [(ngModel)]="selectedPlatform" (ngModelChange)="resetSelectedStock()" name="platform" [ngModelOptions]="{standalone: true}"
+                            class="form-control">
+                            <nz-option-group *ngFor="let platform of platforms" [nzLabel]="platform.groupName | translate">
+                                <nz-option *ngFor="let item of platform.values" [nzLabel]="item.name | translate" [nzValue]="item.eid"></nz-option>
+                            </nz-option-group>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label>{{'EXCHANGE_NAME' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-select [(ngModel)]="selectedStock" name="stock" [ngModelOptions]="{standalone: true}" class="form-control">
+                            <nz-option *ngFor="let item of stocks; index as idx" [nzLabel]="item" [nzValue]="idx"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6" [hidden]="selectedPlatform === 'Futures_OKCoin'">
+                <nz-form-item>
+                    <nz-form-label>{{'BALANCE' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="balance" [nzMin]="1" name="balance" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'AVAILABLE_CURRENCY' | translate" style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6" [hidden]="selectedPlatform === 'Futures_CTP'">
+                <nz-form-item>
+                    <nz-form-label>{{'REMAINING_CURRENCY' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="currency" [nzMin]="1" name="currency" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'AVAILABLE_DIGITAL_CURRENCY' | translate"
+                        style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
         </div>
 
-        <div nz-col [nzSpan]="6">
-            <nz-form-item>
-                <nz-form-label>{{'EXCHANGE_NAME' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-select [(ngModel)]="selectedStock" name="stock" [ngModelOptions]="{standalone: true}" class="form-control">
-                        <nz-option *ngFor="let item of stocks; index as idx" [nzLabel]="item" [nzValue]="idx"></nz-option>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label>{{'DRAW_CHART' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <div class="form-control">
+                            <label nz-checkbox class="form-control" [(ngModel)]="isDrawChart" name="drawChart" [ngModelOptions]="{standalone: true}"></label>
+                        </div>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'HIDE_TO_FASTER_BACKTEST' | translate" style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label>Maker</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="makerFee" [nzMin]="0" [nzMax]="1" [nzStep]="0.1" name="maker" [ngModelOptions]="{standalone: true}"
+                            class="form-control"></nz-input-number>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'FEE_TIP' | translate: {action: 'PENDING_ORDER' | translate}"
+                        style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label>Taker</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="takerFee" [nzMin]="0" [nzMax]="1" [nzStep]="0.1" name="taker" [ngModelOptions]="{standalone: true}"
+                            class="form-control"></nz-input-number>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'FEE_TIP' | translate: {action: 'SWALLOW' | translate}"
+                        style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6" [hidden]="selectedPlatform !== 'Futures_CTP'">
+                <nz-form-item>
+                    <nz-form-label>{{'LOWEST' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="minFee" [nzMin]="0" name="minFee" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
+                    </nz-form-control>
+                    <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'MINIMUM_FEE' | translate" style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
         </div>
 
-        <div nz-col [nzSpan]="6" [hidden]="selectedPlatform === 'Futures_OKCoin'">
-            <nz-form-item>
-                <nz-form-label>{{'BALANCE' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="balance" [nzMin]="1" name="balance" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'AVAILABLE_CURRENCY' | translate" style="color: #1890ff"></i>
-            </nz-form-item>
+        <div fxLayout="row wrap" class="exchange-pair">
+            <button nz-button [nzType]="'primary'" (click)="addPair(selectedPlatform, stocks[selectedStock])">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
+
+            <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
         </div>
+    </form>
 
-        <div nz-col [nzSpan]="6" [hidden]="selectedPlatform === 'Futures_CTP'">
-            <nz-form-item>
-                <nz-form-label>{{'REMAINING_CURRENCY' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="currency" [nzMin]="1" name="currency" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'AVAILABLE_DIGITAL_CURRENCY' | translate" style="color: #1890ff"></i>
-            </nz-form-item>
-        </div>
-    </div>
-
-    <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="6">
-            <nz-form-item>
-                <nz-form-label>{{'DRAW_CHART' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <div class="form-control">
-                        <label nz-checkbox class="form-control" [(ngModel)]="isDrawChart" name="drawChart" [ngModelOptions]="{standalone: true}"></label>
-                    </div>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'HIDE_TO_FASTER_BACKTEST' | translate" style="color: #1890ff"></i>
-            </nz-form-item>
-        </div>
-
-        <div nz-col [nzSpan]="6">
-            <nz-form-item>
-                <nz-form-label>Maker</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="makerFee" [nzMin]="0" [nzMax]="1" [nzStep]="0.1" name="maker" [ngModelOptions]="{standalone: true}"
-                        class="form-control"></nz-input-number>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'FEE_TIP' | translate: {action: 'PENDING_ORDER' | translate}" style="color: #1890ff"></i>
-            </nz-form-item>
-        </div>
-
-        <div nz-col [nzSpan]="6">
-            <nz-form-item>
-                <nz-form-label>Taker</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="takerFee" [nzMin]="0" [nzMax]="1" [nzStep]="0.1" name="taker" [ngModelOptions]="{standalone: true}"
-                        class="form-control"></nz-input-number>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'FEE_TIP' | translate: {action: 'SWALLOW' | translate}" style="color: #1890ff"></i>
-            </nz-form-item>
-        </div>
-
-        <div nz-col [nzSpan]="6" [hidden]="selectedPlatform !== 'Futures_CTP'">
-            <nz-form-item>
-                <nz-form-label>{{'LOWEST' | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="minFee" [nzMin]="0" name="minFee" [ngModelOptions]="{standalone: true}" class="form-control"></nz-input-number>
-                </nz-form-control>
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'MINIMUM_FEE' | translate" style="color: #1890ff"></i>
-            </nz-form-item>
-        </div>
-
-    </div>
-
-    <div fxLayout="row wrap" class="exchange-pair">
-        <button nz-button [nzType]="'primary'" (click)="addPair(selectedPlatform, stocks[selectedStock])">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
-
-        <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
-    </div>
-</form>
+    <i class="anticon anticon-eye eye" [ngClass]="{'help-active': isHelpShow}" (click)="isHelpShow = !isHelpShow"></i>
+</div>

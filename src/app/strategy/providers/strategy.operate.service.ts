@@ -39,7 +39,7 @@ export class StrategyOperateService extends StrategyService {
         public translate: TranslateService,
         public constant: StrategyConstantService,
     ) {
-        super(store, error, process, utilService, nzModal, constant);
+        super(store, error, process, utilService, nzModal, constant, translate);
     }
 
     /* =======================================================Serve Request======================================================= */

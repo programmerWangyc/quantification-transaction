@@ -1,50 +1,54 @@
-<form nz-form [nzLayout]="'inline'">
-    <nz-form-item>
-        <nz-form-label>{{'LEVEL' | translate}}</nz-form-label>
-        <nz-form-control>
-            <nz-select [(ngModel)]="selectedMode" name="mode" [ngModelOptions]="{ standalone: true}">
-                <nz-option *ngFor="let item of modes" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
-            </nz-select>
-        </nz-form-control>
+<div class="container">
+    <form nz-form [nzLayout]="'inline'">
+        <nz-form-item>
+            <nz-form-label>{{'LEVEL' | translate}}</nz-form-label>
+            <nz-form-control>
+                <nz-select [(ngModel)]="selectedMode" name="mode" [ngModelOptions]="{ standalone: true}">
+                    <nz-option *ngFor="let item of modes" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
+                </nz-select>
+            </nz-form-control>
 
-        <i class="anticon anticon-question-circle" [nz-tooltip]="'BACKTEST_LEVEL_TIP' | translate" style="color: #1890ff"></i>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label>{{'ADVANCE_OPTIONS' | translate}}</nz-form-label>
-        <nz-form-control>
-            <nz-switch [(ngModel)]="isAdvancedOptionsOpen" [nzSize]="'small'" name="switch" [ngModelOptions]="{ standalone: true}"></nz-switch>
-        </nz-form-control>
-    </nz-form-item>
-</form>
+            <i class="anticon anticon-question-circle" [hidden]="!isHelpShow" [nz-tooltip]="'BACKTEST_LEVEL_TIP' | translate" style="color: #1890ff"></i>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label>{{'ADVANCE_OPTIONS' | translate}}</nz-form-label>
+            <nz-form-control>
+                <nz-switch [(ngModel)]="isAdvancedOptionsOpen" [nzSize]="'small'" name="switch" [ngModelOptions]="{ standalone: true}"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
 
-<form nz-form [hidden]="!isAdvancedOptionsOpen" [nzLayout]="'inline'">
-    <div nz-row>
-        <div nz-col [nzSpan]="6" *ngFor="let item of (advancedOptions | async)">
-            <nz-form-item>
-                <nz-form-label>{{item.name | translate}}</nz-form-label>
-                <nz-form-control>
-                    <nz-input-number [(ngModel)]="item.value" [nzMax]="item.max" [nzMin]="item.min" [nzStep]="item.step" [name]="item.name" [ngModelOptions]="{standalone: true}"
-                        (ngModelChange)="changeOption(item)"></nz-input-number>
-                </nz-form-control>
+    <form nz-form [hidden]="!isAdvancedOptionsOpen" [nzLayout]="'inline'">
+        <div nz-row>
+            <div nz-col [nzSpan]="6" *ngFor="let item of (advancedOptions | async)">
+                <nz-form-item>
+                    <nz-form-label>{{item.name | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [(ngModel)]="item.value" [nzMax]="item.max" [nzMin]="item.min" [nzStep]="item.step" [name]="item.name" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="changeOption(item)"></nz-input-number>
+                    </nz-form-control>
 
-                <i class="anticon anticon-question-circle" [nz-tooltip]="item.tip | translate" style="color: #1890ff"></i>
-            </nz-form-item>
+                    <i class="anticon anticon-question-circle"  [hidden]="!isHelpShow" [nz-tooltip]="item.tip | translate" style="color: #1890ff"></i>
+                </nz-form-item>
+            </div>
+
+            <div nz-col [nzSpan]="6">
+                <!--1: 实盘级-->
+                <nz-form-item [hidden]="selectedMode===1">
+                    <nz-form-label>{{'K_LINE_PERIOD' | translate}}</nz-form-label>
+
+                    <nz-form-control>
+                        <nz-select [(ngModel)]="selectedPeriodId" (ngModelChange)="updatePeriod(selectedPeriodId)" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
+                            <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id" [nzDisabled]="item.id === 1"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+
+                    <i class="anticon anticon-question-circle"  [hidden]="!isHelpShow" [nz-tooltip]="'BACKTEST_FLOOR_KLINE_OPTION_TIP' | translate" style="color: #1890ff"></i>
+                </nz-form-item>
+
+            </div>
         </div>
+    </form>
 
-        <div nz-col [nzSpan]="6">
-            <!--1: 实盘级-->
-            <nz-form-item [hidden]="selectedMode===1">
-                <nz-form-label>{{'K_LINE_PERIOD' | translate}}</nz-form-label>
-
-                <nz-form-control>
-                    <nz-select [(ngModel)]="selectedPeriodId" (ngModelChange)="updatePeriod(selectedPeriodId)" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
-                        <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id" [nzDisabled]="item.id === 1"></nz-option>
-                    </nz-select>
-                </nz-form-control>
-
-                <i class="anticon anticon-question-circle" [nz-tooltip]="'BACKTEST_FLOOR_KLINE_OPTION_TIP' | translate" style="color: #1890ff"></i>
-            </nz-form-item>
-
-        </div>
-    </div>
-</form>
+    <i class="anticon anticon-eye eye" [ngClass]="{'help-active': isHelpShow}" (click)="isHelpShow = !isHelpShow"></i>
+</div>

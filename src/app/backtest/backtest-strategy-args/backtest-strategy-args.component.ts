@@ -19,6 +19,8 @@ export interface OptimizedVariableOverview extends VariableOverview {
 export class BacktestStrategyArgsComponent implements OnInit {
     @Input() title: string;
 
+    @Input() isTemplate: boolean = false;
+
     @Input() set args(args: VariableOverview[]) {
         this.data = args.map(arg => {
             arg.variableTypeId === VariableType.NUMBER_TYPE ? this.optimizeArg(arg) : { ...arg }
@@ -37,6 +39,8 @@ export class BacktestStrategyArgsComponent implements OnInit {
     buttonPrefix: string;
 
     optimizeData: OptimizedVariableOverview[] = [];
+
+    isHelpShow = true;
 
     constructor(
         private constant: BacktestConstantService,
@@ -63,7 +67,14 @@ export class BacktestStrategyArgsComponent implements OnInit {
     comparableEstablishment(arg: VariableOverview): boolean {
         const [name, mainArgName, dependanceArgName, condition, predicateValue] = arg.variableName.match(comparableVariableNameFormat)
 
-        const { variableValue } = this.data.find(arg => arg.variableName.split('@')[0] === dependanceArgName);
+        let { variableValue, originValue } = this.data.find(arg => arg.variableName.split('@')[0] === dependanceArgName);
+
+        // 如果依赖于列表类型的数据时，参与判断的值应该是当前值在列表中的索引，所以需要进行一下转换
+        if (this.constant.isSpecialTypeArg(this.constant.LIST_PREFIX)(String(originValue))) {
+            variableValue = this.constant.withoutPrefix(<string>originValue, this.constant.LIST_PREFIX).split('|').findIndex(item => item === variableValue);
+        } else {
+            // do nothing;
+        }
 
         return eval(variableValue + condition + predicateValue);
     }
@@ -71,7 +82,7 @@ export class BacktestStrategyArgsComponent implements OnInit {
     booleanableEstablishment(arg: VariableOverview): boolean {
         const [name, mainArgName, predicateValue] = arg.variableName.match(booleanableVariableNameFormat)
 
-        const [_, condition, dependanceArgName] = predicateValue.match(/(!+)(.+)/);
+        const [_, condition, dependanceArgName] = predicateValue.match(/(!*)(.+)/);
 
         const { variableValue } = this.data.find(arg => arg.variableName.split('@')[0] === dependanceArgName);
 
@@ -97,7 +108,7 @@ export class BacktestStrategyArgsComponent implements OnInit {
     checkOptimizingData(value: OptimizedVariableOverview): void {
         value.isOptimizing = !value.isOptimizing;
 
-        this.optimizeData = this.data.filter(arg => arg.isOptimizing).map(arg => ({...arg}));
+        this.optimizeData = this.data.filter(arg => arg.isOptimizing).map(arg => ({ ...arg }));
     }
 
     addOptimizer(data: Filter): void {

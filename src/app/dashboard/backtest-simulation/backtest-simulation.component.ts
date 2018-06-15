@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
-import { ConstantService } from '../../providers/constant.service';
+import { VariableOverview } from '../../interfaces/app.interface';
+import { TemplateSnapshot } from '../../interfaces/response.interface';
 import { StrategyService } from '../../strategy/providers/strategy.service';
 
 @Component({
@@ -20,17 +20,18 @@ export class BacktestSimulationComponent implements OnInit {
 
     strategyArgs: Observable<VariableOverview[]>;
 
-    templateArgs: Observable<TemplateVariableOverview[]>;
+    templates: Observable<TemplateSnapshot[]>;
 
     constructor(
         private strategyService: StrategyService,
-        private constant: ConstantService,
     ) { }
 
     ngOnInit() {
         this.strategyArgs = this.strategyService.getExistedStrategyArgs(() => true).startWith([])
-            .map(args => args.filter(arg => !this.constant.isCommandArg(arg.variableName)));
+            .map(args => args.filter(arg => !this.strategyService.isCommandArg(arg.variableName)));
 
-        // this.templateArgs = this.strategyService.getStrategyDetail().map(detail => detail)
+        this.templates = this.strategyService.getStrategyDetail()
+            .filter(detail => !!detail.templates)
+            .map(detail => detail.templates);
     }
 }

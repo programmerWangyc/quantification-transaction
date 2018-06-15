@@ -117,6 +117,10 @@ export class StrategyConstantService extends ConstantService {
 
     BUTTON_TYPE_VARIABLE_DEFAULT_VALUE = BUTTON_TYPE_VARIABLE_DEFAULT_VALUE;
 
+    jsCommentReg = /\/\*backtest\n((.+\n)*)\*\//;
+
+    pyCommentReg = /\'\'\'\*backtest\n((.+\n)*)\'\'\'/;
+
     constructor() {
         super();
     }

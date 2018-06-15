@@ -3,7 +3,9 @@ import { of } from 'rxjs/observable/of';
 
 import { SelectedPair } from '../../interfaces/app.interface';
 import { GroupedList, UtilService } from '../../providers/util.service';
-import { BacktestConstantService, BacktestPlatform } from '../providers/backtest.constant.service';
+import { BacktestPlatform, BacktestSelectedPair } from '../backtest.interface';
+import { BacktestConstantService } from '../providers/backtest.constant.service';
+import { BacktestService } from '../providers/backtest.service';
 
 @Component({
     selector: 'app-exchange-options',
@@ -19,13 +21,18 @@ export class ExchangeOptionsComponent implements OnInit {
 
     selectedPairs: SelectedPair[] = [];
 
+    platformOptions: BacktestSelectedPair[] = [];
+
     isDrawChart = true;
 
     minFee = 5;
 
+    isHelpShow = true;
+
     constructor(
         private constant: BacktestConstantService,
         private util: UtilService,
+        private backtestService: BacktestService,
     ) { }
 
     ngOnInit() {
@@ -41,17 +48,45 @@ export class ExchangeOptionsComponent implements OnInit {
 
         const { name } = this.constant.BACKTEST_PLATFORMS.find(item => item.eid === eid);
 
-        if (!this.selectedPairs.find(item => item.platformId === eid && item.stock === stock)) {
+        const index = this.selectedPairs.findIndex(item => item.platformId === eid && item.stock === stock);
+
+        if (index < 0) {
             this.selectedPairs.push({ platformId: eid, stock, platformName: name });
         } else {
             /**
              * do nothing;
              */
         }
+
+        this.updateSnapshot(eid, stock, name, index);
+    }
+
+    updateSnapshot(eid: string, stock: string, name: string, index: number): void {
+        let platformSnapshot: BacktestSelectedPair = { eid, name, stock, makerFee: this.makerFee, takerFee: this.takerFee, };
+
+        if (this.selectedPlatform === 'Futures_CTP') {
+            platformSnapshot = { ...platformSnapshot, minFee: this.minFee };
+        } else if (this.selectedPlatform === 'Futures_OKCoin') {
+            platformSnapshot = { ...platformSnapshot, remainingCurrency: this.currency };
+        } else {
+            platformSnapshot = { ...platformSnapshot, balance: this.balance, remainingCurrency: this.currency }
+        }
+
+        if (index < 0) {
+            this.platformOptions.push(platformSnapshot);
+        } else {
+            this.platformOptions[index] = platformSnapshot;
+        }
+
+        this.backtestService.updatePlatformOptions(this.platformOptions);
     }
 
     removePair(index: number) {
         this.selectedPairs.splice(index, 1);
+
+        this.platformOptions.splice(index, 1);
+
+        this.backtestService.updatePlatformOptions(this.platformOptions);
     }
 
     private _selectedPlatform = 'OKCoin_EN';
@@ -81,7 +116,7 @@ export class ExchangeOptionsComponent implements OnInit {
     private _balance: number;
 
     get balance() {
-        return this.platform.balance;
+        return this._balance || this.platform.balance;
     }
 
     set balance(value: number) {
@@ -91,7 +126,7 @@ export class ExchangeOptionsComponent implements OnInit {
     private _currency: number;
 
     get currency() {
-        return this.platform.remainingCurrency;
+        return this._currency || this.platform.remainingCurrency;
     }
 
     set currency(value: number) {
@@ -101,20 +136,20 @@ export class ExchangeOptionsComponent implements OnInit {
     private _makerFee: number;
 
     get makerFee() {
-        return this.platform.makerFee;
+        return this._makerFee || this.platform.makerFee;
     }
 
     set makerFee(value: number) {
-        this.makerFee = value;
+        this._makerFee = value;
     }
 
     private _takerFee: number;
 
     get takerFee() {
-        return this.platform.takerFee;
+        return this._takerFee || this.platform.takerFee;
     }
 
     set takerFee(value: number) {
-        this.takerFee = value;
+        this._takerFee = value;
     }
 }

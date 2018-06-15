@@ -3,6 +3,7 @@ import * as moment from 'moment';
 
 import { CategoryType } from '../../interfaces/request.interface';
 import { ConstantService } from '../../providers/constant.service';
+import { BacktestPlatform } from '../backtest.interface';
 
 export interface BacktestPeriodConfig {
     max: string;
@@ -26,18 +27,6 @@ export interface AdvancedOptionConfig {
     step: number;
 }
 
-export interface BacktestPlatform {
-    eid: string;
-    name: string;
-    stocks: string[];
-    quoteCurrency: string;
-    group: string;
-    balance: number;
-    remainingCurrency: number;
-    makerFee: number;
-    takerFee: number;
-}
-
 export interface CompareOperator {
     name: string;
     id: number;
@@ -57,7 +46,6 @@ export const ADVANCED_OPTIONS_CONFIG: AdvancedOptionConfig[] = [
     { name: 'FAULT_TOLERANT', value: NaN, max: 1, min: 0, storageKey: 'faultTolerant', tip: 'BACKTEST_FAULT_TOLERANT_OPTION_TIP', step: 0.1 },
     { name: 'COLUMN_LENGTH', value: NaN, max: 1500, min: 1, storageKey: 'barLen', tip: 'BACKTEST_BAR_LEN_OPTION_TIP', step: 100 },
 ];
-
 
 export const BACKTEST_PLATFORMS: BacktestPlatform[] = [
     { eid: 'OKCoin_EN', name: 'OKCOINEN', stocks: ['BTC', 'LTC', 'ETH', 'ETC', 'BCH'], quoteCurrency: 'USD', balance: 10000, remainingCurrency: 3, makerFee: 0.15, takerFee: 0.2, group: 'DIGITAL_CURRENCY' },

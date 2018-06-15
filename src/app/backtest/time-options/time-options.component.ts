@@ -5,14 +5,9 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { TipService } from '../../providers/tip.service';
+import { TimeRange } from '../backtest.interface';
 import { BacktestConstantService, BacktestPeriodConfig } from '../providers/backtest.constant.service';
 import { BacktestService } from '../providers/backtest.service';
-
-export interface BacktestTimeConfig {
-    start: Date;
-    end: Date;
-    klinePeriodId: number;
-}
 
 export interface DisabledDateFn {
     (target: Date): boolean;
@@ -28,20 +23,22 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
     @Input() set category(value: number) {
         if (!isNumber(value)) return;
 
+        this._category = value;
+
         this.timeConfig = this.constant.getBackTestPeriodTimeConfig(value);
 
         this.disabledDate = this.disabledDateFactory();
 
-        this.initRange();
-    }
+        this.range = [new Date(this.timeConfig.start), new Date(this.timeConfig.end)];
 
-    @Output() change: EventEmitter<BacktestTimeConfig> = new EventEmitter();
+        this.updateTimeRange();
+    }
 
     @Input() set fixedKlinePeriod(id: number) {
         if (isNumber(id)) {
             this.selectedPeriodId = id;
 
-            this.updatePeriod();
+            this.updatePeriod(id);
 
             this.canSelectPeriod = true;
         } else {
@@ -51,9 +48,13 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
+    @Output() timeRangeChange: EventEmitter<TimeRange> = new EventEmitter();
+
+    @Output() klineChange: EventEmitter<number> = new EventEmitter();
+
     canSelectPeriod = false;
 
-    selectedPeriodId = 3; // 15 minutes;
+    selectedPeriodId: number;
 
     range: Date[] = [];
 
@@ -94,13 +95,21 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
     emit() {
         const [start, end] = this.range;
 
-        this.change.emit({ start, end, klinePeriodId: this.selectedPeriodId });
+        this.timeRangeChange.emit({ start, end });
+
+        this.updateTimeRange();
     }
 
-    updatePeriod() {
-        this.emit();
+    updateTimeRange(): void {
+        const [start, end] = this.range;
 
-        this.backtestService.updateSelectedKlinePeriod(this.selectedPeriodId);
+        this.backtestService.updateSelectedTimeRange({ start, end });
+    }
+
+    updatePeriod(id: number): void {
+        this.klineChange.next(id);
+
+        this.backtestService.updateSelectedKlinePeriod(id);
     }
 
     disabledDateFactory(): DisabledDateFn {
@@ -109,12 +118,6 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         return (target: Date) => {
             return !moment(target).isBetween(new Date(min), new Date(max));
         }
-    }
-
-    initRange(): void {
-        const { start, end } = this.timeConfig;
-
-        this.range = [new Date(start), new Date(end)];
     }
 
     ngOnDestroy() {

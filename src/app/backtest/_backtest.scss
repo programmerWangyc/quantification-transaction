@@ -12,6 +12,22 @@ form {
     border-radius: 4px;
 }
 
+.container {
+    position: relative;
+    .eye {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 100;
+        cursor: pointer;
+        font-size: 22px;
+    }
+}
+
+.help-active {
+    color: #1890ff;
+}
+
 @mixin arg-title($bcg) {
     text-indent: 2em;
     background-color: $bcg;

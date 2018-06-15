@@ -115,7 +115,6 @@ export class ArgListComponent implements OnInit {
         this.data = this.data.filter((_, idx) => idx !== index);
     }
 
-
     resetDefaultValue(index: number): void {
         const target = this.data[index];
 
@@ -165,6 +164,8 @@ export class ArgListComponent implements OnInit {
             return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.LIST_PREFIX) };
         } else if (arg.type === VariableType.ENCRYPT_STRING_TYPE) {
             return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.ENCRYPT_PREFIX) };
+        } else if (arg.type === VariableType.BOOLEAN_TYPE) {
+            return { ...arg, set defaultValue(value: any) { this._defaultValue = !!value }, get defaultValue() { return Number(this._defaultValue) }, _defaultValue: arg.defaultValue };
         } else {
             return arg;
         }

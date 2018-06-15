@@ -31,7 +31,6 @@
 
         <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async"></app-backtest-strategy-args>
 
-        <!-- <app-strategy-arg *ngFor="let item of templateArgs | async"></app-strategy-arg> -->
-
+        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true"></app-backtest-strategy-args>
     </div>
 </div>

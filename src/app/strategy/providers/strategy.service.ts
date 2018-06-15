@@ -1,4 +1,4 @@
-
+import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import {
     ActivatedRoute,
@@ -33,6 +33,8 @@ import { StrategyConstantService } from './strategy.constant.service';
 import { AppState } from '../../store/index.reducer';
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { CategoryType } from '../../interfaces/request.interface';
+import { BacktestTimeConfig, BacktestSelectedPair } from '../../backtest/backtest.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
     groupNameValue?: any;
@@ -53,6 +55,7 @@ export class StrategyService extends BaseService {
         public utilService: UtilService,
         public nzModal: NzModalService,
         public constant: StrategyConstantService,
+        public translate: TranslateService,
     ) { super() }
 
     /* =======================================================Serve Request======================================================= */
@@ -178,6 +181,29 @@ export class StrategyService extends BaseService {
             .map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
     }
 
+    getBacktestConfig(): Observable<string> {
+        return this.store.select(fromRoot.selectBacktestUIState)
+            .map(state => {
+                const { timeOptions, platformOptions } = state;
+
+                let { start, end, klinePeriodId } = timeOptions;
+
+                const begin = moment(start).format('YYYY-MM-DD HH:mm:ss');
+
+                const finish = moment(end).format('YYYY-MM-DD HH:mm:ss');
+
+                let period = '';
+
+                this.translate.get(this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).period).subscribe(res => period = res);
+
+                if (!!platformOptions && platformOptions.length > 0) {
+                    return ` start: ${begin},\n end: ${finish},\n period: ${period},\n exchanges: ${JSON.stringify(platformOptions)}`;
+                } else {
+                    return ` start: ${begin},\n end: ${finish},\n period: ${period}`;
+                }
+            });
+    }
+
     /* =======================================================Local state change======================================================= */
 
     resetState(): void {
@@ -219,7 +245,7 @@ export class StrategyService extends BaseService {
         );
     }
 
-    isCommandArg = this.constant.isCommandArg
+    isCommandArg = this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX)
 
     /* =======================================================Error handler======================================================= */
 

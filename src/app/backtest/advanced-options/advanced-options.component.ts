@@ -24,6 +24,8 @@ export class AdvancedOptionsComponent implements OnInit {
 
     selectedPeriodId = 3;
 
+    isHelpShow = true;
+
     // @Output() updateMode: EventEmitter<number> = new EventEmitter();
 
     constructor(

@@ -14,6 +14,8 @@ import {
 } from '@angular/core';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs/observable/of';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CategoryType } from '../../interfaces/request.interface';
@@ -139,6 +141,10 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
     sub$$: Subscription;
 
+    saveBacktest$: Subject<boolean> = new Subject();
+
+    isSaveBacktestConfig = false;
+
     constructor(
         private translate: TranslateService,
         private constant: StrategyConstantService,
@@ -153,6 +159,10 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
         this.editorThemes = this.constant.EDITOR_THEMES;
 
+        this.launch();
+    }
+
+    launch() {
         this.sub$$ = this.publicService.getFavoriteEditorConfig().subscribe(config => {
             const fontSize = <number>config.fontSize;
 
@@ -162,6 +172,9 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
             if (theme && this.codeOptions.theme !== theme) this.codeOptions.theme = theme;
         })
+            .add(this.saveBacktest$.switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null))
+                .subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
+            );
     }
 
     private formatterFactory(label: string): (v: number) => string {
@@ -171,11 +184,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     parser(value: string): number {
         const res = +value.match(/\d+/g);
 
-        if (res) {
-            return res[0];
-        } else {
-            return 0;
-        }
+        return res ? res[0] : 0;
     }
 
     isCodeChanged(): boolean {
@@ -278,9 +287,33 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         this.codeMirror.codeMirror.focus();
     }
 
+    createComment(comment: string): string {
+        if (this._language === Language.Python) {
+            return `'''backtest\n${comment}\n'''`;
+        } else {
+            return `/*backtest\n${comment}\n*/`;
+        }
+    }
+
+    replaceComment(comment: string): string {
+        const reg = this._language === Language.Python ? this.constant.pyCommentReg : this.constant.jsCommentReg;
+
+        const result = this.codeContent.match(reg);
+
+        if (!result) {
+            return this.createComment(comment) + '\n\n' + this.codeContent;
+        } else {
+            return this.codeContent.replace(reg, this.createComment(comment));
+        }
+    }
+
+    toggleSaveBacktestConfig() {
+        this.isSaveBacktestConfig  = !this.isSaveBacktestConfig;
+
+        this.saveBacktest$.next(this.isSaveBacktestConfig);
+    }
+
     ngOnDestroy() {
         this.sub$$.unsubscribe();
     }
 }
-
-

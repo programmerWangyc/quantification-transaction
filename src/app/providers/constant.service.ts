@@ -185,8 +185,8 @@ export class ConstantService {
         return condition || [];
     }
 
-    isCommandArg = (variableName: string): boolean => {
-        return variableName.indexOf(this.COMMAND_PREFIX) === 0;
+    isSpecialTypeArg = (argPrefix: string): (a: string) => boolean => {
+        return (variableName: string) => variableName.indexOf(argPrefix) === 0;
     }
 
     isButton = (value: any): boolean => {
