@@ -1,14 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { BtNodeService } from '../../providers/bt-node.service';
+import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
+import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
-import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
-import { CategoryType } from '../../interfaces/request.interface';
 
 
 @Component({
@@ -16,10 +17,12 @@ import { CategoryType } from '../../interfaces/request.interface';
     templateUrl: './strategy-copy.component.html',
     styleUrls: ['./strategy-copy.component.scss']
 })
-export class StrategyCopyComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy {
+export class StrategyCopyComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
     templates: Observable<TemplateRefItem[]>;
 
     needShowTemplateDependance: Observable<boolean>;
+
+    save$$: Subscription;
 
     constructor(
         public route: ActivatedRoute,
@@ -39,10 +42,13 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         this.addCurrentPath('COPY');
 
         this.initialPrivateModel();
+
+        this.initialPrivateLaunch();
     }
 
     initialPrivateModel() {
-        this.templates = this.strategyService.getCurrentDependance();
+        this.templates = this.strategyService.getCurrentDependance()
+            .combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language));
 
         this.needShowTemplateDependance = this.templates.map(list => !!list.length)
             .combineLatest(
@@ -51,7 +57,31 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
             );
     }
 
+    initialPrivateLaunch() {
+    }
+
+    ngAfterViewInit() {
+        /**
+         * @description 保存操作需要保证子组件渲染完成，参数需要父组件通过viewChild方式从子组件获取。
+         */
+        this.save$$ = this.strategyService.launchSaveStrategy(
+            this.getSaveParams()
+                .map(params => ({ ...params, id: -1 - this.strategyId }))
+                .switchMap(params => {
+                    const modal = this.nzModal.confirm({
+                        nzContent: SimpleNzConfirmWrapComponent,
+                        nzComponentParams: { content: 'STRATEGY_COPY_SAVE_CONFIRM' },
+                        nzOnOk: () => modal.close(true)
+                    });
+
+                    return modal.afterClose.filter(sure => !!sure).mapTo(params);
+                })
+        );
+    }
+
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
+
+        this.save$$.unsubscribe();
     }
 }

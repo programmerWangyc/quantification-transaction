@@ -264,16 +264,16 @@ export interface GetStrategyDetailRequest {
 
 // save strategy
 export interface SaveStrategyRequest {
-    id: number;
-    categoryId: number;
-    languageId: number;
-    name: string;
-    des: string;
     args: string; // JSON type string;
+    categoryId: number;
     code: string;
-    note: string;
-    manual: string;
     dependance: number[]; // templateId[];
+    des: string;
+    id: number;
+    languageId: number;
+    manual: string;
+    name: string;
+    note: string;
 }
 
 /** ===================================================Charge============================================== **/

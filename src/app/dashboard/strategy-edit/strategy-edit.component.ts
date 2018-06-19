@@ -1,23 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
-import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'app-strategy-edit',
     templateUrl: './strategy-edit.component.html',
     styleUrls: ['./strategy-edit.component.scss']
 })
-export class StrategyEditComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy {
+export class StrategyEditComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
     opToken$: Subject<number> = new Subject();
 
@@ -52,7 +52,8 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
 
-        this.templates = this.strategyService.getStrategyDependance();
+        this.templates = this.strategyService.getStrategyDependance()
+            .combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language));
     }
 
     launchPrivate() {
@@ -64,6 +65,10 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
                 .filter(has => has).mapTo(OpStrategyTokenType.GET).merge(this.opToken$).map(opCode => ({ opCode, strategyId: this.strategyId })))
             )
             .add(this.strategyService.updateStrategySecretKeyState(this.strategyId));
+    }
+
+    ngAfterViewInit() {
+        this.privateSub$$.add(this.strategyService.launchSaveStrategy(this.getSaveParams()));
     }
 
     ngOnDestroy() {

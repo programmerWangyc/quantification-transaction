@@ -31,7 +31,7 @@
                     <span *ngSwitchCase="5">{{'NONE_PARAMETERS' | translate}}</span>
 
                     <!--2: string type-->
-                    <input nz-input *ngSwitchDefault [(ngModel)]="item.defaultValue">
+                    <input [type]="item.type | variableType" nz-input *ngSwitchDefault [(ngModel)]="item.defaultValue">
                 </div>
             </td>
             <td bt-text-center>

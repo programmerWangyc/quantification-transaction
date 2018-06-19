@@ -155,19 +155,19 @@ export class StrategyService extends BaseService {
         return this.getStrategies()
             .withLatestFrom(
                 this.getStrategyDetail().map(item => item.id),
-                (strategies, id) => strategies.map(({ name, id, category }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT })).filter(item => item.id !== id)
+                (strategies, id) => strategies.map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language })).filter(item => item.id !== id)
             );
     }
 
     getCurrentDependance(): Observable<TemplateRefItem[]> {
         return this.getStrategyDetail()
             .map(detail => detail.templates ? detail.templates.map(tpl => {
-                let { name, id, category } = tpl;
+                let { name, id, category, language } = tpl;
 
                 if (category == CategoryType.TEMPLATE_SNAPSHOT) {
-                    return { name: name.split('-')[1], id, checked: true, isSnapshot: true };
+                    return { name: name.split('-')[1], id, checked: true, isSnapshot: true, language };
                 } else {
-                    return { name, id, checked: true, isSnapshot: false }
+                    return { name, id, checked: true, isSnapshot: false, language };
                 }
             }) : []);
     }

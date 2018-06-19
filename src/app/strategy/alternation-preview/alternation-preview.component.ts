@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { StrategyMetaArg } from '../add-arg/add-arg.component';
-import { NzMessageService } from 'ng-zorro-antd';
-import { TipService } from '../../providers/tip.service';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { VariableType } from '../../app.config';
+import { TipService } from '../../providers/tip.service';
+import { StrategyMetaArg } from '../add-arg/add-arg.component';
+import { StrategyConstantService } from '../providers/strategy.constant.service';
 
 interface StrategyMetaArgPreview extends StrategyMetaArg {
     selected?: number;
@@ -39,6 +40,7 @@ export class AlternationPreviewComponent implements OnInit {
 
     constructor(
         private tip: TipService,
+        private constant: StrategyConstantService,
     ) { }
 
     ngOnInit() {
@@ -61,6 +63,8 @@ export class AlternationPreviewComponent implements OnInit {
     patchValue(value: StrategyMetaArg): StrategyMetaArgPreview {
         if (value.type === VariableType.SELECT_TYPE) {
             return { ...value, selected: 0 };
+        } else if (value.type === VariableType.ENCRYPT_STRING_TYPE) {
+            return { ...value, defaultValue: this.constant.withoutPrefix(value.defaultValue, this.constant.ENCRYPT_PREFIX) };
         } else {
             return value;
         }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
+import { isString } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
 import { DeleteStrategyResponse } from '../../interfaces/response.interface';
@@ -37,7 +38,18 @@ export class StrategyEffect extends BaseEffect {
     strategyDetail$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_DETAIL, strategyActions.ResponseActions);
 
     @Effect()
-    saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions);
+    saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions)
+        .do((action: strategyActions.SaveStrategyFailAction | strategyActions.SaveStrategySuccessAction) => {
+            const result = action.payload.result;
+
+            if (!result) {
+                this.tip.messageError('STRATEGY_NAME_DUPLICATE_ERROR');
+            } else {
+                const message = isString(result) ? 'SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY' : 'SAVE_SUCCESS';
+
+                this.tip.messageSuccess(message);
+            }
+        });
 
     constructor(
         public actions$: Actions,

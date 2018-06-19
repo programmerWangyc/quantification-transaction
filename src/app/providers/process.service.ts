@@ -159,9 +159,8 @@ export class ProcessService {
     }
 
     processSaveStrategy(params: Observable<Request.SaveStrategyRequest>): Subscription {
-        // return params.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
-
-        return params.subscribe(params => console.log(params));
+        return params.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
+        // return params.subscribe(params => console.log(params));
     }
     /** ===================================================Charge====================================================== */
 

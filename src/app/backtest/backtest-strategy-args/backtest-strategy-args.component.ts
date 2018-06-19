@@ -23,11 +23,13 @@ export class BacktestStrategyArgsComponent implements OnInit {
 
     @Input() set args(args: VariableOverview[]) {
         this.data = args.map(arg => {
-            arg.variableTypeId === VariableType.NUMBER_TYPE ? this.optimizeArg(arg) : { ...arg }
+
             if (arg.variableTypeId === VariableType.NUMBER_TYPE) {
                 return this.optimizeArg(arg);
             } else if (arg.variableTypeId === VariableType.SELECT_TYPE) {
                 return this.setSelectTypeDefaultValue(arg);
+            } else if (arg.variableTypeId === VariableType.ENCRYPT_STRING_TYPE) {
+                return { ...arg, variableValue: this.constant.withoutPrefix(<string>arg.variableValue, this.constant.ENCRYPT_PREFIX) };
             } else {
                 return { ...arg };
             }

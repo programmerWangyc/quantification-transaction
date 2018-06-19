@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { VariableType } from '../../app.config';
 import { VariableTypeDes } from '../../interfaces/app.interface';
 import { CategoryType } from '../../interfaces/request.interface';
 import { ConstantService } from '../../providers/constant.service';
@@ -159,5 +160,13 @@ export class StrategyConstantService extends ConstantService {
         }
 
         return result;
+    }
+
+    addPrefix(value: any, type: number): string {
+        if (type === VariableType.SELECT_TYPE) {
+            return this.LIST_PREFIX + value;
+        } else {
+            return this.ENCRYPT_PREFIX + value;
+        }
     }
 }

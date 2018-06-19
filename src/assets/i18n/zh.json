@@ -567,5 +567,10 @@
     "COMPARE_BASE_VALUE": "基础值",
     "COMPARE_DESCRIPTION": "{{compare}}至少比{{compared}}{{logic}}{{value}}",
     "COMPARE_DESCRIPTION2": "{{compare}}等于{{compared}}",
-    "COMPARE_EQUAL_TO_COMPARED": "比较值和被比较值不能相等"
+    "COMPARE_EQUAL_TO_COMPARED": "比较值和被比较值不能相等",
+    "STRATEGY_NAME_EMPTY_ERROR": "请输入策略名称",
+    "SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY": "保存成功, 为了防止最新源码被覆盖, 同步秘钥已经改变 !",
+    "SAVE_SUCCESS": "保存成功",
+    "STRATEGY_NAME_DUPLICATE_ERROR": "策略重名了, 请更改策略名称!",
+    "STRATEGY_COPY_SAVE_CONFIRM": "实盘运行前请务必检测此策略代码的安全性, 确定要复制并保存吗?"
 }

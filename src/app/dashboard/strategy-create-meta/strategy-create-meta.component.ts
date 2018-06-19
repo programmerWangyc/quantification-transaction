@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as fileSaver from 'file-saver';
 import { isBoolean, negate } from 'lodash';
@@ -6,26 +6,26 @@ import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs/Observable';
 import { from } from 'rxjs/observable/from';
 import { of } from 'rxjs/observable/of';
-import { find, map } from 'rxjs/operators';
+import { find } from 'rxjs/operators';
 import { mergeMap } from 'rxjs/operators/mergeMap';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
-import { StrategyDetail, Strategy } from '../../interfaces/response.interface';
+import { Strategy, StrategyDetail } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyMetaArg } from '../../strategy/add-arg/add-arg.component';
 import { ArgListComponent } from '../../strategy/arg-list/arg-list.component';
+import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import {
     CodeContent,
     FileContent,
     StrategyCodemirrorComponent,
 } from '../../strategy/strategy-codemirror/strategy-codemirror.component';
+import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
-import { Language } from '../../strategy/strategy.config';
-import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 
 export interface Tab {
     name: string;
@@ -38,7 +38,7 @@ export interface Tab {
     templateUrl: './strategy-create-meta.component.html',
     styleUrls: ['./strategy-create-meta.component.scss']
 })
-export class StrategyCreateMetaComponent implements AfterViewInit {
+export class StrategyCreateMetaComponent {
 
     /**
      * @description UI state related.
@@ -83,12 +83,12 @@ export class StrategyCreateMetaComponent implements AfterViewInit {
 
     @ViewChild(StrategyCodemirrorComponent) codeMirror: StrategyCodemirrorComponent;
 
-    save$$: Subscription;
-
     /**
      * @description Used for interact with StrategyDependanceComponent;
      */
     selectedTemplates$: Subject<number[]> = new Subject();
+
+    @ViewChild(StrategyDependanceComponent) dependance: StrategyDependanceComponent;
 
     /**
      * @description Used for interact with AddArgComponent and ArgListComponent
@@ -195,12 +195,23 @@ export class StrategyCreateMetaComponent implements AfterViewInit {
         }
     }
 
-    ngAfterViewInit() {
-        /**
-         * @description 保存操作需要保证子组件渲染完成，因为除了从组件发送上来的保存事件外，用户还可以通过其它地方的按钮来触发保存行为，
-         * 此时就需要主动获取数据。
-         */
-        this.save$$ = this.strategyService.launchSaveStrategy(this.save$.map(content => isBoolean(content) ? { code: this.codeMirror.codeContent, note: this.codeMirror.noteContent, des: this.codeMirror.desContent, manual: this.codeMirror.manualContent } : content).switchMap(code => this.getSaveStrategyParams(code)))
+    getSaveParams(): Observable<SaveStrategyRequest> {
+        return this.save$.map(content => isBoolean(content) ?
+            {
+                code: this.codeMirror.codeContent,
+                note: this.codeMirror.noteContent,
+                des: this.codeMirror.desContent,
+                manual: this.codeMirror.manualContent
+            } : content)
+            .map(content => ({
+                ...content,
+                id: this.strategyId,
+                name: this.StrategyDes.strategyName,
+                categoryId: this.StrategyDes.category,
+                languageId: this.StrategyDes.language,
+                args: this.getArgs(),
+                dependance: this.getDependance()
+            }));
     }
 
     /**
@@ -211,23 +222,6 @@ export class StrategyCreateMetaComponent implements AfterViewInit {
     }
 
     /**
-     * @param code - Content of StrategyCodeMirrorComponent editable area, includes code, note, description and manual.
-     * @description Generate request params when save action arrived.
-     */
-    getSaveStrategyParams(code: CodeContent): Observable<SaveStrategyRequest> {
-        const args = JSON.stringify(this.strategyArgs.data.concat(this.strategyCommandArgs.data));
-
-        return of(this.strategyId).withLatestFrom(
-            ...[
-                this.name$.startWith(''), // empty
-                this.category$.startWith(CategoryType.COMMODITY_FUTURES),
-                this.language$.startWith(Language.JavaScript),
-                this.selectedTemplates$.startWith([])
-            ],
-            (id, name, categoryId, languageId, dependance) => ({ id, name, categoryId, languageId, args, ...code, dependance })
-        );
-    }
-
     /**
      * @method addCurrentPath
      * @description 提供给子类使用，完善当前的路径信息。
@@ -244,10 +238,6 @@ export class StrategyCreateMetaComponent implements AfterViewInit {
         fileSaver.saveAs(content, name || 'strategy' + extensionName);
     }
 
-    private accumulateArg = (acc: StrategyMetaArg[], cur: StrategyMetaArg) => {
-        return [...acc, cur];
-    }
-
     private transformToMetaArg(arg: VariableOverview): StrategyMetaArg {
         return {
             name: arg.variableName,
@@ -255,6 +245,22 @@ export class StrategyCreateMetaComponent implements AfterViewInit {
             type: arg.variableTypeId,
             comment: arg.variableComment,
             defaultValue: arg.originValue
+        }
+    }
+
+    private getArgs(): string {
+        const args = this.strategyArgs.data.map(item => [item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)])
+
+        const commandArgs = this.strategyCommandArgs.data.map(item => [this.constant.COMMAND_PREFIX + item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
+
+        return JSON.stringify([...args, ...commandArgs]);
+    }
+
+    private getDependance(): number[] {
+        if (this.dependance && this.dependance.data) {
+            return this.dependance.data.filter(item => item.checked).map(item => item.id);
+        } else {
+            return [];
         }
     }
 }

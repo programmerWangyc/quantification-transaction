@@ -12,6 +12,7 @@ import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
+import { TipService } from '../../providers/tip.service';
 import { UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
 import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
@@ -38,6 +39,7 @@ export class StrategyOperateService extends StrategyService {
         public nzModal: NzModalService,
         public translate: TranslateService,
         public constant: StrategyConstantService,
+        public tip: TipService,
     ) {
         super(store, error, process, utilService, nzModal, constant, translate);
     }
@@ -83,7 +85,10 @@ export class StrategyOperateService extends StrategyService {
     }
 
     launchSaveStrategy(params: Observable<fromReq.SaveStrategyRequest>): Subscription {
-        return this.process.processSaveStrategy(params);
+        return this.process.processSaveStrategy(
+            params.do(params => params.name === '' && this.tip.messageError('STRATEGY_NAME_EMPTY_ERROR'))
+                .filter(params => !!params.name)
+        );
     }
 
     /* =======================================================Date acquisition======================================================= */
