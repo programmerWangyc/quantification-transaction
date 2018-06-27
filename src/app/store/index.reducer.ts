@@ -64,6 +64,7 @@ export const selectSettingsResponse = createSelector(getPubState, pub.getSetting
 export const selectLanguage = createSelector(getPubState, pub.getLanguage);
 export const selectFooterState = createSelector(getPubState, pub.getFooterState);
 export const selectEditorConfig = createSelector(getPubState, pub.getEditorConfig);
+export const selectServerMsgSubscribeState = createSelector(getPubState, pub.getServerMsgSubscribeState);
 
 // router
 const getRouteState = (state: AppState) => state.route;
@@ -226,6 +227,27 @@ export const selectSaveStrategyResponse = createSelector(getStrategyState, strat
 // ui state
 export const selectStrategyUIState = createSelector(getStrategyState, strategy.getUIState);
 
+/**
+ * @function selectTemplateSnapshots
+ * @description Get templates from strategy reducer, there are two resources, which one from strategy list that queried by category id equals to
+ * template flag and other comes from templates field of strategy detail.
+ */
+export const selectTemplateSnapshots = createSelector(selectStrategyListResponse, selectStrategyDetailResponse, (list, detail) => {
+    if (!list || !detail) return [];
+
+    const currentTemplates = detail.result.strategy.templates || [];
+
+    const currentIds = currentTemplates.map(item => item.id);
+
+    const availableTemplates = list.result.strategies.map(strategy => {
+        const { id, name, category, args, language, semanticArgs } = strategy;
+
+        return { id, name, category, args, language, semanticArgs, source: '' };
+    }).filter(strategy => currentIds.indexOf(strategy.id) === -1);
+
+    return [...availableTemplates, ...currentTemplates];
+})
+
 /** ===================================================Charge====================================================== */
 
 const getChargeState = (state: AppState) => state.charge;
@@ -247,4 +269,25 @@ export const selectServerSendRechargeMessage = createSelector(getChargeState, ch
 
 const getBacktest = (state: AppState) => state.backtest;
 
+// ui state
 export const selectBacktestUIState = createSelector(getBacktest, backtest.getUIState);
+
+// get templates
+export const selectGetTemplatesResponse = createSelector(getBacktest, backtest.getTemplatesRes);
+export const selectTemplatesResponses = createSelector(getBacktest, backtest.getTemplates);
+
+/**
+ * @function selectBacktestTemplates
+ * @description 把模板拿到后，检查是否获取过模板的源码，将获取过的源码添加到模板上以避免重复获取。
+ */
+export const selectBacktestTemplates = createSelector(selectTemplateSnapshots, selectTemplatesResponses, (snapshots, sources) => snapshots.map(snapshot => {
+    const target = sources.find(item => item.id === snapshot.id);
+
+    return target ? { ...snapshot, source: target.source } : snapshot;
+}));
+
+// request params
+export const selectBacktestRequestParams = createSelector(getBacktest, backtest.getBacktestReqParams);
+
+// backtest io
+export const selectBacktestIOResponse = createSelector(getBacktest, backtest.getBacktestRes);

@@ -5,6 +5,7 @@ import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { Category, StrategyConstantService, SupportedLanguage } from '../providers/strategy.constant.service';
+import { StrategyService } from '../providers/strategy.service';
 
 @Component({
     selector: 'app-strategy-des',
@@ -22,6 +23,8 @@ export class StrategyDesComponent implements OnInit {
         this.language = value.language;
 
         this.category = value.category;
+
+        this.strategyService.updateSelectedLanguage(this.language);
     }
 
     @Output() langChange: EventEmitter<number> = new EventEmitter();
@@ -45,6 +48,7 @@ export class StrategyDesComponent implements OnInit {
     constructor(
         private constant: StrategyConstantService,
         private nzModal: NzModalService,
+        private strategyService: StrategyService,
     ) { }
 
     ngOnInit() {
@@ -64,5 +68,11 @@ export class StrategyDesComponent implements OnInit {
         } else {
             this.catChange.next(category);
         }
+    }
+
+    onLanguageChange(language: number): void {
+        this.langChange.next(language);
+
+        this.strategyService.updateSelectedLanguage(language);
     }
 }

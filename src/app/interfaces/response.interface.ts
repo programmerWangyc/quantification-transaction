@@ -10,7 +10,7 @@ export interface ResponseState {
 }
 
 export interface ResponseBody extends PublicResponse {
-    result: ResponseUnit<ResponseItem>[] | ServerSendRobotMessage;
+    result: ResponseUnit<ResponseItem>[] | ServerSendRobotMessage | ServerSendBacktestMessage;
 }
 
 export interface ResponseUnit<T> extends ResponseState {
@@ -64,6 +64,21 @@ export interface ServerSendRobotMessage {
 
 export interface ServerSendPaymentMessage {
     orderId?: string; // TODO: ensure field
+}
+
+export interface ServerSendBacktestStatus {
+    Status: string;
+	Profit: number;
+	TaskStatus: number;
+	LogsCount: number;
+	Progress: number;
+	Elapsed: number;
+}
+
+export interface ServerSendBacktestMessage {
+    output: string;
+    status: string; // JSON type string. parse result: ServerSendBacktestStatus;
+    uuid: string;
 }
 
 /* =======================================================Auth response========================================================= */
@@ -524,6 +539,24 @@ export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailRe
 
 // save strategy
 export interface SaveStrategyResponse extends ResponseUnit<string | boolean> { }
+
+/** ===================================================Backtest============================================== **/
+
+// get templates
+export interface TemplatesResponse {
+    id: number;
+    source: string;
+}
+
+export interface GetTemplatesResponse extends ResponseUnit<TemplatesResponse[]> { }
+
+// backtestIO
+export interface ServerBacktestResult {
+    Code: number;
+    Result: string; // uuid;
+}
+
+export interface BacktestIOResponse extends ResponseUnit<string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
 
 /** ===================================================Charge============================================== **/
 

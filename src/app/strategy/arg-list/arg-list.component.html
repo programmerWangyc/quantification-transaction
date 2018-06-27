@@ -19,8 +19,7 @@
                 <td bt-text-center>{{item.comment}}</td>
                 <td bt-text-center>{{item.type | variableTypeName | translate}}</td>
                 <td bt-text-center>
-                    <span *ngIf="item.type === 1; else displayOriginBlock">{{item.defaultValue ? 'true' : 'false'}}</span>
-                    <ng-template #displayOriginBlock>{{item.defaultValue}}</ng-template>
+                    <span>{{item | variableValue}}</span>
                 </td>
                 <td bt-text-center>
                     <a href="javascript: void 0" (click)="delete(item, idx)">{{'DELETE' | translate}}</a>
@@ -86,7 +85,8 @@
                                 <nz-option [nzLabel]="'false' | translate" [nzValue]="0"></nz-option>
                             </nz-select>
 
-                            <input nz-input *ngIf="item.type === 2 || item.type === 4  || item.type === 5" [(ngModel)]="item.defaultValue" name="defaultValue" [disabled]="item.type === 5">
+                            <input nz-input [type]="item.type === 4 ? 'password' : 'text'" *ngIf="item.type === 2 || item.type === 4  || item.type === 5"
+                                [(ngModel)]="item.defaultValue" name="defaultValue" [disabled]="item.type === 5">
                         </nz-form-control>
                     </nz-form-item>
                 </td>
@@ -100,7 +100,8 @@
 
                     <nz-divider nzType="vertical"></nz-divider>
 
-                    <a href="javascript: void 0 " *ngIf="name.valid && des.valid && (item.type !== 3 || item.type === 3 && isSelectValueValid(item.defaultValue)); else forbiddenBlock" (click)="saveEdit(item, idx)">{{'SAVE' | translate}}</a>
+                    <a href="javascript: void 0 " *ngIf="name.valid && des.valid && (item.type !== 3 || item.type === 3 && isSelectValueValid(item.defaultValue)); else forbiddenBlock"
+                        (click)="saveEdit(item, idx)">{{'SAVE' | translate}}</a>
 
                     <ng-template #forbiddenBlock>
                         <span>{{'SAVE' | translate}}</span>

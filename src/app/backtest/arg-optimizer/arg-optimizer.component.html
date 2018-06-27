@@ -64,7 +64,8 @@
             <td bt-text-center>{{item.logic.name | translate}}</td>
             <td bt-text-center>{{item.comparedVariable.variableDes}}</td>
             <td bt-text-center>
-                <span *ngIf="selectedOperator?.id !== 2">{{item.baseValue}}</span>
+                <!--2: equal-->
+                <span *ngIf="item.logic.id !== 2">{{item.baseValue}}</span>
             </td>
             <td bt-text-center>
                 <a href="javascript: void 0" (click)="deleteFilter(idx)">{{'DELETE' | translate}}</a>

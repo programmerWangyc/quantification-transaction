@@ -84,7 +84,7 @@ export class ArgListComponent implements OnInit {
     }
 
     saveEdit(target: EditableStrategyMetaArg, index: number): void {
-        const positions = [];
+        const positions: number[] = [];
 
         this.data.forEach((item, idx) => item.flag !== target.flag && (item.name === target.name || item.des === target.des) && positions.push(idx));
 
@@ -95,7 +95,7 @@ export class ArgListComponent implements OnInit {
                 nzContent: SimpleNzConfirmWrapComponent,
                 nzComponentParams: { content: 'REMOVE_DUPLICATE_VARIABLE_CONFIRM', params: { index: positions.map(idx => idx + 1).join(',') } },
                 nzOnOk: () => {
-                    this.data = this.data.filter((_, index) => positions.indexOf(index) === -1);
+                    this.data = this.data.filter((_, index) => !positions.includes(index));
 
                     target.editing = false;
 
@@ -121,7 +121,7 @@ export class ArgListComponent implements OnInit {
         if (target.type === VariableType.BOOLEAN_TYPE || target.type === VariableType.NUMBER_TYPE) {
             target.defaultValue = 0;
         } else if (target.type === VariableType.BUTTON_TYPE) {
-            target.defaultValue = this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE;
+            target.defaultValue = this.constant.VALUE_OF_BUTTON_TYPE_ARG;
         } else {
             target.defaultValue = '';
         }

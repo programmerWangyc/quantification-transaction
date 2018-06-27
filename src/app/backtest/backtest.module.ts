@@ -11,6 +11,7 @@ import { BacktestStrategyArgsComponent } from './backtest-strategy-args/backtest
 import { DispenseOptionsComponent } from './dispense-options/dispense-options.component';
 import { ExchangeOptionsComponent } from './exchange-options/exchange-options.component';
 import { PIPES } from './pipes/index.pipe';
+import { BacktestComputingService } from './providers/backtest.computing.service';
 import { BacktestConstantService } from './providers/backtest.constant.service';
 import { BacktestService } from './providers/backtest.service';
 import { TimeOptionsComponent } from './time-options/time-options.component';
@@ -22,6 +23,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         ToolModule,
         RobotModule,
         StrategyModule,
+        // WorkerAppModule,
     ],
     declarations: [
         TimeOptionsComponent,
@@ -36,6 +38,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
     providers: [
         BacktestService,
         BacktestConstantService,
+        BacktestComputingService,
     ],
 
     exports: [

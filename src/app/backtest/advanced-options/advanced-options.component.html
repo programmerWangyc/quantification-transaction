@@ -3,7 +3,7 @@
         <nz-form-item>
             <nz-form-label>{{'LEVEL' | translate}}</nz-form-label>
             <nz-form-control>
-                <nz-select [(ngModel)]="selectedMode" name="mode" [ngModelOptions]="{ standalone: true}">
+                <nz-select [(ngModel)]="selectedMode" name="mode" (ngModelChange)="updateMode(selectedMode)" [ngModelOptions]="{ standalone: true}">
                     <nz-option *ngFor="let item of modes" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
                 </nz-select>
             </nz-form-control>
@@ -38,7 +38,7 @@
                     <nz-form-label>{{'K_LINE_PERIOD' | translate}}</nz-form-label>
 
                     <nz-form-control>
-                        <nz-select [(ngModel)]="selectedPeriodId" (ngModelChange)="updatePeriod(selectedPeriodId)" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
+                        <nz-select [(ngModel)]="selectedPeriodId" (ngModelChange)="updatePeriod(selectedPeriodId)" [nzDisabled]="disablePeriod" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
                             <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id" [nzDisabled]="item.id === 1"></nz-option>
                         </nz-select>
                     </nz-form-control>

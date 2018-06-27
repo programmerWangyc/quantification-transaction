@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 
-import { CategoryType } from '../../interfaces/request.interface';
+import { BacktestConstantOptions, CategoryType, BacktestPutTaskParams, BacktestPutTaskDescription, BacktestDescription } from '../../interfaces/request.interface';
 import { ConstantService } from '../../providers/constant.service';
-import { BacktestPlatform } from '../backtest.interface';
+import { ArgOptimizeSetting, BacktestPlatform } from '../backtest.interface';
 
 export interface BacktestPeriodConfig {
     max: string;
@@ -22,7 +22,7 @@ export interface AdvancedOptionConfig {
     value: number;
     max: number;
     min: number;
-    storageKey: string; // corresponding to the key of AdvancedOption interface that defined in backtest.constant.service.ts;
+    storageKey: string; // corresponding to the key of AdvancedOption interface that defined in backtest.reducer.ts;
     tip: string;
     step: number;
 }
@@ -30,7 +30,14 @@ export interface AdvancedOptionConfig {
 export interface CompareOperator {
     name: string;
     id: number;
+    operator: string;
 }
+
+export interface BacktestConstantConfig extends BacktestConstantOptions {
+    eid: string;
+}
+
+/** =====================================================Constant======================================================== **/
 
 export const BACKTEST_MODES: BacktestMode[] = [
     { id: 0, name: 'SIMULATION_LEVEL_TICK' },
@@ -56,6 +63,15 @@ export const BACKTEST_PLATFORMS: BacktestPlatform[] = [
     { eid: 'Futures_CTP', name: 'FUTURES_CTP', stocks: ['FUTURES'], quoteCurrency: 'CNY', balance: 1000000, remainingCurrency: 0, makerFee: 0.025, takerFee: 0.025, group: 'FUTURES_SECURITY' },
 ];
 
+export const BACKTEST_PLATFORMS_CONFIG: BacktestConstantConfig[] = [
+    { eid: 'OKCoin_EN', DataSource: '', SymDots: 3, BasePrecision: 3, CurDots: 3, QuotePrecision: 3, Depth: 11, DepthDeep: 11, PriceTick: 0.01, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'Bitfinex', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 4, QuotePrecision: 4, Depth: 11, DepthDeep: 11, PriceTick: 0.001, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'OKEX', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'Huobi', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'Futures_OKCoin', DataSource: 'this_week', SymDots: 0, BasePrecision: 0, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'Futures_CTP', DataSource: 'CTP', SymDots: 0, BasePrecision: 0, CurDots: 3, QuotePrecision: 3, Depth: 2, DepthDeep: 2, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
+];
+
 export enum CompareLogic {
     MORE_THAN,
     LESS_THAN,
@@ -63,10 +79,14 @@ export enum CompareLogic {
 }
 
 export const COMPARE_OPERATORS: CompareOperator[] = [
-    { name: 'MORE_THAN', id: CompareLogic.MORE_THAN },
-    { name: 'LESS_THAN', id: CompareLogic.LESS_THAN },
-    { name: 'EQUAL', id: CompareLogic.EQUAL },
+    { name: 'MORE_THAN', id: CompareLogic.MORE_THAN, operator: '>=' },
+    { name: 'LESS_THAN', id: CompareLogic.LESS_THAN, operator: '<=' },
+    { name: 'EQUAL', id: CompareLogic.EQUAL, operator: '===' },
 ];
+
+export const MAIN_CODE_FLAG = 'main';
+
+export const BACK_END_LANGUAGES: string[] = ['node', 'python | python2.7 | python3 | py', 'g++'];
 
 @Injectable()
 export class BacktestConstantService extends ConstantService {
@@ -81,10 +101,46 @@ export class BacktestConstantService extends ConstantService {
 
     BACKTEST_PLATFORMS = BACKTEST_PLATFORMS;
 
+    BACKTEST_PLATFORMS_CONFIG = BACKTEST_PLATFORMS_CONFIG;
+
     COMPARE_OPERATORS = COMPARE_OPERATORS;
+
+    MAIN_CODE_FLAG = MAIN_CODE_FLAG;
+
+    BT_STATUS = 1 << 0;
+
+    BT_SYMBOLS = 1 << 1;
+
+    BT_INDICATORS = 1 << 2;
+
+    BT_CHART = 1 << 3;
+
+    BT_PROFIT_LOGS = 1 << 4;
+
+    BT_RUNTIME_LOGS = 1 << 5;
+
+    BT_CLOSE_PROFIT_LOGS = 1 << 6;
+
+    BT_ACCOUNTS = 1 << 7;
+
+    BT_ACCOUNTS_PNL = 1 << 8;
+
+    BACK_END_LANGUAGES = BACK_END_LANGUAGES;
 
     constructor() {
         super();
+    }
+
+    getOptimizeSetting(value: number): ArgOptimizeSetting {
+        return value < 1 ? {
+            begin: 0.1,
+            end: 1.0,
+            step: 0.1
+        } : {
+                begin: Math.max(1, Math.round(value * 0.5)),
+                end: Math.max(2, Math.round(value * 1.5)),
+                step: Math.max(1, Math.round(value * 0.1))
+            };
     }
 
     getBackTestPeriodTimeConfig(category: number): BacktestPeriodConfig {
@@ -109,4 +165,7 @@ export class BacktestConstantService extends ConstantService {
         }
     }
 
+    getRetFlags(): number {
+        return this.BT_STATUS | this.BT_CHART | this.BT_PROFIT_LOGS | this.BT_RUNTIME_LOGS | this.BT_CLOSE_PROFIT_LOGS | this.BT_ACCOUNTS | this.BT_ACCOUNTS_PNL;
+    }
 }

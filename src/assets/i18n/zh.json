@@ -572,5 +572,16 @@
     "SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY": "保存成功, 为了防止最新源码被覆盖, 同步秘钥已经改变 !",
     "SAVE_SUCCESS": "保存成功",
     "STRATEGY_NAME_DUPLICATE_ERROR": "策略重名了, 请更改策略名称!",
-    "STRATEGY_COPY_SAVE_CONFIRM": "实盘运行前请务必检测此策略代码的安全性, 确定要复制并保存吗?"
+    "STRATEGY_COPY_SAVE_CONFIRM": "实盘运行前请务必检测此策略代码的安全性, 确定要复制并保存吗?",
+
+    "START_BACKTEST": "开始回测",
+    "START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE": "回测完成接收日志",
+    "BACKTEST_SYSTEM_LOADING": "正在加载回测系统···",
+    "WAIT_FOR_COMPILING": "正在编译，请耐心等待···",
+
+    "BACKTEST_FAULT_TOLERANT_DESCRIPTION": "容错模式下一些函数会随机失败, 模拟实盘环境",
+    "FAULT_TOLERANT_MODE": "容错模式",
+    "BACKTEST_SERVER_OFFLINE": "回测服务器不在线, 请重新选择执行回测任务的托管者, 然后刷新页面!",
+    "BACKTEST_STRATEGY_EXPIRED": "该策略已到期, 不能进行回测, 请及时续费!",
+    "BACKTEST_SYSTEM_BUSY": "回测系统正忙, 请稍后重试!"
 }

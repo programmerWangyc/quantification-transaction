@@ -1,4 +1,4 @@
-<h5 class="arg-title">{{title}}</h5>
+<h5 class="arg-title">{{title | removeMD5}}</h5>
 
 <div class="container">
     <form nz-form [nzLayout]="'inline'">
@@ -10,33 +10,38 @@
                         <ng-container [ngSwitch]="item.variableTypeId">
 
                             <ng-container *ngSwitchCase="0">
-                                <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
+                                <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
+                                    [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
 
                                 <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)">{{'OPTIMIZE' | translate}}</nz-tag>
 
                                 <ng-container *ngIf="item.isOptimizing" #optimizeBlock>
                                     <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto">
-                                        <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
+                                            [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
                                     <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto">
-                                        <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
+                                            [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
                                     <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;">
-                                        <nz-input-number [(ngModel)]="item.optimize.step" [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
+                                            style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
                                 </ng-container>
                             </ng-container>
 
                             <ng-container *ngSwitchCase="1">
                                 <!--boolean type-->
-                                <label nz-checkbox [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}"></label>
+                                <label nz-checkbox [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"></label>
                             </ng-container>
 
                             <ng-container *ngSwitchCase="3">
                                 <!--select type-->
-                                <nz-select [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true}" [nzPlaceHolder]="'PLEASE_SELECT' | translate">
+                                <nz-select [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
+                                    [nzPlaceHolder]="'PLEASE_SELECT' | translate">
                                     <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt" [nzValue]="opt"></nz-option>
                                 </nz-select>
                             </ng-container>
@@ -44,8 +49,8 @@
                             <ng-container *ngSwitchDefault>
                                 <!--string encryptString button-->
                                 <ng-container *ngIf="!isButton(item.originValue)">
-                                    <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
-                                        nz-input>
+                                    <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
+                                        [ngModelOptions]="{standalone: true, updateOn: 'blur'}" nz-input>
                                 </ng-container>
                             </ng-container>
 
@@ -62,5 +67,5 @@
 </div>
 <!--优化过滤器-->
 <div *ngIf="optimizeData.length > 1 && !isTemplate">
-    <app-arg-optimizer [data]="optimizeData" (optimize)="addOptimizer($event)"></app-arg-optimizer>
+    <app-arg-optimizer [data]="optimizeData" (optimize)="updateFilters($event)"></app-arg-optimizer>
 </div>

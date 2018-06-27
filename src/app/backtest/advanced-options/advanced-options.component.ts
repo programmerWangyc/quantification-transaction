@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { isNumber } from 'lodash';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { AdvancedOptionConfig, BacktestConstantService, BacktestMode } from '../providers/backtest.constant.service';
@@ -10,7 +12,18 @@ import { BacktestService } from '../providers/backtest.service';
     templateUrl: './advanced-options.component.html',
     styleUrls: ['./advanced-options.component.scss']
 })
-export class AdvancedOptionsComponent implements OnInit {
+export class AdvancedOptionsComponent implements OnInit, OnDestroy {
+    @Input() set fixedKlinePeriod(value: number) {
+        if (isNumber(value)) {
+            this.selectedPeriodId = value;
+
+            this.disablePeriod = true;
+
+            this.updatePeriod(value);
+        } else {
+            this.disablePeriod = false;
+        }
+    }
 
     modes: BacktestMode[];
 
@@ -22,11 +35,13 @@ export class AdvancedOptionsComponent implements OnInit {
 
     periods: KLinePeriod[];
 
+    disablePeriod = false;
+
     selectedPeriodId = 3;
 
     isHelpShow = true;
 
-    // @Output() updateMode: EventEmitter<number> = new EventEmitter();
+    subscription: Subscription;
 
     constructor(
         private constant: BacktestConstantService,
@@ -41,6 +56,10 @@ export class AdvancedOptionsComponent implements OnInit {
         this.periods = this.constant.K_LINE_PERIOD;
 
         this.initialModel();
+
+        this.subscription = this.backtestService.getUIState()
+            .map(state => state.backtestLevel)
+            .subscribe(level => this.selectedMode = level);
     }
 
     initialModel() {
@@ -57,8 +76,8 @@ export class AdvancedOptionsComponent implements OnInit {
         });
     }
 
-    changeMode(): void {
-        // this.updateMode.next(this.selectedMode);
+    updateMode(mode: number): void {
+        this.backtestService.updateBacktestLevel(mode);
     }
 
     changeOption(target: AdvancedOptionConfig): void {
@@ -69,4 +88,7 @@ export class AdvancedOptionsComponent implements OnInit {
         this.backtestService.updateFloorKlinePeriod(id);
     }
 
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 }

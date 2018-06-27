@@ -25,7 +25,7 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { GroupedList, UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
-import { ResetStateAction, UpdateStrategySecretKeyStateAction } from '../../store/strategy/strategy.action';
+import { ResetStateAction, UpdateStrategySecretKeyStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction } from '../../store/strategy/strategy.action';
 import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
@@ -147,7 +147,7 @@ export class StrategyService extends BaseService {
 
                 const result = uniqBy(available.concat(current), 'id');
 
-                return result.map(item => intersection.indexOf(item.id) === -1 ? item : { ...item, checked: true });
+                return result.map(item => intersection.includes(item.id) ? { ...item, checked: true } : item);
             })
     }
 
@@ -208,6 +208,14 @@ export class StrategyService extends BaseService {
 
     resetState(): void {
         this.store.dispatch(new ResetStateAction());
+    }
+
+    updateSelectedTemplates(ids: Observable<number[]>): Subscription {
+        return ids.subscribe(ids => this.store.dispatch(new UpdateStrategyDependanceTemplatesAction(ids)));
+    }
+
+    updateSelectedLanguage(language: number): void {
+        this.store.dispatch(new UpdateStrategyLanguageAction(language));
     }
 
     /* =======================================================Shortcut methods======================================================= */

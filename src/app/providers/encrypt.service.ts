@@ -69,7 +69,7 @@ export class EncryptService {
     private transformArgs(data: VariableOverview, isEncrypt = true): Observable<Array<string | number | boolean>> {
         const { variableName, variableValue, variableTypeId, originValue } = data;
 
-        const name = variableName.split('@')[0]; // FIXME: 这个地方为啥去割了一刀，没看懂。
+        const name = this.constantService.removeConditionInName(variableName);
 
         if (variableTypeId === VariableType.SELECT_TYPE) {
             const index = this.constantService.transformStringToList(<string>originValue)

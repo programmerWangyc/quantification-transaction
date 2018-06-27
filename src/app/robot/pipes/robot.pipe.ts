@@ -104,7 +104,7 @@ export class LogPricePipe implements PipeTransform {
     transform(price: number, logType: number): string | number {
         const types = [LogTypes.BUY, LogTypes.SALE, LogTypes.PROFIT];
 
-        if (types.indexOf(logType) !== -1) {
+        if (types.includes(logType)) {
 
             if (logType !== LogTypes.PROFIT && price === -1) {
 

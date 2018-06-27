@@ -4,6 +4,8 @@ import * as moment from 'moment';
 import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
 import { StrategyConstantService } from '../providers/strategy.constant.service';
+import { VariableType } from '../../app.config';
+import { StrategyMetaArg } from '../add-arg/add-arg.component';
 
 
 @Pipe({
@@ -35,9 +37,9 @@ export class RemoveMd5Pipe implements PipeTransform {
     transform(name: string): string {
         const index = name.indexOf('-');
 
-        if(index > 0) {
+        if (index > 0) {
             return name.substring(index + 1);
-        }else {
+        } else {
             return name;
         }
     }
@@ -93,5 +95,20 @@ export class LatestModifyDesPipe implements PipeTransform {
 export class ExpireStatusPipe implements PipeTransform {
     transform(value: string): string {
         return moment(value).diff(moment()) < 0 ? 'EXPIRED' : 'ALREADY_PURCHASE';
+    }
+}
+
+@Pipe({
+    name: 'variableValue'
+})
+export class VariableValuePipe implements PipeTransform {
+    transform(input: StrategyMetaArg): any {
+        if (input.type === VariableType.BOOLEAN_TYPE) {
+            return input.type ? 'true' : 'false';
+        } else if (input.type === VariableType.ENCRYPT_STRING_TYPE) {
+            return (<string>input.defaultValue).replace(/./g, '*');
+        } else {
+            return input.defaultValue;
+        }
     }
 }

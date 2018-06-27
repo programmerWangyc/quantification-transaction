@@ -36,6 +36,8 @@ export interface RequestParams {
 
 export interface UIState {
     loading: boolean;
+    selectedTemplates: number[];
+    selectedLanguage: number;
 }
 
 export interface State {
@@ -74,7 +76,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, strategyListRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
         case actions.GET_STRATEGY_LIST_SUCCESS: {
-            const { all, strategies } = action.payload.result;
+            const { strategies } = action.payload.result;
 
             const result = addCustomFields(strategies);
 
@@ -186,6 +188,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // reset state
         case actions.RESET_STATE:
             return { ...state, opStrategyTokenRes: null };
+
+        // strategy dependance
+        case actions.UPDATE_STRATEGY_DEPENDANCE_TEMPLATES:
+            return { ...state, UIState: { ...state.UIState, selectedTemplates: action.payload } };
+
+        // strategy language
+        case actions.UPDATE_SELECTED_LANGUAGE:
+            return { ...state, UIState: { ...state.UIState, selectedLanguage: action.payload } };
 
         default:
             return state;

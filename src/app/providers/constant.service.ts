@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { VariableType } from '../app.config';
 import { VariableTypeDes } from '../interfaces/app.interface';
 import { booleanableVariableNameFormat, comparableVariableNameFormat } from '../validators/validators';
-import { ArgOptimizeSetting } from './../interfaces/app.interface';
 
 export const VERSION = 3.5;
 
@@ -119,6 +118,10 @@ export const COINS = {
 
 export const PAGE_SIZE_SELECT_VALUES = [20, 50, 100, 500];
 
+export const removeConditionInName = (name: string): string => name.split('@')[0];
+
+export const VALUE_OF_BUTTON_TYPE_ARG = '__button__';
+
 @Injectable()
 export class ConstantService {
 
@@ -140,21 +143,9 @@ export class ConstantService {
 
     PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
-    VALUE_OF_BUTTON_TYPE_ARG = '__button__';
+    VALUE_OF_BUTTON_TYPE_ARG = VALUE_OF_BUTTON_TYPE_ARG;
 
     constructor() { }
-
-    getOptimizeSetting(value: number): ArgOptimizeSetting {
-        return value < 1 ? {
-            begin: 0.1,
-            end: 1.0,
-            step: 0.1
-        } : {
-                begin: Math.max(1, Math.round(value * 0.5)),
-                end: Math.max(2, Math.round(value * 1.5)),
-                step: Math.max(1, Math.round(value * 0.1))
-            };
-    }
 
     transformStringToList(value: string): string[] {
         let target = value;
@@ -192,4 +183,6 @@ export class ConstantService {
     isButton = (value: any): boolean => {
         return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
+
+    removeConditionInName = removeConditionInName;
 }

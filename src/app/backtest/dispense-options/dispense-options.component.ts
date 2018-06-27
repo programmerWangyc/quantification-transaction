@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { BtNode } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { BacktestService } from '../providers/backtest.service';
 
 @Component({
     selector: 'app-dispense-options',
@@ -11,11 +12,11 @@ import { BtNodeService } from '../../providers/bt-node.service';
 })
 export class DispenseOptionsComponent implements OnInit {
 
-    nodes: Observable<BtNode[]>;
-
-    selectedNode = 0;
+    @Input() selectedNode = 0;
 
     @Output() nodeChange: EventEmitter<number> = new EventEmitter();
+
+    nodes: Observable<BtNode[]>;
 
     constructor(
         private nodeService: BtNodeService,

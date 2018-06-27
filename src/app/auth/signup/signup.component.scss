@@ -1,7 +1,5 @@
 $prefix: 'signup';
-
 @import '../auth';
-
 #agreement {
     margin-top: 10px;
     a {
@@ -10,5 +8,5 @@ $prefix: 'signup';
 }
 
 .signup-container {
-    margin: -144px auto 0;
+    margin: -96px auto 0;
 }

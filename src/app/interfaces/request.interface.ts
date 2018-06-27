@@ -48,7 +48,8 @@ export enum SettingTypes {
     promotion = 'promotion',
     docker = 'docker',
     brokers = 'brokers',
-    index = 'index'
+    index = 'index',
+    backtest_javascript = 'backtest_javascript',
 }
 
 export interface SettingsRequest {
@@ -276,6 +277,134 @@ export interface SaveStrategyRequest {
     note: string;
 }
 
+/** ===================================================Backtest============================================== **/
+
+export interface GetTemplatesRequest {
+    ids: number[];
+}
+
+// backtest IO
+export enum BacktestDescription {
+    deleteTask = 'DelTask',
+    getTaskStatus = 'GetTaskStatus',
+    getTaskResult = 'GetTaskResult',
+    putTask = 'PutTask', // [node , python|python2.7|python3|py, g++]  script
+    stopTask = 'StopTask'
+}
+
+export type BacktestPutTaskDescription = [string, string, BacktestPutTaskParams];
+
+export type BacktestTaskDescription = [string, string];
+
+export interface BacktestIO<T> {
+    nodeId: number;
+    language: number;
+    info: T; // need to stringify
+}
+
+export interface BacktestPutTaskOptions {
+    RetFlags: number;
+    MaxRuntimeLogs: number;
+    MaxProfitLogs: number;
+    MaxChartLogs: number;
+    DataServer: string; // url
+    // CPP
+    TimeBegin: number; // 日期的数字表示
+    TimeEnd: number; // 日期的数字表示
+    SnapshortPeriod: number
+    Period: number;
+    NetDelay: number;
+    UpdatePeriod: number;
+}
+
+/**
+ * @description Used to semantic put task parameters;
+ */
+export interface BacktestPutTaskCodeArg {
+    argName: string;
+    value: number | string | boolean;
+    type: number;
+}
+
+export interface BacktestPutTaskCode {
+    code: string | number; // 当用户没有查看代码的权限时，这个地方应该用 strategyId, 或 templateId替代
+    args: BacktestPutTaskCodeArg[];
+    name: string;
+}
+
+export type PutTaskCodeArg = [string, number | string | boolean, number];
+
+export type PutTaskCode = [string, PutTaskCodeArg[], string];
+
+/**
+ * @description backtest Exchange field options;
+ */
+export interface BacktestExchangeOptions {
+    BaseCurrency: string;
+    FeeMaker: number;
+    FeeTaker: number;
+    Id: string;
+}
+
+export interface BacktestConstantOptions {
+    DataSource: string;
+    SymDots: number;
+    CurDots: number;
+    Depth: number;
+    PriceTick: number;
+    DepthDeep: number;
+    FeeMin: number;
+    FeeDenominator: number;
+    BasePrecision: number;
+    QuotePrecision: number;
+}
+
+export interface BacktestPlatformOptions {
+    Name: string;
+    Label: string;
+    Balance: number;
+    Stocks: number;  // 余币
+    Fee: number[];
+    MinFee: number;
+    Period: number;
+    Currency: string;
+    QuoteCurrency: string;
+}
+
+export interface BacktestAdvanceOptions {
+    FaultTolerant: number;
+    SlipPoint: number;
+    NetDelay: number;
+    MaxBarLen: number;
+    Mode: number;
+    BasePeriod: number;
+}
+
+export type BacktestExchange = BacktestExchangeOptions & BacktestAdvanceOptions & BacktestConstantOptions & BacktestPlatformOptions;
+
+export interface BacktestTimeRange {
+    start: number; // 日期的数字表示
+    end: number; // 日期的数字表示
+}
+
+export interface BacktestPutTaskParams {
+    Code: PutTaskCode[];
+    Options: BacktestPutTaskOptions;
+    Exchanges: BacktestExchange[];
+    Start: number; // 日期的数字表示
+    End: number; //  日期的数字表示
+}
+
+export interface BacktestTask extends BacktestIO<BacktestTaskDescription> { }
+
+export interface BacktestPutTask extends BacktestIO<BacktestPutTaskDescription> { }
+
+export interface BacktestIORequest {
+    nodeId: number;
+    language: number;
+    io: string; // [] JSON.stringfiy array [ string, uuid ];
+}
+
 /** ===================================================Charge============================================== **/
 
 export interface GetPayOrdersRequest { }
@@ -287,5 +416,5 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 31
+ * 接口总数： 83， 已完成： 32
  */

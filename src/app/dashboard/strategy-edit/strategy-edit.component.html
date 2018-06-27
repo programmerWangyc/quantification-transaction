@@ -37,7 +37,7 @@
     <div *ngIf="!(isTemplateCategorySelected | async); let isTplSelected" class="section">
         <h3>{{'TEMPLATE_REFERENCE' | translate}}</h3>
 
-        <app-strategy-dependance [data]="templates | async" (change)="selectedTemplates$.next($event)"></app-strategy-dependance>
+        <app-strategy-dependance [data]="templates | async"></app-strategy-dependance>
     </div>
 
 
@@ -71,10 +71,9 @@
         <app-alternation-preview [param]="commandArgs | async" [removedArg]="removedCommandArg$ | async"></app-alternation-preview>
     </div>
 
+    <button nz-button [nzType]="'primary'" (click)="save$.next(true)">{{'SAVE_STRATEGY' | translate}}</button>
 </ng-template>
 
 <ng-template #backtest>
     <app-backtest-simulation [category]="category | async" [language]="language | async"></app-backtest-simulation>
 </ng-template>
-
-<button nz-button [nzType]="'primary'" (click)="save$.next(true)">{{'SAVE_STRATEGY' | translate}}</button>

@@ -3,7 +3,8 @@ import { isNumber } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ResponseState, RestartRobotResult } from './../interfaces/response.interface';
+import { getBacktestErrorMessage } from '../store/backtest/backtest.effect';
+import { ResponseState, RestartRobotResult, ServerBacktestResult } from './../interfaces/response.interface';
 import { TipService } from './tip.service';
 
 @Injectable()
@@ -38,5 +39,9 @@ export class ErrorService {
 
     getDeleteRobotError(result: number): string {
         return Math.abs(result) === 1 ? 'DELETE_ROBOT_ERROR' : '';
+    }
+
+    getBacktestError(result: number | ServerBacktestResult): string {
+        return  getBacktestErrorMessage(result);
     }
 }

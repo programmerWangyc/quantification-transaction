@@ -12,6 +12,7 @@ import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
+import * as BacktestActions from './../store//backtest/backtest.action';
 import { SetPasswordRequestAction } from './../store/auth/password.action';
 import { ResetPasswordRequestAction } from './../store/auth/reset.action';
 import { SignupRequestAction } from './../store/auth/signup.action';
@@ -160,8 +161,18 @@ export class ProcessService {
 
     processSaveStrategy(params: Observable<Request.SaveStrategyRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
-        // return params.subscribe(params => console.log(params));
     }
+
+    /** ===================================================Backtest====================================================== */
+
+    processGetTemplates(params: Observable<Request.GetTemplatesRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new BacktestActions.GetTemplatesRequestAction(params)));
+    }
+
+    processBacktestIO(params: Observable<Request.BacktestIORequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new BacktestActions.BacktestIORequestAction(params)));
+    }
+
     /** ===================================================Charge====================================================== */
 
     processPayOrders(params: Observable<any>): Subscription {

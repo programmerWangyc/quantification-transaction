@@ -34,7 +34,7 @@ export enum GetStrategyListOrder {
 }
 
 // Get strategy list
-export class GetStrategyList extends ApiAction {
+class GetStrategyList extends ApiAction {
     isSingleParams = false;
 
     command = 'GetStrategyList';
@@ -79,7 +79,7 @@ export enum ShareStrategyOrder {
     length
 }
 
-export class ShareStrategyAction extends ApiAction {
+class ShareStrategyAction extends ApiAction {
     isSingleParams = false;
 
     noneParams = false;
@@ -126,7 +126,7 @@ export enum GenKeyOrder {
     length
 }
 
-export class GenKeyAction extends ApiAction {
+class GenKeyAction extends ApiAction {
     noneParams = false;
 
     isSingleParams = false;
@@ -171,7 +171,7 @@ export enum VerifyKeyOrder {
     length
 }
 
-export class VerifyKeyAction extends ApiAction {
+class VerifyKeyAction extends ApiAction {
     isSingleParams = false;
 
     noneParams = false;
@@ -210,7 +210,7 @@ export class VerifyKeySuccessAction extends VerifyKeyAction implements Action {
 }
 
 // delete strategy
-export class DeleteStrategyAction extends ApiAction {
+class DeleteStrategyAction extends ApiAction {
     isSingleParams = true;
 
     noneParams = false;
@@ -255,7 +255,7 @@ export enum OpStrategyTokenOrder {
     length
 }
 
-export class OpStrategyTokenAction extends ApiAction {
+class OpStrategyTokenAction extends ApiAction {
     order = OpStrategyTokenOrder;
 
     command = 'OpStrategyToken';
@@ -294,7 +294,7 @@ export class OpStrategyTokenSuccessAction extends OpStrategyTokenAction implemen
 }
 
 // strategy detail
-export class GetStrategyDetailAction extends ApiAction {
+class GetStrategyDetailAction extends ApiAction {
     isSingleParams = true;
 
     noneParams = false;
@@ -347,7 +347,7 @@ export enum SaveStrategyOrder {
     length
 }
 
-export class SaveStrategyAction extends ApiAction {
+class SaveStrategyAction extends ApiAction {
     isSingleParams = false;
 
     noneParams = false;
@@ -403,6 +403,24 @@ export class ResetStateAction implements Action {
     readonly type = RESET_STATE;
 }
 
+// update selected dependance templates
+export const UPDATE_STRATEGY_DEPENDANCE_TEMPLATES = '[Strategy] UPDATE_STRATEGY_DEPENDANCE_TEMPLATES';
+
+export class UpdateStrategyDependanceTemplatesAction implements Action {
+    readonly type = UPDATE_STRATEGY_DEPENDANCE_TEMPLATES;
+
+    constructor(public payload: number[]) { };
+}
+
+// update selected language
+export const UPDATE_SELECTED_LANGUAGE = '[Strategy] UPDATE_SELECTED_LANGUAGE';
+
+export class UpdateStrategyLanguageAction implements Action {
+    readonly type = UPDATE_SELECTED_LANGUAGE;
+
+    constructor(public payload: number) { }
+}
+
 export type ApiActions = GetStrategyListRequestAction
     | DeleteStrategyRequestAction
     | DeleteStrategyFailAction
@@ -431,6 +449,8 @@ export type ApiActions = GetStrategyListRequestAction
 export type Actions = ApiActions
     | UpdateStrategySecretKeyStateAction
     | ResetStateAction
+    | UpdateStrategyDependanceTemplatesAction
+    | UpdateStrategyLanguageAction
 
 export const ResponseActions = {
     GetStrategyListFailAction,

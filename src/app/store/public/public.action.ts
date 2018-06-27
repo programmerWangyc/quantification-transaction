@@ -87,6 +87,14 @@ export class UpdateFavoriteEditorConfigAction implements Action {
     constructor(public payload: EditorConfig) { }
 }
 
+export const TOGGLE_SUBSCRIBE_SERVER_SEND_MESSAGE_TYPE = '[Public] TOGGLE_SUBSCRIBE_SERVER_SEND_MESSAGE_TYPE';
+
+export class ToggleSubscribeServerSendMessageTypeAction implements Action {
+    readonly type = TOGGLE_SUBSCRIBE_SERVER_SEND_MESSAGE_TYPE;
+
+    constructor(public payload: { message: string; status?: boolean }) { }
+}
+
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
@@ -97,6 +105,7 @@ export type Actions = ApiActions
     | SetLanguageAction
     | ToggleFooterAction
     | UpdateFavoriteEditorConfigAction
+    | ToggleSubscribeServerSendMessageTypeAction
 
 export const ResponseActions = {
     GetSettingsFailAction,

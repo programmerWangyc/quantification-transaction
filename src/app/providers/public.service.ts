@@ -5,12 +5,14 @@ import 'rxjs/add/operator/startWith';
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { isString } from 'lodash';
 import { Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
+import { SettingTypes } from '../interfaces/request.interface';
 import {
     AppState,
     selectEditorConfig,
@@ -20,7 +22,6 @@ import {
     selectReferrer,
     selectSettings,
 } from '../store/index.reducer';
-import { Settings, settings } from './../../../request.interface';
 import { EditorConfig, Referrer } from './../interfaces/app.interface';
 import { PublicResponse, ResponseState } from './../interfaces/response.interface';
 import { selectSettingsResponse } from './../store/index.reducer';
@@ -29,6 +30,7 @@ import {
     SetReferrerAction,
     ToggleFooterAction,
     UpdateFavoriteEditorConfigAction,
+    ToggleSubscribeServerSendMessageTypeAction,
 } from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
@@ -49,8 +51,8 @@ export class PublicService extends BaseService {
 
     /* =======================================================Server Request======================================================= */
 
-    launchGetSettings(type: string, single = true): Subscription {
-        return this.process.processSettings(Observable.of({ type }), single);
+    launchGetSettings(type: string | Observable<string>, single = true): Subscription {
+        return this.process.processSettings(isString(type) ? Observable.of({ type }) : type.map(type => ({ type })), single);
     }
 
     /* =======================================================Date acquisition======================================================= */
@@ -60,17 +62,16 @@ export class PublicService extends BaseService {
             .filter(res => !!res);
     }
 
-    // agreement
-    getAgreement(): Observable<string> {
+    getSettingState(settingType: string): Observable<boolean> {
         return this.store.select(selectSettings)
-            .do(settings => (!settings || !settings.agreement) && this.launchGetSettings(Settings.agreement))
-            .filter(settings => !!settings && !!settings.agreement)
-            .map(settings => settings.agreement);
+            .map(res => !!res[settingType]);
     }
 
-    getAgreementState(): Observable<boolean> {
+    getSetting(settingType: string): Observable<any> {
         return this.store.select(selectSettings)
-            .map(res => !!res && !!res.agreement);
+            .do(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType]))
+            .filter(settings => !!settings[settingType])
+            .map(settings => settings[settingType]);
     }
 
     // response body information
@@ -217,6 +218,10 @@ export class PublicService extends BaseService {
 
     updateEditorConfig(config: EditorConfig): void {
         this.store.dispatch(new UpdateFavoriteEditorConfigAction(config));
+    }
+
+    updateServerMsgSubscribeState(message: string, status: boolean): void {
+        this.store.dispatch(new ToggleSubscribeServerSendMessageTypeAction({ message, status }));
     }
 
     /* =======================================================Error Handle======================================================= */

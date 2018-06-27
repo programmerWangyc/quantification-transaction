@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { isNumber } from 'lodash';
 
 import { TipService } from '../../providers/tip.service';
-import { OptimizedVariableOverview } from '../backtest-strategy-args/backtest-strategy-args.component';
 import { BacktestConstantService, CompareOperator } from '../providers/backtest.constant.service';
+import { OptimizedVariableOverview } from '../backtest.interface';
 
 export interface Filter {
     compareVariable: OptimizedVariableOverview;
@@ -25,7 +25,7 @@ export class ArgOptimizerComponent implements OnInit {
         this.rightList = value.map(item => ({ ...item }));
     }
 
-    @Output() optimize: EventEmitter<any> = new EventEmitter();
+    @Output() optimize: EventEmitter<Filter[]> = new EventEmitter();
 
     leftList: OptimizedVariableOverview[] = [];
 
@@ -77,6 +77,8 @@ export class ArgOptimizerComponent implements OnInit {
 
     deleteFilter(index: number): void {
         this.filters = this.filters.filter((_, idx) => idx !== index);
+
+        this.optimize.emit(this.filters);
     }
 
     checkValue(): void {

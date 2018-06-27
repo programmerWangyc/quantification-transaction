@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
+import { SettingTypes } from '../../interfaces/request.interface';
 import { PublicService } from './../../providers/public.service';
 
 
@@ -21,8 +22,8 @@ export class AgreementComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.content = this.publicService.getAgreement();
-        
-        this.pending = this.publicService.getAgreementState();
+        this.content = this.publicService.getSetting(SettingTypes.agreement);
+
+        this.pending = this.publicService.getSettingState(SettingTypes.agreement);
     }
 }

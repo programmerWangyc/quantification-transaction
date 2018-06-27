@@ -12,7 +12,7 @@
         <nz-form-label>{{'K_LINE_PERIOD' | translate}}</nz-form-label>
 
         <nz-form-control>
-            <nz-select [ngModel]="selectedPeriodId" (ngModelChange)="updatePeriod($event)" [nzDisabled]="canSelectPeriod" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
+            <nz-select [ngModel]="selectedPeriodId" (ngModelChange)="updatePeriod($event)" [nzDisabled]="disablePeriod" name="klinePeriod" [ngModelOptions]="{ standalone: true}">
                 <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
             </nz-select>
         </nz-form-control>

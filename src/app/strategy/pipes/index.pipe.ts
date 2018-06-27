@@ -7,6 +7,7 @@ import {
     VariableToSelectListPipe,
     VariableTypeNamePipe,
     VariableTypePipe,
+    VariableValuePipe,
 } from './strategy.pipe';
 
 
@@ -20,4 +21,5 @@ export const PIPES = [
     LatestModifyDesPipe,
     ExpireStatusPipe,
     VariableTypeNamePipe,
+    VariableValuePipe,
 ];

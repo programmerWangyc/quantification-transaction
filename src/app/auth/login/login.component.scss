@@ -1,6 +1,9 @@
 @import '../auth';
-
 #get-password {
     display: flex;
     justify-content: space-between;
+}
+
+.login-container {
+    margin: -144px auto 0;
 }

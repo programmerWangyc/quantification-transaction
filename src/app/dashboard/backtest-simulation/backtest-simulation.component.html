@@ -10,7 +10,7 @@
     <div class="section form-item">
         <h4>{{'OPTIONS' | translate}}</h4>
 
-        <app-advanced-options></app-advanced-options>
+        <app-advanced-options [fixedKlinePeriod]="fixedFloorKlinePeriodId$ | async"></app-advanced-options>
     </div>
 
     <div class="section form-item">
@@ -23,14 +23,27 @@
         <!--1: Python-->
         <h4>{{'DISPENSE' | translate}}</h4>
 
-        <app-dispense-options></app-dispense-options>
+        <app-dispense-options [selectedNode]="runningNode | async" (nodeChange)="runningNode$.next($event)"></app-dispense-options>
     </div>
 
     <div class="section form-item">
         <h4>{{'ARGUMENTS' | translate}}</h4>
 
-        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async"></app-backtest-strategy-args>
+        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async" [id]="strategyId | async"></app-backtest-strategy-args>
 
-        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true"></app-backtest-strategy-args>
+        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true" [id]="item.id"></app-backtest-strategy-args>
+    </div>
+
+    <div class="section form-item" fxLayoutAlign="row center">
+        <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(isFaultTolerantMode)" [disabled]="disableBacktest | async">{{backtestBtnText | async | translate}}</button>
+
+        <button nz-button [nzType]="'danger'" (click)="stopBacktest()" class="stop-btn">{{'STOP' | translate}}</button>
+
+        <div class="fault-switch">
+            <span [nz-tooltip]="'BACKTEST_FAULT_TOLERANT_DESCRIPTION' | translate">{{'FAULT_TOLERANT_MODE' | translate}}</span>
+
+            <nz-switch [ngModel]="isFaultTolerantMode | async" (ngModelChange)="toggleBacktestMode()" [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate">
+            </nz-switch>
+        </div>
     </div>
 </div>

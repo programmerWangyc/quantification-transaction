@@ -26,12 +26,6 @@ export interface VariableTypeDes {
     inputType: string;
 }
 
-export interface ArgOptimizeSetting {
-    begin: number;
-    end: number;
-    step: number;
-};
-
 export interface VariableOverview {
     variableName: string;
     variableDes: string;

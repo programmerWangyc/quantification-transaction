@@ -62,7 +62,7 @@ export class AddArgComponent implements OnInit {
         if (this.selectedType === VariableType.BOOLEAN_TYPE || this.selectedType === VariableType.NUMBER_TYPE) {
             this.form.patchValue({ defaultValue: 0 });
         } else if (this.selectedType === VariableType.BUTTON_TYPE) {
-            this.form.patchValue({ defaultValue: this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE });
+            this.form.patchValue({ defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });
         }
         else {
             this.form.patchValue({ defaultValue: '' });
@@ -88,7 +88,7 @@ export class AddArgComponent implements OnInit {
          * @description 按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
          */
         if (param.type === VariableType.BUTTON_TYPE) {
-            this.add.next({ ...param, defaultValue: this.constant.BUTTON_TYPE_VARIABLE_DEFAULT_VALUE });
+            this.add.next({ ...param, defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });
         } else {
             this.add.next(param);
         }

@@ -23,7 +23,7 @@ import {
     StopRobotResponse,
     StrategyLog,
 } from '../../interfaces/response.interface';
-import { ENCRYPT_PREFIX, LIST_PREFIX } from '../../providers/constant.service';
+import { ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG } from '../../providers/constant.service';
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ImportedArg } from '../../robot/robot.interface';
 import { TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
@@ -566,6 +566,8 @@ export function completionParams(arg: (string | number)[]): VariableOverview {
  * @description Digitized parameter types;
  */
 function getArgId(value: string | boolean | number): number {
+    if (value === null) return 2;
+
     if (typeof value === 'number') {
         return 0;
     } else if (typeof value === 'boolean') {
@@ -574,7 +576,7 @@ function getArgId(value: string | boolean | number): number {
         return 3;
     } else if (value.indexOf(ENCRYPT_PREFIX) === 0) {
         return 4;
-    } else if (value === '__button__') {
+    } else if (value === VALUE_OF_BUTTON_TYPE_ARG) {
         return 5;
     } else {
         return 2;

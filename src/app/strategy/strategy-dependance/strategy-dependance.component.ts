@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
+import { Subscription } from 'rxjs/Subscription';
 
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
+import { StrategyService } from '../providers/strategy.service';
 
 export interface TemplateRefItem {
     id: number;
@@ -16,16 +18,32 @@ export interface TemplateRefItem {
     templateUrl: './strategy-dependance.component.html',
     styleUrls: ['./strategy-dependance.component.scss']
 })
-export class StrategyDependanceComponent implements OnInit {
-    @Input() data: TemplateRefItem[] = [];
+export class StrategyDependanceComponent implements OnInit, OnDestroy {
+    @Input() set data(value: TemplateRefItem[]) {
+        if (!value) return;
+
+        this.source = value;
+
+        this.change.next(value.filter(item => item.checked).map(item => item.id));
+    }
 
     @Output() change: EventEmitter<number[]> = new EventEmitter();
 
+    subscription$$: Subscription;
+
+    source: TemplateRefItem[] = [];
+
     constructor(
         private nzModal: NzModalService,
+        private strategyService: StrategyService,
     ) { }
 
     ngOnInit() {
+        this.launch();
+    }
+
+    launch() {
+        this.subscription$$ = this.strategyService.updateSelectedTemplates(this.change.startWith([]));
     }
 
     onChange(target: TemplateRefItem): void {
@@ -42,7 +60,10 @@ export class StrategyDependanceComponent implements OnInit {
     }
 
     emit(): void {
-        this.change.next(this.data.filter(item => item.checked).map(item => item.id));
+        this.change.next(this.source.filter(item => item.checked).map(item => item.id));
     }
 
+    ngOnDestroy() {
+        this.subscription$$.unsubscribe();
+    }
 }

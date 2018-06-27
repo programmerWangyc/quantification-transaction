@@ -83,11 +83,6 @@ export class StrategyCreateMetaComponent {
 
     @ViewChild(StrategyCodemirrorComponent) codeMirror: StrategyCodemirrorComponent;
 
-    /**
-     * @description Used for interact with StrategyDependanceComponent;
-     */
-    selectedTemplates$: Subject<number[]> = new Subject();
-
     @ViewChild(StrategyDependanceComponent) dependance: StrategyDependanceComponent;
 
     /**

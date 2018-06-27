@@ -3,7 +3,7 @@
 </nz-input-group>
 
 <ng-template #addOnBeforeTemplate>
-    <nz-select [(ngModel)]="language" (ngModelChange)="langChange.next(language)">
+    <nz-select [(ngModel)]="language" (ngModelChange)="onLanguageChange(language)">
         <nz-option nzCustomContent *ngFor="let lang of languages" [nzLabel]="lang.name | translate" [nzValue]="lang.id">
             <i class="anticon" [ngClass]="lang.icon"></i>
             {{ lang.name | translate}}

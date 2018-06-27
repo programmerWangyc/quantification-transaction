@@ -40,11 +40,11 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
             this.updatePeriod(id);
 
-            this.canSelectPeriod = true;
+            this.disablePeriod = true;
         } else {
-            this.canSelectPeriod && this.tip.messageInfo('RESET_KLINE_PERIOD_OF_TIME_CONFIG');
+            this.disablePeriod && this.tip.messageInfo('RESET_KLINE_PERIOD_OF_TIME_CONFIG');
 
-            this.canSelectPeriod = false;
+            this.disablePeriod = false;
         }
     }
 
@@ -52,7 +52,7 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
     @Output() klineChange: EventEmitter<number> = new EventEmitter();
 
-    canSelectPeriod = false;
+    disablePeriod = false;
 
     selectedPeriodId: number;
 
