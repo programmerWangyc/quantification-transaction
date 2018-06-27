@@ -1,12 +1,12 @@
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/distinctUntilKeyChanged';
+
+import {map, switchMap, delay} from 'rxjs/operators';
+
+
 
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotLogService } from '../providers/robot.log.service';
@@ -67,18 +67,18 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
 
         this.isShow = this.robotLog.hasStrategyChart();
 
-        this.charts = this.options.switchMap(options => this.chart$.bufferCount(options.length));
+        this.charts = this.options.pipe(switchMap(options => this.chart$.bufferCount(options.length)));
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.strategyLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().map(item => item.chartLimit);
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(item => item.chartLimit));
     }
 
     launch() {
-        const id = this.route.paramMap.map(param => +param.get('id'));
+        const id = this.route.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts)
-            .add(this.charts.delay(30).map(charts => {
+            .add(this.charts.pipe(delay(30),map(charts => {
                 const chart = document.getElementsByClassName('chart');
 
                 const target = window.getComputedStyle(chart[0]);
@@ -88,7 +88,7 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
                 const height = parseInt(target.height);
 
                 return { charts, width, height };
-            }).subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height))))
+            }),).subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height))))
             .add(this.robotLog.launchRobotLogs(
                 this.robotLog.getStrategyOffset()
                     .withLatestFrom(

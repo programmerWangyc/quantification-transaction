@@ -1,7 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotDetail } from '../../interfaces/response.interface';

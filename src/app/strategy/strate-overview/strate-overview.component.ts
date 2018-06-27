@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { StrategyService } from '../providers/strategy.service';
-import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
 import * as moment from 'moment';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
+import { StrategyService } from '../providers/strategy.service';
+
 
 function getLength<T>(data: T[]): number {
     return data.length;
@@ -27,13 +30,13 @@ export class StrateOverviewComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.total = this.strategyService.getStrategies().map(getLength);
+        this.total = this.strategyService.getStrategies().pipe(map(getLength));
 
-        this.publishCount = this.strategyService.getSpecificStrategies(this.isPublished).map(getLength);
+        this.publishCount = this.strategyService.getSpecificStrategies(this.isPublished).pipe(map(getLength));
 
-        this.soldCount = this.strategyService.getSpecificStrategies(this.isSold).map(getLength);
+        this.soldCount = this.strategyService.getSpecificStrategies(this.isSold).pipe(map(getLength));
 
-        this.expireCount = this.strategyService.getSpecificStrategies(this.isExpired).map(getLength);
+        this.expireCount = this.strategyService.getSpecificStrategies(this.isExpired).pipe(map(getLength));
     }
 
     isPublished(data: Strategy): boolean {

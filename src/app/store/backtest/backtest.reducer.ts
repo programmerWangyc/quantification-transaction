@@ -1,9 +1,6 @@
 import { flatten } from 'lodash';
-import { from } from 'rxjs/observable/from';
-import { concatMap } from 'rxjs/operators/concatMap';
-import { filter } from 'rxjs/operators/filter';
-import { map } from 'rxjs/operators/map';
-import { reduce } from 'rxjs/operators/reduce';
+import { from } from 'rxjs';
+import { concatMap ,  filter ,  map ,  reduce } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../../app.config';
 import { Filter } from '../../backtest/arg-optimizer/arg-optimizer.component';

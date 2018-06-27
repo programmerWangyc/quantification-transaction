@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
-import { Observable } from 'rxjs/Observable';
+import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 
 import { VariableType } from '../app.config';
 import { TemplateVariableOverview, VariableOverview } from './../interfaces/app.interface';
 import { AuthService } from './../shared/providers/auth.service';
 import { ConstantService } from './constant.service';
+
 
 @Injectable()
 export class EncryptService {
@@ -48,19 +50,19 @@ export class EncryptService {
     }
 
     transformStrategyArgsToEncryptType(data: Observable<VariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data.mergeMap(variables => Observable.from(variables)
-            .mergeMap(item => this.transformArgs(item, isEncrypt))
-            .reduce(this.putInArray, [])
-        );
+        return data.pipe(mergeMap(variables => observableFrom(variables).pipe(
+            mergeMap(item => this.transformArgs(item, isEncrypt)),
+            reduce(this.putInArray, []), )
+        ));
     }
 
     transformTemplateArgsToEncryptType(data: Observable<TemplateVariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data.mergeMap(variables => Observable.from(variables)
-            .mergeMap(variable => Observable.from(variable.variables)
-                .mergeMap(item => this.transformArgs(item, isEncrypt).map(res => [...res, variable.id]))
-            )
-            .reduce(this.putInArray, [])
-        );
+        return data.pipe(mergeMap(variables => observableFrom(variables).pipe(
+            mergeMap(variable => observableFrom(variable.variables).pipe(
+                mergeMap(item => this.transformArgs(item, isEncrypt).pipe(map(res => [...res, variable.id]))))
+            ),
+            reduce(this.putInArray, []), )
+        ));
     }
 
     /**
@@ -75,13 +77,13 @@ export class EncryptService {
             const index = this.constantService.transformStringToList(<string>originValue)
                 .findIndex(item => item === variableValue);
 
-            return Observable.of([name, index]);
+            return observableOf([name, index]);
         } else if (variableTypeId === VariableType.ENCRYPT_STRING_TYPE && (<string>variableValue).indexOf(this.constantService.ENCRYPT_PREFIX) !== 0 && isEncrypt) {
-            return this.authService.getTemporaryPwd()
-                .map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)])
+            return this.authService.getTemporaryPwd().pipe(
+                map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)]))
                 .take(1);
         } else {
-            return Observable.of([name, variableValue]);
+            return observableOf([name, variableValue]);
         }
     }
 

@@ -1,6 +1,8 @@
+
+import {map} from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { BtNode, Platform } from '../../interfaces/response.interface';
 import { PlatformService } from '../../providers/platform.service';
@@ -60,7 +62,7 @@ export class RobotDebuggerComponent implements OnInit {
     }
 
     get selectedPlatform(): Observable<Platform> {
-        return this.platformService.getPlatformList().map(list => list.find(item => item.id === this.platform.value));
+        return this.platformService.getPlatformList().pipe(map(list => list.find(item => item.id === this.platform.value)));
     }
 
     ngOnDestroy() { }

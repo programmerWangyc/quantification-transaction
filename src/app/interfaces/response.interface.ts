@@ -556,6 +556,15 @@ export interface ServerBacktestResult {
     Result: string; // uuid;
 }
 
+/**
+ * ServerBacktestResult 中的 Result 在不同接口中表示不同的含义
+ * {
+ *      PutTask: uuid;
+ *      GetTaskStatus: 一个结构体，字段还不少；
+ *      GetTaskResult: string | 结构体，
+ * }
+ */
+
 export interface BacktestIOResponse extends ResponseUnit<string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
 
 /** ===================================================Charge============================================== **/

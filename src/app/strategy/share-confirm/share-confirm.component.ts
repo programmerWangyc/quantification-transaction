@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { isEqual } from 'lodash';
+import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { isEqual } from 'lodash';
 import { NzModalRef } from 'ng-zorro-antd';
+import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 export enum ConfirmType {
     NORMAL = 1,
@@ -80,7 +81,7 @@ export class ShareConfirmComponent implements OnInit {
         const [tip, operate] = ary;
 
 
-        this.msg = this.translate.get(operate).mergeMap(operate => this.translate.get(tip, { operate }));
+        this.msg = this.translate.get(operate).pipe(mergeMap(operate => this.translate.get(tip, { operate })));
     }
 
     close(type = NaN): void {

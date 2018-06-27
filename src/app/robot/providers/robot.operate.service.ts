@@ -1,9 +1,3 @@
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/delayWhen';
-import 'rxjs/add/operator/merge';
-import 'rxjs/add/operator/switchMapTo';
-import 'rxjs/add/operator/withLatestFrom';
-
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,8 +5,8 @@ import * as fileSaver from 'file-saver';
 import { flatten, isEmpty, isNaN } from 'lodash';
 import * as moment from 'moment';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { from as observableFrom, Observable, of as observableOf, Subscription } from 'rxjs';
+import { map, merge, mergeMap, switchMap, withLatestFrom, zip } from 'rxjs/operators';
 
 import { VariableType } from '../../app.config';
 import { BaseService } from '../../base/base.service';
@@ -40,6 +34,12 @@ import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
+
+
+
+
+
+
 
 export interface RobotDebugFormModal {
     agent: number;
@@ -82,7 +82,7 @@ export class RobotOperateService extends BaseService {
             .switchMapTo(this.getRobotOperateConfirm(data)
                 .filter(sure => sure)
                 .mergeMapTo(this.isPublicNode())
-                .switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : Observable.of(true))
+                .switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : observableOf(true))
                 .zip(data, (condition, data) => condition && data)
                 .filter(value => !!value)
                 .map(({ id }) => ({ id })));
@@ -90,25 +90,25 @@ export class RobotOperateService extends BaseService {
         /**
          * FIXME: 这里如果调用 this.getRobotOperateConfirm 实测并不能取到第一个值， why?
          */
-        const param2 = (<Observable<fromRes.Robot>>data)
-            .switchMap(({ id, node_public, status }) => this.tipService.confirmOperateTip(ConfirmComponent, { message: this.constantService.getRobotOperateMap(status).tip, needTranslate: true })
+        const param2 = (<Observable<fromRes.Robot>>data).pipe(
+            switchMap(({ id, node_public, status }) => this.tipService.confirmOperateTip(ConfirmComponent, { message: this.constantService.getRobotOperateMap(status).tip, needTranslate: true })
                 .filter(v => !!v)
-                .mergeMapTo(this.pubService.isLogin()
-                    .mergeMap(isLogin => !isLogin && node_public && node_public === 1 ? this.isSecurityVerifySuccess().filter(v => !!v).mapTo({ id }) : Observable.of({ id }))
+                .mergeMapTo(this.pubService.isLogin().pipe(
+                    mergeMap(isLogin => !isLogin && node_public && node_public === 1 ? this.isSecurityVerifySuccess().filter(v => !!v).mapTo({ id }) : observableOf({ id })))
                 )
-            );
+            ));
 
         return this.process.processRestartRobot(needVerifyPlatform ? param1 : param2);
     }
 
     launchStopRobot(data: Observable<fromRes.RobotDetail | fromRes.Robot>): Subscription {
         return this.process.processStopRobot(
-            data.switchMap(({ id, status }) => this.tipService.confirmOperateTip(
+            data.pipe(switchMap(({ id, status }) => this.tipService.confirmOperateTip(
                 ConfirmComponent,
                 { message: this.constantService.getRobotOperateMap(status).tip, needTranslate: true })
                 .filter(sure => sure)
                 .mapTo({ id })
-            )
+            ))
         );
     }
 
@@ -122,38 +122,38 @@ export class RobotOperateService extends BaseService {
      *          6 验证失败：不发送
      */
     launchUpdateRobotConfig(data: Observable<fromReq.ModifyRobotRequest>): Subscription {
-        return this.process.processModifyRobot(data.switchMap(data => this.isArgsNeedToEncrypt()
-            .switchMap(need => need ? this.store.select(fromRoot.selectTemporaryPwd).map(pwd => !!pwd) : Observable.of(true))
-            .switchMap(pass => pass ? Observable.of(true) : this.isSecurityVerifySuccess())
+        return this.process.processModifyRobot(data.pipe(switchMap(data => this.isArgsNeedToEncrypt().pipe(
+            switchMap(need => need ? this.store.select(fromRoot.selectTemporaryPwd).pipe(map(pwd => !!pwd)) : observableOf(true)),
+            switchMap(pass => pass ? observableOf(true) : this.isSecurityVerifySuccess()), )
             .filter(v => !!v)
             .mergeMapTo(this.getEncryptedArgs())
             .take(1)
             .withLatestFrom(
-                this.getRobotDetail().map(item => item.id),
+                this.getRobotDetail().pipe(map(item => item.id)),
                 (args, id) => ({ ...data, args, id })
             )
-        ));
+        )));
     }
 
     launchCommandRobot(data: Observable<VariableOverview>): Subscription {
         return this.process.processCommandRobot(
-            data.switchMap(variable => this.canSendCommandToRobot(variable).mapTo(this.getRobotCommand(variable)))
-                .withLatestFrom(
-                    this.getRobotDetail().map(robot => robot.id),
+            data.pipe(switchMap(variable => this.canSendCommandToRobot(variable).mapTo(this.getRobotCommand(variable))),
+                withLatestFrom(
+                    this.getRobotDetail().pipe(map(robot => robot.id)),
                     (command, id) => ({ id, command })
-                )
-                .switchMap(request => this.translate.get('CONFIRM_SEND_COMMAND_TO_ROBOT_TIP', { cmd: this.constantService.withoutPrefix(request.command, this.constantService.COMMAND_PREFIX) })
-                    .mergeMap(message => this.tipService.confirmOperateTip(ConfirmComponent, { message, needTranslate: false }))
+                ),
+                switchMap(request => this.translate.get('CONFIRM_SEND_COMMAND_TO_ROBOT_TIP', { cmd: this.constantService.withoutPrefix(request.command, this.constantService.COMMAND_PREFIX) }).pipe(
+                    mergeMap(message => this.tipService.confirmOperateTip(ConfirmComponent, { message, needTranslate: false })))
                     .filter(confirm => confirm)
                     .mapTo(request)
-                )
+                ), )
         );
     }
 
     launchDeleteRobot(data: Observable<fromRes.Robot>): Subscription {
         return this.process.processDeleteRobot(
-            data.withLatestFrom(this.tipService.getNzConfirmOperateConfig())
-                .switchMap(([{ id }, config]) => {
+            data.pipe(withLatestFrom(this.tipService.getNzConfirmOperateConfig()),
+                switchMap(([{ id }, config]) => {
                     const modal = this.nzModal.confirm(Object.assign({
                         nzContent: DeleteRobotComponent,
                         nzComponentParams: { id },
@@ -161,17 +161,17 @@ export class RobotOperateService extends BaseService {
                     }, config));
 
                     return modal.afterClose.filter(res => !!res).map(checked => ({ id, checked }));
-                })
+                }), )
         );
     }
 
     launchDebugRobot(data: Observable<{ options: RobotDebugFormModal, content: string }>): Subscription {
-        return this.process.processDebugRobot(data.map(({ options, content }) => ({
+        return this.process.processDebugRobot(data.pipe(map(({ options, content }) => ({
             period: 60,
             node: options.agent,
             exchanges: [{ pid: options.platform, pair: options.stock }],
             source: content
-        })));
+        }))));
     }
 
     /* =======================================================Date Acquisition======================================================= */
@@ -184,7 +184,7 @@ export class RobotOperateService extends BaseService {
 
     // robot detail
     getPublicRobotLoadingState(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(res => res.publicRobotLoading);
+        return this.store.select(fromRoot.selectRobotUiState).pipe(map(res => res.publicRobotLoading));
     }
 
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
@@ -193,22 +193,22 @@ export class RobotOperateService extends BaseService {
     }
 
     getRobotDetail(): Observable<fromRes.RobotDetail> {
-        return this.getRobotDetailResponse()
-            .map(res => res.result.robot);
+        return this.getRobotDetailResponse().pipe(
+            map(res => res.result.robot));
     }
 
     getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
-        return this.getRobotDetail()
-            .map(detail => {
+        return this.getRobotDetail().pipe(
+            map(detail => {
                 const [kLinePeriod, exchangeIds, stocks] = JSON.parse(detail.strategy_exchange_pairs);
 
                 return { kLinePeriod, exchangeIds, stocks };
-            })
+            }))
     }
 
     canChangePlatform(): Observable<boolean> {
-        return this.getRobotStrategyExchangePair()
-            .map(pairs => pairs.exchangeIds.some(id => id > -10))
+        return this.getRobotStrategyExchangePair().pipe(
+            map(pairs => pairs.exchangeIds.some(id => id > -10)))
             .do(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
     }
 
@@ -234,8 +234,8 @@ export class RobotOperateService extends BaseService {
     getRobotTemplateArgs(): Observable<TemplateVariableOverview[]> {
         return this.store.select(fromRoot.selectRobotTemplateArgs)
             .filter(v => !!v)
-            .mergeMap(templates => Observable.from(templates)
-                .map(tpl => ({ ...tpl, variables: tpl.variables.map(item => this.setSelectDefaultValue(item)) }))
+            .mergeMap(templates => observableFrom(templates).pipe(
+                map(tpl => ({ ...tpl, variables: tpl.variables.map(item => this.setSelectDefaultValue(item)) })))
                 .reduce((acc, cur) => [...acc, cur], [])
             );
     }
@@ -256,11 +256,11 @@ export class RobotOperateService extends BaseService {
     }
 
     isArgsNeedToEncrypt(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotStrategyArgs)
-            .map(args => !args ? false : this.encryptService.isNeedEncrypt(args))
+        return this.store.select(fromRoot.selectRobotStrategyArgs).pipe(
+            map(args => !args ? false : this.encryptService.isNeedEncrypt(args)))
             .combineLatest(
-                this.store.select(fromRoot.selectRobotTemplateArgs)
-                    .map(templates => !templates ? false : this.encryptService.isNeedEncrypt(flatten(templates.map(item => item.variables)))),
+                this.store.select(fromRoot.selectRobotTemplateArgs).pipe(
+                    map(templates => !templates ? false : this.encryptService.isNeedEncrypt(flatten(templates.map(item => item.variables))))),
                 (strategyNeed, templateNeed) => strategyNeed || templateNeed
             )
     }
@@ -275,16 +275,16 @@ export class RobotOperateService extends BaseService {
     }
 
     hasArgs(): Observable<boolean> {
-        return this.getRobotStrategyArgs()
-            .map(args => !!args && !!args.length)
-            .combineLatest(this.getRobotTemplateArgs().map(args => !!args && !!args.length))
+        return this.getRobotStrategyArgs().pipe(
+            map(args => !!args && !!args.length))
+            .combineLatest(this.getRobotTemplateArgs().pipe(map(args => !!args && !!args.length)))
             .map(([hasStrategyArgs, hasTemplateArgs]) => hasStrategyArgs || hasTemplateArgs)
             .startWith(false);
     }
 
     exportArgs(kLinePeriodId: number): Subscription {
-        return this.getEncryptedArgs()
-            .withLatestFrom(this.getRobotDetail().map(item => item.name))
+        return this.getEncryptedArgs().pipe(
+            withLatestFrom(this.getRobotDetail().pipe(map(item => item.name))))
             .subscribe(([args, name]) => {
                 const data = JSON.stringify({
                     timestamp: new Date().getTime(),
@@ -354,53 +354,53 @@ export class RobotOperateService extends BaseService {
     }
 
     getPluginRunResult(): Observable<any> {
-        return this.getPluginRunResponse().map(res => JSON.parse(res.result));
+        return this.getPluginRunResponse().pipe(map(res => JSON.parse(res.result)));
     }
 
     getPluginRunLogs(): Observable<fromRes.DebugLog[]> {
-        return this.getPluginRunResponse().map(res => res.logs);
+        return this.getPluginRunResponse().pipe(map(res => res.logs));
     }
 
     // ui state
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.loading);
+        return this.store.select(fromRoot.selectRobotUiState).pipe(map(state => type ? state[type] : state.loading));
     }
 
     isCurrentRobotOperating(robot: fromRes.Robot, operateType: string): Observable<boolean> {
-        return this.isLoading(operateType + OPERATE_ROBOT_LOADING_TAIL)
-            .withLatestFrom(this.store.select(fromRoot.selectRobotRequestParameters).filter(res => !!res && !!res[operateType + OPERATE_ROBOT_REQUEST_TAIL]).map(res => res[operateType + OPERATE_ROBOT_REQUEST_TAIL].id))
+        return this.isLoading(operateType + OPERATE_ROBOT_LOADING_TAIL).pipe(
+            withLatestFrom(this.store.select(fromRoot.selectRobotRequestParameters).filter(res => !!res && !!res[operateType + OPERATE_ROBOT_REQUEST_TAIL]).map(res => res[operateType + OPERATE_ROBOT_REQUEST_TAIL].id)))
             .filter(([loading, id]) => robot.id === id)
             .map(([loading, _]) => loading)
             .startWith(false);
     }
 
     isDebugLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState)
-            .map(state => state.debugLoading);
+        return this.store.select(fromRoot.selectRobotUiState).pipe(
+            map(state => state.debugLoading));
     }
 
     getOperateBtnText(): Observable<string> {
-        return this.getRobotDetail()
-            .map(robot => this.constantService.getRobotOperateMap(robot.status).btnText)
+        return this.getRobotDetail().pipe(
+            map(robot => this.constantService.getRobotOperateMap(robot.status).btnText))
             .combineLatest(
-                this.isLoading(RobotOperateType.stop + OPERATE_ROBOT_LOADING_TAIL).merge(this.isLoading(RobotOperateType.restart + OPERATE_ROBOT_LOADING_TAIL)),
+                this.isLoading(RobotOperateType.stop + OPERATE_ROBOT_LOADING_TAIL).pipe(merge(this.isLoading(RobotOperateType.restart + OPERATE_ROBOT_LOADING_TAIL))),
                 (btnTexts: string[], isLoading: boolean) => this.constantService.getRobotOperateBtnText(isLoading, btnTexts)
             );
     }
 
     getRobotWatchDogBtnText(): Observable<string> {
-        return this.getRobotDetail()
-            .map(robot => robot.wd === 0 ? 'MONITOR' : 'CANCEL');
+        return this.getRobotDetail().pipe(
+            map(robot => robot.wd === 0 ? 'MONITOR' : 'CANCEL'));
     }
 
     getSelectedNode(): Observable<fromRes.BtNode> {
-        return this.btNodeService.getNodeList()
-            .zip(this.getRobotDetail(), (nodes, { fixed_id }) => nodes.find(item => item.id === fixed_id))
+        return this.btNodeService.getNodeList().pipe(
+            zip(this.getRobotDetail(), (nodes, { fixed_id }) => nodes.find(item => item.id === fixed_id)))
     }
 
     getBindNode(): Observable<fromRes.BtNode> {
-        return this.btNodeService.getNodeList()
-            .zip(
+        return this.btNodeService.getNodeList().pipe(
+            zip(
                 this.getRobotDetail(),
                 (nodes, { node_id, fixed_id }) => {
                     const node = nodes.find(item => item.id === fixed_id);
@@ -413,78 +413,78 @@ export class RobotOperateService extends BaseService {
                         return null;
                     }
                 }
-            );
+            ));
     }
 
     isPublicNode(): Observable<boolean> {
-        return this.getSelectedNode()
-            .map(node => !!node && node.public === 1);
+        return this.getSelectedNode().pipe(
+            map(node => !!node && node.public === 1));
     }
 
     getRobotStatusTip(): Observable<string> {
-        return this.getSelectedNode()
-            .mergeMap(node => !!node ? Observable.of('') : this.translate.get('DOCKER_OFF_LINE_TIP'))
+        return this.getSelectedNode().pipe(
+            mergeMap(node => !!node ? observableOf('') : this.translate.get('DOCKER_OFF_LINE_TIP')))
             .filter(tip => !!tip)
             .merge(
-                this.getBindNode()
-                    .withLatestFrom(
+                this.getBindNode().pipe(
+                    withLatestFrom(
                         this.getRobotDetail(),
                         this.getSelectedNode(),
                         (node, robot, selectedNode) => {
                             const hasNode = node && node.id !== -1;
 
                             if (hasNode) {
-                                return this.translate.get('DOCKER_ON').map(label => label + node.name + robot.id)
+                                return this.translate.get('DOCKER_ON').pipe(map(label => label + node.name + robot.id))
                             } else if (robot.status === 0 && !hasNode) {
-                                return this.translate.get('WAIT').map(label => label + selectedNode.name)
+                                return this.translate.get('WAIT').pipe(map(label => label + selectedNode.name))
                             } else {
-                                return Observable.of('');
+                                return observableOf('');
                             }
-                        })
-                    .mergeMap(obs => obs)
+                        }),
+                    mergeMap(obs => obs), )
                     .filter(tip => !!tip)
             )
     }
 
     getRobotConfigMessage(): Observable<string> {
-        return this.getBindNode()
-            .withLatestFrom(this.pubService.isLogin())
-            .mergeMap(([bindNode, isLogin]) => {
+        return this.getBindNode().pipe(
+            withLatestFrom(this.pubService.isLogin()),
+            mergeMap(([bindNode, isLogin]) => {
                 if (!!bindNode && (bindNode.public === 1) && !bindNode.is_owner && isLogin) {
                     return this.translate.get('ROBOT_RUNNING_ON_PUBLIC_WARING', bindNode);
                 } else {
-                    return Observable.of('');
+                    return observableOf('');
                 }
-            })
+            }), )
             .filter(v => !!v);
     }
 
     /* =======================================================Short cart method================================================== */
 
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
-        return this.encryptService.transformStrategyArgsToEncryptType(this.store.select(fromRoot.selectRobotStrategyArgs).map(args => args || []), isEncrypt)
+        return this.encryptService.transformStrategyArgsToEncryptType(this.store.select(fromRoot.selectRobotStrategyArgs).pipe(map(args => args || [])), isEncrypt)
             .combineLatest(
-                this.encryptService.transformTemplateArgsToEncryptType(this.store.select(fromRoot.selectRobotTemplateArgs).map(args => args || []), isEncrypt),
+                this.encryptService.transformTemplateArgsToEncryptType(this.store.select(fromRoot.selectRobotTemplateArgs).pipe(map(args => args || [])), isEncrypt),
                 (strategyArgs, templateArgs) => [...strategyArgs, ...templateArgs]
             )
             .map(args => JSON.stringify(args));
     }
 
     private getPublicRobotRequest(robot: Observable<fromRes.Robot>): Observable<fromReq.PublicRobotRequest> {
-        return robot.switchMap(robot => this.tipService.confirmOperateTip(
+        return robot.pipe(switchMap(robot => this.tipService.confirmOperateTip(
             ConfirmComponent,
-            { message: robot.public ? 'CANCEL_PUBLISH_ROBOT_CONFIRM': 'PUBLISH_ROBOT_CONFIRM', needTranslate: true },
+            { message: robot.public ? 'CANCEL_PUBLISH_ROBOT_CONFIRM' : 'PUBLISH_ROBOT_CONFIRM', needTranslate: true },
         )
             .filter(sure => !!sure)
             .mapTo({ id: robot.id, type: Number(!robot.public) })
-        );
+        ));
     }
 
     private getRobotOperateConfirm(robot: Observable<fromRes.RobotDetail | fromRes.Robot>): Observable<boolean> {
-        return robot.switchMap(robot => this.tipService.confirmOperateTip(
+        return robot.pipe(switchMap(robot => this.tipService.confirmOperateTip(
             ConfirmComponent,
             { message: this.constantService.getRobotOperateMap(robot.status).tip, needTranslate: true }
-        ));
+        )));
     }
 
     private isSecurityVerifySuccess(): Observable<boolean> {
@@ -507,12 +507,12 @@ export class RobotOperateService extends BaseService {
     }
 
     private canSendCommandToRobot(variable: VariableOverview): Observable<boolean> {
-        return this.getRobotDetail()
-            .map(robot => robot.status !== 1)
-            .withLatestFrom(
-                Observable.of(variable.variableTypeId === VariableType.NUMBER_TYPE && isNaN(<number>variable.variableValue)),
-                Observable.of(variable.variableTypeId === VariableType.STRING_TYPE && isEmpty(<string>variable.variableValue)),
-                Observable.of(this.getRobotCommand(variable).length > 200),
+        return this.getRobotDetail().pipe(
+            map(robot => robot.status !== 1),
+            withLatestFrom(
+                observableOf(variable.variableTypeId === VariableType.NUMBER_TYPE && isNaN(<number>variable.variableValue)),
+                observableOf(variable.variableTypeId === VariableType.STRING_TYPE && isEmpty(<string>variable.variableValue)),
+                observableOf(this.getRobotCommand(variable).length > 200),
                 (isNotRunning, invalidNumberType, emptyStringType, overBoundary) =>
                     [
                         isNotRunning && CommandRobotTip.invalidRobotState,
@@ -520,8 +520,8 @@ export class RobotOperateService extends BaseService {
                         emptyStringType && CommandRobotTip.invalidStringTypeArg,
                         overBoundary && CommandRobotTip.invalidCommandLength
                     ]
-            )
-            .map(result => result.find(item => !!item) || '')
+            ),
+            map(result => result.find(item => !!item) || ''), )
             .do(tip => !isEmpty(tip) && this.tipService.showTip(tip))
             .filter(tip => !tip)
             .map(tip => isEmpty(tip));
@@ -549,15 +549,15 @@ export class RobotOperateService extends BaseService {
 
     handleRobotRestartError(): Subscription {
         return this.error.handleError(
-            this.getRestartRobotResponse()
-                .map(res => res.error || this.error.getRestartRobotError(res.result))
+            this.getRestartRobotResponse().pipe(
+                map(res => res.error || this.error.getRestartRobotError(res.result)))
         );
     }
 
     handleRobotStopError(): Subscription {
         return this.error.handleError(
-            this.getStopRobotResponse()
-                .map(res => res.error || this.error.getStopRobotError(res.result))
+            this.getStopRobotResponse().pipe(
+                map(res => res.error || this.error.getStopRobotError(res.result)))
         )
     }
 
@@ -567,8 +567,8 @@ export class RobotOperateService extends BaseService {
 
     handleDeleteRobotError(): Subscription {
         return this.error.handleError(
-            this.getDeleteRobotResponse()
-                .map(res => res.error || this.error.getDeleteRobotError(res.result))
+            this.getDeleteRobotResponse().pipe(
+                map(res => res.error || this.error.getDeleteRobotError(res.result)))
         )
     }
 }

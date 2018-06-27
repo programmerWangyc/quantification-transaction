@@ -1,6 +1,9 @@
+
+import {from as observableFrom,  Observable } from 'rxjs';
+
+import {map, mergeMap} from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 
 import { RunningLog } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
@@ -48,8 +51,8 @@ export class RobotLogTableComponent implements OnInit {
     @Output() pageSizeChange: EventEmitter<number> = new EventEmitter();
 
     constructor(private translate: TranslateService) {
-        Observable.from(filterTypes)
-            .mergeMap(type => this.translate.get(type.text).map(text => ({ text, value: type.value })))
+        observableFrom(filterTypes).pipe(
+            mergeMap(type => this.translate.get(type.text).pipe(map(text => ({ text, value: type.value })))))
             .reduce((acc, cur) => [...acc, cur], [])
             .subscribe(types => this.filterTypes = types);
     }

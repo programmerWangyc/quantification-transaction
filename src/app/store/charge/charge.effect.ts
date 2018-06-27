@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { ServerSendEventType, ServerSendPaymentMessage } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';

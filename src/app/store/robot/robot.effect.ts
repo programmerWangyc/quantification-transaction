@@ -1,10 +1,9 @@
-import 'rxjs/add/observable/empty';
-
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { isString } from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { switchMap, zip } from 'rxjs/operators';
 
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ResponseAction } from '../base.action';
@@ -23,6 +22,8 @@ import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as robotActions from './robot.action';
 
+
+
 @Injectable()
 export class RobotEffect extends BaseEffect {
 
@@ -34,7 +35,7 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).zip(...this.getOtherObsOfRobotDetail()),
+        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).pipe(zip(...this.getOtherObsOfRobotDetail())),
         { ...robotActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 
@@ -74,18 +75,18 @@ export class RobotEffect extends BaseEffect {
         })
 
     @Effect()
-    serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
-        .switchMap(state => this.ws.messages.filter(msg => {
+    serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
+        switchMap(state => this.ws.messages.filter(msg => {
             const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
 
             return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS)
         })
             .map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result))
-        );
+        ));
 
     @Effect()
     robotDebug$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(btNodeActions.GET_NODE_LIST).zip(this.actions$.ofType(platformActions.GET_PLATFORM_LIST)),
+        this.actions$.ofType(btNodeActions.GET_NODE_LIST).pipe(zip(this.actions$.ofType(platformActions.GET_PLATFORM_LIST))),
         { ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 

@@ -1,12 +1,12 @@
-import 'rxjs/add/operator/scan';
+
+import {map} from 'rxjs/operators';
+
 
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FileUploader } from 'ng2-file-upload';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
@@ -90,7 +90,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
                 kLinePeriod: JSON.parse(robot.strategy_exchange_pairs)[0],
             }))
             .add(this.platformService.getPlatformList().subscribe(list => this.platforms = list))
-            .add(this.robotOperate.launchUpdateRobotConfig(this.modify$.map(formValue => this.createModifyParams(formValue))))
+            .add(this.robotOperate.launchUpdateRobotConfig(this.modify$.pipe(map(formValue => this.createModifyParams(formValue)))))
     }
 
     initialModel() {
@@ -98,13 +98,13 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
 
         this.strategyArgs = this.robotOperate.getRobotStrategyArgs();
 
-        this.hasStrategyArg = this.strategyArgs.map(args => !!args.length);
+        this.hasStrategyArg = this.strategyArgs.pipe(map(args => !!args.length));
 
         this.templateArgs = this.robotOperate.getRobotTemplateArgs();
 
         this.hasArgs = this.robotOperate.hasArgs();
 
-        this.warningMessage = this.robotOperate.getRobotConfigMessage().map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg))
+        this.warningMessage = this.robotOperate.getRobotConfigMessage().pipe(map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg)))
     }
 
     initialForm() {
@@ -172,6 +172,6 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
     }
 
     get selectedPlatform(): Observable<Platform> {
-        return this.platformService.getPlatformList().map(list => list.find(item => item.id === this.platform.value));
+        return this.platformService.getPlatformList().pipe(map(list => list.find(item => item.id === this.platform.value)));
     }
 }

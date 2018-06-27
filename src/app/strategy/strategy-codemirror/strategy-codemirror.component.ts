@@ -14,9 +14,8 @@ import {
 } from '@angular/core';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs/observable/of';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { of, Subject, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { CategoryType } from '../../interfaces/request.interface';
 import { StrategyDetail } from '../../interfaces/response.interface';
@@ -24,6 +23,7 @@ import { PublicService } from '../../providers/public.service';
 import { StrategyConstantService } from '../providers/strategy.constant.service';
 import { StrategyService } from '../providers/strategy.service';
 import { Language } from '../strategy.config';
+
 
 const beautify = require('js-beautify').js;
 
@@ -172,7 +172,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
             if (theme && this.codeOptions.theme !== theme) this.codeOptions.theme = theme;
         })
-            .add(this.saveBacktest$.switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null))
+            .add(this.saveBacktest$.pipe(switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null)))
                 .subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
             );
     }
@@ -308,7 +308,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     toggleSaveBacktestConfig() {
-        this.isSaveBacktestConfig  = !this.isSaveBacktestConfig;
+        this.isSaveBacktestConfig = !this.isSaveBacktestConfig;
 
         this.saveBacktest$.next(this.isSaveBacktestConfig);
     }

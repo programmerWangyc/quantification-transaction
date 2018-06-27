@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
 import { BacktestService } from '../../backtest/providers/backtest.service';

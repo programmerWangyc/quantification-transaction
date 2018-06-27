@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { PublicService } from './../../providers/public.service';
 
@@ -24,7 +22,7 @@ export class FooterComponent implements OnInit, OnDestroy {
     constructor(
         private translate: TranslateService,
         private publicService: PublicService,
-    ) { 
+    ) {
     }
 
     ngOnInit() {

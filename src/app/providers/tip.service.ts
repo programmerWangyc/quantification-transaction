@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { NzMessageDataOptions, NzMessageService, NzModalService, NzNotificationService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ConfirmOperateTipData } from '../interfaces/app.interface';
 import { CustomSnackBarComponent } from '../tool/tool.components';
+
 
 @Injectable()
 export class TipService {
@@ -79,12 +81,12 @@ export class TipService {
      * @description NzModalService secondary wrap.
      */
     getNzConfirmOperateConfig(): Observable<object> {
-        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).map(res => ({
+        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(map(res => ({
             nzTitle: res.OPERATE_CONFIRM,
             nzOkText: res.CONFIRM,
             nzCancelText: res.CANCEL,
             nzOkType: 'primary',
-        }));
+        })));
     }
 
     /**

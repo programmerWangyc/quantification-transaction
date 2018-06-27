@@ -1,9 +1,9 @@
+
+import {map} from 'rxjs/operators';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { SemanticsLog } from '../robot.config';
@@ -59,11 +59,11 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.profitLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().map(item => item.profitLimit);
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(item => item.profitLimit));
     }
 
     launch() {
-        const id = this.route.paramMap.map(param => +param.get('id'));
+        const id = this.route.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.addProfitPoints(this.chart$)
             .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset().withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })).skip(1)));

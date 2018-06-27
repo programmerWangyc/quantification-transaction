@@ -1,16 +1,8 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/retryWhen';
-import 'rxjs/add/operator/share';
-
 import { Injectable } from '@angular/core';
 import { QueueingSubject } from 'queueing-subject';
+import { Observable, Subscription } from 'rxjs';
 import websocketConnect, { IWebSocket } from 'rxjs-websockets';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { delay, filter, map, retryWhen, share, tap } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../app.config';
 import { WsRequest } from './../interfaces/request.interface';
@@ -63,7 +55,7 @@ export class WebsocketService {
         // console.log(param);
         this.inputStream.next(request);
 
-        return this.messages.filter(data => data.callbackId === param.callbackId);
+        return this.messages.pipe(filter(data => data.callbackId === param.callbackId));
     }
 
     connect(): void {
@@ -79,13 +71,13 @@ export class WebsocketService {
 
         const { messages, connectionStatus } = websocketConnect(this.url, this.inputStream, [], webSocketFactory);
 
-        this.messages = messages
-            .map(msg => this.unfold(msg))
+        this.messages = messages.pipe(
+            map(msg => this.unfold(msg)),
             // .do(msg => console.log('Websocket get message: ', JSON.parse(msg)))
-            .filter(response => response !== 'P')
-            .map(response => JSON.parse(response) as ResponseBody)
-            .retryWhen(errors => errors.do(_ => this.tip.showTip('网络错误')).delay(5000))
-            .share();
+            filter(response => response !== 'P'),
+            map(response => JSON.parse(response) as ResponseBody),
+            retryWhen(errors => errors.pipe(tap(_ => this.tip.showTip('网络错误')), delay(5000), )),
+            share(), );
 
         this.connectionStatus = connectionStatus;
 

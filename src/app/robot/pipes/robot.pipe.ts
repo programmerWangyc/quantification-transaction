@@ -1,7 +1,8 @@
+import { map } from 'rxjs/operators';
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString, last, zip } from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { Robot, RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
 import { RobotOperateType } from '../../store/robot/robot.reducer';
@@ -224,10 +225,10 @@ export class RobotOperateBtnTextPipe implements PipeTransform {
         return this.robotOperate.isCurrentRobotOperating(
             robot,
             robot.status > 2 ? RobotOperateType.restart : RobotOperateType.stop
-        ).map(loading => {
+        ).pipe(map(loading => {
             const btnTexts = this.constantService.getRobotOperateMap(robot.status).btnText;
 
             return this.constantService.getRobotOperateBtnText(loading, btnTexts);
-        });
+        }));
     }
 }

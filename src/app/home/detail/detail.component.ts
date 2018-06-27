@@ -1,10 +1,8 @@
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/reduce';
-
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { from as observableFrom, Observable } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 
 interface Detail {
     title: string;
@@ -45,14 +43,14 @@ export class DetailComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.list = Observable.from(list)
-            .mergeMap(item => this.translate.get(item.detail)
-                .map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) }))
-            )
-            .reduce((acc, cur) => {
+        this.list = observableFrom(list).pipe(
+            mergeMap(item => this.translate.get(item.detail).pipe(
+                map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) })))
+            ),
+            reduce((acc, cur) => {
                 acc.push(cur);
 
                 return acc;
-            }, []);
+            }, []), );
     }
 }

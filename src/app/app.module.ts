@@ -1,6 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
 import { MatSnackBarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,7 +33,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        HttpModule,
         HomeModule,
         AppRoutingModule, // top level route, must at last of all routers;
         SharedModule.forRoot(),

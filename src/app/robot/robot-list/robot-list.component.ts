@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subject, Subscription ,  Observable } from 'rxjs';
 
 import { BaseComponent } from '../../base/base.component';
 import { Robot } from '../../interfaces/response.interface';

@@ -1,15 +1,15 @@
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/zip';
+
+
+
+
+
+
+
+
 
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { LoginResponse, SignupResponse } from '../../interfaces/response.interface';
 import { WebsocketService } from '../../providers/websocket.service';

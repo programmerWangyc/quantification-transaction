@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { isNumber } from 'lodash';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { AdvancedOptionConfig, BacktestConstantService, BacktestMode } from '../providers/backtest.constant.service';

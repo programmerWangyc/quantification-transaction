@@ -1,9 +1,10 @@
-import 'rxjs/add/observable/empty';
+
+import {empty as observableEmpty,  Observable } from 'rxjs';
+
 
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { omit } from 'lodash';
-import { Observable } from 'rxjs/Observable';
 
 import { LocalStorageKey } from '../../app.config';
 import { ResponseAction } from '../base.action';
@@ -31,7 +32,7 @@ export class PublicEffect extends BaseEffect {
 
             localStorage.setItem(LocalStorageKey.refUser, refUser);
 
-            return Observable.empty();
+            return observableEmpty();
         });
 
     @Effect()

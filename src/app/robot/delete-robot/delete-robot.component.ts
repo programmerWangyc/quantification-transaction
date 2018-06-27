@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NzModalRef } from 'ng-zorro-antd';
 

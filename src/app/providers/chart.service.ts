@@ -1,15 +1,16 @@
-import 'rxjs/add/operator/concat';
-
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as Highstock from 'highcharts/highstock';
 import { cloneDeep, compact, flatten, isArray, isEmpty, isEqual, isNumber, isObject, omit, orderBy, range } from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { from as observableFrom } from 'rxjs';
+import { concat, map, mergeMap, zip } from 'rxjs/operators';
 
 import { StrategyChartSeriesData } from '../robot/robot.config';
 import { ChartUpdateIndicator, StrategyChartData, StrategyChartPoint } from './../interfaces/app.interface';
 import { RobotLogs, StrategyLog } from './../interfaces/response.interface';
 import { UtilService } from './util.service';
+
+
 
 @Injectable()
 export class ChartService {
@@ -28,9 +29,9 @@ export class ChartService {
 
         this.setDefaultOptions();
 
-        Observable.from(this.TYPE_BUTTON_RANGE)
-            .mergeMap(count => this.translate.get('SOME_HOURS', { count }).map(text => ({ type: 'hour', count, text })))
-            .concat(this.translate.get('ALL').map(text => ({ type: 'all', text }))).reduce((acc, cur) => [...acc, cur], [])
+        observableFrom(this.TYPE_BUTTON_RANGE).pipe(
+            mergeMap(count => this.translate.get('SOME_HOURS', { count }).pipe(map(text => ({ type: 'hour', count, text })))),
+            concat(this.translate.get('ALL').pipe(map(text => ({ type: 'all', text })))), ).reduce((acc, cur) => [...acc, cur], [])
             .subscribe(result => this.typeButtons = result);
     }
 
@@ -45,10 +46,10 @@ export class ChartService {
 
         const other = ["CONTEXT_BUTTON_TITLE", "DOWNLOAD_JPEG", "DOWNLOAD_PDF", "DOWNLOAD_PNG", "DOWNLOAD_SVG", "DRILL_UP_TEXT", "LOADING", "NO_DATA", "PRINT_CHART", "RESET_ZOOM", "RESET_ZOOM_TITLE", "RANGE"];
 
-        this.translate.get(months)
-            .map(result => months.map(key => result[key]))
-            .zip(
-                this.translate.get(weeks).map(result => weeks.map(key => result[key])),
+        this.translate.get(months).pipe(
+            map(result => months.map(key => result[key])),
+            zip(
+                this.translate.get(weeks).pipe(map(result => weeks.map(key => result[key]))),
                 this.translate.get(other),
                 (months, weeks, other) => ({
                     contextButtonTitle: other.CONTEXT_BUTTON_TITLE,
@@ -67,7 +68,7 @@ export class ChartService {
                     weekdays: weeks,
                     rangeSelectorZoom: other.RANGE
                 })
-            ).subscribe(lang => Highstock.setOptions({ lang, credits: { enabled: false }, global: { useUTC: false } }));
+            ), ).subscribe(lang => Highstock.setOptions({ lang, credits: { enabled: false }, global: { useUTC: false } }));
     }
 
     getRobotProfitLogsOptions(data: [number, number][]): Highstock.Options {

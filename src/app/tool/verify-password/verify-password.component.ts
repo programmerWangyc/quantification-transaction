@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { EncryptService } from './../../providers/encrypt.service';
 import { AuthService } from './../../shared/providers/auth.service';
+
 
 @Component({
     selector: 'app-verify-password',
@@ -35,7 +36,7 @@ export class VerifyPasswordComponent extends BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$.map(password => ({ password: this.encryptService.encryptPassword(password) })))
+        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$.pipe(map(password => ({ password: this.encryptService.encryptPassword(password) }))))
             .add(this.authService.storePwdTemporary(this.verify$))
 
         this.authService.handleVerifyPasswordError();

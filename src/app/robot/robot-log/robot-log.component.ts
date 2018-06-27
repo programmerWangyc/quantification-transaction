@@ -1,11 +1,11 @@
-import 'rxjs/add/operator/skip';
+
+import {map} from 'rxjs/operators';
+
 
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { includes } from 'lodash';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
@@ -92,7 +92,7 @@ export class RobotLogComponent extends BaseComponent {
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.runningLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().map(params => params.logLimit).startWith(20);
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(params => params.logLimit)).startWith(20);
 
         this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize);
 
@@ -100,9 +100,9 @@ export class RobotLogComponent extends BaseComponent {
     }
 
     launch() {
-        const id = this.activatedRoute.paramMap.map(param => +param.get('id'));
+        const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
-        this.subscription$$ = this.robotLog.launchRobotLogs(id.map(robotId => ({ robotId })), this.allowSeparateRequest)
+        this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(map(robotId => ({ robotId }))), this.allowSeparateRequest)
             .add(this.robotLog.launchRobotLogs(id.combineLatest(this.robotLog.getLogOffset(), (robotId, logOffset) => ({ robotId, logOffset })).skip(1)))
             // .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))

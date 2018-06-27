@@ -1,7 +1,7 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, of as observableOf, Subscription } from 'rxjs';
+import { distinctUntilChanged, map, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
@@ -22,6 +22,7 @@ import {
 } from '../../store/index.reducer';
 import { PaymentMethod } from '../charge.config';
 import { getChargePrice } from '../pipes/charge.pipe';
+
 
 export interface RechargeFormModal {
     payMethod: number;
@@ -47,9 +48,9 @@ export class ChargeService extends BaseService {
 
     /* =======================================================Server request======================================================= */
 
-    launchPaymentArg(data: Observable<RechargeFormModal>, strategyId: Observable<number> = Observable.of(0)): Subscription {
+    launchPaymentArg(data: Observable<RechargeFormModal>, strategyId: Observable<number> = observableOf(0)): Subscription {
         return this.process.processPaymentArg(
-            data.withLatestFrom(strategyId, ({ payMethod, chargeAmount }, strategyId) => ({ payMethod, chargeAmount, strategyId }))
+            data.pipe(withLatestFrom(strategyId, ({ payMethod, chargeAmount }, strategyId) => ({ payMethod, chargeAmount, strategyId })))
         );
     }
 
@@ -66,15 +67,15 @@ export class ChargeService extends BaseService {
     }
 
     private goToPaymentPage(payMethod: number): Observable<GetPaymentArgResponse> {
-        return this.getPaymentArgsResponse()
-            .withLatestFrom(this.store.select(selectPaymentArgRequestParams))
+        return this.getPaymentArgsResponse().pipe(
+            withLatestFrom(this.store.select(selectPaymentArgRequestParams)))
             .filter(([res, req]) => !!req && (req.payMethod === payMethod))
             .map(([res, _]) => res);
     }
 
     goToAlipayPage(): Subscription {
-        return this.goToPaymentPage(PaymentMethod.ALIPAY)
-            .map(res => {
+        return this.goToPaymentPage(PaymentMethod.ALIPAY).pipe(
+            map(res => {
                 const form: HTMLFormElement = this.renderer2.createElement('form');
 
                 form.method = 'GET';
@@ -94,7 +95,7 @@ export class ChargeService extends BaseService {
                 form.submit();
 
                 return form;
-            })
+            }))
             .subscribe(form => this.renderer2.removeChild(document.body, form));
     }
 
@@ -104,9 +105,9 @@ export class ChargeService extends BaseService {
     }
 
     getWechartQrCode(): Observable<string> {
-        return this.goToPaymentPage(PaymentMethod.WECHART)
-            .map(res => res.result.code_url)
-            .distinctUntilChanged();
+        return this.goToPaymentPage(PaymentMethod.WECHART).pipe(
+            map(res => res.result.code_url),
+            distinctUntilChanged(), );
     }
 
     // pay orders
@@ -116,15 +117,15 @@ export class ChargeService extends BaseService {
     }
 
     getHistoryOrders(): Observable<PayOrder[]> {
-        return this.getPayOrdersResponse()
-            .map(res => res.result.items);
+        return this.getPayOrdersResponse().pipe(
+            map(res => res.result.items));
     }
 
     getSpecificHistoryOrders(flag: string): Observable<PayOrder[]> {
         const predicate = this.isSpecificOrder(flag);
 
-        return this.getHistoryOrders()
-            .map(orders => orders.filter(predicate));
+        return this.getHistoryOrders().pipe(
+            map(orders => orders.filter(predicate)));
     }
 
     isSpecificOrder(flag: string): (order: PayOrder) => boolean {
@@ -132,7 +133,7 @@ export class ChargeService extends BaseService {
     }
 
     getHistoryOrderTotalAmount(data: Observable<PayOrder[]>): Observable<number> {
-        return data.map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0));
+        return data.pipe(map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0)));
     }
 
     // server send message

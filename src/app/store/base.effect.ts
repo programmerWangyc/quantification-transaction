@@ -1,9 +1,8 @@
-import 'rxjs/add/operator/mapTo';
-
 import { Injectable } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
+import { catchError, filter, map, mapTo, mergeMap, switchMap, takeUntil, zip } from 'rxjs/operators';
 
 import { WsRequest } from '../interfaces/request.interface';
 import { ResponseBody, ResponseItem } from '../interfaces/response.interface';
@@ -12,6 +11,8 @@ import { WebsocketService } from './../providers/websocket.service';
 import { RequestAction, ResponseAction } from './base.action';
 import { ApiActions, failTail, successTail } from './index.action';
 
+
+
 export declare function resultPredicate(data: ResponseUnit<any>): boolean;
 
 export interface isFail<T> {
@@ -19,8 +20,8 @@ export interface isFail<T> {
 }
 
 /**
- * @function isFail 
- * @param data ResponseUnit<any> 
+ * @function isFail
+ * @param data ResponseUnit<any>
  * @description Predicate the response is an error or not;
  */
 export const isFail: isFail<any> = (data: ResponseUnit<any>) => !!data.error;
@@ -33,35 +34,35 @@ export class BaseEffect {
     ) { }
 
     /**
-     * 
-     * @param data ResponseBody 
+     *
+     * @param data ResponseBody
      * @param actionModule Collection of response actions;
      * @param resultFail Predicate whether the response is success.
      * @description Used to split the response data to corresponding response actions.
      */
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
-        return Observable.from(<ResponseUnit<ResponseItem>[]>data.result || [])
-            .zip(Observable.from(data.callbackId.split('-')), (result, action) => ({ ...result, action }))
+        return observableFrom(<ResponseUnit<ResponseItem>[]>data.result || []).pipe(
+            zip(observableFrom(data.callbackId.split('-')), (result, action) => ({ ...result, action })),
             // .do(res => console.log(`Action-${res.action} get response: `, res.result))
-            .map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res));
+            map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res)), );
     }
 
     /**
-     * @method getResponseAction 
+     * @method getResponseAction
      * @param actionName Request action name;
      * @param actionModule Collection of response actions;
      * @param resultFail Predicate whether the response is success.
      * @description If a request calls only one interface, use this method.
      */
     protected getResponseAction(actionName: string, actionModule: object, resultFail = isFail): Observable<ResponseAction> {
-        return this.actions$.ofType(actionName)
-            .filter((action: ApiActions) => action.allowSeparate())
-            .switchMap((action: ApiActions) => this.ws
-                .send(action.getParams(action.payload))
-                .takeUntil(this.actions$.ofType(actionName))
-                .mergeMap(body => this.getSplitAction(body, actionModule, resultFail))
-                .catch(error => Observable.of(error))
-            );
+        return this.actions$.ofType(actionName).pipe(
+            filter((action: ApiActions) => action.allowSeparate()),
+            switchMap((action: ApiActions) => this.ws
+                .send(action.getParams(action.payload)).pipe(
+                    takeUntil(this.actions$.ofType(actionName)),
+                    mergeMap(body => this.getSplitAction(body, actionModule, resultFail)),
+                    catchError(error => observableOf(error)), )
+            ), );
     }
 
     /**
@@ -71,13 +72,13 @@ export class BaseEffect {
      * @description If a request calls multiple interfaces, use this method.
      */
     protected getMultiResponseActions(source: Observable<Action[]>, actionModule: object): Observable<ResponseAction> {
-        return source.map(actions => actions.map((action: RequestAction) => action.getParams(action.payload)))
-            .switchMap((data: WsRequest[]) => this.ws
-                .send(this.mergeParams(data))
-                .takeUntil(source.mapTo(true))
-                .mergeMap(body => this.getSplitAction(body, actionModule))
-                .catch(error => Observable.of(error))
-            );
+        return source.pipe(map(actions => actions.map((action: RequestAction) => action.getParams(action.payload))),
+            switchMap((data: WsRequest[]) => this.ws
+                .send(this.mergeParams(data)).pipe(
+                    takeUntil(source.pipe(mapTo(true))),
+                    mergeMap(body => this.getSplitAction(body, actionModule)),
+                    catchError(error => observableOf(error)), )
+            ), );
     }
 
     /**

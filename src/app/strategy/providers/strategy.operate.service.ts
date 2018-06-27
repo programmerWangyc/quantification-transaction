@@ -1,12 +1,9 @@
-import 'rxjs/add/operator/partition';
-
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
@@ -21,6 +18,8 @@ import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confi
 import { ShareStrategyStateSnapshot } from '../strategy.interface';
 import { StrategyConstantService } from './strategy.constant.service';
 import { StrategyService } from './strategy.service';
+
+
 
 export enum GenKeyType {
     COPY_CODE,
@@ -47,22 +46,22 @@ export class StrategyOperateService extends StrategyService {
     /* =======================================================Serve Request======================================================= */
 
     launchShareStrategy(params: Observable<ShareStrategyStateSnapshot>): Subscription {
-        return this.process.processShareStrategy(params.switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent)
+        return this.process.processShareStrategy(params.pipe(switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent)
             .do(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType]))
             .filter(confirmType => confirmType !== ConfirmType.INNER)
-            .mapTo({ id: params.id, type: params.type }))
+            .mapTo({ id: params.id, type: params.type })))
         )
             .add(this.launchGenKey());
     }
 
     launchGenKey(): Subscription {
-        return this.process.processGenKey(this.genKey$.switchMap(([params, confirmType]) => this.confirmStrategyShare(params, InnerShareConfirmComponent)
-            .map((form: InnerShareFormModel) => ({
+        return this.process.processGenKey(this.genKey$.pipe(switchMap(([params, confirmType]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
+            map((form: InnerShareFormModel) => ({
                 type: params.type === fromReq.StrategyShareType.PUBLISH ? GenKeyType.COPY_CODE : GenKeyType.REGISTER_CODE,
                 strategyId: params.id,
                 days: form.days,
                 concurrent: form.concurrent
-            })))
+            })))))
         );
     }
 
@@ -71,16 +70,16 @@ export class StrategyOperateService extends StrategyService {
     }
 
     launchDeleteStrategy(params: Observable<fromRes.Strategy>): Subscription {
-        return this.process.processDeleteStrategy(params.switchMap(params => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name })
-            .mergeMap(content => {
+        return this.process.processDeleteStrategy(params.pipe(switchMap(params => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
+            mergeMap(content => {
                 const modal = this.nzModal.confirm({
                     nzContent: content,
                     nzOnOk: () => modal.close(true),
                 })
 
                 return modal.afterClose.filter(sure => sure);
-            })
-            .mapTo({ id: params.id }))
+            }))
+            .mapTo({ id: params.id })))
         );
     }
 
@@ -101,8 +100,8 @@ export class StrategyOperateService extends StrategyService {
     remindPublishRobot(): Subscription {
         return this.getShareStrategyResponse()
             .filter(res => res.result)
-            .zip(this.getRequestParams()
-                .map(res => res.shareStrategy)
+            .zip(this.getRequestParams().pipe(
+                map(res => res.shareStrategy))
                 .filter(req => req && (req.type === fromReq.StrategyShareType.SELL))
                 .distinctUntilKeyChanged('id'),
                 (_1, _2) => true
@@ -120,7 +119,7 @@ export class StrategyOperateService extends StrategyService {
         return this.getGenKeyResponse()
             .filter(res => !!res.result)
             .map(res => res.result)
-            .withLatestFrom(this.getRequestParams().map(res => res.genKey).filter(req => !!req), this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE']))
+            .withLatestFrom(this.getRequestParams().pipe(map(res => res.genKey)).filter(req => !!req), this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE']))
             .subscribe(([code, req, label]) => {
                 const { strategyId, type } = req;
 
@@ -141,8 +140,8 @@ export class StrategyOperateService extends StrategyService {
     }
 
     isVerifyKeySuccess(): Observable<boolean> {
-        return this.getVerifyKeyResponse()
-            .map(res => res.result);
+        return this.getVerifyKeyResponse().pipe(
+            map(res => res.result));
     }
 
     private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {

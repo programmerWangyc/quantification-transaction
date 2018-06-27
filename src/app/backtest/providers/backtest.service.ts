@@ -1,8 +1,7 @@
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { BaseService } from '../../base/base.service';
 import { GetTemplatesRequest, PutTaskCode, PutTaskCodeArg, BacktestExchange, BacktestAdvanceOptions, BacktestPlatformOptions, BacktestConstantOptions, BacktestPutTaskOptions, BacktestPutTaskParams, BacktestIORequest, BacktestDescription, SettingTypes } from '../../interfaces/request.interface';
@@ -13,7 +12,7 @@ import { ProcessService } from '../../providers/process.service';
 import * as Actions from '../../store/backtest/backtest.action';
 import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
-import { BacktestSelectedPair, TimeRange, BacktestCode, WorkerBacktest, WorkerBacktestRequest } from '../backtest.interface';
+import { BacktestSelectedPair, TimeRange, BacktestCode } from '../backtest.interface';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { environment } from '../../../environments/environment';
 import { isNumber, omit } from 'lodash';
@@ -21,11 +20,8 @@ import { Filter } from '../arg-optimizer/arg-optimizer.component';
 import { VariableOverview } from '../../interfaces/app.interface';
 import { VariableType } from '../../app.config';
 import { TranslateService } from '@ngx-translate/core';
-import { Language } from '../../strategy/strategy.config';
 import { PublicService } from '../../providers/public.service';
 import { BacktestComputingService } from './backtest.computing.service';
-
-import { Http, Response } from '@angular/http';
 
 // export const workerUrl = '../../../assets/sandbox/worker.js'
 

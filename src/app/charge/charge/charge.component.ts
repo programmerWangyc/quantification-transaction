@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, merge } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PaymentMethod } from '../charge.config';
 import { PAY_METHODS } from '../providers/charge.constant.service';
 import { ChargeService, RechargeFormModal } from '../providers/charge.service';
+
 
 @Component({
     selector: 'app-charge',
@@ -63,7 +63,7 @@ export class ChargeComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPaymentArg(this.pay$.merge(this.getQRCodeIfWechart()))
+        this.subscription$$ = this.chargeService.launchPaymentArg(this.pay$.pipe(merge(this.getQRCodeIfWechart())))
             .add(this.chargeService.goToAlipayPage())
             .add(this.chargeService.goToPayPal())
             .add(this.chargeService.handlePaymentsArgsError());
@@ -83,9 +83,9 @@ export class ChargeComponent implements BaseComponent {
     }
 
     mapPaymentStateTo(start: string, processing: string, finish: string): Observable<string> {
-        return this.processState = this.pay$.merge(this.getQRCodeIfWechart()).map(_ => processing)
-            .merge(this.chargeService.isRechargeSuccess().map(_ => finish))
-            .merge(this.form.valueChanges.filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART).mapTo(start))
+        return this.processState = this.pay$.pipe(merge(this.getQRCodeIfWechart()), map(_ => processing),
+            merge(this.chargeService.isRechargeSuccess().pipe(map(_ => finish))),
+            merge(this.form.valueChanges.filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART).mapTo(start)), )
             .startWith(start);
     }
 

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { isNumber } from 'lodash';
 import * as moment from 'moment';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { TipService } from '../../providers/tip.service';

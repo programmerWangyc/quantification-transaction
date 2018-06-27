@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { Path } from '../../app.config';
 import { PublicService } from './../../providers/public.service';
@@ -51,7 +51,7 @@ const analyzing: Link = {
 })
 export class NavbarComponent implements OnInit {
 
-    navLinks: Link[] = [main, square, factFinder, community, documentation, market, analyzing ];
+    navLinks: Link[] = [main, square, factFinder, community, documentation, market, analyzing];
 
     searchValue: string;
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { ResponseAction } from '../base.action';
 import { WebsocketService } from './../../providers/websocket.service';

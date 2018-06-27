@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject, Subscription, timer as observableTimer } from 'rxjs';
+import { map, switchMapTo } from 'rxjs/operators';
+
 import { StrategyOperateService } from '../providers/strategy.operate.service';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/timer';
+
+
 
 @Component({
     selector: 'app-strategy-renewal',
@@ -38,9 +39,9 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-        this.timer = this.startTimer.switchMapTo(this.tryAgain(6));
+        this.timer = this.startTimer.pipe(switchMapTo(this.tryAgain(6)));
 
-        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify.map(verifyCode => ({ verifyCode, strategyId: this.id })))
+        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify.pipe(map(verifyCode => ({ verifyCode, strategyId: this.id }))))
             .add(this.strategyOperate.isVerifyKeySuccess().subscribe(isSuccess => {
                 if (isSuccess) {
                     this.close();
@@ -56,7 +57,7 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     }
 
     tryAgain(seconds: number): Observable<number> {
-        return Observable.timer(0, 1000).take(seconds).map(count => seconds - count - 1).do(time => this.forbidden = !!time);
+        return observableTimer(0, 1000).take(seconds).map(count => seconds - count - 1).do(time => this.forbidden = !!time);
     }
 
     ngOnDestroy() {

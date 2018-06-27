@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subscription } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PayOrder } from '../../interfaces/response.interface';
 import { ChargeConstantService } from '../providers/charge.constant.service';
 import { ChargeService } from '../providers/charge.service';
+
 
 @Component({
     selector: 'app-charge-history',
@@ -37,8 +38,8 @@ export class ChargeHistoryComponent implements BaseComponent {
     initialModel() {
         this.historyRecords = this.chargeService.getSpecificHistoryOrders(this.constant.RECHARGE_PAYMENT_FLAG);
 
-        this.statistics = this.chargeService.getHistoryOrderTotalAmount(this.historyRecords)
-            .mergeMap(total => this.translate.get('HISTORY_TOTAL_PAY', { total }));
+        this.statistics = this.chargeService.getHistoryOrderTotalAmount(this.historyRecords).pipe(
+            mergeMap(total => this.translate.get('HISTORY_TOTAL_PAY', { total })));
     }
 
     launch() {

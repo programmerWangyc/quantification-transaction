@@ -1,6 +1,8 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { Robot, RobotStatus } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
@@ -36,7 +38,7 @@ export class RobotDurationComponent implements OnInit {
     ngOnInit() {
         const predicate = (robot: Robot) => !robot.is_sandbox && this.robotService.isNormalStatus(robot);
 
-        const availableRobotCount = this.robotService.getRobotCountByStatus(predicate).map(robots => Math.max(1, robots.length));
+        const availableRobotCount = this.robotService.getRobotCountByStatus(predicate).pipe(map(robots => Math.max(1, robots.length)));
 
         const availableHours = availableRobotCount.withLatestFrom(
             this.publicService.getBalance(),
@@ -55,9 +57,9 @@ export class RobotDurationComponent implements OnInit {
 
         this.consumed = this.publicService.getConsumed();
 
-        this.runningRobotCount = this.robotService.getRobotCountByStatus((robot: Robot) => robot.status === RobotStatus.RUNNING).map(robots => robots.length);
+        this.runningRobotCount = this.robotService.getRobotCountByStatus((robot: Robot) => robot.status === RobotStatus.RUNNING).pipe(map(robots => robots.length));
 
-        this.robotTotal = this.robotService.getRobots().map(robots => robots.length);
+        this.robotTotal = this.robotService.getRobots().pipe(map(robots => robots.length));
 
         this.grossProfit = this.robotService.getGrossProfit();
     }

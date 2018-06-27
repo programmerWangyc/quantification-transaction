@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
 import { isNumber } from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { filter, map, switchMapTo } from 'rxjs/operators';
 
 import { ServerBacktestCode } from '../../backtest/backtest.config';
-import { BacktestIOResponse, ServerBacktestResult, ServerSendEventType, ServerSendBacktestMessage } from '../../interfaces/response.interface';
+import {
+    BacktestIOResponse,
+    ServerBacktestResult,
+    ServerSendBacktestMessage,
+    ServerSendEventType,
+} from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { ResponseAction } from '../base.action';
+import { AppState, selectServerMsgSubscribeState } from '../index.reducer';
+import { UPDATE_STRATEGY_DEPENDANCE_TEMPLATES, UpdateStrategyDependanceTemplatesAction } from '../strategy/strategy.action';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
 import * as backtestActions from './backtest.action';
-import { Action, Store } from '@ngrx/store';
-import { UPDATE_STRATEGY_DEPENDANCE_TEMPLATES, UpdateStrategyDependanceTemplatesAction } from '../strategy/strategy.action';
-import { AppState, selectServerMsgSubscribeState } from '../index.reducer';
+
 
 @Injectable()
 export class BacktestEffect extends BaseEffect {
@@ -26,15 +33,15 @@ export class BacktestEffect extends BaseEffect {
      * @description 在模板依赖被取消后检查回测中的模板代码是否被用户选中，删除不需要的模板
      */
     @Effect()
-    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES)
-        .map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload));
+    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES).pipe(
+        map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload)));
 
 
     @Effect()
-    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
-        .filter(isResponsive => isResponsive)
-        .switchMapTo(this.ws.messages.filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))
-        .map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage>msg.result));
+    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
+        filter(isResponsive => isResponsive),
+        switchMapTo(this.ws.messages.pipe(filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))),
+        map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage>msg.result)), );
 
     constructor(
         public actions$: Actions,
@@ -49,8 +56,8 @@ export class BacktestEffect extends BaseEffect {
      * @description 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出具有回测功能的页面时会取消订阅，此时不再处理回测消息。
      */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
-        return this.store.select(selectServerMsgSubscribeState)
-            .map(status => status[ServerSendEventType.BACKTEST]);
+        return this.store.select(selectServerMsgSubscribeState).pipe(
+            map(status => status[ServerSendEventType.BACKTEST]));
     }
 }
 

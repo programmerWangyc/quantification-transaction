@@ -1,22 +1,22 @@
-import { WsRequest } from './../../interfaces/request.interface';
+import { Injectable } from '@angular/core';
+import { Actions, Effect } from '@ngrx/effects';
+import { Observable } from 'rxjs';
+import { zip } from 'rxjs/operators';
+
+import { ResponseAction } from '../base.action';
+import { GET_EXCHANGE_LIST, ResponseActions as exchange } from '../exchange/exchange.action';
+import { GET_SETTINGS, ResponseActions as pub } from '../public/public.action';
 import { WebsocketService } from './../../providers/websocket.service';
 import { BaseEffect } from './../base.effect';
-import { Injectable } from '@angular/core';
-import { Effect, Actions } from '@ngrx/effects';
-import { Observable } from 'rxjs/Observable';
 
-import { ResponseActions as pub, GET_SETTINGS} from '../public/public.action'; 
-import { ResponseActions as exchange, GET_EXCHANGE_LIST} from '../exchange/exchange.action';
-import { ApiAction, ResponseAction } from '../base.action';
-import { Action } from '@ngrx/store';
 
 @Injectable()
 export class HomeEffect extends BaseEffect {
 
     @Effect()
     homeInfo$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(GET_SETTINGS)
-            .zip(this.actions$.ofType(GET_EXCHANGE_LIST)),
+        this.actions$.ofType(GET_SETTINGS).pipe(
+            zip(this.actions$.ofType(GET_EXCHANGE_LIST))),
         { ...pub, ...exchange }
     );
 

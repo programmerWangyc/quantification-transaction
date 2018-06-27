@@ -9,7 +9,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { Path } from '../../app.config';
 import { TipService } from '../../providers/tip.service';

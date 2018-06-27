@@ -1,3 +1,5 @@
+
+import { withLatestFrom, switchMap, find, map, mergeMap, take } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import {
@@ -11,11 +13,7 @@ import {
 import { Store } from '@ngrx/store';
 import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
-import { from } from 'rxjs/observable/from';
-import { of } from 'rxjs/observable/of';
-import { find, map, mergeMap, take } from 'rxjs/operators';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, from, of, Subscription } from 'rxjs';
 
 import { BaseService } from '../../base/base.service';
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
@@ -65,9 +63,9 @@ export class StrategyService extends BaseService {
     }
 
     launchOpStrategyToken(source: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
-        return this.process.processOpStrategyToken(source.switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
-            : this.confirmLaunchOpStrategyToken(source)
-                .map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) })))
+        return this.process.processOpStrategyToken(source.pipe(switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
+            : this.confirmLaunchOpStrategyToken(source).pipe(
+                map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) })))))
         );
     }
 
@@ -88,12 +86,12 @@ export class StrategyService extends BaseService {
     }
 
     getStrategies(): Observable<fromRes.Strategy[]> {
-        return this.getStrategyListResponse().map(res => res.result.strategies);
+        return this.getStrategyListResponse().pipe(map(res => res.result.strategies));
     }
 
     getGroupedStrategy(key: string, getName?: (arg: number | boolean) => string, getNameValue?: (arg: string) => number | boolean): Observable<GroupedStrategy[]> {
-        return this.utilService.getGroupedList(this.getStrategies(), key, getName)
-            .map(list => {
+        return this.utilService.getGroupedList(this.getStrategies(), key, getName).pipe(
+            map(list => {
                 if (getNameValue) {
                     const result = list.map(({ groupName, values }) => ({ groupName, values, groupNameValue: getNameValue(groupName) }));
 
@@ -101,7 +99,7 @@ export class StrategyService extends BaseService {
                 } else {
                     return list;
                 }
-            });
+            }));
     }
 
     getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
@@ -128,7 +126,7 @@ export class StrategyService extends BaseService {
     }
 
     updateStrategySecretKeyState(id: number): Subscription {
-        return this.getOpStrategyTokenResponse().map(res => !!res.result)
+        return this.getOpStrategyTokenResponse().pipe(map(res => !!res.result))
             .subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
     }
 
@@ -137,7 +135,7 @@ export class StrategyService extends BaseService {
     }
 
     getStrategyDetail(): Observable<fromRes.StrategyDetail> {
-        return this.getStrategyDetailResponse().map(res => res.result.strategy);
+        return this.getStrategyDetailResponse().pipe(map(res => res.result.strategy));
     }
 
     getStrategyDependance(): Observable<TemplateRefItem[]> {
@@ -152,16 +150,16 @@ export class StrategyService extends BaseService {
     }
 
     getAvailableDependance(): Observable<TemplateRefItem[]> {
-        return this.getStrategies()
-            .withLatestFrom(
-                this.getStrategyDetail().map(item => item.id),
+        return this.getStrategies().pipe(
+            withLatestFrom(
+                this.getStrategyDetail().pipe(map(item => item.id)),
                 (strategies, id) => strategies.map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language })).filter(item => item.id !== id)
-            );
+            ));
     }
 
     getCurrentDependance(): Observable<TemplateRefItem[]> {
-        return this.getStrategyDetail()
-            .map(detail => detail.templates ? detail.templates.map(tpl => {
+        return this.getStrategyDetail().pipe(
+            map(detail => detail.templates ? detail.templates.map(tpl => {
                 let { name, id, category, language } = tpl;
 
                 if (category == CategoryType.TEMPLATE_SNAPSHOT) {
@@ -169,21 +167,21 @@ export class StrategyService extends BaseService {
                 } else {
                     return { name, id, checked: true, isSnapshot: false, language };
                 }
-            }) : []);
+            }) : []));
     }
 
     isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectStrategyUIState).map(state => state.loading);
+        return this.store.select(fromRoot.selectStrategyUIState).pipe(map(state => state.loading));
     }
 
     getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
-        return this.getStrategyDetail()
-            .map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
+        return this.getStrategyDetail().pipe(
+            map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName))))
     }
 
     getBacktestConfig(): Observable<string> {
-        return this.store.select(fromRoot.selectBacktestUIState)
-            .map(state => {
+        return this.store.select(fromRoot.selectBacktestUIState).pipe(
+            map(state => {
                 const { timeOptions, platformOptions } = state;
 
                 let { start, end, klinePeriodId } = timeOptions;
@@ -201,7 +199,7 @@ export class StrategyService extends BaseService {
                 } else {
                     return ` start: ${begin},\n end: ${finish},\n period: ${period}`;
                 }
-            });
+            }));
     }
 
     /* =======================================================Local state change======================================================= */
@@ -231,7 +229,7 @@ export class StrategyService extends BaseService {
     }
 
     getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
-        return this.getStrategies().map(strategies => strategies.filter(predicate));
+        return this.getStrategies().pipe(map(strategies => strategies.filter(predicate)));
     }
 
     private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {

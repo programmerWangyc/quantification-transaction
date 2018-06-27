@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 import { SelectedPair } from '../../interfaces/app.interface';
 import { GroupedList, UtilService } from '../../providers/util.service';

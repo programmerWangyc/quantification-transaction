@@ -3,13 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import * as fileSaver from 'file-saver';
 import { isBoolean, negate } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs/Observable';
-import { from } from 'rxjs/observable/from';
-import { of } from 'rxjs/observable/of';
-import { find } from 'rxjs/operators';
-import { mergeMap } from 'rxjs/operators/mergeMap';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  from ,  of ,  Subject ,  Subscription } from 'rxjs';
+import { find ,  mergeMap } from 'rxjs/operators';
 
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';

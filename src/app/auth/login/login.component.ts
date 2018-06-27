@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subject, Subscription ,  Observable } from 'rxjs';
 
 import { BaseComponent } from '../../base/base.component';
 import { LoginRequest } from '../../interfaces/request.interface';

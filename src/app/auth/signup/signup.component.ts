@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject ,  Observable ,  Subscription } from 'rxjs';
 
 import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';

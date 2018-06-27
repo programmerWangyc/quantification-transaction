@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, of as observableOf, Subscription } from 'rxjs';
 
 import { AppState } from '../../store/index.reducer';
 import { ResponseState } from './../../interfaces/response.interface';
 import { ErrorService } from './../../providers/error.service';
 import { ProcessService } from './../../providers/process.service';
 import { selectExchangeResponseState } from './../../store/index.reducer';
+
 
 @Injectable()
 export class HomeService {
@@ -21,7 +21,7 @@ export class HomeService {
     /* =======================================================Server request======================================================= */
 
     launchExchangeList(): Subscription {
-        return this.process.processExchangeList(Observable.of(null));
+        return this.process.processExchangeList(observableOf(null));
     }
 
     /* =======================================================Date Acquisition======================================================= */

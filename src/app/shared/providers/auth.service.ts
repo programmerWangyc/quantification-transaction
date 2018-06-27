@@ -1,12 +1,8 @@
-import 'rxjs/add/operator/delayWhen';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/take';
-
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subscription } from 'rxjs';
+import { delayWhen, map, mergeMap } from 'rxjs/operators';
 
 import { LoginRequest, SetPasswordRequest, SignupRequest } from '../../interfaces/request.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -39,6 +35,10 @@ import {
     selectVerifyPwdResponse,
 } from './../../store/index.reducer';
 
+
+
+
+
 @Injectable()
 export class AuthService {
 
@@ -61,7 +61,7 @@ export class AuthService {
     }
 
     launchRegain(source: Observable<string>): Subscription {
-        return this.process.processRegain(source.map(email => ({ email })));
+        return this.process.processRegain(source.pipe(map(email => ({ email }))));
     }
 
     launchSetPwd(source: Observable<SetPasswordRequest>): Subscription {
@@ -74,7 +74,7 @@ export class AuthService {
 
     /* =======================================================Date Acquisition======================================================= */
 
-    // login 
+    // login
     private getLoginResponse(): Observable<LoginResponse> {
         return this.store.select(selectLoginResponse)
             .filter(data => !!data);
@@ -85,8 +85,8 @@ export class AuthService {
     }
 
     isLoginSuccess(): Observable<boolean> {
-        return this.getLoginResponse()
-            .map(data => data.result === 0);
+        return this.getLoginResponse().pipe(
+            map(data => data.result === 0));
     }
 
     resetLoginError(): void {
@@ -100,8 +100,8 @@ export class AuthService {
     }
 
     isSignupSuccess(): Observable<boolean> {
-        return this.getSignupResponse()
-            .map(data => data.result === 0);
+        return this.getSignupResponse().pipe(
+            map(data => data.result === 0));
     }
 
     isAgree(): Observable<boolean> {
@@ -117,8 +117,8 @@ export class AuthService {
     }
 
     showSignupResponse(): Subscription {
-        return this.isSignupSuccess()
-            .mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP'))
+        return this.isSignupSuccess().pipe(
+            mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP')))
             .subscribe(message => this.tip.showTip(message));
     }
 
@@ -129,8 +129,8 @@ export class AuthService {
     }
 
     showResetPasswordResponse(): Subscription {
-        return this.getResetPasswordResponse()
-            .mergeMap(res => this.translate.get(res.result ? 'EMAIL_VALID_TIP' : 'EMAIL_INVALID_TIP'))
+        return this.getResetPasswordResponse().pipe(
+            mergeMap(res => this.translate.get(res.result ? 'EMAIL_VALID_TIP' : 'EMAIL_INVALID_TIP')))
             .subscribe(message => this.tip.showTip(message, 60000));
     }
 
@@ -141,8 +141,8 @@ export class AuthService {
     }
 
     showSetPasswordResponse(): Subscription {
-        return this.getSetPasswordResponse()
-            .mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP'))
+        return this.getSetPasswordResponse().pipe(
+            mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP')))
             .subscribe(message => this.tip.showTip(message));
     }
 
@@ -157,8 +157,8 @@ export class AuthService {
     }
 
     verifyPasswordSuccess(): Observable<boolean> {
-        return this.getVerifyPasswordResponse()
-            .map(res => res.result)
+        return this.getVerifyPasswordResponse().pipe(
+            map(res => res.result))
             // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
             .filter(success => success);
     }
@@ -174,7 +174,7 @@ export class AuthService {
      * @description This action must take place after the VerifyPasswordSuccessAction action.
      */
     storePwdTemporary(pwd: Observable<string>): Subscription {
-        return pwd.delayWhen(pwd => this.verifyPasswordSuccess())
+        return pwd.pipe(delayWhen(pwd => this.verifyPasswordSuccess()))
             .subscribe(pwd => this.store.dispatch(new StorePwdTemporaryAction(pwd)));
     }
 

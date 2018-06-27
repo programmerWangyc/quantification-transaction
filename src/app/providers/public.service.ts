@@ -1,14 +1,8 @@
-import 'rxjs/add/operator/combineLatest';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/startWith';
-
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { isString } from 'lodash';
-import { Subject } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, of as observableOf, Subject, Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, merge, startWith } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
@@ -29,11 +23,16 @@ import {
     SetLanguageAction,
     SetReferrerAction,
     ToggleFooterAction,
-    UpdateFavoriteEditorConfigAction,
     ToggleSubscribeServerSendMessageTypeAction,
+    UpdateFavoriteEditorConfigAction,
 } from './../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
+
+
+
+
+
 
 @Injectable()
 export class PublicService extends BaseService {
@@ -52,19 +51,19 @@ export class PublicService extends BaseService {
     /* =======================================================Server Request======================================================= */
 
     launchGetSettings(type: string | Observable<string>, single = true): Subscription {
-        return this.process.processSettings(isString(type) ? Observable.of({ type }) : type.map(type => ({ type })), single);
+        return this.process.processSettings(isString(type) ? observableOf({ type }) : type.pipe(map(type => ({ type }))), single);
     }
 
     /* =======================================================Date acquisition======================================================= */
 
     getSettingsResponse(): Observable<ResponseState> {
-        return this.store.select(selectSettingsResponse)
-            .filter(res => !!res);
+        return this.store.select(selectSettingsResponse).pipe(
+            filter(res => !!res));
     }
 
     getSettingState(settingType: string): Observable<boolean> {
-        return this.store.select(selectSettings)
-            .map(res => !!res[settingType]);
+        return this.store.select(selectSettings).pipe(
+            map(res => !!res[settingType]));
     }
 
     getSetting(settingType: string): Observable<any> {
@@ -80,40 +79,40 @@ export class PublicService extends BaseService {
     }
 
     private getSecurityPublicResponse(): Observable<PublicResponse> {
-        return this.getPublicResponse().filter(this.isTruth);
+        return this.getPublicResponse().pipe(filter(this.isTruth));
     }
 
     getToken(): Observable<string> {
-        return this.getPublicResponse().map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token));
+        return this.getPublicResponse().pipe(map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token)));
     }
 
     isSubAccount(): Observable<boolean> {
-        return this.getToken()
-            .map(token => typeof token === 'string' && token.indexOf("1|") === 0);
+        return this.getToken().pipe(
+            map(token => typeof token === 'string' && token.indexOf("1|") === 0));
     }
 
     getCurrentUser(): Observable<string> {
-        return this.getPublicResponse().map(res => res ? res.username : localStorage.getItem(LocalStorageKey.username));
+        return this.getPublicResponse().pipe(map(res => res ? res.username : localStorage.getItem(LocalStorageKey.username)));
     }
 
     isAdmin(): Observable<boolean> {
-        return this.getSecurityPublicResponse().map(res => res.is_admin);
+        return this.getSecurityPublicResponse().pipe(map(res => res.is_admin));
     }
 
     isLogin(): Observable<boolean> {
-        return this.getToken().map(token => !!token && token.length > 0);
+        return this.getToken().pipe(map(token => !!token && token.length > 0));
     }
 
     getError(): Observable<string> {
-        return this.getPublicResponse().filter(this.isTruth).map(res => res.error)
+        return this.getPublicResponse().pipe(filter(this.isTruth), map(res => res.error), )
     }
 
     getBalance(): Observable<number> {
-        return this.getSecurityPublicResponse().map(res => res.balance);
+        return this.getSecurityPublicResponse().pipe(map(res => res.balance));
     }
 
     getConsumed(): Observable<number> {
-        return this.getSecurityPublicResponse().map(res => res.consumed);
+        return this.getSecurityPublicResponse().pipe(map(res => res.consumed));
     }
 
     // ui state
@@ -127,9 +126,9 @@ export class PublicService extends BaseService {
 
     // editor config
     getFavoriteEditorConfig(): Observable<EditorConfig> {
-        return this.store.select(selectEditorConfig)
-            .map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig)))
-            .filter(this.isTruth);
+        return this.store.select(selectEditorConfig).pipe(
+            map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
+            filter(this.isTruth), );
     }
 
     /* =======================================================Config operate======================================================= */
@@ -139,19 +138,19 @@ export class PublicService extends BaseService {
     }
 
     saveReferrer(): Subscription {
-        return this.refUser$$.combineLatest(
-            this.checkReferrerUrl()
-                .filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0)
-                .startWith(''),
+        return this.refUser$$.pipe(combineLatest(
+            this.checkReferrerUrl().pipe(
+                filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0),
+                startWith(''), ),
             (refUrl, refUser) => ({ refUrl, refUser })
-        )
+        ))
             .subscribe(referrer => this.store.dispatch(new SetReferrerAction(referrer)));
     }
 
     getReferrer(): Observable<Referrer> {
-        return this.store.select(selectReferrer)
-            .filter(referrer => !!referrer)
-            .merge(this.getReferrerFromLocalStorage());
+        return this.store.select(selectReferrer).pipe(
+            filter(referrer => !!referrer),
+            merge(this.getReferrerFromLocalStorage()), );
     }
 
     updateLanguage(language: Observable<string>): Subscription {
@@ -167,7 +166,7 @@ export class PublicService extends BaseService {
 
         const refUser = localStorage.getItem(LocalStorageKey.refUser) || '';
 
-        return Observable.of({ refUrl, refUser });
+        return observableOf({ refUrl, refUser });
     }
 
     private checkReferrerUrl(): Observable<string> {
@@ -191,7 +190,7 @@ export class PublicService extends BaseService {
             referrer = document.referrer;
         }
 
-        return Observable.of(referrer);
+        return observableOf(referrer);
     }
 
     private checkReferrerUser() {
@@ -203,14 +202,14 @@ export class PublicService extends BaseService {
     }
 
     private updateToken(): Subscription {
-        return this.getToken()
-            .distinctUntilChanged()
+        return this.getToken().pipe(
+            distinctUntilChanged())
             .subscribe(token => localStorage.setItem(LocalStorageKey.token, token || ''));
     }
 
     private updateCurrentUser(): Subscription {
-        return this.getCurrentUser()
-            .distinctUntilChanged()
+        return this.getCurrentUser().pipe(
+            distinctUntilChanged())
             .subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
     }
 

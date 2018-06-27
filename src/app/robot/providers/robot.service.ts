@@ -1,17 +1,10 @@
+import { from as observableFrom, of as observableOf, Observable, Subscription } from 'rxjs';
+import { withLatestFrom, map, mergeMap, switchMap } from 'rxjs/operators';
 import { RobotStatusTable } from '../robot.interface';
 import { ServerSendRobotEventType } from '../robot.config';
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/delayWhen';
-import 'rxjs/add/operator/merge';
-import 'rxjs/add/operator/switchMapTo';
-import 'rxjs/add/operator/withLatestFrom';
-
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 import { includes, isEmpty } from 'lodash';
-
 import * as moment from 'moment';
 import { ResetRobotDetailAction } from '../../store/robot/robot.action';
 import * as fromReq from './../../interfaces/request.interface';
@@ -60,11 +53,11 @@ export class RobotService {
 
     launchCreateRobot(data: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
-            data.switchMap(data => this.nodeService.isPublicNode(data.nodeId)
-                .mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(
+            data.pipe(switchMap(data => this.nodeService.isPublicNode(data.nodeId).pipe(
+                mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(
                     ConfirmComponent,
                     { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' }
-                ).map(sure => sure ? data : null) : Observable.of(data)))
+                ).pipe(map(sure => sure ? data : null)) : observableOf(data)))))
                 .filter(v => !!v)
         );
     }
@@ -78,18 +71,18 @@ export class RobotService {
     }
 
     getRobotTotal(): Observable<number> {
-        return this.getRobotListResponse()
-            .map(res => res.all);
+        return this.getRobotListResponse().pipe(
+            map(res => res.all));
     }
 
     getRobotConcurrence(): Observable<number> {
-        return this.getRobotListResponse()
-            .map(res => res.concurrent);
+        return this.getRobotListResponse().pipe(
+            map(res => res.concurrent));
     }
 
     getRobots(): Observable<fromRes.Robot[]> {
-        return this.getRobotListResponse()
-            .map(res => res.robots);
+        return this.getRobotListResponse().pipe(
+            map(res => res.robots));
     }
 
     getRobotListResState(): Observable<fromRes.ResponseState> {
@@ -98,14 +91,14 @@ export class RobotService {
     }
 
     getRobotCountByStatus(predicate: (robot: fromRes.Robot) => boolean): Observable<fromRes.Robot[]> {
-        return this.getRobots()
-            .map(robots => robots.filter(predicate));
+        return this.getRobots().pipe(
+            map(robots => robots.filter(predicate)));
     }
 
     getRobotDeadLine(): Observable<string> {
-        return this.getRobotCountByStatus(this.isNormalStatus)
-            .withLatestFrom(this.pubService.getBalance())
-            .map(([robots, balance]) => {
+        return this.getRobotCountByStatus(this.isNormalStatus).pipe(
+            withLatestFrom(this.pubService.getBalance()),
+            map(([robots, balance]) => {
                 const now = parseInt(new Date().getTime() / 10000 + '') * 10000;
 
                 const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
@@ -115,12 +108,12 @@ export class RobotService {
                 const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '');
 
                 return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
-            });
+            }), );
     }
 
     getGrossProfit(): Observable<number> {
-        return this.getRobots()
-            .map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0));
+        return this.getRobots().pipe(
+            map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0)));
     }
 
     // robot detail
@@ -130,26 +123,26 @@ export class RobotService {
     }
 
     getRobotDetail(): Observable<fromRes.RobotDetail> {
-        return this.getRobotDetailResponse()
-            .map(res => res.result.robot);
+        return this.getRobotDetailResponse().pipe(
+            map(res => res.result.robot));
     }
 
     getCurrentRobotId(): Observable<number> {
-        return this.getRobotDetail().map(robot => robot.id);
+        return this.getRobotDetail().pipe(map(robot => robot.id));
     }
 
     getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
-        return this.getRobotDetail()
-            .map(detail => {
+        return this.getRobotDetail().pipe(
+            map(detail => {
                 const [kLinePeriod, exchangeIds, stocks] = JSON.parse(detail.strategy_exchange_pairs);
 
                 return { kLinePeriod, exchangeIds, stocks };
-            })
+            }))
     }
 
     canChangePlatform(): Observable<boolean> {
-        return this.getRobotStrategyExchangePair()
-            .map(pairs => pairs.exchangeIds.some(id => id > -10))
+        return this.getRobotStrategyExchangePair().pipe(
+            map(pairs => pairs.exchangeIds.some(id => id > -10)))
             .do(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
     }
 
@@ -160,8 +153,8 @@ export class RobotService {
     }
 
     isSubscribeRobotSuccess(): Observable<boolean> {
-        return this.getSubscribeRobotResponse()
-            .map(res => res.result);
+        return this.getSubscribeRobotResponse().pipe(
+            map(res => res.result));
     }
 
     // server send message
@@ -181,7 +174,7 @@ export class RobotService {
             .mergeMap(summary => {
                 const ary = summary.split('\n');
 
-                return Observable.from(ary).map(res => this.getSummary(res.trim())).reduce((acc, cur) => [...acc, cur], []);
+                return observableFrom(ary).pipe(map(res => this.getSummary(res.trim()))).reduce((acc, cur) => [...acc, cur], []);
             });
     }
 
@@ -190,7 +183,7 @@ export class RobotService {
     monitorServerSendRobotStatus(): Subscription {
         const param = this.getServerSendRobotMessage()
             .filter(data => data.status && this.isOverStatus(data))
-            .switchMap(data => this.getRobotDetail().map(({ id }) => ({ id })).filter(({ id }) => id === data.id));
+            .switchMap(data => this.getRobotDetail().pipe(map(({ id }) => ({ id }))).filter(({ id }) => id === data.id));
 
         return this.launchRobotDetail(param);
     }
@@ -228,7 +221,7 @@ export class RobotService {
     /* =======================================================Local state modify================================================== */
 
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).map(state => type ? state[type] : state.loading);
+        return this.store.select(fromRoot.selectRobotUiState).pipe(map(state => type ? state[type] : state.loading));
     }
 
     resetRobotDetail(): void {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { ArgOptimizeSetting, WorkerBacktest, WorkerBacktestRequest } from '../backtest.interface';
 
