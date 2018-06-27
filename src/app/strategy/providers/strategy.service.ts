@@ -1,15 +1,7 @@
 
-import { withLatestFrom, switchMap, find, map, mergeMap, take } from 'rxjs/operators';
+import { withLatestFrom, switchMap, find, map, mergeMap, take, combineLatest } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
-import {
-    ActivatedRoute,
-    ActivatedRouteSnapshot,
-    CanActivate,
-    CanActivateChild,
-    Router,
-    RouterStateSnapshot,
-} from '@angular/router';
 import { Store } from '@ngrx/store';
 import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
@@ -28,10 +20,8 @@ import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
-import { AppState } from '../../store/index.reducer';
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { CategoryType } from '../../interfaces/request.interface';
-import { BacktestTimeConfig, BacktestSelectedPair } from '../../backtest/backtest.interface';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
@@ -63,9 +53,15 @@ export class StrategyService extends BaseService {
     }
 
     launchOpStrategyToken(source: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
-        return this.process.processOpStrategyToken(source.pipe(switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
-            : this.confirmLaunchOpStrategyToken(source).pipe(
-                map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) })))))
+        return this.process.processOpStrategyToken(source
+            .pipe(
+                switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
+                    : this.confirmLaunchOpStrategyToken(source)
+                        .pipe(
+                            map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) }))
+                        )
+                )
+            )
         );
     }
 
@@ -77,129 +73,176 @@ export class StrategyService extends BaseService {
 
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.select(fromRoot.selectStrategyListResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     protected getRequestParams(): Observable<RequestParams> {
         return this.store.select(fromRoot.selectStrategyRequestParams)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     getStrategies(): Observable<fromRes.Strategy[]> {
-        return this.getStrategyListResponse().pipe(map(res => res.result.strategies));
+        return this.getStrategyListResponse()
+            .pipe(
+                map(res => res.result.strategies)
+            );
     }
 
     getGroupedStrategy(key: string, getName?: (arg: number | boolean) => string, getNameValue?: (arg: string) => number | boolean): Observable<GroupedStrategy[]> {
-        return this.utilService.getGroupedList(this.getStrategies(), key, getName).pipe(
-            map(list => {
-                if (getNameValue) {
-                    const result = list.map(({ groupName, values }) => ({ groupName, values, groupNameValue: getNameValue(groupName) }));
+        return this.utilService.getGroupedList(this.getStrategies(), key, getName)
+            .pipe(
+                map(list => {
+                    if (getNameValue) {
+                        const result = list.map(({ groupName, values }) => ({ groupName, values, groupNameValue: getNameValue(groupName) }));
 
-                    return sortBy(result, item => item.groupNameValue);
-                } else {
-                    return list;
-                }
-            }));
+                        return sortBy(result, item => item.groupNameValue);
+                    } else {
+                        return list;
+                    }
+                })
+            );
     }
 
     getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
         return this.getStrategies()
-            .combineLatest(strategyId.filter(this.isTruth), (strategies, id) => {
-                const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
+            .pipe(
+                combineLatest(
+                    strategyId.pipe(this.filterTruth()),
+                    (strategies, id) => {
+                        const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
 
-                const noArgs = !semanticArgs.length && !semanticTemplateArgs;
+                        const noArgs = !semanticArgs.length && !semanticTemplateArgs;
 
-                return noArgs ? null : { semanticArgs, semanticTemplateArgs };
-            });
+                        return noArgs ? null : { semanticArgs, semanticTemplateArgs };
+                    }
+                )
+            );
     }
 
     private getOpStrategyTokenResponse(): Observable<fromRes.OpStrategyTokenResponse> {
         return this.store.select(fromRoot.selectOpStrategyTokenResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     /**
      * @description Get secret key response from 'OpStrategyToken' api.
      */
     getStrategyToken(): Observable<string> {
-        return this.getOpStrategyTokenResponse().pipe(map(res => res.result));
+        return this.getOpStrategyTokenResponse()
+            .pipe(
+                map(res => res.result)
+            );
     }
 
     updateStrategySecretKeyState(id: number): Subscription {
-        return this.getOpStrategyTokenResponse().pipe(map(res => !!res.result))
+        return this.getOpStrategyTokenResponse()
+            .pipe(
+                map(res => !!res.result)
+            )
             .subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
     }
 
     private getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
-        return this.store.select(fromRoot.selectStrategyDetailResponse).filter(this.isTruth);
+        return this.store.select(fromRoot.selectStrategyDetailResponse)
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     getStrategyDetail(): Observable<fromRes.StrategyDetail> {
-        return this.getStrategyDetailResponse().pipe(map(res => res.result.strategy));
+        return this.getStrategyDetailResponse()
+            .pipe(
+                map(res => res.result.strategy)
+            );
     }
 
     getStrategyDependance(): Observable<TemplateRefItem[]> {
         return this.getAvailableDependance()
-            .combineLatest(this.getCurrentDependance(), (available, current) => {
-                const intersection = intersectionWith(available, current, (a, c) => a.id === c.id).map(item => item.id);
+            .pipe(
+                combineLatest(
+                    this.getCurrentDependance(),
+                    (available, current) => {
+                        const intersection = intersectionWith(available, current, (a, c) => a.id === c.id).map(item => item.id);
 
-                const result = uniqBy(available.concat(current), 'id');
+                        const result = uniqBy(available.concat(current), 'id');
 
-                return result.map(item => intersection.includes(item.id) ? { ...item, checked: true } : item);
-            })
+                        return result.map(item => intersection.includes(item.id) ? { ...item, checked: true } : item);
+                    }
+                )
+            );
     }
 
     getAvailableDependance(): Observable<TemplateRefItem[]> {
-        return this.getStrategies().pipe(
-            withLatestFrom(
-                this.getStrategyDetail().pipe(map(item => item.id)),
-                (strategies, id) => strategies.map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language })).filter(item => item.id !== id)
-            ));
+        return this.getStrategies()
+            .pipe(
+                withLatestFrom(
+                    this.getStrategyDetail()
+                        .pipe(
+                            map(item => item.id)
+                        ),
+                    (strategies, id) => strategies.map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language })).filter(item => item.id !== id)
+                )
+            );
     }
 
     getCurrentDependance(): Observable<TemplateRefItem[]> {
-        return this.getStrategyDetail().pipe(
-            map(detail => detail.templates ? detail.templates.map(tpl => {
-                let { name, id, category, language } = tpl;
+        return this.getStrategyDetail()
+            .pipe(
+                map(detail => detail.templates ? detail.templates.map(tpl => {
+                    let { name, id, category, language } = tpl;
 
-                if (category == CategoryType.TEMPLATE_SNAPSHOT) {
-                    return { name: name.split('-')[1], id, checked: true, isSnapshot: true, language };
-                } else {
-                    return { name, id, checked: true, isSnapshot: false, language };
-                }
-            }) : []));
+                    if (category == CategoryType.TEMPLATE_SNAPSHOT) {
+                        return { name: name.split('-')[1], id, checked: true, isSnapshot: true, language };
+                    } else {
+                        return { name, id, checked: true, isSnapshot: false, language };
+                    }
+                }) : [])
+            );
     }
 
     isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectStrategyUIState).pipe(map(state => state.loading));
+        return this.store.select(fromRoot.selectStrategyUIState)
+            .pipe(
+                map(state => state.loading)
+            );
     }
 
     getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
-        return this.getStrategyDetail().pipe(
-            map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName))))
+        return this.getStrategyDetail()
+            .pipe(
+                map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
+            );
     }
 
     getBacktestConfig(): Observable<string> {
-        return this.store.select(fromRoot.selectBacktestUIState).pipe(
-            map(state => {
-                const { timeOptions, platformOptions } = state;
+        return this.store.select(fromRoot.selectBacktestUIState)
+            .pipe(
+                map(state => {
+                    const { timeOptions, platformOptions } = state;
 
-                let { start, end, klinePeriodId } = timeOptions;
+                    let { start, end, klinePeriodId } = timeOptions;
 
-                const begin = moment(start).format('YYYY-MM-DD HH:mm:ss');
+                    const begin = moment(start).format('YYYY-MM-DD HH:mm:ss');
 
-                const finish = moment(end).format('YYYY-MM-DD HH:mm:ss');
+                    const finish = moment(end).format('YYYY-MM-DD HH:mm:ss');
 
-                let period = '';
+                    let period = '';
 
-                this.translate.get(this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).period).subscribe(res => period = res);
+                    this.translate.get(this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).period).subscribe(res => period = res);
 
-                if (!!platformOptions && platformOptions.length > 0) {
-                    return ` start: ${begin},\n end: ${finish},\n period: ${period},\n exchanges: ${JSON.stringify(platformOptions)}`;
-                } else {
-                    return ` start: ${begin},\n end: ${finish},\n period: ${period}`;
-                }
-            }));
+                    if (!!platformOptions && platformOptions.length > 0) {
+                        return ` start: ${begin},\n end: ${finish},\n period: ${period},\n exchanges: ${JSON.stringify(platformOptions)}`;
+                    } else {
+                        return ` start: ${begin},\n end: ${finish},\n period: ${period}`;
+                    }
+                })
+            );
     }
 
     /* =======================================================Local state change======================================================= */
@@ -229,7 +272,10 @@ export class StrategyService extends BaseService {
     }
 
     getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
-        return this.getStrategies().pipe(map(strategies => strategies.filter(predicate)));
+        return this.getStrategies()
+            .pipe(
+                map(strategies => strategies.filter(predicate))
+            );
     }
 
     private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {
@@ -243,12 +289,13 @@ export class StrategyService extends BaseService {
     }
 
     hasToken(id: number): Observable<boolean> {
-        return this.getStrategies().pipe(
-            mergeMap(list => from(list)),
-            find(strategy => strategy.id === id),
-            map(strategy => strategy.hasToken),
-            take(1)
-        );
+        return this.getStrategies()
+            .pipe(
+                mergeMap(list => from(list)),
+                find(strategy => strategy.id === id),
+                map(strategy => strategy.hasToken),
+                take(1)
+            );
     }
 
     isCommandArg = this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX)

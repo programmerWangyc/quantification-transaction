@@ -1,13 +1,13 @@
-
-import {map} from 'rxjs/operators';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, skip, withLatestFrom } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { SemanticsLog } from '../robot.config';
 import { RobotLogService } from './../providers/robot.log.service';
+
 
 @Component({
     selector: 'app-robot-profit-chart',
@@ -66,7 +66,12 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
         const id = this.route.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.addProfitPoints(this.chart$)
-            .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset().withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })).skip(1)));
+            .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset()
+                .pipe(
+                    withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })),
+                    skip(1)
+                )
+            ));
     }
 
     changePage(page) {

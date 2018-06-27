@@ -1,12 +1,12 @@
-
-import {map} from 'rxjs/operators';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { VariableOverview } from './../../interfaces/app.interface';
 import { RobotOperateService } from './../providers/robot.operate.service';
 import { RobotService } from './../providers/robot.service';
+
 
 @Component({
     selector: 'app-robot-command',
@@ -43,7 +43,10 @@ export class RobotCommandComponent extends FoldableBusinessComponent implements 
     initialModel() {
         this.commandArgs = this.robotOperate.getRobotCommandArgs();
 
-        this.hasArgs = this.commandArgs.pipe(map(args => !!args.length));
+        this.hasArgs = this.commandArgs
+            .pipe(
+                map(args => !!args.length)
+            );
     }
 
     launch() {

@@ -30,13 +30,15 @@ export class StrateOverviewComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.total = this.strategyService.getStrategies().pipe(map(getLength));
+        const getLengthOperator = map(getLength);
 
-        this.publishCount = this.strategyService.getSpecificStrategies(this.isPublished).pipe(map(getLength));
+        this.total = this.strategyService.getStrategies().pipe(getLengthOperator);
 
-        this.soldCount = this.strategyService.getSpecificStrategies(this.isSold).pipe(map(getLength));
+        this.publishCount = this.strategyService.getSpecificStrategies(this.isPublished).pipe(getLengthOperator);
 
-        this.expireCount = this.strategyService.getSpecificStrategies(this.isExpired).pipe(map(getLength));
+        this.soldCount = this.strategyService.getSpecificStrategies(this.isSold).pipe(getLengthOperator);
+
+        this.expireCount = this.strategyService.getSpecificStrategies(this.isExpired).pipe(getLengthOperator);
     }
 
     isPublished(data: Strategy): boolean {

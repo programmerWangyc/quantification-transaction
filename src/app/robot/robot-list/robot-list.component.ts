@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Subject, Subscription ,  Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { startWith } from 'rxjs/internal/operators/startWith';
 
 import { BaseComponent } from '../../base/base.component';
 import { Robot } from '../../interfaces/response.interface';
@@ -57,7 +58,10 @@ export class RobotListComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.data = this.robotService.getRobots().startWith([]);
+        this.data = this.robotService.getRobots()
+            .pipe(
+                startWith([])
+            );
 
         this.isLoading = this.robotOperate.getPublicRobotLoadingState();
 

@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs';
@@ -20,7 +11,7 @@ import { LOGIN, ResponseActions as loginAction } from './login.action';
 import { ResponseActions as setAction, SET_PASSWORD } from './password.action';
 import { RESET_PASSWORD, ResponseActions as resetAction } from './reset.action';
 import { ResponseActions as signupAction, SIGNUP } from './signup.action';
-import { ResponseActions as verifyAction, VERIFY_PASSWORD, VerifyPasswordRequestAction, VERIFY_PASSWORD_FAIL } from './verify-password.action';
+import { ResponseActions as verifyAction, VERIFY_PASSWORD } from './verify-password.action';
 
 @Injectable()
 export class AuthEffect extends BaseEffect {

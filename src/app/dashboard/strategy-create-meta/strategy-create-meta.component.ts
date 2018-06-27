@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import * as fileSaver from 'file-saver';
 import { isBoolean, negate } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable ,  from ,  of ,  Subject ,  Subscription } from 'rxjs';
-import { find ,  mergeMap } from 'rxjs/operators';
+import { from, Observable, of, Subject, Subscription } from 'rxjs';
+import { find, map, merge, mergeMap } from 'rxjs/operators';
 
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
@@ -126,7 +126,10 @@ export class StrategyCreateMetaComponent {
          * @description 这里的信息没有从detail里取，因为通过编辑或复制按钮进来时，从list上来取这些信息时更快，不需要等后台响应就可以拿到。
          */
         this.strategy = this.strategyService.getStrategies()
-            .pipe(mergeMap(list => from(list)), find(item => item.id === this.strategyId));
+            .pipe(
+                mergeMap(list => from(list)),
+                find(item => item.id === this.strategyId)
+            );
 
         /**
          * @description 当前策略的详细信息由响应数据提供。
@@ -139,14 +142,25 @@ export class StrategyCreateMetaComponent {
          *  类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
          */
         this.args = this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg))
-            .map(args => args.map(this.transformToMetaArg))
-            .merge(this.args$.map(item => ({ ...item })));
+            .pipe(
+                map(args => args.map(this.transformToMetaArg)),
+                merge(this.args$.pipe(map(item => ({ ...item }))))
+            );
 
         this.commandArgs = this.strategyService.getExistedStrategyArgs(this.strategyService.isCommandArg)
-            .map(args => args.map(arg => this.transformToMetaArg({ ...arg, variableName: this.constant.withoutPrefix(arg.variableName, this.constant.COMMAND_PREFIX) })))
-            .merge(this.commandArgs$.map(item => ({ ...item })));
+            .pipe(
+                map(args => args.map(arg => this.transformToMetaArg({ ...arg, variableName: this.constant.withoutPrefix(arg.variableName, this.constant.COMMAND_PREFIX) }))),
+                merge(this.commandArgs$
+                    .pipe(
+                        map(item => ({ ...item }))
+                    )
+                )
+            );
 
-        this.hasCommandArgs = this.commandArgs.map(res => Array.isArray(res) ? !!res.length : !!res);
+        this.hasCommandArgs = this.commandArgs
+            .pipe(
+                map(res => Array.isArray(res) ? !!res.length : !!res)
+            );
 
         /**
          * @description loading 状态控制
@@ -156,19 +170,33 @@ export class StrategyCreateMetaComponent {
         /**
          * @description Multi source observables;
          */
-        this.language = this.strategy.map(strategy => strategy.language).merge(this.language$);
+        this.language = this.strategy
+            .pipe(
+                map(strategy => strategy.language),
+                merge(this.language$)
+            );
 
-        this.category = this.strategy.map(strategy => strategy.category).merge(this.category$);
+        this.category = this.strategy
+            .pipe(
+                map(strategy => strategy.category),
+                merge(this.category$)
+            );
 
-        this.isTemplateCategorySelected = this.category.map(cat => cat === CategoryType.TEMPLATE_LIBRARY);
+        this.isTemplateCategorySelected = this.category
+            .pipe(
+                map(cat => cat === CategoryType.TEMPLATE_LIBRARY)
+            );
     }
 
     launch(isBacktest: boolean): void {
-        const id = this.route.paramMap.map(data => +data.get('id'));
+        const id = this.route.paramMap
+            .pipe(
+                map(data => ({ id: +data.get('id') }))
+            );
 
         if (isBacktest) {
             this.subscription$$ = this.strategyService.handleStrategyDetailError()
-                .add(this.strategyService.launchStrategyDetail(id.map(id => ({ id }))))
+                .add(this.strategyService.launchStrategyDetail(id))
         } else {
             this.subscription$$ = this.strategyService.handleStrategyDetailError()
                 .add(this.strategyService.handleStrategyListError())
@@ -177,7 +205,7 @@ export class StrategyCreateMetaComponent {
                 // 响应用户导出文件的操作
                 .add(this.export$.subscribe(content => this.exportFile(content)))
                 // 获取当前策略详情
-                .add(this.strategyService.launchStrategyDetail(id.map(id => ({ id }))))
+                .add(this.strategyService.launchStrategyDetail(id))
                 // 只获取属于模板类库的策略
                 .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg })))
 
@@ -186,22 +214,28 @@ export class StrategyCreateMetaComponent {
     }
 
     getSaveParams(): Observable<SaveStrategyRequest> {
-        return this.save$.map(content => isBoolean(content) ?
-            {
-                code: this.codeMirror.codeContent,
-                note: this.codeMirror.noteContent,
-                des: this.codeMirror.desContent,
-                manual: this.codeMirror.manualContent
-            } : content)
-            .map(content => ({
-                ...content,
-                id: this.strategyId,
-                name: this.StrategyDes.strategyName,
-                categoryId: this.StrategyDes.category,
-                languageId: this.StrategyDes.language,
-                args: this.getArgs(),
-                dependance: this.getDependance()
-            }));
+        return this.save$
+            .pipe(
+                map(content => {
+                    const req = isBoolean(content) ?
+                        {
+                            code: this.codeMirror.codeContent,
+                            note: this.codeMirror.noteContent,
+                            des: this.codeMirror.desContent,
+                            manual: this.codeMirror.manualContent
+                        } : content;
+
+                    return {
+                        ...req,
+                        id: this.strategyId,
+                        name: this.StrategyDes.strategyName,
+                        categoryId: this.StrategyDes.category,
+                        languageId: this.StrategyDes.language,
+                        args: this.getArgs(),
+                        dependance: this.getDependance()
+                    }
+                })
+            );
     }
 
     /**

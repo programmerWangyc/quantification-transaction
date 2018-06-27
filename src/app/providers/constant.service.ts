@@ -163,15 +163,17 @@ export class ConstantService {
 
     // FIXME: unused;
     getArgCondition(value: string): any[] {
-        const condition = this.VARIABLE_NAME_REGEXPS.map((reg, index) => {
-            const result = value.match(reg);
+        const condition = this.VARIABLE_NAME_REGEXPS
+            .map((reg, index) => {
+                const result = value.match(reg);
 
-            if (result && index === 0) return result.slice(2, 5);
+                if (result && index === 0) return result.slice(2, 5);
 
-            if (result && index === 1) return [result[2].replace(/!/g, ''), result[2][0] === '!' ? '!=' : '==', '1'];
+                if (result && index === 1) return [result[2].replace(/!/g, ''), result[2][0] === '!' ? '!=' : '==', '1'];
 
-            return null;
-        }).find(item => !!item);
+                return null;
+            })
+            .find(item => !!item);
 
         return condition || [];
     }

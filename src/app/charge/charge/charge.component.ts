@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, merge } from 'rxjs/operators';
+import { distinctUntilKeyChanged, filter, map, mapTo, merge, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PaymentMethod } from '../charge.config';
@@ -59,11 +59,19 @@ export class ChargeComponent implements BaseComponent {
 
         this.paymentStateIcon = this.mapPaymentStateTo('anticon-reload', 'anticon-spin anticon-loading', 'anticon-check-circle-o');
 
-        this.completeState = this.chargeService.isRechargeSuccess().startWith(false).map(isSuccess => isSuccess ? 'finish' : 'wait');
+        this.completeState = this.chargeService.isRechargeSuccess()
+            .pipe(
+                startWith(false),
+                map(isSuccess => isSuccess ? 'finish' : 'wait')
+            );
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPaymentArg(this.pay$.pipe(merge(this.getQRCodeIfWechart())))
+        this.subscription$$ = this.chargeService.launchPaymentArg(this.pay$
+            .pipe(
+                merge(this.getQRCodeIfWechart())
+            )
+        )
             .add(this.chargeService.goToAlipayPage())
             .add(this.chargeService.goToPayPal())
             .add(this.chargeService.handlePaymentsArgsError());
@@ -78,15 +86,28 @@ export class ChargeComponent implements BaseComponent {
 
     getQRCodeIfWechart(): Observable<RechargeFormModal> {
         return this.form.valueChanges
-            .filter((form: RechargeFormModal) => this.chargeAmount.valid && (form.payMethod === PaymentMethod.WECHART))
-            .distinctUntilKeyChanged('chargeAmount');
+            .pipe(
+                filter((form: RechargeFormModal) => this.chargeAmount.valid && (form.payMethod === PaymentMethod.WECHART)),
+                distinctUntilKeyChanged('chargeAmount')
+            );
     }
 
     mapPaymentStateTo(start: string, processing: string, finish: string): Observable<string> {
-        return this.processState = this.pay$.pipe(merge(this.getQRCodeIfWechart()), map(_ => processing),
-            merge(this.chargeService.isRechargeSuccess().pipe(map(_ => finish))),
-            merge(this.form.valueChanges.filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART).mapTo(start)), )
-            .startWith(start);
+        return this.processState = this.pay$
+            .pipe(
+                merge(this.getQRCodeIfWechart()),
+                map(_ => processing),
+                merge(this.chargeService.isRechargeSuccess().pipe(
+                    map(_ => finish)),
+                ),
+                merge(this.form.valueChanges.pipe(
+                    filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART),
+                    mapTo(start)),
+                )
+            )
+            .pipe(
+                startWith(start)
+            );
     }
 
     get chargeAmount(): AbstractControl {

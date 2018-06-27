@@ -36,7 +36,11 @@ export class VerifyPasswordComponent extends BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$.pipe(map(password => ({ password: this.encryptService.encryptPassword(password) }))))
+        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$
+            .pipe(
+                map(password => ({ password: this.encryptService.encryptPassword(password) }))
+            )
+        )
             .add(this.authService.storePwdTemporary(this.verify$))
 
         this.authService.handleVerifyPasswordError();

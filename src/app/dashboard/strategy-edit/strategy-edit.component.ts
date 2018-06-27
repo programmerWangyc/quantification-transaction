@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { combineLatest, filter, map, mapTo, merge } from 'rxjs/operators';
 
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -51,7 +52,11 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.secretKey = this.strategyService.getStrategyToken();
 
         this.templates = this.strategyService.getStrategyDependance()
-            .combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language));
+            .pipe(
+                combineLatest(
+                    this.language,
+                    (templates, language) => templates.filter(item => item.language === language))
+            );
     }
 
     launchPrivate() {
@@ -60,7 +65,12 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
              * @description Besides user active acquisition, it needs to check the strategy whether has token already.
              */
             .add(this.strategyService.launchOpStrategyToken(this.strategyService.hasToken(this.strategyId)
-                .filter(has => has).mapTo(OpStrategyTokenType.GET).merge(this.opToken$).map(opCode => ({ opCode, strategyId: this.strategyId })))
+                .pipe(
+                    filter(has => has),
+                    mapTo(OpStrategyTokenType.GET),
+                    merge(this.opToken$),
+                    map(opCode => ({ opCode, strategyId: this.strategyId }))
+                ))
             )
             .add(this.strategyService.updateStrategySecretKeyState(this.strategyId));
     }

@@ -1,5 +1,5 @@
 import { from as observableFrom, of as observableOf, Observable, Subscription } from 'rxjs';
-import { withLatestFrom, map, mergeMap, switchMap } from 'rxjs/operators';
+import { withLatestFrom, map, mergeMap, switchMap, filter, tap, reduce } from 'rxjs/operators';
 import { RobotStatusTable } from '../robot.interface';
 import { ServerSendRobotEventType } from '../robot.config';
 import { Injectable } from '@angular/core';
@@ -21,9 +21,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { OPERATE_ROBOT_LOADING_TAIL } from '../../store/robot/robot.reducer';
+import { BaseService } from '../../base/base.service';
 
 @Injectable()
-export class RobotService {
+export class RobotService extends BaseService {
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -31,10 +32,9 @@ export class RobotService {
         private error: ErrorService,
         private tipService: TipService,
         private pubService: PublicService,
-        private nzModel: NzModalService,
-        private translate: TranslateService,
         private nodeService: BtNodeService,
     ) {
+        super()
     }
 
     /* =======================================================Serve Request======================================================= */
@@ -53,12 +53,16 @@ export class RobotService {
 
     launchCreateRobot(data: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
-            data.pipe(switchMap(data => this.nodeService.isPublicNode(data.nodeId).pipe(
-                mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(
-                    ConfirmComponent,
-                    { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' }
-                ).pipe(map(sure => sure ? data : null)) : observableOf(data)))))
-                .filter(v => !!v)
+            data.pipe(
+                switchMap(data => this.nodeService.isPublicNode(data.nodeId)
+                    .pipe(
+                        mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(ConfirmComponent, { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' })
+                            .pipe(map(sure => sure ? data : null), ) : observableOf(data)
+                        )
+                    )
+                ),
+                filter(v => !!v)
+            )
         );
     }
 
@@ -67,7 +71,9 @@ export class RobotService {
     // robot list
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
         return this.store.select(fromRoot.selectRobotListData)
-            .filter(response => !!response)
+            .pipe(
+                filter(this.isTruth),
+        );
     }
 
     getRobotTotal(): Observable<number> {
@@ -87,7 +93,9 @@ export class RobotService {
 
     getRobotListResState(): Observable<fromRes.ResponseState> {
         return this.store.select(fromRoot.selectRobotListResState)
-            .filter(res => !!res);
+            .pipe(
+                filter(this.isTruth),
+        );
     }
 
     getRobotCountByStatus(predicate: (robot: fromRes.Robot) => boolean): Observable<fromRes.Robot[]> {
@@ -119,7 +127,9 @@ export class RobotService {
     // robot detail
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.select(fromRoot.selectRobotDetailResponse)
-            .filter(res => !!res);
+            .pipe(
+                filter(this.isTruth),
+        );
     }
 
     getRobotDetail(): Observable<fromRes.RobotDetail> {
@@ -142,14 +152,17 @@ export class RobotService {
 
     canChangePlatform(): Observable<boolean> {
         return this.getRobotStrategyExchangePair().pipe(
-            map(pairs => pairs.exchangeIds.some(id => id > -10)))
-            .do(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
+            map(pairs => pairs.exchangeIds.some(id => id > -10)),
+            tap(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP')),
+        );
     }
 
     // subscribe robot
     private getSubscribeRobotResponse(): Observable<fromRes.SubscribeRobotResponse> {
         return this.store.select(fromRoot.selectSubscribeRobotResponse)
-            .filter(res => !!res);
+            .pipe(
+                filter(this.isTruth),
+        );
     }
 
     isSubscribeRobotSuccess(): Observable<boolean> {
@@ -160,30 +173,47 @@ export class RobotService {
     // server send message
     private getServerSendRobotMessage(): Observable<fromRes.ServerSendRobotMessage> {
         return this.store.select(fromRoot.selectServerSendRobotMessage)
-            .filter(v => !!v);
+            .pipe(
+                filter(this.isTruth),
+        );
     }
 
     getServerSendRobotMessageType(msgType: number): Observable<fromRes.ServerSendRobotMessage> {
         return this.getServerSendRobotMessage()
-            .filter(msg => !!(msg.flags & msgType));
+            .pipe(
+                filter(msg => !!(msg.flags & msgType)),
+        );
     }
 
     getRobotSummary(summary: Observable<string>): Observable<any[]> {
         return summary
-            .filter(summary => !isEmpty(summary))
-            .mergeMap(summary => {
-                const ary = summary.split('\n');
+            .pipe(
+                filter(summary => !isEmpty(summary)),
+                mergeMap(summary => {
+                    const ary = summary.split('\n');
 
-                return observableFrom(ary).pipe(map(res => this.getSummary(res.trim()))).reduce((acc, cur) => [...acc, cur], []);
-            });
+                    return observableFrom(ary)
+                        .pipe(
+                            map(res => this.getSummary(res.trim())),
+                            reduce((acc, cur) => [...acc, cur], []),
+                    );
+                }),
+        );
     }
 
     /* =======================================================Short cart method================================================== */
 
     monitorServerSendRobotStatus(): Subscription {
         const param = this.getServerSendRobotMessage()
-            .filter(data => data.status && this.isOverStatus(data))
-            .switchMap(data => this.getRobotDetail().pipe(map(({ id }) => ({ id }))).filter(({ id }) => id === data.id));
+            .pipe(
+                filter(data => data.status && this.isOverStatus(data)),
+                switchMap(data => this.getRobotDetail()
+                    .pipe(
+                        map(({ id }) => ({ id })),
+                        filter(({ id }) => id === data.id)
+                    )
+                )
+            );
 
         return this.launchRobotDetail(param);
     }
@@ -221,7 +251,10 @@ export class RobotService {
     /* =======================================================Local state modify================================================== */
 
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).pipe(map(state => type ? state[type] : state.loading));
+        return this.store.select(fromRoot.selectRobotUiState)
+            .pipe(
+                map(state => type ? state[type] : state.loading)
+            );
     }
 
     resetRobotDetail(): void {

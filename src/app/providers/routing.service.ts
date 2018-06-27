@@ -22,7 +22,10 @@ export class RoutingService extends BaseService {
     }
 
     getCurrentUrl(): Observable<string> {
-        return this.getCurrentRouteState().pipe(map(state => state.url));
+        return this.getCurrentRouteState()
+            .pipe(
+                map(state => state.url)
+            );
     }
 
     go(data: RouterInfo): void {

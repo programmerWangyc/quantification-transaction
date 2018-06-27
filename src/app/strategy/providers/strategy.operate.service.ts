@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom, zip } from 'rxjs/operators';
 
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
@@ -46,22 +46,34 @@ export class StrategyOperateService extends StrategyService {
     /* =======================================================Serve Request======================================================= */
 
     launchShareStrategy(params: Observable<ShareStrategyStateSnapshot>): Subscription {
-        return this.process.processShareStrategy(params.pipe(switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent)
-            .do(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType]))
-            .filter(confirmType => confirmType !== ConfirmType.INNER)
-            .mapTo({ id: params.id, type: params.type })))
+        return this.process.processShareStrategy(params
+            .pipe(
+                switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent)
+                    .pipe(
+                        tap(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType])),
+                        filter(confirmType => confirmType !== ConfirmType.INNER),
+                        mapTo({ id: params.id, type: params.type })
+                    )
+                )
+            )
         )
             .add(this.launchGenKey());
     }
 
     launchGenKey(): Subscription {
-        return this.process.processGenKey(this.genKey$.pipe(switchMap(([params, confirmType]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
-            map((form: InnerShareFormModel) => ({
-                type: params.type === fromReq.StrategyShareType.PUBLISH ? GenKeyType.COPY_CODE : GenKeyType.REGISTER_CODE,
-                strategyId: params.id,
-                days: form.days,
-                concurrent: form.concurrent
-            })))))
+        return this.process.processGenKey(this.genKey$
+            .pipe(
+                switchMap(([params, confirmType]) => this.confirmStrategyShare(params, InnerShareConfirmComponent)
+                    .pipe(
+                        map((form: InnerShareFormModel) => ({
+                            type: params.type === fromReq.StrategyShareType.PUBLISH ? GenKeyType.COPY_CODE : GenKeyType.REGISTER_CODE,
+                            strategyId: params.id,
+                            days: form.days,
+                            concurrent: form.concurrent
+                        }))
+                    )
+                )
+            )
         );
     }
 
@@ -70,23 +82,32 @@ export class StrategyOperateService extends StrategyService {
     }
 
     launchDeleteStrategy(params: Observable<fromRes.Strategy>): Subscription {
-        return this.process.processDeleteStrategy(params.pipe(switchMap(params => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
-            mergeMap(content => {
-                const modal = this.nzModal.confirm({
-                    nzContent: content,
-                    nzOnOk: () => modal.close(true),
-                })
+        return this.process.processDeleteStrategy(params
+            .pipe(
+                switchMap((params: fromRes.Strategy) => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name })
+                    .pipe(
+                        mergeMap(content => {
+                            const modal = this.nzModal.confirm({
+                                nzContent: content,
+                                nzOnOk: () => modal.close(true),
+                            })
 
-                return modal.afterClose.filter(sure => sure);
-            }))
-            .mapTo({ id: params.id })))
+                            return modal.afterClose.filter(sure => sure);
+                        }),
+                        mapTo({ id: params.id })
+                    )
+                )
+            )
         );
     }
 
     launchSaveStrategy(params: Observable<fromReq.SaveStrategyRequest>): Subscription {
         return this.process.processSaveStrategy(
-            params.do(params => params.name === '' && this.tip.messageError('STRATEGY_NAME_EMPTY_ERROR'))
-                .filter(params => !!params.name)
+            params
+                .pipe(
+                    tap(params => params.name === '' && this.tip.messageError('STRATEGY_NAME_EMPTY_ERROR')),
+                    filter(params => !!params.name)
+                )
         );
     }
 
@@ -94,32 +115,50 @@ export class StrategyOperateService extends StrategyService {
 
     getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
         return this.store.select(fromRoot.selectShareStrategyResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     remindPublishRobot(): Subscription {
         return this.getShareStrategyResponse()
-            .filter(res => res.result)
-            .zip(this.getRequestParams().pipe(
-                map(res => res.shareStrategy))
-                .filter(req => req && (req.type === fromReq.StrategyShareType.SELL))
-                .distinctUntilKeyChanged('id'),
-                (_1, _2) => true
+            .pipe(
+                filter(res => res.result),
+                zip(
+                    this.getRequestParams()
+                        .pipe(
+                            map(res => res.shareStrategy),
+                            filter(req => req && (req.type === fromReq.StrategyShareType.SELL)),
+                            distinctUntilKeyChanged('id')
+                        ),
+                    (_1, _2) => true
+                ),
+                withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN']))
             )
-            .withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN']))
             .subscribe(([_1, translated]) => this.nzModal.success({ nzContent: translated.PUBLISH_STRATEGY_RELATED_ROBOT_TIP, nzOkText: translated.I_KNOWN }));
     }
 
     private getGenKeyResponse(): Observable<fromRes.GenKeyResponse> {
         return this.store.select(fromRoot.selectGenKeyResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     remindStoreGenKeyResult(): Subscription {
         return this.getGenKeyResponse()
-            .filter(res => !!res.result)
-            .map(res => res.result)
-            .withLatestFrom(this.getRequestParams().pipe(map(res => res.genKey)).filter(req => !!req), this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE']))
+            .pipe(
+                filter(res => !!res.result),
+                map(res => res.result),
+                withLatestFrom(
+                    this.getRequestParams()
+                        .pipe(
+                            map(res => res.genKey),
+                            filter(req => !!req)
+                        ),
+                    this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE'])
+                )
+            )
             .subscribe(([code, req, label]) => {
                 const { strategyId, type } = req;
 
@@ -136,22 +175,30 @@ export class StrategyOperateService extends StrategyService {
 
     private getVerifyKeyResponse(): Observable<fromRes.VerifyKeyResponse> {
         return this.store.select(fromRoot.selectVerifyKeyResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     isVerifyKeySuccess(): Observable<boolean> {
-        return this.getVerifyKeyResponse().pipe(
-            map(res => res.result));
+        return this.getVerifyKeyResponse()
+            .pipe(
+                map(res => res.result)
+            );
     }
 
     private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {
         return this.store.select(fromRoot.selectDeleteStrategyResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     private getSaveStrategyResponse(): Observable<fromRes.SaveStrategyResponse> {
         return this.store.select(fromRoot.selectSaveStrategyResponse)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     /* =======================================================Shortcut methods======================================================= */
@@ -166,7 +213,10 @@ export class StrategyOperateService extends StrategyService {
             nzFooter: null,
         })
 
-        return modal.afterClose.filter(this.isTruth);
+        return modal.afterClose
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     /* =======================================================Error handler======================================================= */

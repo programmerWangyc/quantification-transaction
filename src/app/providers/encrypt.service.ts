@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
 import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
-import { map, mergeMap, reduce } from 'rxjs/operators';
+import { map, mergeMap, reduce, take } from 'rxjs/operators';
 
 import { VariableType } from '../app.config';
 import { TemplateVariableOverview, VariableOverview } from './../interfaces/app.interface';
@@ -50,19 +50,32 @@ export class EncryptService {
     }
 
     transformStrategyArgsToEncryptType(data: Observable<VariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data.pipe(mergeMap(variables => observableFrom(variables).pipe(
-            mergeMap(item => this.transformArgs(item, isEncrypt)),
-            reduce(this.putInArray, []), )
-        ));
+        return data
+            .pipe(
+                mergeMap(variables => observableFrom(variables)
+                    .pipe(
+                        mergeMap(item => this.transformArgs(item, isEncrypt)),
+                        reduce(this.putInArray, [])
+                    )
+                )
+            );
     }
 
     transformTemplateArgsToEncryptType(data: Observable<TemplateVariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data.pipe(mergeMap(variables => observableFrom(variables).pipe(
-            mergeMap(variable => observableFrom(variable.variables).pipe(
-                mergeMap(item => this.transformArgs(item, isEncrypt).pipe(map(res => [...res, variable.id]))))
-            ),
-            reduce(this.putInArray, []), )
-        ));
+        return data
+            .pipe(
+                mergeMap(variables => observableFrom(variables)
+                    .pipe(
+                        mergeMap(variable => observableFrom(variable.variables)
+                            .pipe(
+                                mergeMap(item => this.transformArgs(item, isEncrypt)
+                                    .pipe(map(res => [...res, variable.id]))
+                                ),
+                        ), ),
+                        reduce(this.putInArray, [])
+                    )
+                )
+            );
     }
 
     /**
@@ -79,9 +92,12 @@ export class EncryptService {
 
             return observableOf([name, index]);
         } else if (variableTypeId === VariableType.ENCRYPT_STRING_TYPE && (<string>variableValue).indexOf(this.constantService.ENCRYPT_PREFIX) !== 0 && isEncrypt) {
-            return this.authService.getTemporaryPwd().pipe(
-                map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)]))
-                .take(1);
+            return this.authService.getTemporaryPwd()
+                .pipe(
+                    map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)]),
+                    take(1)
+                );
+
         } else {
             return observableOf([name, variableValue]);
         }

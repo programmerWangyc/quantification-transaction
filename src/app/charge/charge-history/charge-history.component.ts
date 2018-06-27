@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PayOrder } from '../../interfaces/response.interface';
@@ -38,12 +38,18 @@ export class ChargeHistoryComponent implements BaseComponent {
     initialModel() {
         this.historyRecords = this.chargeService.getSpecificHistoryOrders(this.constant.RECHARGE_PAYMENT_FLAG);
 
-        this.statistics = this.chargeService.getHistoryOrderTotalAmount(this.historyRecords).pipe(
-            mergeMap(total => this.translate.get('HISTORY_TOTAL_PAY', { total })));
+        this.statistics = this.chargeService.getHistoryOrderTotalAmount(this.historyRecords)
+            .pipe(
+                mergeMap(total => this.translate.get('HISTORY_TOTAL_PAY', { total }))
+            );
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPayOrders(this.chargeService.isRechargeSuccess().startWith(true))
+        this.subscription$$ = this.chargeService.launchPayOrders(this.chargeService.isRechargeSuccess()
+            .pipe(
+                startWith(true)
+            )
+        )
             .add(this.chargeService.handlePayOrdersError());
     }
 

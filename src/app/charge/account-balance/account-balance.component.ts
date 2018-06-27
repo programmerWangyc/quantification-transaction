@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 import { PublicService } from '../../providers/public.service';
@@ -18,7 +17,6 @@ export class AccountBalanceComponent implements OnInit {
     unit = 'YUAN';
 
     constructor(
-        private translate: TranslateService,
         private publicService: PublicService,
     ) { }
 

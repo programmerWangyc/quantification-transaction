@@ -6,5 +6,5 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FromJSONPipe implements PipeTransform {
     transform(source: string): any {
         return JSON.parse(source)
-   }
+    }
 }

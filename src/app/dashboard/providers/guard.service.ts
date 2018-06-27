@@ -10,6 +10,7 @@ import {
 import { Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { TipService } from '../../providers/tip.service';
@@ -32,8 +33,10 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.store.select(selectStrategyListResponse)
-            .map(res => !!res)
-            .do(v => !v && this.router.navigate([Path.dashboard, Path.strategy]));
+            .pipe(
+                map(res => !!res),
+                tap(v => !v && this.router.navigate([Path.dashboard, Path.strategy]))
+            );
     }
 
     canDeactivate(component: CanDeactivateComponent, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {

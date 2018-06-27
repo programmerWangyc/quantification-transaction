@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { isString } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
+import { partition } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -58,7 +59,7 @@ export class StrategyComponent implements BaseComponent {
     }
 
     launch() {
-        const [renewalByPay, renewalByCode] = this.renewal$.partition(({ pricing }) => isString(pricing) && pricing.indexOf('/') !== -1);
+        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.indexOf('/') !== -1)(this.renewal$);
 
         this.subscription$$ = this.strategyService.handleStrategyListError()
             .add(this.btNodeService.handleNodeListError())
@@ -75,10 +76,10 @@ export class StrategyComponent implements BaseComponent {
                 nzComponentParams: { name, author: username, email, id },
                 nzFooter: null,
             })))
-            .add(renewalByPay.subscribe(strategy => this.router.navigate(['rent', strategy.id], { relativeTo: this.activatedRoute })))
-            .add(this.btNodeService.launchGetNodeList(Observable.of(true)))
-            .add(this.platformService.launchGetPlatformList(Observable.of(true)))
-            .add(this.strategyService.launchStrategyList(Observable.of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })))
+            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate(['rent', strategy.id], { relativeTo: this.activatedRoute })))
+            .add(this.btNodeService.launchGetNodeList(of(true)))
+            .add(this.platformService.launchGetPlatformList(of(true)))
+            .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })))
     }
 
     navigateTo(path: string): void {

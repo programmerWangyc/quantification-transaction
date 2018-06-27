@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable ,  Subscription } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 
 import { BaseService } from '../../base/base.service';
 import { GetTemplatesRequest, PutTaskCode, PutTaskCodeArg, BacktestExchange, BacktestAdvanceOptions, BacktestPlatformOptions, BacktestConstantOptions, BacktestPutTaskOptions, BacktestPutTaskParams, BacktestIORequest, BacktestDescription, SettingTypes } from '../../interfaces/request.interface';
@@ -22,6 +22,7 @@ import { VariableType } from '../../app.config';
 import { TranslateService } from '@ngx-translate/core';
 import { PublicService } from '../../providers/public.service';
 import { BacktestComputingService } from './backtest.computing.service';
+import { mapTo, take, switchMapTo, filter, map, partition, withLatestFrom, tap, distinct, combineLatest, distinctUntilChanged, zip, merge } from 'rxjs/operators';
 
 // export const workerUrl = '../../../assets/sandbox/worker.js'
 
@@ -53,7 +54,11 @@ export class BacktestService extends BaseService {
         //         (isJS, isOwner) => isJS && isOwner
         //     )
 
-        return this.launchServerBacktest(language.mapTo(true))
+        return this.launchServerBacktest(language
+            .pipe(
+                mapTo(true)
+            )
+        )
             // .add(this.launchLocalBacktest(signal))
             .add(generateToBeTestedValue$$);
     }
@@ -64,8 +69,14 @@ export class BacktestService extends BaseService {
     private launchServerBacktest(signal: Observable<boolean>): Subscription {
         return this.process.processBacktestIO(
             signal
-                // .filter(res => !res)
-                .switchMapTo(this.getBacktestIOParameters().take(1))
+                .pipe(
+                    switchMapTo(this.getBacktestIOParameters()
+                        .pipe(
+                            take(1)
+                        )
+                    )
+                )
+            // .filter(res => !res)
         );
     }
 
@@ -75,29 +86,53 @@ export class BacktestService extends BaseService {
      * @description 本地回测，在webworker中进行
      */
     private launchLocalBacktest(signal: Observable<boolean>): Subscription {
-        const [isPro, isDev] = signal
-            .filter(res => res)
-            .map(_ => environment.production)
-            .partition(isPro => isPro);
+
+        const [isPro, isDev] = partition((flag: boolean) => flag)(
+            signal.pipe(
+                filter(res => res),
+                mapTo(environment.production)
+            )
+        );
 
         const jsSetting$$ = this.launchJSSetting(isPro);
 
-        const devEnvBacktest = isDev.switchMapTo(this.generatePutTaskParams().map(task => ({ task, uri: '本地中的地址', blob: '' }))); // 本地调试时 blob 为空。
+        const devEnvBacktest = isDev
+            .pipe(
+                switchMapTo(this.generatePutTaskParams()
+                    .pipe(
+                        map(task => ({ task, uri: '本地中的地址', blob: '' }))
+                    ) // 本地调试时 blob 为空。
+                )
+            );
 
-        const proEnvBacktest = isPro.switchMapTo(this.store.select(fromRoot.selectSettingsResponse)
-            .filter(res => !res.error)
-            .switchMapTo(this.publicService.getSetting(SettingTypes.backtest_javascript) as Observable<string>)
-            .withLatestFrom(this.generatePutTaskParams(), (blob, task) => ({ task, blob, uri: '打包后放在服务器上的地址' }))
-        );
+        const proEnvBacktest = isPro
+            .pipe(
+                switchMapTo(this.store.select(fromRoot.selectSettingsResponse)
+                    .pipe(
+                        filter(res => !res.error),
+                        switchMapTo(this.publicService.getSetting(SettingTypes.backtest_javascript) as Observable<string>),
+                        withLatestFrom(
+                            this.generatePutTaskParams(),
+                            (blob, task) => ({ task, blob, uri: '打包后放在服务器上的地址' })
+                        )
+                    )
+                )
+            );
 
-        return this.computeService.handleBacktestInWorker(devEnvBacktest.merge(proEnvBacktest))
+        return this.computeService.handleBacktestInWorker(devEnvBacktest
+            .pipe(
+                merge(proEnvBacktest)
+            )
+        )
             .add(jsSetting$$);
     }
 
     private launchJSSetting(signal: Observable<boolean>): Subscription {
         return this.publicService.launchGetSettings(
-            signal.do(_ => fromRoot.selectSettingsResponse.release())
-                .mapTo(SettingTypes.backtest_javascript)
+            signal.pipe(
+                tap(_ => fromRoot.selectSettingsResponse.release()),
+                mapTo(SettingTypes.backtest_javascript)
+            )
         );
     }
 
@@ -113,16 +148,20 @@ export class BacktestService extends BaseService {
 
     getSelectedTemplateIds(): Observable<number[]> {
         return this.store.select(fromRoot.selectStrategyUIState)
-            .map(res => res.selectedTemplates)
-            .filter(this.isTruth);
+            .pipe(
+                map(res => res.selectedTemplates),
+                this.filterTruth()
+            );
     }
 
     getTemplatesParams(): Observable<GetTemplatesRequest> {
         return this.getSelectedTemplates()
-            .map(templates => templates.filter(item => !item.source).map(item => item.id))
-            .filter(ids => ids.length > 0)
-            .distinct()
-            .map(ids => ({ ids }));
+            .pipe(
+                map(templates => templates.filter(item => !item.source).map(item => item.id)),
+                filter(ids => ids.length > 0),
+                distinct(),
+                map(ids => ({ ids }))
+            );
     }
 
     /**
@@ -133,73 +172,109 @@ export class BacktestService extends BaseService {
         releaseCache && fromRoot.selectStrategyDetailResponse.release();
 
         return this.getSelectedTemplateIds()
-            .combineLatest(
-                this.store.select(fromRoot.selectBacktestTemplates).filter(this.isTruth),
-                (ids, templates) => templates.filter(({ id }) => ids.includes(id))
+            .pipe(
+                combineLatest(
+                    this.store.select(fromRoot.selectBacktestTemplates).pipe(filter(this.isTruth)),
+                    (ids, templates) => templates.filter(({ id }) => ids.includes(id))
+                )
             );
     }
 
     private getGetTemplatesResponse(): Observable<fromRes.GetTemplatesResponse> {
-        return this.store.select(fromRoot.selectGetTemplatesResponse)
-            .filter(this.isTruth);
+        return this.store
+            .pipe(
+                select(fromRoot.selectGetTemplatesResponse),
+                this.filterTruth()
+            );
     }
 
     private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult> {
-        return this.store.select(fromRoot.selectBacktestIOResponse)
-            .filter(this.isTruth)
-            .map(res => isNumber(res.result) ? <number>res.result : <fromRes.ServerBacktestResult>JSON.parse(res.result));
+        return this.store
+            .pipe(
+                select(fromRoot.selectBacktestIOResponse),
+                filter(this.isTruth),
+                map(res => isNumber(res.result) ? <number>res.result : <fromRes.ServerBacktestResult>JSON.parse(res.result))
+            );
     }
 
     private getStrategyDetail(): Observable<fromRes.StrategyDetail> {
-        return this.store.select(fromRoot.selectStrategyDetailResponse)
-            .filter(res => !!res)
-            .map(res => res.result.strategy);
+        return this.store
+            .pipe(
+                select(fromRoot.selectStrategyDetailResponse),
+                filter(res => !!res),
+                map(res => res.result.strategy)
+            );
     }
 
     private getSelectedLanguage(): Observable<number> {
-        return this.store.select(fromRoot.selectStrategyUIState)
-            .filter(res => !!res)
-            .map(state => state.selectedLanguage);
+        return this.store
+            .pipe(
+                select(fromRoot.selectStrategyUIState),
+                filter(res => !!res),
+                map(state => state.selectedLanguage)
+            );
     }
-
-
 
     /* =======================================================UI state ======================================================= */
 
     getUIState(): Observable<UIState> {
-        return this.store.select(fromRoot.selectBacktestUIState);
+        return this.store
+            .pipe(
+                select(fromRoot.selectBacktestUIState)
+            );
     }
 
     getSelectedKlinePeriod(): Observable<number> {
-        return this.getUIState().map(res => res.timeOptions.klinePeriodId);
+        return this.getUIState()
+            .pipe(
+                map(res => res.timeOptions.klinePeriodId)
+            );
     }
 
     getSelectedTimeRange(): Observable<TimeRange> {
-        return this.getUIState().map(res => {
-            const { start, end } = res.timeOptions;
+        return this.getUIState()
+            .pipe(
+                map(res => {
+                    const { start, end } = res.timeOptions;
 
-            return { start, end }; // may be null;
-        });
+                    return { start, end }; // may be null;
+                })
+            );
     }
 
     getAdvancedOptions(): Observable<AdvancedOption> {
-        return this.getUIState().map(res => res.advancedOptions);
+        return this.getUIState()
+            .pipe(
+                map(res => res.advancedOptions)
+            );
     }
 
     getBacktestBtnText(): Observable<string> {
-        return this.getUIState().map(res => res.isBacktesting ? 'BACKTEST_SYSTEM_LOADING' : 'START_BACKTEST');
+        return this.getUIState()
+            .pipe(
+                map(res => res.isBacktesting ? 'BACKTEST_SYSTEM_LOADING' : 'START_BACKTEST')
+            );
     }
 
     getRunningNode(): Observable<number> {
-        return this.getUIState().map(res => res.runningNode);
+        return this.getUIState()
+            .pipe(
+                map(res => res.runningNode)
+            );
     }
 
     getBacktestCode(): Observable<BacktestCode[]> {
-        return this.getUIState().map(res => res.backtestCode);
+        return this.getUIState()
+            .pipe(
+                map(res => res.backtestCode)
+            );
     }
 
     getBacktestTaskFilters(): Observable<Filter[]> {
-        return this.getUIState().map(res => res.backtestTaskFiler);
+        return this.getUIState()
+            .pipe(
+                map(res => res.backtestTaskFiler)
+            );
     }
 
     /* =======================================================Local state change======================================================= */
@@ -251,18 +326,20 @@ export class BacktestService extends BaseService {
      */
     private getBacktestIOParameters(): Observable<BacktestIORequest> {
         return this.getStrategyDetail()
-            .combineLatest(
-                this.getSelectedLanguage(),
-                this.getUIState().map(state => state.runningNode),
-                this.generatePutTaskParams(),
-                ({ is_owner }, language, node, task) => ({
-                    nodeId: is_owner ? node : 0,
-                    language: is_owner ? language : language + 1000,
-                    info: task
-                })
-            )
-            .map(({ nodeId, language, info }) => ({ nodeId, language, io: JSON.stringify([BacktestDescription.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(info)]) }))
-            .distinctUntilChanged((previous, current) => Object.keys(current).every(key => previous[key] === current[key]))
+            .pipe(
+                combineLatest(
+                    this.getSelectedLanguage(),
+                    this.getRunningNode(),
+                    this.generatePutTaskParams(),
+                    ({ is_owner }, language, node, task) => ({
+                        nodeId: is_owner ? node : 0,
+                        language: is_owner ? language : language + 1000,
+                        info: task
+                    }),
+                ),
+                map(({ nodeId, language, info }) => ({ nodeId, language, io: JSON.stringify([BacktestDescription.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(info)]) })),
+                distinctUntilChanged((previous, current) => Object.keys(current).every(key => previous[key] === current[key])),
+        );
     }
 
     /**
@@ -270,12 +347,14 @@ export class BacktestService extends BaseService {
      */
     private generatePutTaskParams(): Observable<BacktestPutTaskParams> {
         return this.generatePutTaskCode()
-            .zip(
-                this.generatePutTaskExchange(),
-                this.generatePutTaskOptions(),
-                (code, exchange, options) => ({ Code: code, Exchanges: exchange, Options: options, Start: options.TimeBegin, End: options.TimeEnd })
-            )
-            .distinctUntilChanged((previous, current) => JSON.stringify(previous) === JSON.stringify(current));
+            .pipe(
+                zip(
+                    this.generatePutTaskExchange(),
+                    this.generatePutTaskOptions(),
+                    (code, exchange, options) => ({ Code: code, Exchanges: exchange, Options: options, Start: options.TimeBegin, End: options.TimeEnd })
+                ),
+                distinctUntilChanged((previous, current) => JSON.stringify(previous) === JSON.stringify(current))
+            );
     }
 
     /**
@@ -292,25 +371,28 @@ export class BacktestService extends BaseService {
         }
 
         return this.getBacktestCode()
-            .map(codes => codes.map(code => {
-                const { name, id, args } = code;
+            .pipe(
+                map(codes => codes.map(code => {
+                    const { name, id, args } = code;
 
-                const result: PutTaskCodeArg[] = args.map(arg => <PutTaskCodeArg>[this.constant.removeConditionInName(arg.variableName), getValue(arg), arg.variableTypeId]);
+                    const result: PutTaskCodeArg[] = args.map(arg => <PutTaskCodeArg>[this.constant.removeConditionInName(arg.variableName), getValue(arg), arg.variableTypeId]);
 
-                return { name, id, args: result };
-            }))
-            .combineLatest(
-                this.getSelectedTemplates(false),
-                this.getStrategyDetail(),
-                (tasks, templates, strategy) => tasks.map(task => {
-                    const { id, name, args } = task;
+                    return { name, id, args: result };
+                })),
+                combineLatest(
+                    this.getSelectedTemplates(false),
+                    this.getStrategyDetail(),
+                    (tasks, templates, strategy) => tasks.map(task => {
+                        const { id, name, args } = task;
 
-                    const sourceKey = !!strategy.is_owner ? 'source' : 'id'; // 用户不能看代码时统一传id。
+                        const sourceKey = !!strategy.is_owner ? 'source' : 'id'; // 用户不能看代码时统一传id。
 
-                    const code = name === this.constant.MAIN_CODE_FLAG ? strategy[sourceKey] : templates.find(template => template.id === id)[sourceKey];
+                        const code = name === this.constant.MAIN_CODE_FLAG ? strategy[sourceKey] : templates.find(template => template.id === id)[sourceKey];
 
-                    return [code, args, name] as PutTaskCode;
-                }));
+                        return [code, args, name] as PutTaskCode;
+                    })
+                )
+            );
     }
 
     /**
@@ -318,32 +400,37 @@ export class BacktestService extends BaseService {
      */
     private generatePutTaskOptions(): Observable<BacktestPutTaskOptions> {
         return this.getUIState()
-            .combineLatest(this.getUpdatePeriod(), ({ advancedOptions, timeOptions, backtestLevel, backtestTasks }, updatePeriod) => {
-                const { log, profit, chart, delay } = advancedOptions;
+            .pipe(
+                combineLatest(
+                    this.getUpdatePeriod(),
+                    ({ advancedOptions, timeOptions, backtestLevel, backtestTasks }, updatePeriod) => {
+                        const { log, profit, chart, delay } = advancedOptions;
 
-                const { start, end, klinePeriodId } = timeOptions;
+                        const { start, end, klinePeriodId } = timeOptions;
 
-                const begin = <number>moment(start).unix();
+                        const begin = <number>moment(start).unix();
 
-                const finish = <number>moment(end).unix();
+                        const finish = <number>moment(end).unix();
 
-                const isMultipleTask = !!backtestTasks.length;
+                        const isMultipleTask = !!backtestTasks.length;
 
-                return {
-                    RetFlags: this.getRetFlags(isMultipleTask, backtestLevel),
-                    MaxRuntimeLogs: isMultipleTask ? 0 : log,
-                    MaxProfitLogs: profit,
-                    MaxChartLogs: isMultipleTask ? 0 : chart,
-                    DataServer: 'https://www.botvs.com',
-                    // CPP
-                    TimeBegin: begin,
-                    TimeEnd: finish,
-                    SnapshortPeriod: this.generateSnapshotPeriod(begin, finish) * 1000,
-                    Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60 * 1000,
-                    NetDelay: Math.max(1, delay),
-                    UpdatePeriod: updatePeriod,
-                }
-            })
+                        return {
+                            RetFlags: this.getRetFlags(isMultipleTask, backtestLevel),
+                            MaxRuntimeLogs: isMultipleTask ? 0 : log,
+                            MaxProfitLogs: profit,
+                            MaxChartLogs: isMultipleTask ? 0 : chart,
+                            DataServer: 'https://www.botvs.com',
+                            // CPP
+                            TimeBegin: begin,
+                            TimeEnd: finish,
+                            SnapshortPeriod: this.generateSnapshotPeriod(begin, finish) * 1000,
+                            Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60 * 1000,
+                            NetDelay: Math.max(1, delay),
+                            UpdatePeriod: updatePeriod,
+                        }
+                    }
+                )
+            );
     }
 
     /**
@@ -370,7 +457,10 @@ export class BacktestService extends BaseService {
      * @description 生成回测 Options 中的 UpdatePeriod 的值。
      */
     private getUpdatePeriod(): Observable<number> {
-        return this.getSelectedLanguage().map(language => language === 1 ? 5000 : 500);
+        return this.getSelectedLanguage()
+            .pipe(
+                map(language => language === 1 ? 5000 : 500)
+            );
     }
 
     /**
@@ -399,36 +489,38 @@ export class BacktestService extends BaseService {
      */
     private generatePutTaskExchange(): Observable<BacktestExchange[]> {
         return this.getUIState()
-            .map(state => {
-                const { timeOptions, floorKlinePeriod, advancedOptions, platformOptions, isFaultTolerantMode, backtestLevel } = state;
+            .pipe(
+                map(state => {
+                    const { timeOptions, floorKlinePeriod, advancedOptions, platformOptions, isFaultTolerantMode, backtestLevel } = state;
 
-                const { klinePeriodId } = timeOptions;
+                    const { klinePeriodId } = timeOptions;
 
-                const advanceConfig = this.generateAdvanceOptionsForExchange(advancedOptions, isFaultTolerantMode, backtestLevel, floorKlinePeriod);
+                    const advanceConfig = this.generateAdvanceOptionsForExchange(advancedOptions, isFaultTolerantMode, backtestLevel, floorKlinePeriod);
 
-                return platformOptions.map(option => {
-                    const { eid, stock, makerFee, takerFee } = option;
+                    return platformOptions.map(option => {
+                        const { eid, stock, makerFee, takerFee } = option;
 
-                    const constantConfig: BacktestConstantOptions = omit(this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === eid), ['eid']) as BacktestConstantOptions;
+                        const constantConfig: BacktestConstantOptions = omit(this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === eid), ['eid']) as BacktestConstantOptions;
 
-                    return {
-                        Id: eid,
-                        BaseCurrency: this.generateBaseCurrency(stock),
-                        FeeMaker: this.generateFee(makerFee),
-                        FeeTaker: this.generateFee(takerFee),
+                        return {
+                            Id: eid,
+                            BaseCurrency: this.generateBaseCurrency(stock),
+                            FeeMaker: this.generateFee(makerFee),
+                            FeeTaker: this.generateFee(takerFee),
 
-                        // constant options
-                        ...constantConfig,
-                        DataSource: this.generateDataSource(option),
+                            // constant options
+                            ...constantConfig,
+                            DataSource: this.generateDataSource(option),
 
-                        // advance options
-                        ...advanceConfig,
+                            // advance options
+                            ...advanceConfig,
 
-                        // platform options
-                        ...this.generatePlatformOptionsForExchange(option, klinePeriodId),
-                    }
+                            // platform options
+                            ...this.generatePlatformOptionsForExchange(option, klinePeriodId),
+                        }
+                    })
                 })
-            });
+            );
     }
 
     /**
@@ -466,7 +558,7 @@ export class BacktestService extends BaseService {
             Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes,
             Currency: stock,
             QuoteCurrency: this.constant.BACKTEST_PLATFORMS.find(item => item.eid === eid).quoteCurrency,
-        }
+        };
     }
 
     /**
@@ -506,7 +598,9 @@ export class BacktestService extends BaseService {
     handleBacktestIOError(): Subscription {
         return this.error.handleError(
             this.getBacktestIOResponse()
-                .map(res => this.error.getBacktestError(res))
+                .pipe(
+                    map(res => this.error.getBacktestError(res))
+                )
         );
     }
 }

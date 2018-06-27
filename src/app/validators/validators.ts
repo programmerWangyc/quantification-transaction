@@ -62,7 +62,7 @@ export function variableNameValidator(input: AbstractControl): ValidatorResult {
     return { variableNameFormat: 'INVALID_VARIABLE_NAME_ERROR' };
 }
 
-export const selectTypeValueFormat =/^([^\|]+\|)+([^\|]+)$/;
+export const selectTypeValueFormat = /^([^\|]+\|)+([^\|]+)$/;
 
 export function selectTypeValueValidator(input: AbstractControl): ValidatorResult {
     return selectTypeValueFormat.test(input.value) ? null : { selectTypeValueFormat: 'SELECT_TYPE_VALUE_FORMAT_ERROR' };

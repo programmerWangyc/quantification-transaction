@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject ,  Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -47,8 +48,14 @@ export class StrategyVerifyCodeComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify$.map(verifyCode => ({ strategyId: this.id, verifyCode })))
-            .add(this.strategyOperate.isVerifyKeySuccess().subscribe(isSuccess => this.handleVerifySuccess(isSuccess)))
+        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify$
+            .pipe(
+                map(verifyCode => ({ strategyId: this.id, verifyCode }))
+            )
+        )
+            .add(this.strategyOperate.isVerifyKeySuccess()
+                .subscribe(isSuccess => this.handleVerifySuccess(isSuccess))
+            )
             .add(this.strategyOperate.handleVerifyKeyError());
     }
 

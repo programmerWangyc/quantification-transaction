@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject ,  Observable ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, merge, mergeMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';
@@ -66,10 +67,27 @@ export class SignupComponent extends BaseComponent {
     }
 
     launch(): void {
-        this.subscription$$ = this.authService.launchSignup(this.signup$.map(data => ({ username: data.username, email: data.email, password: this.encrypt.encryptPassword(data.passwordInfo.password), refUser: '', refUrl: '' })))
-            .add(this.authService.toggleAgreeState(this.toggleAgree$.merge(this.getDialogResult())))
-            .add(this.activatedRoute.params.map(params => params['ref']).filter(ref => !!ref).subscribe(this.publicService.refUser$$))
-            .add(this.authService.isSignupSuccess().filter(success => !!success).subscribe(_ => this.router.navigateByUrl('/home')))
+        this.subscription$$ = this.authService.launchSignup(this.signup$
+            .pipe(
+                map(data => ({ username: data.username, email: data.email, password: this.encrypt.encryptPassword(data.passwordInfo.password), refUser: '', refUrl: '' }))
+            )
+        )
+            .add(this.authService.toggleAgreeState(this.toggleAgree$
+                .pipe(
+                    merge(this.getDialogResult())
+                ))
+            )
+            .add(this.activatedRoute.params
+                .pipe(
+                    map(params => params['ref']),
+                    filter(ref => !!ref)
+                )
+                .subscribe(this.publicService.refUser$$)
+            )
+            .add(this.authService.isSignupSuccess()
+                .pipe(filter(success => !!success))
+                .subscribe(_ => this.router.navigateByUrl('/home'))
+            )
             .add(this.authService.showSignupResponse())
             .add(this.authService.isAgree().subscribe(agree => this.isAgree = agree))
             .add(this.authService.handleSignupError())
@@ -88,8 +106,12 @@ export class SignupComponent extends BaseComponent {
     }
 
     getDialogResult(): Observable<boolean> {
-        return this.dialog$.filter(v => v)
-            .mergeMap(_ => this.dialog.open(AgreementComponent).afterClosed().map(res => !!res));
+        return this.dialog$.pipe(
+            filter(v => v),
+            mergeMap(_ => this.dialog.open(AgreementComponent).afterClosed()
+                .pipe(map(res => !!res))
+            )
+        );
     }
 
     ngOnDestroy() {

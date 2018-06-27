@@ -1,13 +1,9 @@
-
-import { of as observableOf, Observable, Subject, Subscription } from 'rxjs';
-
-import { concat, map } from 'rxjs/operators';
-
-
 import { Location } from '@angular/common';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { isEmpty } from 'lodash';
+import { Observable, of as observableOf, Subject, Subscription } from 'rxjs';
+import { concat, map, reduce } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
 import { SelectedPair, VariableOverview } from '../../interfaces/app.interface';
@@ -20,6 +16,8 @@ import { PlatformService } from '../../providers/platform.service';
 import { SemanticArg, StrategyService } from '../../strategy/providers/strategy.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
+
+
 
 export interface RobotCreationForm {
     robotName: string;
@@ -105,14 +103,14 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     initialModel() {
         this.agents = this.btNodeService.getGroupedNodeList('public', this.btNodeService.getAgentName);
 
-        this.strategies = this.strategyService.getGroupedStrategy('category', this.strategyService.getCategoryName, this.strategyService.reverseGetCategoryName).pipe(
-            map(list => list.map(({ groupName, values, groupNameValue }) => ({
-                groupName,
-                groupNameValue,
-                values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY)
-            }))
-                .filter(list => !isEmpty(list.values))
-            ));
+        this.strategies = this.strategyService.getGroupedStrategy('category', this.strategyService.getCategoryName, this.strategyService.reverseGetCategoryName)
+            .pipe(
+                map(list => list.map(({ groupName, values, groupNameValue }) => ({
+                    groupName,
+                    groupNameValue,
+                    values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY)
+                })).filter(list => !isEmpty(list.values)))
+            );
     }
 
     launch() {
@@ -130,7 +128,11 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             .add(this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
 
         // FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
-        this.create$$ = this.robotService.launchCreateRobot(this.create$.pipe(map(form => this.createSaveParams(form))));
+        this.create$$ = this.robotService.launchCreateRobot(this.create$
+            .pipe(
+                map(form => this.createSaveParams(form))
+            )
+        );
     }
 
     initForm() {
@@ -152,10 +154,12 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         let args = '';
 
         if (this.selectedStrategyArgs) {
-            this.encrypt.transformStrategyArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticArgs || [])).pipe(
-                concat(this.encrypt.transformTemplateArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticTemplateArgs || []))))
-                .reduce((acc, cur) => [...acc, ...cur], [])
-                .map(result => JSON.stringify(result))
+            this.encrypt.transformStrategyArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticArgs || []))
+                .pipe(
+                    concat(this.encrypt.transformTemplateArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticTemplateArgs || []))),
+                    reduce((acc, cur) => [...acc, ...cur], []),
+                    map(result => JSON.stringify(result))
+                )
                 .subscribe(result => args = result);
         }
 

@@ -1,7 +1,7 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
-import { distinctUntilChanged, map, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mapTo, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
@@ -50,7 +50,13 @@ export class ChargeService extends BaseService {
 
     launchPaymentArg(data: Observable<RechargeFormModal>, strategyId: Observable<number> = observableOf(0)): Subscription {
         return this.process.processPaymentArg(
-            data.pipe(withLatestFrom(strategyId, ({ payMethod, chargeAmount }, strategyId) => ({ payMethod, chargeAmount, strategyId })))
+            data
+                .pipe(
+                    withLatestFrom(
+                        strategyId,
+                        ({ payMethod, chargeAmount }, strategyId) => ({ payMethod, chargeAmount, strategyId })
+                    )
+                )
         );
     }
 
@@ -62,40 +68,46 @@ export class ChargeService extends BaseService {
 
     // payment
     private getPaymentArgsResponse(): Observable<GetPaymentArgResponse> {
-        return this.store.select(selectPaymentArgResponse)
-            .filter(this.isTruth);
+        return this.store.pipe(select(selectPaymentArgResponse))
+            .pipe(
+                filter(this.isTruth)
+            );
     }
 
     private goToPaymentPage(payMethod: number): Observable<GetPaymentArgResponse> {
-        return this.getPaymentArgsResponse().pipe(
-            withLatestFrom(this.store.select(selectPaymentArgRequestParams)))
-            .filter(([res, req]) => !!req && (req.payMethod === payMethod))
-            .map(([res, _]) => res);
+        return this.getPaymentArgsResponse()
+            .pipe(
+                withLatestFrom(this.store.select(selectPaymentArgRequestParams)),
+                filter(([res, req]) => !!req && (req.payMethod === payMethod)),
+                map(([res, _]) => res)
+            );
     }
 
     goToAlipayPage(): Subscription {
-        return this.goToPaymentPage(PaymentMethod.ALIPAY).pipe(
-            map(res => {
-                const form: HTMLFormElement = this.renderer2.createElement('form');
+        return this.goToPaymentPage(PaymentMethod.ALIPAY)
+            .pipe(
+                map(res => {
+                    const form: HTMLFormElement = this.renderer2.createElement('form');
 
-                form.method = 'GET';
+                    form.method = 'GET';
 
-                form.action = this.alipayAddress;
+                    form.action = this.alipayAddress;
 
-                Object.entries(res.result.form).forEach(([key, value]) => {
-                    const input: HTMLInputElement = this.renderer2.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = value;
-                    form.appendChild(input);
+                    Object.entries(res.result.form).forEach(([key, value]) => {
+                        const input: HTMLInputElement = this.renderer2.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
+                    })
+
+                    this.renderer2.appendChild(document.body, form);
+
+                    form.submit();
+
+                    return form;
                 })
-
-                this.renderer2.appendChild(document.body, form);
-
-                form.submit();
-
-                return form;
-            }))
+            )
             .subscribe(form => this.renderer2.removeChild(document.body, form));
     }
 
@@ -105,27 +117,35 @@ export class ChargeService extends BaseService {
     }
 
     getWechartQrCode(): Observable<string> {
-        return this.goToPaymentPage(PaymentMethod.WECHART).pipe(
-            map(res => res.result.code_url),
-            distinctUntilChanged(), );
+        return this.goToPaymentPage(PaymentMethod.WECHART)
+            .pipe(
+                map(res => res.result.code_url),
+                distinctUntilChanged()
+            );
     }
 
     // pay orders
     private getPayOrdersResponse(): Observable<GetPayOrdersResponse> {
         return this.store.select(selectPayOrdersResponse)
-            .filter(this.isTruth);
+            .pipe(
+                filter(this.isTruth)
+            );
     }
 
     getHistoryOrders(): Observable<PayOrder[]> {
-        return this.getPayOrdersResponse().pipe(
-            map(res => res.result.items));
+        return this.getPayOrdersResponse()
+            .pipe(
+                map(res => res.result.items)
+            );
     }
 
     getSpecificHistoryOrders(flag: string): Observable<PayOrder[]> {
         const predicate = this.isSpecificOrder(flag);
 
-        return this.getHistoryOrders().pipe(
-            map(orders => orders.filter(predicate)));
+        return this.getHistoryOrders()
+            .pipe(
+                map(orders => orders.filter(predicate))
+            );
     }
 
     isSpecificOrder(flag: string): (order: PayOrder) => boolean {
@@ -133,17 +153,25 @@ export class ChargeService extends BaseService {
     }
 
     getHistoryOrderTotalAmount(data: Observable<PayOrder[]>): Observable<number> {
-        return data.pipe(map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0)));
+        return data
+            .pipe(
+                map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0))
+            );
     }
 
     // server send message
     private getServerSendRechargeMessage(): Observable<ServerSendPaymentMessage> {
         return this.store.select(selectServerSendRechargeMessage)
-            .filter(this.isTruth);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     isRechargeSuccess(): Observable<boolean> {
-        return this.getServerSendRechargeMessage().mapTo(true);
+        return this.getServerSendRechargeMessage()
+            .pipe(
+                mapTo(true)
+            );
     }
 
     /* =======================================================Short cart method================================================== */

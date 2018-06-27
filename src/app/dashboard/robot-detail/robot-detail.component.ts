@@ -1,8 +1,7 @@
-
-
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable ,  Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, mapTo, mergeMapTo } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -10,6 +9,8 @@ import { RobotService } from '../../robot/providers/robot.service';
 import { BtNodeService } from './../../providers/bt-node.service';
 import { PlatformService } from './../../providers/platform.service';
 import { PublicService } from './../../providers/public.service';
+
+
 
 @Component({
     selector: 'app-robot-detail',
@@ -27,7 +28,6 @@ export class RobotDetailComponent extends BaseComponent {
     constructor(
         private robotService: RobotService,
         private activatedRoute: ActivatedRoute,
-        private router: Router,
         private publicService: PublicService,
         private btNodeService: BtNodeService,
         private platformService: PlatformService,
@@ -48,15 +48,28 @@ export class RobotDetailComponent extends BaseComponent {
     }
 
     launch() {
-        const id = this.activatedRoute.paramMap.map(param => +param.get('id'));
+        const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
-        const isMainAccount = this.publicService.isSubAccount().filter(sure => !sure).distinctUntilChanged();
+        const isMainAccount = this.publicService.isSubAccount().pipe(
+            filter(sure => !sure),
+            distinctUntilChanged(),
+        );
 
-        this.subscription$$ = this.robotService.launchRobotDetail(id.map(id => ({ id })))
+        const requestById = id.pipe(map(id => ({ id })));
+
+        const isMain = isMainAccount.pipe(
+            mergeMapTo(id
+                .pipe(
+                    mapTo(true)
+                )
+            )
+        );
+
+        this.subscription$$ = this.robotService.launchRobotDetail(requestById)
             .add(this.robotService.monitorServerSendRobotStatus())
-            .add(this.robotService.launchSubscribeRobot(id.map(id => ({ id })), false))
-            .add(this.btNodeService.launchGetNodeList(isMainAccount.mergeMapTo(id.mapTo(true))))
-            .add(this.platformService.launchGetPlatformList(isMainAccount.mergeMapTo(id.mapTo(true))))
+            .add(this.robotService.launchSubscribeRobot(requestById, false))
+            .add(this.btNodeService.launchGetNodeList(isMain))
+            .add(this.platformService.launchGetPlatformList(isMain))
             .add(this.robotService.handleRobotDetailError())
             .add(this.robotService.handleSubscribeRobotError())
             .add(this.btNodeService.handleNodeListError())
@@ -64,7 +77,7 @@ export class RobotDetailComponent extends BaseComponent {
     }
 
     ngOnDestroy() {
-        this.robotService.launchSubscribeRobot(Observable.of({ id: 0 }));
+        this.robotService.launchSubscribeRobot(of({ id: 0 }));
 
         this.subscription$$.unsubscribe();
 

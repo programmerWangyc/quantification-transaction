@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { GetNodeListResponse } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
@@ -40,12 +40,16 @@ export class BtNodeService {
 
     private getNodeListResponse(): Observable<GetNodeListResponse> {
         return this.store.select(fromRoot.selectBtNodeListResponse)
-            .filter(res => !!res);
+            .pipe(
+                filter(res => !!res)
+            );
     }
 
     getNodeList(): Observable<BtNode[]> {
-        return this.getNodeListResponse().pipe(
-            map(res => res.result.nodes));
+        return this.getNodeListResponse()
+            .pipe(
+                map(res => res.result.nodes)
+            );
     }
 
     getGroupedNodeList(key: string, getName?: (arg: number | boolean) => string): Observable<GroupedNode[]> {
@@ -61,16 +65,21 @@ export class BtNodeService {
     }
 
     isPublicNode(nodeId: number): Observable<boolean> {
-        return this.getNodeList().pipe(
-            map(list => {
-                const target = list.find(item => item.id === nodeId);
+        return this.getNodeList()
+            .pipe(
+                map(list => {
+                    const target = list.find(item => item.id === nodeId);
 
-                return !!target.public;
-            }))
+                    return !!target.public;
+                })
+            );
     }
 
     getSpecificNodeList(...conditions: NodeFilterFn[]): Observable<BtNode[]> {
-        return this.getNodeList().pipe(map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true))));
+        return this.getNodeList()
+            .pipe(
+                map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true)))
+            );
     }
 
     /* =======================================================Shortcut methods======================================================= */

@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
 import { BacktestService } from '../../backtest/providers/backtest.service';
@@ -76,23 +77,37 @@ export class BacktestSimulationComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.strategyId = this.route.paramMap.map(param => +param.get('id'));
+        this.strategyId = this.route.paramMap
+            .pipe(
+                map(param => +param.get('id'))
+            );
 
         this.strategyArgs = this.strategyService.getExistedStrategyArgs(() => true)
-            .startWith([])
-            .map(args => args.filter(arg => !this.strategyService.isCommandArg(arg.variableName)));
+            .pipe(
+                startWith([]),
+                map(args => args.filter(arg => !this.strategyService.isCommandArg(arg.variableName)))
+            );
 
         this.templates = this.backtestService.getSelectedTemplates();
 
         this.backtestBtnText = this.backtestService.getBacktestBtnText();
 
-        this.isBacktestLoading = this.backtestService.getUIState().map(state => state.isBacktesting);
+        this.isBacktestLoading = this.backtestService.getUIState()
+            .pipe(
+                map(state => state.isBacktesting)
+            );
 
         this.runningNode = this.backtestService.getRunningNode();
 
-        this.isFaultTolerantMode = this.backtestService.getUIState().map(state => state.isFaultTolerantMode);
+        this.isFaultTolerantMode = this.backtestService.getUIState()
+            .pipe(
+                map(state => state.isFaultTolerantMode)
+            );
 
-        this.disableBacktest = this.backtestService.getUIState().map(res => !res.platformOptions || !res.platformOptions.length || res.isBacktesting);
+        this.disableBacktest = this.backtestService.getUIState()
+            .pipe(
+                map(res => !res.platformOptions || !res.platformOptions.length || res.isBacktesting)
+            );
     }
 
     launch() {
@@ -104,7 +119,11 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
             .add(this.backtestService.updateRunningNode(this.runningNode$))
-            .add(this.backtestService.launchBacktest(this.startBacktest$.map(_ => this.language)))
+            .add(this.backtestService.launchBacktest(this.startBacktest$
+                .pipe(
+                    map(_ => this.language)
+                )
+            ));
     }
 
     toggleBacktestMode() {

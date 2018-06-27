@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { from as observableFrom, Observable, Subscription } from 'rxjs';
-import { groupBy, map, mergeMap } from 'rxjs/operators';
+import { filter, groupBy, map, mergeMap, reduce } from 'rxjs/operators';
 
 import { GetPlatformListResponse, Platform } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
@@ -38,37 +38,50 @@ export class PlatformService {
 
     private getPlatformListResponse(): Observable<GetPlatformListResponse> {
         return this.store.select(fromRoot.selectPlatformListResponse)
-            .filter(res => !!res);
+            .pipe(
+                filter(res => !!res)
+            );
     }
 
     getPlatformList(): Observable<Platform[]> {
-        return this.getPlatformListResponse().pipe(
-            map(res => res.result.platforms));
+        return this.getPlatformListResponse()
+            .pipe(
+                map(res => res.result.platforms)
+            );
     }
 
     groupPlatformList(): Observable<GroupedPlatform[]> {
-        return this.getPlatformList().pipe(
-            mergeMap(list => observableFrom(list).pipe(map(platform => {
-                if (platform.eid === 'Futures_CTP') {
-                    platform['group'] = 'ctp';
-                } else if (platform.eid === 'Futures_LTS') {
-                    platform['group'] = 'lts';
-                } else {
-                    platform['group'] = 'botvs';
-                }
-                return <GroupPlatform>platform;
-            }))),
-            groupBy(item => item.group),
-            mergeMap(obs => obs.reduce((acc, cur) => {
-                const { group } = cur;
+        return this.getPlatformList()
+            .pipe(
+                mergeMap(list => observableFrom(list)
+                    .pipe(
+                        map(platform => {
+                            if (platform.eid === 'Futures_CTP') {
+                                platform['group'] = 'ctp';
+                            } else if (platform.eid === 'Futures_LTS') {
+                                platform['group'] = 'lts';
+                            } else {
+                                platform['group'] = 'botvs';
+                            }
+                            return <GroupPlatform>platform;
+                        })
+                    )
+                ),
+                groupBy(item => item.group),
+                mergeMap((obs: Observable<GroupPlatform>) => obs
+                    .pipe(
+                        reduce((acc: GroupedPlatform, cur: GroupPlatform) => {
+                            const { group } = cur;
 
-                const platforms = [...acc.platforms, cur];
+                            const platforms = [...acc.platforms, cur];
 
-                return { group, platforms };
+                            return { group, platforms };
 
-            }, { group: '', platforms: [] })), )
-            .reduce((acc, cur) => [...acc, cur], [])
-            .do(v => console.log(v));
+                        }, { group: '', platforms: [] })
+                    )
+                ),
+                reduce((acc, cur) => [...acc, cur], []),
+        );
     }
 
     /* =======================================================Error Handle======================================================= */

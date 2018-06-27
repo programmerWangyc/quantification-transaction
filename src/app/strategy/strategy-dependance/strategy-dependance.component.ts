@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { Subscription } from 'rxjs';
+import { startWith } from 'rxjs/internal/operators/startWith';
 
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyService } from '../providers/strategy.service';
@@ -43,7 +44,7 @@ export class StrategyDependanceComponent implements OnInit, OnDestroy {
     }
 
     launch() {
-        this.subscription$$ = this.strategyService.updateSelectedTemplates(this.change.startWith([]));
+        this.subscription$$ = this.strategyService.updateSelectedTemplates(this.change.pipe(startWith([])));
     }
 
     onChange(target: TemplateRefItem): void {

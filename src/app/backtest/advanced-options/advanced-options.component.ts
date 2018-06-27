@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { isNumber } from 'lodash';
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { AdvancedOptionConfig, BacktestConstantService, BacktestMode } from '../providers/backtest.constant.service';
@@ -57,22 +58,27 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         this.initialModel();
 
         this.subscription = this.backtestService.getUIState()
-            .map(state => state.backtestLevel)
+            .pipe(
+                map(state => state.backtestLevel)
+            )
             .subscribe(level => this.selectedMode = level);
     }
 
     initialModel() {
-        this.advancedOptions = this.backtestService.getAdvancedOptions().map(options => {
-            const keys = Object.keys(options);
+        this.advancedOptions = this.backtestService.getAdvancedOptions()
+            .pipe(
+                map(options => {
+                    const keys = Object.keys(options);
 
-            return this.constant.ADVANCED_OPTIONS_CONFIG.map(item => {
-                const key = keys.find(key => item.storageKey === key);
+                    return this.constant.ADVANCED_OPTIONS_CONFIG.map(item => {
+                        const key = keys.find(key => item.storageKey === key);
 
-                item.value = options[key];
+                        item.value = options[key];
 
-                return item;
-            })
-        });
+                        return item;
+                    })
+                })
+            );
     }
 
     updateMode(mode: number): void {

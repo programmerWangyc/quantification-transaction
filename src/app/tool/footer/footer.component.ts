@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { PublicService } from './../../providers/public.service';
@@ -20,7 +19,6 @@ export class FooterComponent implements OnInit, OnDestroy {
     isShow: Observable<boolean>;
 
     constructor(
-        private translate: TranslateService,
         private publicService: PublicService,
     ) {
     }

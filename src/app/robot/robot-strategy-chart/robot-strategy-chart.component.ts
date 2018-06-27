@@ -1,16 +1,15 @@
-
-import {map, switchMap, delay} from 'rxjs/operators';
-
-
-
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { bufferCount, delay, map, skip, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from '../robot.config';
+
+
+
 
 @Component({
     selector: 'app-robot-strategy-chart',
@@ -67,43 +66,61 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
 
         this.isShow = this.robotLog.hasStrategyChart();
 
-        this.charts = this.options.pipe(switchMap(options => this.chart$.bufferCount(options.length)));
+        this.charts = this.options
+            .pipe(
+                switchMap(options => this.chart$
+                    .pipe(
+                        bufferCount(options.length)
+                    )
+                )
+            );
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.strategyLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(item => item.chartLimit));
+        this.pageSize = this.robotLog.getRobotLogDefaultParams()
+            .pipe(
+                map(item => item.chartLimit)
+            );
     }
 
     launch() {
         const id = this.route.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts)
-            .add(this.charts.pipe(delay(30),map(charts => {
-                const chart = document.getElementsByClassName('chart');
+            .add(this.charts
+                .pipe(
+                    delay(30),
+                    map(charts => {
+                        const chart = document.getElementsByClassName('chart');
 
-                const target = window.getComputedStyle(chart[0]);
+                        const target = window.getComputedStyle(chart[0]);
 
-                const width = parseInt(target.width);
+                        const width = parseInt(target.width);
 
-                const height = parseInt(target.height);
+                        const height = parseInt(target.height);
 
-                return { charts, width, height };
-            }),).subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height))))
+                        return { charts, width, height };
+                    })
+                )
+                .subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height)))
+            )
             .add(this.robotLog.launchRobotLogs(
                 this.robotLog.getStrategyOffset()
-                    .withLatestFrom(
-                        id,
-                        (chartOffset, robotId) => ({
-                            robotId,
-                            chartOffset,
-                            chartMinId: 0,
-                            chartMaxId: 0,
-                            chartUpdateBaseId: 0,
-                            chartUpdateTime: 0,
-                        })
+                    .pipe(
+                        withLatestFrom(
+                            id,
+                            (chartOffset, robotId) => ({
+                                robotId,
+                                chartOffset,
+                                chartMinId: 0,
+                                chartMaxId: 0,
+                                chartUpdateBaseId: 0,
+                                chartUpdateTime: 0,
+                            })
+                        ),
+                        skip(1)
                     )
-                    .skip(1))
-            );
+            ));
     }
 
     changePage(page: number) {

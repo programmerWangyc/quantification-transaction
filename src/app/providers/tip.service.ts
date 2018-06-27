@@ -81,12 +81,14 @@ export class TipService {
      * @description NzModalService secondary wrap.
      */
     getNzConfirmOperateConfig(): Observable<object> {
-        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(map(res => ({
-            nzTitle: res.OPERATE_CONFIRM,
-            nzOkText: res.CONFIRM,
-            nzCancelText: res.CANCEL,
-            nzOkType: 'primary',
-        })));
+        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(
+            map(res => ({
+                nzTitle: res.OPERATE_CONFIRM,
+                nzOkText: res.CONFIRM,
+                nzCancelText: res.CANCEL,
+                nzOkType: 'primary',
+            })),
+        );
     }
 
     /**

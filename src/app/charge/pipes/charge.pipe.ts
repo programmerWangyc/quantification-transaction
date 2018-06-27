@@ -12,8 +12,6 @@ export class ChargeMethodPipe implements PipeTransform {
     transform(guid: string): string {
         const ary = guid.split(this.constant.RECHARGE_PAYMENT_FLAG);
 
-        const length = ary.length;
-
         const paymentId = parseInt(ary[ChargePaymentInfo.paymentMethod]); // FIXME: why 4 ,why 5?
 
         return ary.length === 5 ? PaymentMethod[paymentId] : PaymentMethod[0];

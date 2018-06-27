@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { includes } from 'lodash';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
+import { combineLatest, concat, map, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { BtNode, Platform, RunningLog } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
-import { TipService } from '../../providers/tip.service';
 import { RobotLogService } from '../../robot/providers/robot.log.service';
 import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/robot.operate.service';
 
@@ -72,10 +71,8 @@ export class RobotDebugComponent implements BaseComponent {
     constructor(
         private nodeService: BtNodeService,
         private platformService: PlatformService,
-        private tipService: TipService,
         private robotOperate: RobotOperateService,
         private robotLog: RobotLogService,
-        private translate: TranslateService,
     ) { }
 
     ngOnInit() {
@@ -89,20 +86,29 @@ export class RobotDebugComponent implements BaseComponent {
 
         this.agents = this.nodeService.getSpecificNodeList(this.nodeService.isLatestFunctionalNode, this.nodeService.isMineNode);
 
-        this.hasAgents = this.agents.map(agents => !!agents.length);
+        this.hasAgents = this.agents.pipe(map(agents => !!agents.length));
 
-        this.logs = this.robotOperate.getPluginRunLogs().map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx)))
-            .combineLatest(
-                this.filter$,
-                (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
-            )
-            .startWith([]);
+        this.logs = this.robotOperate.getPluginRunLogs()
+            .pipe(
+                map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx))),
+                combineLatest(
+                    this.filter$,
+                    (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
+                ),
+                startWith([])
+            );
 
-        this.pageSize = Observable.of(this.initialPageSize);
+        this.pageSize = of(this.initialPageSize);
 
-        this.logTotal = this.logs.map(logs => logs.length);
+        this.logTotal = this.logs.pipe(map(logs => logs.length));
 
-        this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize.concat(this.pageSize$));
+        this.statistics = this.robotLog.getRobotLogPaginationStatistics(
+            this.logTotal,
+            this.pageSize
+                .pipe(
+                    concat(this.pageSize$)
+                )
+        );
 
         this.debugResult = this.robotOperate.getPluginRunResult();
 
@@ -110,11 +116,15 @@ export class RobotDebugComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.robotOperate.launchDebugRobot(this.debug$.map(options => ({ options, content: this.content })))
+        this.subscription$$ = this.robotOperate.launchDebugRobot(this.debug$
+            .pipe(
+                map(options => ({ options, content: this.content }))
+            )
+        )
             .add(this.platformService.handlePlatformListError())
             .add(this.nodeService.handleNodeListError())
-            .add(this.nodeService.launchGetNodeList(Observable.of(null)))
-            .add(this.platformService.launchGetPlatformList(Observable.of(null)))
+            .add(this.nodeService.launchGetNodeList(of(null)))
+            .add(this.platformService.launchGetPlatformList(of(null)))
     }
 
     ngOnDestroy() {

@@ -33,15 +33,19 @@ export class BacktestEffect extends BaseEffect {
      * @description 在模板依赖被取消后检查回测中的模板代码是否被用户选中，删除不需要的模板
      */
     @Effect()
-    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES).pipe(
-        map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload)));
+    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES)
+        .pipe(
+            map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload))
+        );
 
 
     @Effect()
-    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
-        filter(isResponsive => isResponsive),
-        switchMapTo(this.ws.messages.pipe(filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))),
-        map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage>msg.result)), );
+    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
+        .pipe(
+            filter(isResponsive => isResponsive),
+            switchMapTo(this.ws.messages.pipe(filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))),
+            map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage>msg.result))
+        );
 
     constructor(
         public actions$: Actions,

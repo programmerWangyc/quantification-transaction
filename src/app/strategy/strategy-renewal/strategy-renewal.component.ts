@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription, timer as observableTimer } from 'rxjs';
-import { map, switchMapTo } from 'rxjs/operators';
+import { map, switchMapTo, take, tap } from 'rxjs/operators';
 
 import { StrategyOperateService } from '../providers/strategy.operate.service';
 
@@ -41,7 +41,11 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.timer = this.startTimer.pipe(switchMapTo(this.tryAgain(6)));
 
-        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify.pipe(map(verifyCode => ({ verifyCode, strategyId: this.id }))))
+        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify
+            .pipe(
+                map(verifyCode => ({ verifyCode, strategyId: this.id }))
+            )
+        )
             .add(this.strategyOperate.isVerifyKeySuccess().subscribe(isSuccess => {
                 if (isSuccess) {
                     this.close();
@@ -57,7 +61,12 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     }
 
     tryAgain(seconds: number): Observable<number> {
-        return observableTimer(0, 1000).take(seconds).map(count => seconds - count - 1).do(time => this.forbidden = !!time);
+        return observableTimer(0, 1000)
+            .pipe(
+                take(seconds),
+                map(count => seconds - count - 1),
+                tap(time => this.forbidden = !!time)
+            );
     }
 
     ngOnDestroy() {

@@ -41,10 +41,12 @@ export class BaseEffect {
      * @description Used to split the response data to corresponding response actions.
      */
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
-        return observableFrom(<ResponseUnit<ResponseItem>[]>data.result || []).pipe(
-            zip(observableFrom(data.callbackId.split('-')), (result, action) => ({ ...result, action })),
-            // .do(res => console.log(`Action-${res.action} get response: `, res.result))
-            map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res)), );
+        return observableFrom(<ResponseUnit<ResponseItem>[]>data.result || [])
+            .pipe(
+                zip(observableFrom(data.callbackId.split('-')), (result, action) => ({ ...result, action })),
+                // .do(res => console.log(`Action-${res.action} get response: `, res.result))
+                map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res))
+            );
     }
 
     /**
@@ -55,14 +57,16 @@ export class BaseEffect {
      * @description If a request calls only one interface, use this method.
      */
     protected getResponseAction(actionName: string, actionModule: object, resultFail = isFail): Observable<ResponseAction> {
-        return this.actions$.ofType(actionName).pipe(
-            filter((action: ApiActions) => action.allowSeparate()),
-            switchMap((action: ApiActions) => this.ws
-                .send(action.getParams(action.payload)).pipe(
-                    takeUntil(this.actions$.ofType(actionName)),
-                    mergeMap(body => this.getSplitAction(body, actionModule, resultFail)),
-                    catchError(error => observableOf(error)), )
-            ), );
+        return this.actions$.ofType(actionName)
+            .pipe(
+                filter((action: ApiActions) => action.allowSeparate()),
+                switchMap((action: ApiActions) => this.ws
+                    .send(action.getParams(action.payload)).pipe(
+                        takeUntil(this.actions$.ofType(actionName)),
+                        mergeMap(body => this.getSplitAction(body, actionModule, resultFail)),
+                        catchError(error => observableOf(error)), )
+                )
+            );
     }
 
     /**
@@ -72,13 +76,16 @@ export class BaseEffect {
      * @description If a request calls multiple interfaces, use this method.
      */
     protected getMultiResponseActions(source: Observable<Action[]>, actionModule: object): Observable<ResponseAction> {
-        return source.pipe(map(actions => actions.map((action: RequestAction) => action.getParams(action.payload))),
-            switchMap((data: WsRequest[]) => this.ws
-                .send(this.mergeParams(data)).pipe(
-                    takeUntil(source.pipe(mapTo(true))),
-                    mergeMap(body => this.getSplitAction(body, actionModule)),
-                    catchError(error => observableOf(error)), )
-            ), );
+        return source
+            .pipe(
+                map(actions => actions.map((action: RequestAction) => action.getParams(action.payload))),
+                switchMap((data: WsRequest[]) => this.ws
+                    .send(this.mergeParams(data)).pipe(
+                        takeUntil(source.pipe(mapTo(true))),
+                        mergeMap(body => this.getSplitAction(body, actionModule)),
+                        catchError(error => observableOf(error)), )
+                )
+            );
     }
 
     /**

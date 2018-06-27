@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MarkdownModule } from 'angular2-markdown';
+import { MarkdownModule } from 'ngx-markdown';
 
 import { SharedModule } from './../shared/shared.module';
 import { ToolModule } from './../tool/tool.module';

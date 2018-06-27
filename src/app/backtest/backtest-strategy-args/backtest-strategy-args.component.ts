@@ -4,8 +4,8 @@ import { VariableType } from '../../app.config';
 import { VariableOverview } from '../../interfaces/app.interface';
 import { booleanableVariableNameFormat, comparableVariableNameFormat } from '../../validators/validators';
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
-import { BacktestConstantService } from '../providers/backtest.constant.service';
 import { OptimizedVariableOverview } from '../backtest.interface';
+import { BacktestConstantService } from '../providers/backtest.constant.service';
 import { BacktestService } from '../providers/backtest.service';
 
 @Component({
@@ -24,7 +24,6 @@ export class BacktestStrategyArgsComponent implements OnInit {
         if (!args) return;
 
         this.data = args.map(arg => {
-
             if (arg.variableTypeId === VariableType.NUMBER_TYPE) {
                 return this.optimizeArg(arg);
             } else if (arg.variableTypeId === VariableType.SELECT_TYPE) {

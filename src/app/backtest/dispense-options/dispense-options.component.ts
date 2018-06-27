@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BtNode } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
-import { BacktestService } from '../providers/backtest.service';
 
 @Component({
     selector: 'app-dispense-options',
@@ -28,25 +28,27 @@ export class DispenseOptionsComponent implements OnInit {
 
     initialModel() {
         this.nodes = this.nodeService.getNodeList()
-            .map(nodes => [
-                {
-                    build: '',
-                    city: '',
-                    date: '',
-                    id: 0,
-                    ip: '',
-                    is_owner: true,
-                    loaded: NaN,
-                    name: 'BOTVS_CLOUD_SERVER_COLLECTION',
-                    online: true,
-                    os: '',
-                    public: NaN,
-                    region: '',
-                    version: '',
-                    wd: NaN,
-                },
-                ...nodes.filter(node => node.is_owner && node.online)
-            ])
+            .pipe(
+                map(nodes => [
+                    {
+                        build: '',
+                        city: '',
+                        date: '',
+                        id: 0,
+                        ip: '',
+                        is_owner: true,
+                        loaded: NaN,
+                        name: 'BOTVS_CLOUD_SERVER_COLLECTION',
+                        online: true,
+                        os: '',
+                        public: NaN,
+                        region: '',
+                        version: '',
+                        wd: NaN,
+                    },
+                    ...nodes.filter(node => node.is_owner && node.online)
+                ])
+            );
     }
 
 }

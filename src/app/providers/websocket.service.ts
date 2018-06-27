@@ -71,13 +71,20 @@ export class WebsocketService {
 
         const { messages, connectionStatus } = websocketConnect(this.url, this.inputStream, [], webSocketFactory);
 
-        this.messages = messages.pipe(
-            map(msg => this.unfold(msg)),
-            // .do(msg => console.log('Websocket get message: ', JSON.parse(msg)))
-            filter(response => response !== 'P'),
-            map(response => JSON.parse(response) as ResponseBody),
-            retryWhen(errors => errors.pipe(tap(_ => this.tip.showTip('网络错误')), delay(5000), )),
-            share(), );
+        this.messages = messages
+            .pipe(
+                map(msg => this.unfold(msg)),
+                // .do(msg => console.log('Websocket get message: ', JSON.parse(msg)))
+                filter(response => response !== 'P'),
+                map(response => JSON.parse(response) as ResponseBody),
+                retryWhen(errors => errors
+                    .pipe(
+                        tap(_ => this.tip.showTip('网络错误')),
+                        delay(5000)
+                    )
+                ),
+                share()
+            );
 
         this.connectionStatus = connectionStatus;
 

@@ -15,8 +15,10 @@ export class HomeEffect extends BaseEffect {
 
     @Effect()
     homeInfo$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(GET_SETTINGS).pipe(
-            zip(this.actions$.ofType(GET_EXCHANGE_LIST))),
+        this.actions$.ofType(GET_SETTINGS)
+            .pipe(
+                zip(this.actions$.ofType(GET_EXCHANGE_LIST))
+            ),
         { ...pub, ...exchange }
     );
 

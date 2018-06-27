@@ -97,11 +97,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription$$ = this.routing.getCurrentUrl().subscribe(url => {
-            const ary = url.split('/'); // ary : ['', 'dashboard', moduleName, ...params etc.]
+        this.subscription$$ = this.routing.getCurrentUrl()
+            .subscribe(url => {
+                const ary = url.split('/'); // ary : ['', 'dashboard', moduleName, ...params etc.]
 
-            this.currentModule = ary[2];
-        });
+                this.currentModule = ary[2];
+            });
     }
 
     navigateTo(target: SideNav): void {

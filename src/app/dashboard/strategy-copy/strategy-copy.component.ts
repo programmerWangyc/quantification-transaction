@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { combineLatest, filter, map, switchMap } from 'rxjs/operators';
 
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
@@ -47,13 +48,17 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
 
     initialPrivateModel() {
         this.templates = this.strategyService.getCurrentDependance()
-            .combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language));
-
-        this.needShowTemplateDependance = this.templates.map(list => !!list.length)
-            .combineLatest(
-                this.isTemplateCategorySelected.filter(sure => !sure),
-                (hasTemplates, isNotTemplateCategory) => hasTemplates && isNotTemplateCategory
+            .pipe(
+                combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language))
             );
+
+        this.needShowTemplateDependance = this.templates.pipe(
+            map(list => !!list.length),
+            combineLatest(
+                this.isTemplateCategorySelected.pipe(filter(sure => !sure)),
+                (hasTemplates, isNotTemplateCategory) => hasTemplates && isNotTemplateCategory
+            )
+        );
     }
 
     initialPrivateLaunch() {
@@ -65,16 +70,18 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
          */
         this.save$$ = this.strategyService.launchSaveStrategy(
             this.getSaveParams()
-                .map(params => ({ ...params, id: -1 - this.strategyId }))
-                .switchMap(params => {
-                    const modal = this.nzModal.confirm({
-                        nzContent: SimpleNzConfirmWrapComponent,
-                        nzComponentParams: { content: 'STRATEGY_COPY_SAVE_CONFIRM' },
-                        nzOnOk: () => modal.close(true)
-                    });
+                .pipe(
+                    map(params => ({ ...params, id: -1 - this.strategyId })),
+                    switchMap(params => {
+                        const modal = this.nzModal.confirm({
+                            nzContent: SimpleNzConfirmWrapComponent,
+                            nzComponentParams: { content: 'STRATEGY_COPY_SAVE_CONFIRM' },
+                            nzOnOk: () => modal.close(true)
+                        });
 
-                    return modal.afterClose.filter(sure => !!sure).mapTo(params);
-                })
+                        return modal.afterClose.filter(sure => !!sure).mapTo(params);
+                    })
+                )
         );
     }
 

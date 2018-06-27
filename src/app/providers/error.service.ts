@@ -14,15 +14,19 @@ export class ErrorService {
     constructor(private tipService: TipService) { }
 
     handleResponseError(source: Observable<ResponseState>): Subscription {
-        return source.pipe(
-            filter(data => !!data.error),
-            map(data => data.error), )
+        return source
+            .pipe(
+                filter(data => !!data.error),
+                map(data => data.error)
+            )
             .subscribe(data => this.tipService.showTip(data));
     }
 
     handleError(source: Observable<string>): Subscription {
-        return source.pipe(
-            filter(str => !!str))
+        return source
+            .pipe(
+                filter(str => !!str)
+            )
             .subscribe(data => this.tipService.showTip(data));
     }
 

@@ -1,11 +1,8 @@
-
-import {map} from 'rxjs/operators';
-
-
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { includes } from 'lodash';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { combineLatest, filter, map, skip, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
@@ -14,6 +11,8 @@ import { PAGE_SIZE_SELECT_VALUES } from './../../providers/constant.service';
 import { TipService } from './../../providers/tip.service';
 import { RobotLogService } from './../providers/robot.log.service';
 import { RobotService } from './../providers/robot.service';
+
+
 
 const soundTypes: string[] = [
     LogTypes[0],
@@ -84,15 +83,21 @@ export class RobotLogComponent extends BaseComponent {
 
     initialModel() {
         this.logs = this.robotLog.getSemanticsRobotRunningLogs()
-            .combineLatest(
-                this.search$,
-                (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
-            )
-            .startWith([]);
+            .pipe(
+                combineLatest(
+                    this.search$,
+                    (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
+                ),
+                startWith([])
+            );
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.runningLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(params => params.logLimit)).startWith(20);
+        this.pageSize = this.robotLog.getRobotLogDefaultParams()
+            .pipe(
+                map(params => params.logLimit),
+                startWith(20)
+            );
 
         this.statistics = this.robotLog.getRobotLogPaginationStatistics(this.logTotal, this.pageSize);
 
@@ -103,10 +108,22 @@ export class RobotLogComponent extends BaseComponent {
         const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(map(robotId => ({ robotId }))), this.allowSeparateRequest)
-            .add(this.robotLog.launchRobotLogs(id.combineLatest(this.robotLog.getLogOffset(), (robotId, logOffset) => ({ robotId, logOffset })).skip(1)))
+            .add(this.robotLog.launchRobotLogs(id
+                .pipe(
+                    combineLatest(
+                        this.robotLog.getLogOffset(),
+                        (robotId, logOffset) => ({ robotId, logOffset })
+                    ),
+                    skip(1)))
+            )
             // .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
-            .add(this.robotLog.needPlayTipAudio().filter(need => need).subscribe(_ => this.playAudio()))
+            .add(this.robotLog.needPlayTipAudio()
+                .pipe(
+                    filter(need => need)
+                )
+                .subscribe(_ => this.playAudio())
+            )
             .add(this.robotLog.handleRobotLogsError())
 
         // FIXME: 这行加到上面时在组件销毁时没有取消掉, 然后每次进入时就会多出一条同步信息的流。why?

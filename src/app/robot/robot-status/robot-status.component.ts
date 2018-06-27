@@ -1,13 +1,13 @@
-
-import {map} from 'rxjs/operators';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { flatten, isString } from 'lodash';
-import { Subscription ,  Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map, merge, startWith } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotStatusTable } from '../robot.interface';
 import { RobotLogService } from './../providers/robot.log.service';
 import { RobotService } from './../providers/robot.service';
+
 
 @Component({
     selector: 'app-robot-status',
@@ -43,17 +43,33 @@ export class RobotStatusComponent extends FoldableBusinessComponent implements B
     }
 
     initialModel() {
-        const source = this.robotService.getRobotSummary(this.robotLog.getRobotLogs().pipe(map(logs => logs.summary)));
+        const source = this.robotService.getRobotSummary(this.robotLog.getRobotLogs()
+            .pipe(
+                map(logs => logs.summary)
+            )
+        );
 
-        this.tabs = source.pipe(
-            map(res => flatten(res).filter(item => item && !!item.type && item.type === 'table')))
+        this.tabs = source
+            .pipe(
+                map(res => flatten(res).filter(item => item && !!item.type && item.type === 'table'))
+            );
 
-        this.labels = source.pipe(
-            map(res => flatten(res).filter(item => isString(item))));
+        this.labels = source
+            .pipe(
+                map(res => flatten(res).filter(item => isString(item)))
+            );
 
         this.hasTabs = this.tabs.pipe(map(tabs => !!tabs.length));
 
-        this.hasStatusInfo = this.hasTabs.merge(this.labels.pipe(map(labels => !!labels.length))).startWith(false);
+        this.hasStatusInfo = this.hasTabs
+            .pipe(
+                merge(this.labels
+                    .pipe(
+                        map(labels => !!labels.length),
+                        startWith(false)
+                    )
+                )
+            );
     }
 
     launch() {
