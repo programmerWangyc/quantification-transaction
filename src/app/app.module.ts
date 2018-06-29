@@ -50,7 +50,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         EffectsModule.forRoot(EFFECTS),
         MatSnackBarModule,
         ToolModule,
-        NgZorroAntdModule.forRoot(),
+        NgZorroAntdModule,
         RobotModule,
     ],
     providers: [

@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import { VariableType } from '../../app.config';
 import { VariableTypeDes } from '../../interfaces/app.interface';
@@ -21,18 +22,18 @@ export interface StrategyMetaArg {
     templateUrl: './add-arg.component.html',
     styleUrls: ['./add-arg.component.scss']
 })
-export class AddArgComponent implements OnInit {
+export class AddArgComponent implements OnInit, OnDestroy {
     @Input() isAlternation = false;
 
     @Output() add: EventEmitter<StrategyMetaArg> = new EventEmitter();
 
     form: FormGroup;
 
-    selectedType = 0;
-
     types: VariableTypeDes[] = [];
 
     variableType: string;
+
+    subscription: Subscription;
 
     constructor(
         private fb: FormBuilder,
@@ -46,6 +47,11 @@ export class AddArgComponent implements OnInit {
         this.types = this.constant.VARIABLE_TYPES.filter(item => this.isAlternation ? item.id !== VariableType.ENCRYPT_STRING_TYPE : item.id !== VariableType.BUTTON_TYPE);
 
         this.translate.get(this.isAlternation ? 'BUTTON_TYPE' : 'VARIABLE').subscribe(res => this.variableType = res);
+
+        this.type.valueChanges
+            .subscribe(_ => {
+                this.resetDefaultValue();
+            });
     }
 
     initForm(): void {
@@ -58,23 +64,25 @@ export class AddArgComponent implements OnInit {
         });
     }
 
-    resetDefaultValue(): void {
-        if (this.selectedType === VariableType.BOOLEAN_TYPE || this.selectedType === VariableType.NUMBER_TYPE) {
+    private resetDefaultValue(): void {
+        const selectedType = this.type.value;
+
+        if (selectedType === VariableType.BOOLEAN_TYPE || selectedType === VariableType.NUMBER_TYPE) {
             this.form.patchValue({ defaultValue: 0 });
-        } else if (this.selectedType === VariableType.BUTTON_TYPE) {
+        } else if (selectedType === VariableType.BUTTON_TYPE) {
             this.form.patchValue({ defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });
         }
         else {
             this.form.patchValue({ defaultValue: '' });
         }
 
-        if(this.selectedType === VariableType.BUTTON_TYPE) {
+        if (selectedType === VariableType.BUTTON_TYPE) {
             this.defaultValue.disable();
-        }else {
+        } else {
             this.defaultValue.enable();
         }
 
-        if (this.selectedType === VariableType.SELECT_TYPE) {
+        if (selectedType === VariableType.SELECT_TYPE) {
             this.defaultValue.setValidators([Validators.required, selectTypeValueValidator]);
         } else {
             this.defaultValue.setValidators(null);
@@ -114,4 +122,7 @@ export class AddArgComponent implements OnInit {
         return this.form.get('defaultValue');
     }
 
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 }

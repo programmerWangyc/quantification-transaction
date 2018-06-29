@@ -43,14 +43,18 @@ export class DetailComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.list = observableFrom(list).pipe(
-            mergeMap(item => this.translate.get(item.detail).pipe(
-                map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) })))
-            ),
-            reduce((acc, cur) => {
-                acc.push(cur);
+        this.list = observableFrom(list)
+            .pipe(
+                mergeMap(item => this.translate.get(item.detail)
+                    .pipe(
+                        map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) }))
+                    )
+                ),
+                reduce((acc, cur) => {
+                    acc.push(cur);
 
-                return acc;
-            }, []), );
+                    return acc;
+                }, [])
+            );
     }
 }

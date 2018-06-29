@@ -69,7 +69,9 @@ export class EncryptService {
                         mergeMap(variable => observableFrom(variable.variables)
                             .pipe(
                                 mergeMap(item => this.transformArgs(item, isEncrypt)
-                                    .pipe(map(res => [...res, variable.id]))
+                                    .pipe(
+                                        map(res => [...res, variable.id])
+                                    )
                                 ),
                         ), ),
                         reduce(this.putInArray, [])

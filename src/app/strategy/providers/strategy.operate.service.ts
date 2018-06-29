@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom, zip } from 'rxjs/operators';
 
@@ -87,12 +87,15 @@ export class StrategyOperateService extends StrategyService {
                 switchMap((params: fromRes.Strategy) => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name })
                     .pipe(
                         mergeMap(content => {
-                            const modal = this.nzModal.confirm({
+                            const modal: NzModalRef = this.nzModal.confirm({
                                 nzContent: content,
                                 nzOnOk: () => modal.close(true),
                             })
 
-                            return modal.afterClose.filter(sure => sure);
+                            return modal.afterClose
+                                .pipe(
+                                    this.filterTruth()
+                                );
                         }),
                         mapTo({ id: params.id })
                     )

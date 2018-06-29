@@ -32,7 +32,6 @@ export class TipService {
         private dialog: MatDialog,
         private notification: NzNotificationService,
         private translate: TranslateService,
-        private nzModal: NzModalService,
         private message: NzMessageService,
     ) { }
 
@@ -49,7 +48,8 @@ export class TipService {
     }
 
     confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
-        return this.dialog.open(component, { data, ...this.confirmConfig })
+        return this.dialog
+            .open(component, { data, ...this.confirmConfig })
             .afterClosed();
     }
 
@@ -57,9 +57,13 @@ export class TipService {
      * @description NzNotificationService secondary wrap.
      */
     success(content: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
-        this.translate.get(content).subscribe(content => {
-            this.notification.success(title, content, option)
-        }, error => console.log(error), () => console.log('translate complete'));
+        this.translate.get(content)
+            .subscribe(content => {
+                this.notification.success(title, content, option)
+            },
+                error => console.log(error),
+                () => console.log('translate complete')
+            );
     }
 
     /**
@@ -81,14 +85,15 @@ export class TipService {
      * @description NzModalService secondary wrap.
      */
     getNzConfirmOperateConfig(): Observable<object> {
-        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(
-            map(res => ({
-                nzTitle: res.OPERATE_CONFIRM,
-                nzOkText: res.CONFIRM,
-                nzCancelText: res.CANCEL,
-                nzOkType: 'primary',
-            })),
-        );
+        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL'])
+            .pipe(
+                map(res => ({
+                    nzTitle: res.OPERATE_CONFIRM,
+                    nzOkText: res.CONFIRM,
+                    nzCancelText: res.CANCEL,
+                    nzOkType: 'primary',
+                }))
+            );
     }
 
     /**

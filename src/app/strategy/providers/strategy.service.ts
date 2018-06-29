@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd';
 import { Observable, from, of, Subscription } from 'rxjs';
 
 import { BaseService } from '../../base/base.service';
@@ -111,7 +111,10 @@ export class StrategyService extends BaseService {
         return this.getStrategies()
             .pipe(
                 combineLatest(
-                    strategyId.pipe(this.filterTruth()),
+                    strategyId
+                        .pipe(
+                            this.filterTruth()
+                        ),
                     (strategies, id) => {
                         const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
 
@@ -279,13 +282,16 @@ export class StrategyService extends BaseService {
     }
 
     private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {
-        const modal = this.nzModal.confirm({
+        const modal: NzModalRef = this.nzModal.confirm({
             nzContent: SimpleNzConfirmWrapComponent,
             nzComponentParams: { content: source.opCode === OpStrategyTokenTypeAdapter.ADD ? 'GEN_SECRET_KEY_CONFIRM' : 'UPDATE_SECRET_KEY_CONFIRM', },
             nzOnOk: () => modal.close(true)
         });
 
-        return modal.afterClose.filter(this.isTruth);
+        return modal.afterClose
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     hasToken(id: number): Observable<boolean> {

@@ -45,3 +45,7 @@ testem.log
 Thumbs.db
 .vscode
 .angulardoc.json
+
+# other
+build/
+.history/

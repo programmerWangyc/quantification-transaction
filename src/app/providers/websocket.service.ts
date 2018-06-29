@@ -14,14 +14,16 @@ export interface CustomEvent {
     data: ArrayBuffer;
 }
 
-export const Buffer = require('buffer').Buffer;
+declare var requireX: any;
 
-export const LZ4 = require('lz4');
+const Buffer = requireX('buffer').Buffer;
+
+const LZ4 = requireX('lz4');
 
 @Injectable()
 export class WebsocketService {
 
-    private url = `wss://www.botvs.com/ws_botvs_v1`;
+    private url = `wss://www.fmz.com/ws_botvs_v1`;
 
     private inputStream: QueueingSubject<ArrayBuffer> = new QueueingSubject();
 

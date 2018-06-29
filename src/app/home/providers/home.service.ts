@@ -7,16 +7,19 @@ import { ResponseState } from './../../interfaces/response.interface';
 import { ErrorService } from './../../providers/error.service';
 import { ProcessService } from './../../providers/process.service';
 import { selectExchangeResponseState } from './../../store/index.reducer';
+import { BaseService } from '../../base/base.service';
 
 
 @Injectable()
-export class HomeService {
+export class HomeService extends BaseService {
 
     constructor(
         private process: ProcessService,
         private store: Store<AppState>,
         private error: ErrorService,
-    ) { }
+    ) {
+        super();
+    }
 
     /* =======================================================Server request======================================================= */
 
@@ -28,7 +31,9 @@ export class HomeService {
 
     getExchangeListResponseState(): Observable<ResponseState> {
         return this.store.select(selectExchangeResponseState)
-            .filter(v => !!v);
+            .pipe(
+                this.filterTruth()
+            );
     }
 
     /* =======================================================Error handle======================================================= */

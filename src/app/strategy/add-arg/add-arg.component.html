@@ -40,7 +40,7 @@
     <nz-form-item>
         <nz-form-label nzRequired>{{ 'TYPE' | translate}}</nz-form-label>
         <nz-form-control style="min-width: 8.5em;">
-            <nz-select formControlName="type" [(ngModel)]="selectedType" (ngModelChange)="resetDefaultValue()">
+            <nz-select formControlName="type">
                 <nz-option *ngFor="let item of types" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
             </nz-select>
         </nz-form-control>
@@ -48,7 +48,7 @@
 
     <nz-form-item>
         <nz-form-label nzRequired>{{ 'DEFAULT_VALUE' | translate}}</nz-form-label>
-        <nz-form-control [ngSwitch]="selectedType">
+        <nz-form-control [ngSwitch]="type.value">
             <!--0: number type-->
             <nz-input-number formControlName="defaultValue" nz-input *ngSwitchCase="0" style="min-width: 171px;"></nz-input-number>
 
@@ -63,7 +63,7 @@
         </nz-form-control>
 
         <nz-popover [nzTitle]="'SELECT_TYPE_DATA_RULE' | translate">
-            <i *ngIf="selectedType === 3" class="anticon anticon-question-circle" nz-popover style="color: #1890ff"></i>
+            <i *ngIf="type.value === 3" class="anticon anticon-question-circle" nz-popover style="color: #1890ff"></i>
             <ng-template #nzTemplate>
                 <ul>
                     <li>{{'SELECT_TYPE_DATA_RULE_1' | translate}}</li>

@@ -61,7 +61,10 @@ export class ChartService {
             .pipe(
                 map(result => months.map(key => result[key])),
                 zip(
-                    this.translate.get(weeks).pipe(map(result => weeks.map(key => result[key]))),
+                    this.translate.get(weeks)
+                        .pipe(
+                            map(result => weeks.map(key => result[key]))
+                        ),
                     this.translate.get(other),
                     (months, weeks, other) => ({
                         contextButtonTitle: other.CONTEXT_BUTTON_TITLE,
@@ -192,7 +195,6 @@ export class ChartService {
             });
 
             updateIndicator = flatten(result);
-
         } else {
             // nothing to do
         }

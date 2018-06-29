@@ -45,11 +45,6 @@ import { ModifyDefaultParamsAction } from './../../store/robot/robot.action';
 import { RobotService } from './robot.service';
 
 
-interface SeriesMiddleware {
-    seriesIdx: number;
-    data: StrategyChartPoint[];
-}
-
 @Injectable()
 export class RobotLogService extends BaseService {
 
@@ -265,7 +260,10 @@ export class RobotLogService extends BaseService {
     getRobotLogPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
         return total
             .pipe(
-                combineLatest(pageSize, (total, page) => ({ total, page: Math.ceil(total / page) })),
+                combineLatest(
+                    pageSize,
+                    (total, page) => ({ total, page: Math.ceil(total / page) })
+                ),
                 switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),
                 distinctUntilChanged()
             );
@@ -375,7 +373,10 @@ export class RobotLogService extends BaseService {
             .pipe(
                 filter(res => !!res && !!res.result.profitLog.Arr.length),
                 map(res => res.result.profitLog.Arr),
-                withLatestFrom(this.getProfitMaxPoint(), chart, this.canAddProfitPoint()),
+                withLatestFrom(
+                    this.getProfitMaxPoint(),
+                    chart, this.canAddProfitPoint()
+                ),
                 filter(([points, maxPoints, chart, can]) => can)
             )
             .subscribe(([points, maxPoints, chart]) => {
@@ -418,7 +419,9 @@ export class RobotLogService extends BaseService {
     getProfitOffset(): Observable<number> {
         return this.store.select(fromRoot.selectRobotProfitChartCurrentPage)
             .pipe(
-                combineLatest(this.getRobotLogDefaultParams(), (page, { profitLimit }) => page * profitLimit)
+                combineLatest(
+                    this.getRobotLogDefaultParams(),
+                    (page, { profitLimit }) => page * profitLimit)
             );
     }
 
@@ -464,7 +467,10 @@ export class RobotLogService extends BaseService {
                             reduce((acc, cur) => [...acc, cur], [])
                         );
 
-                    return options.pipe(zip(logs));
+                    return options
+                        .pipe(
+                            zip(logs)
+                        );
                 }),
                 map(([options, logs]) => this.chartService.getRobotStrategyLogsOptions(options, logs))
             );
@@ -534,7 +540,10 @@ export class RobotLogService extends BaseService {
                         : getParam(manual)
                 ),
                 distinct(),
-                withLatestFrom(this.getStrategyMaxPoint(), (source, chartLimit) => ({ ...source, chartLimit }))
+                withLatestFrom(
+                    this.getStrategyMaxPoint(),
+                    (source, chartLimit) => ({ ...source, chartLimit })
+                )
             );
     }
 
@@ -558,7 +567,10 @@ export class RobotLogService extends BaseService {
                         reduce((acc, cur) => [...acc, ...cur], [])
                     )
                 ),
-                withLatestFrom(charts, this.canUpdateStrategyChart()),
+                withLatestFrom(
+                    charts,
+                    this.canUpdateStrategyChart()
+                ),
                 filter(([result, charts, can]) => can)
             )
             .subscribe(([result, charts]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => charts[idx].redraw()));

@@ -25,6 +25,9 @@ export class ChargeComponent implements BaseComponent {
 
     form: FormGroup;
 
+    /**
+     * TODO: 同一个DOM元素上同时时使用了响应式表单字段和 ngModel，需修复。
+     */
     selectedPayMethod = 0;
 
     payMethods = PAY_METHODS;

@@ -23,8 +23,8 @@
                         "styles": [
                             "src/styles.scss",
                             "src/theme/dark.theme.scss",
-                            "node_modules/ng-zorro-antd/src/ng-zorro-antd.less",
-                            "node_modules/prismjs/themes/prism-okaidia.css"
+                            "node_modules/prismjs/themes/prism-okaidia.css",
+                            "node_modules/ng-zorro-antd/src/ng-zorro-antd.min.css"
                         ],
                         "scripts": [
                             "node_modules/marked/lib/marked.js",
@@ -76,8 +76,7 @@
                         "scripts": [],
                         "styles": [
                             "src/styles.scss",
-                            "src/theme/dark.theme.scss",
-                            "node_modules/ng-zorro-antd/src/ng-zorro-antd.less"
+                            "src/theme/dark.theme.scss"
                         ],
                         "assets": [
                             "src/assets",
@@ -135,4 +134,5 @@
             "prefix": "app"
         }
     }
+
 }

@@ -44,7 +44,11 @@ export class StrategyDependanceComponent implements OnInit, OnDestroy {
     }
 
     launch() {
-        this.subscription$$ = this.strategyService.updateSelectedTemplates(this.change.pipe(startWith([])));
+        this.subscription$$ = this.strategyService.updateSelectedTemplates(this.change
+            .pipe(
+                startWith([])
+            )
+        );
     }
 
     onChange(target: TemplateRefItem): void {

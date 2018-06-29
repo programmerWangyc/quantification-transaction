@@ -64,7 +64,8 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
     /**
      * FIXME: selectAgent, selectedStrategy, selectedKLine, selectedExchange 实际是没有用的，
-     * 但是去掉后 nzPlaceholder 无法正确显示，貌似是 ng-zorro 的一个BUG。
+     * 但是去掉后 nzPlaceholder 无法正确显示，貌似是 ng-zorro 的一个BUG.
+     * angular6中ngModel和响应式表单同时暂时警告，7中将无法同时使用，所以以下4个属性待修复
      **/
     selectedAgent = null;
 

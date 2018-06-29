@@ -1,7 +1,5 @@
 import { from as observableFrom, of as observableOf, Observable, Subscription } from 'rxjs';
 import { withLatestFrom, map, mergeMap, switchMap, filter, tap, reduce } from 'rxjs/operators';
-import { RobotStatusTable } from '../robot.interface';
-import { ServerSendRobotEventType } from '../robot.config';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { includes, isEmpty } from 'lodash';
@@ -14,13 +12,9 @@ import { ProcessService } from './../../providers/process.service';
 import { PublicService } from './../../providers/public.service';
 import { TipService } from './../../providers/tip.service';
 import * as fromRoot from './../../store/index.reducer';
-import { ServerSendRobotMessage, RobotStatus } from './../../interfaces/response.interface';
-import { NzModalService } from 'ng-zorro-antd';
-import { CreateRobotComponent } from '../create-robot/create-robot.component';
-import { TranslateService } from '@ngx-translate/core';
+import { RobotStatus } from './../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { OPERATE_ROBOT_LOADING_TAIL } from '../../store/robot/robot.reducer';
 import { BaseService } from '../../base/base.service';
 
 @Injectable()
@@ -72,73 +66,90 @@ export class RobotService extends BaseService {
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
         return this.store.select(fromRoot.selectRobotListData)
             .pipe(
-                filter(this.isTruth),
-        );
+                filter(this.isTruth)
+            );
     }
 
     getRobotTotal(): Observable<number> {
-        return this.getRobotListResponse().pipe(
-            map(res => res.all));
+        return this.getRobotListResponse()
+            .pipe(
+                map(res => res.all)
+            );
     }
 
     getRobotConcurrence(): Observable<number> {
-        return this.getRobotListResponse().pipe(
-            map(res => res.concurrent));
+        return this.getRobotListResponse()
+            .pipe(
+                map(res => res.concurrent)
+            );
     }
 
     getRobots(): Observable<fromRes.Robot[]> {
-        return this.getRobotListResponse().pipe(
-            map(res => res.robots));
+        return this.getRobotListResponse()
+            .pipe(
+                map(res => res.robots)
+            );
     }
 
     getRobotListResState(): Observable<fromRes.ResponseState> {
         return this.store.select(fromRoot.selectRobotListResState)
             .pipe(
-                filter(this.isTruth),
-        );
+                filter(this.isTruth)
+            );
     }
 
     getRobotCountByStatus(predicate: (robot: fromRes.Robot) => boolean): Observable<fromRes.Robot[]> {
-        return this.getRobots().pipe(
-            map(robots => robots.filter(predicate)));
+        return this.getRobots()
+            .pipe(
+                map(robots => robots.filter(predicate))
+            );
     }
 
     getRobotDeadLine(): Observable<string> {
-        return this.getRobotCountByStatus(this.isNormalStatus).pipe(
-            withLatestFrom(this.pubService.getBalance()),
-            map(([robots, balance]) => {
-                const now = parseInt(new Date().getTime() / 10000 + '') * 10000;
+        return this.getRobotCountByStatus(this.isNormalStatus)
+            .pipe(
+                withLatestFrom(this.pubService.getBalance()),
+                map(([robots, balance]) => {
+                    const now = parseInt(new Date().getTime() / 10000 + '') * 10000;
 
-                const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
+                    const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
 
-                const count = Math.max(1, robots.length);
+                    const count = Math.max(1, robots.length);
 
-                const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '');
+                    const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '');
 
-                return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
-            }), );
+                    return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
+                })
+            );
     }
 
     getGrossProfit(): Observable<number> {
-        return this.getRobots().pipe(
-            map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0)));
+        return this.getRobots()
+            .pipe(
+                map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0))
+            );
     }
 
     // robot detail
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.select(fromRoot.selectRobotDetailResponse)
             .pipe(
-                filter(this.isTruth),
-        );
+                filter(this.isTruth)
+            );
     }
 
     getRobotDetail(): Observable<fromRes.RobotDetail> {
-        return this.getRobotDetailResponse().pipe(
-            map(res => res.result.robot));
+        return this.getRobotDetailResponse()
+            .pipe(
+                map(res => res.result.robot)
+            );
     }
 
     getCurrentRobotId(): Observable<number> {
-        return this.getRobotDetail().pipe(map(robot => robot.id));
+        return this.getRobotDetail()
+            .pipe(
+                map(robot => robot.id)
+            );
     }
 
     getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
@@ -151,10 +162,11 @@ export class RobotService extends BaseService {
     }
 
     canChangePlatform(): Observable<boolean> {
-        return this.getRobotStrategyExchangePair().pipe(
-            map(pairs => pairs.exchangeIds.some(id => id > -10)),
-            tap(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP')),
-        );
+        return this.getRobotStrategyExchangePair()
+            .pipe(
+                map(pairs => pairs.exchangeIds.some(id => id > -10)),
+                tap(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
+            );
     }
 
     // subscribe robot
@@ -166,23 +178,25 @@ export class RobotService extends BaseService {
     }
 
     isSubscribeRobotSuccess(): Observable<boolean> {
-        return this.getSubscribeRobotResponse().pipe(
-            map(res => res.result));
+        return this.getSubscribeRobotResponse()
+            .pipe(
+                map(res => res.result)
+            );
     }
 
     // server send message
     private getServerSendRobotMessage(): Observable<fromRes.ServerSendRobotMessage> {
         return this.store.select(fromRoot.selectServerSendRobotMessage)
             .pipe(
-                filter(this.isTruth),
-        );
+                filter(this.isTruth)
+            );
     }
 
     getServerSendRobotMessageType(msgType: number): Observable<fromRes.ServerSendRobotMessage> {
         return this.getServerSendRobotMessage()
             .pipe(
-                filter(msg => !!(msg.flags & msgType)),
-        );
+                filter(msg => !!(msg.flags & msgType))
+            );
     }
 
     getRobotSummary(summary: Observable<string>): Observable<any[]> {
@@ -197,8 +211,8 @@ export class RobotService extends BaseService {
                             map(res => this.getSummary(res.trim())),
                             reduce((acc, cur) => [...acc, cur], []),
                     );
-                }),
-        );
+                })
+            );
     }
 
     /* =======================================================Short cart method================================================== */
