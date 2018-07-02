@@ -1,5 +1,5 @@
 <header fxLayout="column" *ngIf="!(isLogin | async)">
-    <div id="header" class="header">
+    <div id="header" class="header" fxLayoutAlign="space-between center">
         <span fxLayout="row no-wrap" fxFlex="1 0 auto">
             <img src="../../assets/images/botvs.png">
         </span>
@@ -23,6 +23,7 @@
             <nz-avatar nzIcon="user" class="avatar"></nz-avatar>
         </section>
     </div>
+
     <nav class="header" fxLayoutAlign="space-between center">
         <div fxLayoutAlign="space-between center" id="nav">
             <a *ngFor="let link of navLinks" [routerLink]="link.path">
@@ -40,6 +41,7 @@
                 </li>
             </ul>
         </div>
+
         <div id="auth" fxLayoutAlign="space-between center">
             <button nz-button [nzType]="'primary'" [nzSize]="'large'" routerLink="/auth/login" routerLinkActive="active" fxLayoutAlign="center center">
                 <i class="anticon anticon-login"></i>

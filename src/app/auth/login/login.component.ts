@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable, Subject, Subscription, merge } from 'rxjs';
+import { filter, map, mapTo, tap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { LoginRequest } from '../../interfaces/request.interface';
@@ -45,7 +45,13 @@ export class LoginComponent extends BaseComponent {
     }
 
     initialModel(): void {
-        this.needVerification = this.authService.needVerification();
+        this.needVerification = this.authService.needVerification()
+            .pipe(
+                tap(need => {
+                    this.verificationCode.setValidators(need ? [Validators.required] : null);
+                    this.verificationCode.updateValueAndValidity();
+                })
+            );
     }
 
     createForm(): void {
@@ -57,13 +63,18 @@ export class LoginComponent extends BaseComponent {
     }
 
     launch(): void {
-        this.subscription$$ = this.authService.launchLogin(this.login$.pipe(
-            map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) })))
+        this.subscription$$ = this.authService.launchLogin(
+            this.login$.pipe(
+                map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) }))
+            )
         )
             .add(this.authService.isLoginSuccess()
-                .pipe(filter(success => success))
+                .pipe(
+                    filter(success => success)
+                )
                 .subscribe(_ => this.router.navigateByUrl('/dashboard/robot'))
             )
+            .add(this.username.valueChanges.subscribe(_ => this.authService.closeSecondaryVerify()))
             .add(this.authService.handleLoginError());
     }
 

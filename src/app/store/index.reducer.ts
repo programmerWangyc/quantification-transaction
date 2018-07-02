@@ -291,3 +291,13 @@ export const selectBacktestRequestParams = createSelector(getBacktest, backtest.
 
 // backtest io
 export const selectBacktestIOResponse = createSelector(getBacktest, backtest.getBacktestRes);
+
+// backtest state: collection of backtest state during different processing;
+export const selectBacktestState = createSelector(getBacktest, backtest.getBacktestState);
+
+// backtest server send message
+export const selectBacktestServerSendMessage = createSelector(getBacktest, backtest.getServerSendMessage);
+export const selectBacktestServerMessages = createSelector(getBacktest, backtest.getBacktestServerMessages);
+
+// backtest results
+export const selectBacktestResults = createSelector(getBacktest, backtest.getBacktestResults);

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
-import { catchError, filter, map, mapTo, mergeMap, switchMap, takeUntil, zip } from 'rxjs/operators';
+import { from as observableFrom, Observable, of as observableOf, zip } from 'rxjs';
+import { catchError, filter, map, mapTo, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import { WsRequest } from '../interfaces/request.interface';
 import { ResponseBody, ResponseItem } from '../interfaces/response.interface';
@@ -28,6 +28,8 @@ export const isFail: isFail<any> = (data: ResponseUnit<any>) => !!data.error;
 
 @Injectable()
 export class BaseEffect {
+    readonly callbackIdFlag = '-';
+
     constructor(
         public ws: WebsocketService,
         public actions$: Actions,
@@ -41,10 +43,13 @@ export class BaseEffect {
      * @description Used to split the response data to corresponding response actions.
      */
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
-        return observableFrom(<ResponseUnit<ResponseItem>[]>data.result || [])
+        return zip(
+            observableFrom(<ResponseUnit<ResponseItem>[]>data.result || []),
+            observableFrom(data.callbackId.split(this.callbackIdFlag))
+        )
             .pipe(
-                zip(observableFrom(data.callbackId.split('-')), (result, action) => ({ ...result, action })),
-                // .do(res => console.log(`Action-${res.action} get response: `, res.result))
+                map(([result, action]) => ({ ...result, action })),
+                // tap(res => console.log(`Action-${res.action} get response: `, res.result)),
                 map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res))
             );
     }
@@ -64,7 +69,8 @@ export class BaseEffect {
                     .send(action.getParams(action.payload)).pipe(
                         takeUntil(this.actions$.ofType(actionName)),
                         mergeMap(body => this.getSplitAction(body, actionModule, resultFail)),
-                        catchError(error => observableOf(error)), )
+                        catchError(error => observableOf(error))
+                    )
                 )
             );
     }
@@ -93,12 +99,14 @@ export class BaseEffect {
      * @description Merge multiple requests into one request.
      */
     private mergeParams(source: WsRequest[]): WsRequest {
-        const result = { method: [], params: [] };
+        const result = { method: [], params: [], callbackId: '' };
 
         for (let i = 0, len = source.length; i < len; i++) {
             result.method = result.method.concat(source[i].method);
             result.params = result.params.concat(source[i].params);
         }
+
+        result.callbackId = source.map(item => item.callbackId).join(this.callbackIdFlag);
 
         return result;
     }

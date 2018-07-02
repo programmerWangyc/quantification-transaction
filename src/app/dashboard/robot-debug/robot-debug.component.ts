@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { includes } from 'lodash';
-import { Observable, of, Subject, Subscription } from 'rxjs';
-import { combineLatest, concat, map, startWith } from 'rxjs/operators';
+import { concat, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -88,13 +88,15 @@ export class RobotDebugComponent implements BaseComponent {
 
         this.hasAgents = this.agents.pipe(map(agents => !!agents.length));
 
-        this.logs = this.robotOperate.getPluginRunLogs()
-            .pipe(
-                map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx))),
-                combineLatest(
-                    this.filter$,
-                    (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
+        this.logs = combineLatest(
+            this.robotOperate.getPluginRunLogs()
+                .pipe(
+                    map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx)))
                 ),
+            this.filter$
+        )
+            .pipe(
+                map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
                 startWith([])
             );
 
@@ -104,10 +106,10 @@ export class RobotDebugComponent implements BaseComponent {
 
         this.statistics = this.robotLog.getRobotLogPaginationStatistics(
             this.logTotal,
-            this.pageSize
-                .pipe(
-                    concat(this.pageSize$)
-                )
+            concat(
+                this.pageSize,
+                this.pageSize$
+            )
         );
 
         this.debugResult = this.robotOperate.getPluginRunResult();

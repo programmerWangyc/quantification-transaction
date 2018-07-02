@@ -72,8 +72,9 @@ export class EncryptService {
                                     .pipe(
                                         map(res => [...res, variable.id])
                                     )
-                                ),
-                        ), ),
+                                )
+                            )
+                        ),
                         reduce(this.putInArray, [])
                     )
                 )

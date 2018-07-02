@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { isString } from 'lodash';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, switchMap, tap, zip } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ResponseAction } from '../base.action';
@@ -35,7 +35,10 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(robotActions.GET_ROBOT_DETAIL).pipe(zip(...this.getOtherObsOfRobotDetail())),
+        zip(
+            this.actions$.ofType(robotActions.GET_ROBOT_DETAIL),
+            ...this.getOtherObsOfRobotDetail()
+        ),
         { ...robotActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 
@@ -96,7 +99,10 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotDebug$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(btNodeActions.GET_NODE_LIST).pipe(zip(this.actions$.ofType(platformActions.GET_PLATFORM_LIST))),
+        zip(
+            this.actions$.ofType(btNodeActions.GET_NODE_LIST),
+            this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
+        ),
         { ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 

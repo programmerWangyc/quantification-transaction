@@ -51,7 +51,9 @@ export class RobotService extends BaseService {
                 switchMap(data => this.nodeService.isPublicNode(data.nodeId)
                     .pipe(
                         mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(ConfirmComponent, { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' })
-                            .pipe(map(sure => sure ? data : null), ) : observableOf(data)
+                            .pipe(
+                                map(sure => sure ? data : null)
+                            ) : observableOf(data)
                         )
                     )
                 ),

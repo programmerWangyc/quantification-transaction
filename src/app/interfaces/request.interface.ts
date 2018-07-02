@@ -2,6 +2,7 @@
 export interface WsRequest {
     method: string[];
     params: any[][];
+    callbackId: string;
 }
 
 /** ===================================================Auth========================================= **/
@@ -284,7 +285,7 @@ export interface GetTemplatesRequest {
 }
 
 // backtest IO
-export enum BacktestDescription {
+export enum BacktestIOType {
     deleteTask = 'DelTask',
     getTaskStatus = 'GetTaskStatus',
     getTaskResult = 'GetTaskResult',
@@ -294,7 +295,7 @@ export enum BacktestDescription {
 
 export type BacktestPutTaskDescription = [string, string, BacktestPutTaskParams];
 
-export type BacktestTaskDescription = [string, string];
+export type BacktestTaskDes = [string, string];
 
 export interface BacktestIO<T> {
     nodeId: number;
@@ -395,7 +396,7 @@ export interface BacktestPutTaskParams {
     End: number; //  日期的数字表示
 }
 
-export interface BacktestTask extends BacktestIO<BacktestTaskDescription> { }
+export interface BacktestTask extends BacktestIO<BacktestTaskDes> { }
 
 export interface BacktestPutTask extends BacktestIO<BacktestPutTaskDescription> { }
 
@@ -418,3 +419,4 @@ export interface GetPaymentArgRequest {
 /**
  * 接口总数： 83， 已完成： 32
  */
+

@@ -15,8 +15,8 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="spy.invalid && (spy.dirty || spy.touched)">
-                            <div *ngIf="spy.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
-                            <div *ngIf="!spy.errors.required && spy.errors.email">{{'EMAIL_FORMAT_ERROR' | translate}}</div>
+                            <div *ngIf="!!spy.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
+                            <div *ngIf="!spy.errors.required && !!spy.errors.email">{{'EMAIL_FORMAT_ERROR' | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>

@@ -48,7 +48,7 @@ export class AddArgComponent implements OnInit, OnDestroy {
 
         this.translate.get(this.isAlternation ? 'BUTTON_TYPE' : 'VARIABLE').subscribe(res => this.variableType = res);
 
-        this.type.valueChanges
+        this.subscription = this.type.valueChanges
             .subscribe(_ => {
                 this.resetDefaultValue();
             });

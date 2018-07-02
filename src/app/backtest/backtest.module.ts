@@ -15,6 +15,7 @@ import { BacktestComputingService } from './providers/backtest.computing.service
 import { BacktestConstantService } from './providers/backtest.constant.service';
 import { BacktestService } from './providers/backtest.service';
 import { TimeOptionsComponent } from './time-options/time-options.component';
+import { BacktestParamService } from './providers/backtest.param.service';
 
 @NgModule({
     imports: [
@@ -39,6 +40,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         BacktestService,
         BacktestConstantService,
         BacktestComputingService,
+        BacktestParamService,
     ],
 
     exports: [

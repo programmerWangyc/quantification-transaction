@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { combineLatest, map, mergeMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 
 import { Robot, RobotStatus } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
@@ -53,13 +53,13 @@ export class RobotDurationComponent implements OnInit {
 
         // const deadline = this.robotService.getRobotDeadLine();
 
-        this.info = availableRobotCount
+        this.info = combineLatest(
+            availableRobotCount,
+            this.publicService.getBalance(),
+            this.robotService.getRobotDeadLine()
+        )
             .pipe(
-                combineLatest(
-                    this.publicService.getBalance(),
-                    this.robotService.getRobotDeadLine(),
-                    (count, balance, datetime) => ({ count, hours: (balance / 1e8 / count / 0.125).toFixed(2), datetime })
-                ),
+                map(([count, balance, datetime]) => ({ count, hours: (balance / 1e8 / count / 0.125).toFixed(2), datetime })),
                 mergeMap(data => this.translate.get('ROBOTS_AVAILABLE_STATE_STATISTICS', data))
             );
 

@@ -21,7 +21,7 @@
                 <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
             </nz-select>
             <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
-                <div *ngIf="platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
+                <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
             </nz-form-explain>
         </nz-form-control>
     </nz-form-item>

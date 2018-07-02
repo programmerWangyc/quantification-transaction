@@ -40,6 +40,12 @@ export abstract class ApiAction {
     allowSeparateRequest?: boolean;
 
     /**
+     * @property callbackId
+     * @description It will be passed to server with request, and received within response, so we can find the response correspond to witch request.
+     */
+    callbackId?: any;
+
+    /**
      * @method oderParams
      * @description If the request has multiple parameters, use this method to generate parameters that communicate with the server.
      */
@@ -67,7 +73,7 @@ export abstract class ApiAction {
      * @description Used to convert the parameters in the request action into a format that can communicate with the server.
      */
     getParams(payload: any, defaultValue = ''): WsRequest {
-        const result = { method: [this.command] };
+        const result = { method: [this.command], callbackId: this.callbackId || this.command };
 
         if (this.noneParams) {
             return { ...result, params: [[]] };

@@ -1,11 +1,11 @@
 
-import { withLatestFrom, switchMap, find, map, mergeMap, take, combineLatest } from 'rxjs/operators';
+import { withLatestFrom, switchMap, find, map, mergeMap, take } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd';
-import { Observable, from, of, Subscription } from 'rxjs';
+import { Observable, from, of, Subscription, combineLatest } from 'rxjs';
 
 import { BaseService } from '../../base/base.service';
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
@@ -108,21 +108,21 @@ export class StrategyService extends BaseService {
     }
 
     getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
-        return this.getStrategies()
-            .pipe(
-                combineLatest(
-                    strategyId
-                        .pipe(
-                            this.filterTruth()
-                        ),
-                    (strategies, id) => {
-                        const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
-
-                        const noArgs = !semanticArgs.length && !semanticTemplateArgs;
-
-                        return noArgs ? null : { semanticArgs, semanticTemplateArgs };
-                    }
+        return combineLatest(
+            this.getStrategies(),
+            strategyId
+                .pipe(
+                    this.filterTruth()
                 )
+        )
+            .pipe(
+                map(([strategies, id]) => {
+                    const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
+
+                    const noArgs = !semanticArgs.length && !semanticTemplateArgs;
+
+                    return noArgs ? null : { semanticArgs, semanticTemplateArgs };
+                })
             );
     }
 
@@ -166,18 +166,18 @@ export class StrategyService extends BaseService {
     }
 
     getStrategyDependance(): Observable<TemplateRefItem[]> {
-        return this.getAvailableDependance()
+        return combineLatest(
+            this.getAvailableDependance(),
+            this.getCurrentDependance()
+        )
             .pipe(
-                combineLatest(
-                    this.getCurrentDependance(),
-                    (available, current) => {
-                        const intersection = intersectionWith(available, current, (a, c) => a.id === c.id).map(item => item.id);
+                map(([available, current]) => {
+                    const intersection = intersectionWith(available, current, (a, c) => a.id === c.id).map(item => item.id);
 
-                        const result = uniqBy(available.concat(current), 'id');
+                    const result = uniqBy(available.concat(current), 'id');
 
-                        return result.map(item => intersection.includes(item.id) ? { ...item, checked: true } : item);
-                    }
-                )
+                    return result.map(item => intersection.includes(item.id) ? { ...item, checked: true } : item);
+                })
             );
     }
 

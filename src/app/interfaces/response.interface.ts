@@ -1,4 +1,5 @@
 import { TemplateVariableOverview, VariableOverview } from './app.interface';
+import { BacktestPutTaskParams } from './request.interface';
 
 /* =======================================================Abstract response========================================================= */
 
@@ -10,7 +11,7 @@ export interface ResponseState {
 }
 
 export interface ResponseBody extends PublicResponse {
-    result: ResponseUnit<ResponseItem>[] | ServerSendRobotMessage | ServerSendBacktestMessage;
+    result: ResponseUnit<ResponseItem>[] | ServerSendRobotMessage | ServerSendBacktestMessage<string>;
 }
 
 export interface ResponseUnit<T> extends ResponseState {
@@ -27,6 +28,7 @@ export interface PublicResponse {
     balance: number;
     cached: boolean;
     callbackId: string;
+    // responseActionName: string;
     consumed: number;
     error: string;
     is_admin: boolean;
@@ -66,18 +68,9 @@ export interface ServerSendPaymentMessage {
     orderId?: string; // TODO: ensure field
 }
 
-export interface ServerSendBacktestStatus {
-    Status: string;
-	Profit: number;
-	TaskStatus: number;
-	LogsCount: number;
-	Progress: number;
-	Elapsed: number;
-}
-
-export interface ServerSendBacktestMessage {
+export interface ServerSendBacktestMessage<T> {
     output: string;
-    status: string; // JSON type string. parse result: ServerSendBacktestStatus;
+    status: T; // default: string, JSON type string. parse result: BacktestTaskResult;
     uuid: string;
 }
 
@@ -551,9 +544,57 @@ export interface TemplatesResponse {
 export interface GetTemplatesResponse extends ResponseUnit<TemplatesResponse[]> { }
 
 // backtestIO
-export interface ServerBacktestResult {
+/**
+ * <<-----------------------------------------------------------------------------------
+ * backtest task result start region
+ */
+export interface ServerBacktestResult<T> {
     Code: number;
-    Result: string; // uuid;
+    Result: T; // string: uuid; object: BacktestTaskResult;
+}
+
+export interface BacktestChart {
+    Cfg: string;
+    Datas: any[];
+}
+
+export interface BacktestSnapshot {
+    Balance: number;
+    BaseCurrency: string;
+    Commission: number;
+    FrozenBalance: number;
+    FrozenStocks: number;
+    Id: string;
+    QuoteCurrency: string;
+    Stocks: number;
+    Symbols: Object
+    TradeStatus: Object;
+
+}
+
+export interface BacktestTaskResult {
+    Accounts?: Object
+    Chart: BacktestChart;
+    CloseProfitLogs?: Object;
+    Elapsed: number;
+    Exception: string;
+    Finished: boolean;
+    Indicators: Object;
+    LoadBytes: number;
+    LoadElapsed: number;
+    LogsCount: number;
+    Pending?: any;
+    Profit: number;
+    ProfitLogs: any[];
+    Progress: number;
+    RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
+    Snapshorts: [number, BacktestSnapshot[]][];
+    Status: string;
+    Stderr: string;
+    Symbols: any[];
+    Task: BacktestPutTaskParams;
+    TaskStatus: number;
+    Time: number;
 }
 
 /**
@@ -564,8 +605,12 @@ export interface ServerBacktestResult {
  *      GetTaskResult: string | 结构体，
  * }
  */
+/**
+ * --------------------------------------------------------------------------------->>
+ *  backtest task result endregion
+ */
 
-export interface BacktestIOResponse extends ResponseUnit<string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
+export interface BacktestIOResponse extends ResponseUnit<ServerBacktestResult<string | BacktestTaskResult> | string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
 
 /** ===================================================Charge============================================== **/
 

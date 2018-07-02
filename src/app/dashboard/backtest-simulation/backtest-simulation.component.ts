@@ -119,11 +119,7 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
             .add(this.backtestService.updateRunningNode(this.runningNode$))
-            .add(this.backtestService.launchBacktest(this.startBacktest$
-                .pipe(
-                    map(_ => this.language)
-                )
-            ));
+            .add(this.backtestService.launchBacktest(this.startBacktest$))
     }
 
     toggleBacktestMode() {
@@ -142,6 +138,8 @@ export class BacktestSimulationComponent extends BaseComponent {
 
     ngOnDestroy() {
         this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, false);
+
+        this.backtestService.resetBacktestState();
 
         this.subscription$$.unsubscribe();
     }

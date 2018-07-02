@@ -1,5 +1,6 @@
 import { VariableOverview } from '../interfaces/app.interface';
-import { BacktestExchange, BacktestPutTaskOptions, PutTaskCode, BacktestPutTaskParams } from '../interfaces/request.interface';
+import { BacktestPutTaskParams } from '../interfaces/request.interface';
+import { BacktestChart, BacktestSnapshot, BacktestTaskResult } from '../interfaces/response.interface';
 
 export interface TimeRange {
     start: Date;
@@ -123,26 +124,13 @@ export interface WorkerBacktestChartCfg {
     __isStock: boolean;
 }
 
-export interface WorkerBacktestChart {
-    Cfg: string;
-    Datas: any[];
-}
-export interface WorkerBacktestSnapshot {
-    Balance: number;
-    BaseCurrency: string;
-    Commission: number;
-    FrozenBalance: number;
-    FrozenStocks: number;
-    Id: string;
-    QuoteCurrency: string;
-    Stocks: number;
-    Symbols: Object
-    TradeStatus: Object;
+export interface WorkerBacktestChart extends BacktestChart {
 }
 
-export interface WorkerBacktestTask extends BacktestPutTaskParams { }
+export interface WorkerBacktestSnapshot extends BacktestSnapshot {
+}
 
-export type WorkerBacktestRequest = [WorkerBacktestTask, WorkerBacktestHttpCache, string];
+export type WorkerBacktestRequest = [BacktestPutTaskParams, WorkerBacktestHttpCache, string];
 
 export interface WorkerBacktest {
     task: BacktestPutTaskParams;
@@ -154,9 +142,10 @@ export interface WorkerBacktestHttpCache {
     [key: string]: any;
 }
 
-export interface WorkerBacktestResponse {
-    Accounts: Object
+export interface WorkerBacktestResponse extends BacktestTaskResult {
+    Accounts?: Object
     Chart: WorkerBacktestChart;
+    CloseProfitLogs?: Object;
     Elapsed: number;
     Exception: string;
     Finished: boolean;
@@ -173,10 +162,10 @@ export interface WorkerBacktestResponse {
     Status: string;
     Stderr: string;
     Symbols: any[];
-    Task: WorkerBacktestTask;
+    Task: BacktestPutTaskParams;
     TaskStatus: number;
     Time: number;
-    httpCache: WorkerBacktestHttpCache;
+    httpCache?: WorkerBacktestHttpCache;
 }
 
 // args related interfaces

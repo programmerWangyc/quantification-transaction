@@ -19,6 +19,7 @@ import { GetNodeListRequestAction } from './../store/bt-node/bt-node.action';
 import { GetSettingsRequestAction } from './../store/public/public.action';
 import * as RobotActions from './../store/robot/robot.action';
 import { TipService } from './tip.service';
+import { BacktestIOType } from '../interfaces/request.interface';
 
 @Injectable()
 export class ProcessService {
@@ -169,7 +170,30 @@ export class ProcessService {
     }
 
     processBacktestIO(params: Observable<Request.BacktestIORequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new BacktestActions.BacktestIORequestAction(params)));
+        const getAction = (req: Request.BacktestIORequest) => {
+            const { io } = req;
+
+            switch (JSON.parse(io)[0]) {
+                case BacktestIOType.putTask:
+                    return BacktestActions.BacktestIORequestAction;
+                case BacktestIOType.getTaskStatus:
+                    return BacktestActions.BacktestStatusRequestAction;
+                case BacktestIOType.getTaskResult:
+                    return BacktestActions.BacktestResultRequestAction;
+                case BacktestIOType.deleteTask:
+                    return BacktestActions.DeleteBacktestRequestAction;
+                case BacktestIOType.stopTask:
+                    return BacktestActions.StopBacktestRequestAction;
+                default:
+                    throw new Error('No io action find!');
+            }
+        };
+
+        return params.subscribe(params => {
+            const Action = getAction(params);
+
+            this.store.dispatch(new Action(params))
+        });
     }
 
     /** ===================================================Charge====================================================== */

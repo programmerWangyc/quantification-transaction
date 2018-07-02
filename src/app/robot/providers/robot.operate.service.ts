@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
 import { flatten, isEmpty, isNaN } from 'lodash';
 import * as moment from 'moment';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { from as observableFrom, Observable, of as observableOf, Subscription } from 'rxjs';
+import { from as observableFrom, Observable, of as observableOf, merge, combineLatest, zip, Subscription } from 'rxjs';
 import {
-    combineLatest,
     filter,
     map,
     mapTo,
-    merge,
     mergeMap,
     mergeMapTo,
     reduce,
@@ -21,7 +19,6 @@ import {
     take,
     tap,
     withLatestFrom,
-    zip,
 } from 'rxjs/operators';
 
 import { VariableType } from '../../app.config';
@@ -90,14 +87,21 @@ export class RobotOperateService extends BaseService {
         const param1 = this.canChangePlatform()
             .pipe(
                 filter(sure => sure),
-                switchMapTo(this.getRobotOperateConfirm(data)
-                    .pipe(
-                        filter(sure => sure),
-                        mergeMapTo(this.isPublicNode()),
-                        switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : observableOf(true)),
-                        zip(data, (condition, data) => condition && data),
-                        filter(value => !!value),
-                        map(({ id }) => ({ id })))
+                switchMapTo(
+                    zip(
+                        this.getRobotOperateConfirm(data)
+                            .pipe(
+                                filter(sure => sure),
+                                mergeMapTo(this.isPublicNode()),
+                                switchMap(isPublic => isPublic ? this.isSecurityVerifySuccess() : observableOf(true)),
+                        ),
+                        data
+                    )
+                        .pipe(
+                            map(([condition, data]) => condition && data),
+                            filter(value => !!value),
+                            map(({ id }) => ({ id }))
+                        )
                 )
             );
 
@@ -347,17 +351,18 @@ export class RobotOperateService extends BaseService {
     }
 
     isArgsNeedToEncrypt(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotStrategyArgs)
-            .pipe(
-                map(args => !args ? false : this.encryptService.isNeedEncrypt(args)),
-                combineLatest(
-                    this.store.select(fromRoot.selectRobotTemplateArgs)
-                        .pipe(
-                            map(templates => !templates ? false : this.encryptService.isNeedEncrypt(flatten(templates.map(item => item.variables))))
-                        ),
-                    (strategyNeed, templateNeed) => strategyNeed || templateNeed
+        return combineLatest(
+            this.store.pipe(
+                select(fromRoot.selectRobotStrategyArgs),
+                map(args => !args ? false : this.encryptService.isNeedEncrypt(args))
+            ),
+            this.store.select(fromRoot.selectRobotTemplateArgs)
+                .pipe(
+                    map(templates => !templates ? false : this.encryptService.isNeedEncrypt(flatten(templates.map(item => item.variables))))
                 )
-            )
+        ).pipe(
+            map(([strategyNeed, templateNeed]) => strategyNeed || templateNeed)
+        );
     }
 
     getPairsParams(pairs: SelectedPair[]): { platform: number[], stocks: string[] } {
@@ -370,14 +375,17 @@ export class RobotOperateService extends BaseService {
     }
 
     hasArgs(): Observable<boolean> {
-        return this.getRobotStrategyArgs()
-            .pipe(
-                map(args => !!args && !!args.length),
-                combineLatest(this.getRobotTemplateArgs()
-                    .pipe(
-                        map(args => !!args && !!args.length)
-                    )
+        return combineLatest(
+            this.getRobotStrategyArgs()
+                .pipe(
+                    map(args => !!args && !!args.length)
                 ),
+            this.getRobotTemplateArgs()
+                .pipe(
+                    map(args => !!args && !!args.length)
+                )
+        )
+            .pipe(
                 map(([hasStrategyArgs, hasTemplateArgs]) => hasStrategyArgs || hasTemplateArgs),
                 startWith(false)
             );
@@ -520,17 +528,18 @@ export class RobotOperateService extends BaseService {
     }
 
     getOperateBtnText(): Observable<string> {
-        return this.getRobotDetail()
-            .pipe(
-                map(robot => this.constantService.getRobotOperateMap(robot.status).btnText),
-                combineLatest(
-                    this.isLoading(RobotOperateType.stop + OPERATE_ROBOT_LOADING_TAIL)
-                        .pipe(
-                            merge(this.isLoading(RobotOperateType.restart + OPERATE_ROBOT_LOADING_TAIL))
-                        ),
-                    (btnTexts: string[], isLoading: boolean) => this.constantService.getRobotOperateBtnText(isLoading, btnTexts)
-                )
-            );
+        return combineLatest(
+            this.getRobotDetail()
+                .pipe(
+                    map(robot => this.constantService.getRobotOperateMap(robot.status).btnText),
+            ),
+            merge(
+                this.isLoading(RobotOperateType.stop + OPERATE_ROBOT_LOADING_TAIL),
+                this.isLoading(RobotOperateType.restart + OPERATE_ROBOT_LOADING_TAIL)
+            )
+        ).pipe(
+            map(([btnTexts, isLoading]) => this.constantService.getRobotOperateBtnText(isLoading, btnTexts))
+        );
     }
 
     getRobotWatchDogBtnText(): Observable<string> {
@@ -541,32 +550,30 @@ export class RobotOperateService extends BaseService {
     }
 
     getSelectedNode(): Observable<fromRes.BtNode> {
-        return this.btNodeService.getNodeList()
-            .pipe(
-                zip(
-                    this.getRobotDetail(),
-                    (nodes, { fixed_id }) => nodes.find(item => item.id === fixed_id)
-                )
-            );
+        return zip(
+            this.btNodeService.getNodeList(),
+            this.getRobotDetail(),
+            (nodes, { fixed_id }) => nodes.find(item => item.id === fixed_id)
+        );
     }
 
     getBindNode(): Observable<fromRes.BtNode> {
-        return this.btNodeService.getNodeList()
+        return zip(
+            this.btNodeService.getNodeList(),
+            this.getRobotDetail()
+        )
             .pipe(
-                zip(
-                    this.getRobotDetail(),
-                    (nodes, { node_id, fixed_id }) => {
-                        const node = nodes.find(item => item.id === fixed_id);
+                map(([nodes, { node_id, fixed_id }]) => {
+                    const node = nodes.find(item => item.id === fixed_id);
 
-                        if (node) {
-                            return node;
-                        } else if (node_id > 0) {
-                            return nodes.find(item => item.id === node_id) || null
-                        } else {
-                            return null;
-                        }
+                    if (node) {
+                        return node;
+                    } else if (node_id > 0) {
+                        return nodes.find(item => item.id === node_id) || null
+                    } else {
+                        return null;
                     }
-                )
+                })
             );
     }
 
@@ -578,32 +585,32 @@ export class RobotOperateService extends BaseService {
     }
 
     getRobotStatusTip(): Observable<string> {
-        return this.getSelectedNode()
-            .pipe(
-                mergeMap(node => !!node ? observableOf('') : this.translate.get('DOCKER_OFF_LINE_TIP')),
-                this.filterTruth(),
-                merge(
-                    this.getBindNode()
-                        .pipe(
-                            withLatestFrom(
-                                this.getRobotDetail(),
-                                this.getSelectedNode(),
-                                (node, robot, selectedNode) => {
-                                    const hasNode = node && node.id !== -1;
+        return merge(
+            this.getSelectedNode()
+                .pipe(
+                    mergeMap(node => !!node ? observableOf('') : this.translate.get('DOCKER_OFF_LINE_TIP')),
+                    this.filterTruth()
+                ),
+            this.getBindNode()
+                .pipe(
+                    withLatestFrom(
+                        this.getRobotDetail(),
+                        this.getSelectedNode(),
+                        (node, robot, selectedNode) => {
+                            const hasNode = node && node.id !== -1;
 
-                                    if (hasNode) {
-                                        return this.translate.get('DOCKER_ON').pipe(map(label => label + node.name + robot.id))
-                                    } else if (robot.status === 0 && !hasNode) {
-                                        return this.translate.get('WAIT').pipe(map(label => label + selectedNode.name))
-                                    } else {
-                                        return observableOf('');
-                                    }
-                                }),
-                            mergeMap(obs => obs),
-                            this.filterTruth()
-                        )
+                            if (hasNode) {
+                                return this.translate.get('DOCKER_ON').pipe(map(label => label + node.name + robot.id))
+                            } else if (robot.status === 0 && !hasNode) {
+                                return this.translate.get('WAIT').pipe(map(label => label + selectedNode.name))
+                            } else {
+                                return observableOf('');
+                            }
+                        }),
+                    mergeMap(obs => obs),
+                    this.filterTruth()
                 )
-            );
+        );
     }
 
     getRobotConfigMessage(): Observable<string> {
@@ -624,25 +631,24 @@ export class RobotOperateService extends BaseService {
     /* =======================================================Short cart method================================================== */
 
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
-        return this.encryptService.transformStrategyArgsToEncryptType(
-            this.store.select(fromRoot.selectRobotStrategyArgs)
-                .pipe(
-                    map(args => args || [])
-                ),
-            isEncrypt
+        return combineLatest(
+            this.encryptService.transformStrategyArgsToEncryptType(
+                this.store.select(fromRoot.selectRobotStrategyArgs)
+                    .pipe(
+                        map(args => args || [])
+                    ),
+                isEncrypt
+            ),
+            this.encryptService.transformTemplateArgsToEncryptType(
+                this.store.select(fromRoot.selectRobotTemplateArgs)
+                    .pipe(
+                        map(args => args || [])
+                    ),
+                isEncrypt
+            )
         )
             .pipe(
-                combineLatest(
-                    this.encryptService.transformTemplateArgsToEncryptType(
-                        this.store.select(fromRoot.selectRobotTemplateArgs)
-                            .pipe(
-                                map(args => args || [])
-                            ),
-                        isEncrypt
-                    ),
-                    (strategyArgs, templateArgs) => [...strategyArgs, ...templateArgs]
-                ),
-                map(args => JSON.stringify(args))
+                map(([strategyArgs, templateArgs]) => JSON.stringify([...strategyArgs, ...templateArgs]))
             );
     }
 

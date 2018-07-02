@@ -1,51 +1,42 @@
-import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, timer, merge, combineLatest, of, concat, zip } from 'rxjs';
 
-import { BaseService } from '../../base/base.service';
-import { GetTemplatesRequest, PutTaskCode, PutTaskCodeArg, BacktestExchange, BacktestAdvanceOptions, BacktestPlatformOptions, BacktestConstantOptions, BacktestPutTaskOptions, BacktestPutTaskParams, BacktestIORequest, BacktestDescription, SettingTypes } from '../../interfaces/request.interface';
+import { GetTemplatesRequest, BacktestIORequest, BacktestIOType, SettingTypes } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
-import { TemplateSnapshot } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as Actions from '../../store/backtest/backtest.action';
-import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
+import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { BacktestSelectedPair, TimeRange, BacktestCode } from '../backtest.interface';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { environment } from '../../../environments/environment';
-import { isNumber, omit } from 'lodash';
+import { isNumber } from 'lodash';
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
-import { VariableOverview } from '../../interfaces/app.interface';
-import { VariableType } from '../../app.config';
-import { TranslateService } from '@ngx-translate/core';
 import { PublicService } from '../../providers/public.service';
 import { BacktestComputingService } from './backtest.computing.service';
-import { mapTo, take, switchMapTo, filter, map, partition, withLatestFrom, tap, distinct, combineLatest, distinctUntilChanged, zip, merge } from 'rxjs/operators';
-
-// export const workerUrl = '../../../assets/sandbox/worker.js'
+import { mapTo, take, switchMapTo, filter, map, partition, withLatestFrom, tap, distinct, distinctUntilChanged, switchMap, takeUntil, distinctUntilKeyChanged, scan, delayWhen } from 'rxjs/operators';
+import { ServerBacktestCode, BacktestMilestone } from '../backtest.config';
+import { BacktestParamService } from './backtest.param.service';
 
 @Injectable()
-export class BacktestService extends BaseService {
+export class BacktestService extends BacktestParamService {
 
     constructor(
         private process: ProcessService,
         private error: ErrorService,
-        private store: Store<fromRoot.AppState>,
-        private constant: BacktestConstantService,
-        private translate: TranslateService,
+        public store: Store<fromRoot.AppState>,
+        public constant: BacktestConstantService,
         private publicService: PublicService,
         private computeService: BacktestComputingService,
     ) {
-        super();
+        super(store, constant);
     }
 
     /* =======================================================Serve Request======================================================= */
 
-    launchBacktest(language: Observable<number>): Subscription {
-        const generateToBeTestedValue$$ = language.subscribe(_ => this.store.dispatch(new Actions.GenerateToBeTestedValuesAction()));
-
+    launchBacktest(start: Observable<boolean>): Subscription {
         // TODO: 本地回测时使用，用于发出本地回测的信号。
         // const signal = language
         //     .map(lan => lan === Language.JavaScript)
@@ -54,29 +45,54 @@ export class BacktestService extends BaseService {
         //         (isJS, isOwner) => isJS && isOwner
         //     )
 
-        return this.launchServerBacktest(language
-            .pipe(
-                mapTo(true)
-            )
-        )
-            // .add(this.launchLocalBacktest(signal))
-            .add(generateToBeTestedValue$$);
+        /**
+         *  回测前的动作：1、根据参数配置项生成需要测试的任务；2、将loading切换成回测中。
+         *  注意：loading 将在回测结束后在 store 中被自动重置为false。
+         */
+        const generateToBeTestedValue$$ = start.subscribe(_ => {
+            this.store.dispatch(new Actions.ToggleBacktestLoadingStateAction(true));
+            this.store.dispatch(new Actions.GenerateToBeTestedValuesAction());
+        });
+
+        return this.launchServerBacktest(start)
+            .add(generateToBeTestedValue$$)
+            // 回测命令响应成功后，开始轮询回测的状态
+            // .add(this.launchOperateBacktest(this.commandPollingBacktestState(), BacktestIOType.getTaskStatus))
+            //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
+            .add(this.launchOperateBacktest(
+                this.store.pipe(
+                    select(fromRoot.selectBacktestServerSendMessage),
+                    this.filterTruth()
+                )
+                , BacktestIOType.getTaskResult)
+            );
     }
 
     /**
-     * @description 服务端回测
+     * @description 服务端回测；1、第一个回测任务立即发起；2、之后的回测任务需要在服务端推送消息，也就是上个回测任务结束之后再发起。
      */
     private launchServerBacktest(signal: Observable<boolean>): Subscription {
+        const notify = concat(
+            of(true),
+            this.store.pipe(
+                select(fromRoot.selectBacktestServerSendMessage),
+                this.filterTruth(),
+                mapTo(true)
+            )
+        );
+
         return this.process.processBacktestIO(
-            signal
-                .pipe(
-                    switchMapTo(this.getBacktestIOParameters()
-                        .pipe(
-                            take(1)
-                        )
+            signal.pipe(
+                switchMapTo(
+                    zip(
+                        this.getPutTaskParameters(),
+                        notify
                     )
+                        .pipe(
+                            map(([params, _]) => params)
+                        )
                 )
-            // .filter(res => !res)
+            )
         );
     }
 
@@ -119,10 +135,8 @@ export class BacktestService extends BaseService {
                 )
             );
 
-        return this.computeService.handleBacktestInWorker(devEnvBacktest
-            .pipe(
-                merge(proEnvBacktest)
-            )
+        return this.computeService.handleBacktestInWorker(
+            merge(devEnvBacktest, proEnvBacktest)
         )
             .add(jsSetting$$);
     }
@@ -144,15 +158,44 @@ export class BacktestService extends BaseService {
         return this.process.processGetTemplates(this.getTemplatesParams());
     }
 
-    /* =======================================================Data acquisition======================================================= */
+    /**
+     * @param taskType 回测任务的类型，BacktestIOType 中除了 putTask 以外的类型。
+     * @description 获取操作的参数，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测。
+     */
+    private getBacktestTaskParams(taskType: string): Observable<BacktestIORequest> {
+        const partialParam = withLatestFrom(
+            this.getRunningNode(),
+            this.getSelectedLanguage(),
+            (uuid, nodeId, language) => ({ nodeId, language, io: JSON.stringify([taskType, uuid]) })
+        );
 
-    getSelectedTemplateIds(): Observable<number[]> {
-        return this.store.select(fromRoot.selectStrategyUIState)
-            .pipe(
-                map(res => res.selectedTemplates),
-                this.filterTruth()
-            );
+        return taskType === BacktestIOType.getTaskStatus ? this.getUUid().pipe(
+            partialParam
+        ) : this.getUUid().pipe(
+            partialParam,
+            distinctUntilChanged(this.compareAllValues())
+        )
     }
+
+    /**
+     * @method launchOperateBacktest
+     * @param {Observable} command: 操作指令，指定操作应该发生的时机。
+     * @param { string } taskType: 指令的类型
+     * @description 发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
+     */
+    launchOperateBacktest(command: Observable<any>, taskType: string): Subscription {
+        return this.process.processBacktestIO(
+            command.pipe(
+                switchMapTo(
+                    this.getBacktestTaskParams(taskType).pipe(
+                        take(1)
+                    )
+                )
+            )
+        );
+    }
+
+    /* =======================================================Data acquisition======================================================= */
 
     getTemplatesParams(): Observable<GetTemplatesRequest> {
         return this.getSelectedTemplates()
@@ -164,22 +207,6 @@ export class BacktestService extends BaseService {
             );
     }
 
-    /**
-     * @param releaseCache - 是否释放输出流中的缓存值。
-     * @description 获取用户选中的模板，模板数据源是strategy list 的响应和strategy detail 响应中的 templates字段
-     */
-    getSelectedTemplates(releaseCache = true): Observable<TemplateSnapshot[]> {
-        releaseCache && fromRoot.selectStrategyDetailResponse.release();
-
-        return this.getSelectedTemplateIds()
-            .pipe(
-                combineLatest(
-                    this.store.select(fromRoot.selectBacktestTemplates).pipe(filter(this.isTruth)),
-                    (ids, templates) => templates.filter(({ id }) => ids.includes(id))
-                )
-            );
-    }
-
     private getGetTemplatesResponse(): Observable<fromRes.GetTemplatesResponse> {
         return this.store
             .pipe(
@@ -188,41 +215,74 @@ export class BacktestService extends BaseService {
             );
     }
 
-    private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult> {
+    private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult<string | fromRes.BacktestTaskResult>> {
         return this.store
             .pipe(
                 select(fromRoot.selectBacktestIOResponse),
                 filter(this.isTruth),
-                map(res => isNumber(res.result) ? <number>res.result : <fromRes.ServerBacktestResult>JSON.parse(res.result))
+                map(res => isNumber(res.result) ? <number>res.result : res.result)
             );
     }
 
-    private getStrategyDetail(): Observable<fromRes.StrategyDetail> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectStrategyDetailResponse),
-                filter(res => !!res),
-                map(res => res.result.strategy)
-            );
+    private filterPutTaskSuccessfulResponse(): Observable<fromRes.ServerBacktestResult<string>> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestState),
+            map(res => res[BacktestIOType.putTask]),
+            filter(result => {
+                if (!result || isNumber(result)) {
+                    return false;
+                } else {
+                    return result.Code === ServerBacktestCode.SUCCESS || result.Code === ServerBacktestCode.ALREADY_EXIST;
+                }
+            }),
+        ) as Observable<fromRes.ServerBacktestResult<string>>;
     }
 
-    private getSelectedLanguage(): Observable<number> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectStrategyUIState),
-                filter(res => !!res),
-                map(state => state.selectedLanguage)
-            );
+    /**
+     * @description 获取当前回测任务的uuid
+     */
+    private getUUid(): Observable<string> {
+        return this.filterPutTaskSuccessfulResponse().pipe(
+            map(res => res.Result),
+            distinctUntilChanged()
+        );
     }
+
+    /**
+     * @description 当前查询当前回测状态的结果;
+     */
+    private getBacktestStatusResult(): Observable<fromRes.BacktestTaskResult> { // TODO: any： 回测状态查询的结果 回传的数据和轮询的数据应该是一样的结构（待确认）；
+        const dataFromPolling = this.store.pipe(
+            select(fromRoot.selectBacktestState),
+            map(state => state[BacktestIOType.getTaskStatus]),
+            filter(status => !!status && !isNumber(status)),
+            map((status: fromRes.ServerBacktestResult<fromRes.BacktestTaskResult>) => status.Result)
+        );
+
+        const dataFromServerMsg = this.store.pipe(
+            select(fromRoot.selectBacktestServerSendMessage),
+            this.filterTruth(),
+            map(state => state.status)
+        );
+
+        return merge(dataFromPolling, dataFromServerMsg)
+    }
+
+    /**
+     * @description 在发起putTask成功后，开始定时向服务器轮询回测的状态。回测中止后停止轮询。
+     */
+    // private commandPollingBacktestState(): Observable<any> {
+    //     return this.filterPutTaskSuccessfulResponse()
+    //         .pipe(
+    //             distinctUntilKeyChanged('Result'),
+    //             map(response => response.Code === ServerBacktestCode.SUCCESS ? 500 : 0),
+    //             switchMap(delay => timer(delay, 5000).pipe(
+    //                 takeUntil(this.isBacktestComplete())
+    //             ))
+    //         );
+    // }
 
     /* =======================================================UI state ======================================================= */
-
-    getUIState(): Observable<UIState> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectBacktestUIState)
-            );
-    }
 
     getSelectedKlinePeriod(): Observable<number> {
         return this.getUIState()
@@ -252,21 +312,15 @@ export class BacktestService extends BaseService {
     getBacktestBtnText(): Observable<string> {
         return this.getUIState()
             .pipe(
-                map(res => res.isBacktesting ? 'BACKTEST_SYSTEM_LOADING' : 'START_BACKTEST')
-            );
-    }
+                map(state => {
+                    const { backtestMilestone, isBacktesting } = state;
 
-    getRunningNode(): Observable<number> {
-        return this.getUIState()
-            .pipe(
-                map(res => res.runningNode)
-            );
-    }
-
-    getBacktestCode(): Observable<BacktestCode[]> {
-        return this.getUIState()
-            .pipe(
-                map(res => res.backtestCode)
+                    if (!isNaN(backtestMilestone)) {
+                        return BacktestMilestone[backtestMilestone];
+                    } else {
+                        return isBacktesting ? 'BACKTESTING' : 'START_BACKTEST';
+                    }
+                })
             );
     }
 
@@ -319,274 +373,8 @@ export class BacktestService extends BaseService {
         this.store.dispatch(new Actions.UpdateBacktestLevelAction(level));
     }
 
-    /* =======================================================Backtest IO parameters======================================================= */
-
-    /**
-     * @description 获取回测接口 backtestIO 的参数。
-     */
-    private getBacktestIOParameters(): Observable<BacktestIORequest> {
-        return this.getStrategyDetail()
-            .pipe(
-                combineLatest(
-                    this.getSelectedLanguage(),
-                    this.getRunningNode(),
-                    this.generatePutTaskParams(),
-                    ({ is_owner }, language, node, task) => ({
-                        nodeId: is_owner ? node : 0,
-                        language: is_owner ? language : language + 1000,
-                        info: task
-                    }),
-                ),
-                map(({ nodeId, language, info }) => ({ nodeId, language, io: JSON.stringify([BacktestDescription.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(info)]) })),
-                distinctUntilChanged((previous, current) => Object.keys(current).every(key => previous[key] === current[key])),
-        );
-    }
-
-    /**
-     * @description 生成回测任务的参数
-     */
-    private generatePutTaskParams(): Observable<BacktestPutTaskParams> {
-        return this.generatePutTaskCode()
-            .pipe(
-                zip(
-                    this.generatePutTaskExchange(),
-                    this.generatePutTaskOptions(),
-                    (code, exchange, options) => ({ Code: code, Exchanges: exchange, Options: options, Start: options.TimeBegin, End: options.TimeEnd })
-                ),
-                distinctUntilChanged((previous, current) => JSON.stringify(previous) === JSON.stringify(current))
-            );
-    }
-
-    /**
-     * @description 生成回测时所需要的Code字段的值。
-     */
-    private generatePutTaskCode(): Observable<PutTaskCode[]> {
-
-        const getValue = (overview: VariableOverview): string | boolean | number => {
-            if (overview.variableTypeId === VariableType.SELECT_TYPE) {
-                return this.constant.transformStringToList(<string>overview.originValue).findIndex(item => item === overview.variableValue);
-            } else {
-                return overview.variableValue;
-            }
-        }
-
-        return this.getBacktestCode()
-            .pipe(
-                map(codes => codes.map(code => {
-                    const { name, id, args } = code;
-
-                    const result: PutTaskCodeArg[] = args.map(arg => <PutTaskCodeArg>[this.constant.removeConditionInName(arg.variableName), getValue(arg), arg.variableTypeId]);
-
-                    return { name, id, args: result };
-                })),
-                combineLatest(
-                    this.getSelectedTemplates(false),
-                    this.getStrategyDetail(),
-                    (tasks, templates, strategy) => tasks.map(task => {
-                        const { id, name, args } = task;
-
-                        const sourceKey = !!strategy.is_owner ? 'source' : 'id'; // 用户不能看代码时统一传id。
-
-                        const code = name === this.constant.MAIN_CODE_FLAG ? strategy[sourceKey] : templates.find(template => template.id === id)[sourceKey];
-
-                        return [code, args, name] as PutTaskCode;
-                    })
-                )
-            );
-    }
-
-    /**
-     * @description 生成回测时所需的 Options 字段。
-     */
-    private generatePutTaskOptions(): Observable<BacktestPutTaskOptions> {
-        return this.getUIState()
-            .pipe(
-                combineLatest(
-                    this.getUpdatePeriod(),
-                    ({ advancedOptions, timeOptions, backtestLevel, backtestTasks }, updatePeriod) => {
-                        const { log, profit, chart, delay } = advancedOptions;
-
-                        const { start, end, klinePeriodId } = timeOptions;
-
-                        const begin = <number>moment(start).unix();
-
-                        const finish = <number>moment(end).unix();
-
-                        const isMultipleTask = !!backtestTasks.length;
-
-                        return {
-                            RetFlags: this.getRetFlags(isMultipleTask, backtestLevel),
-                            MaxRuntimeLogs: isMultipleTask ? 0 : log,
-                            MaxProfitLogs: profit,
-                            MaxChartLogs: isMultipleTask ? 0 : chart,
-                            DataServer: 'https://www.botvs.com',
-                            // CPP
-                            TimeBegin: begin,
-                            TimeEnd: finish,
-                            SnapshortPeriod: this.generateSnapshotPeriod(begin, finish) * 1000,
-                            Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60 * 1000,
-                            NetDelay: Math.max(1, delay),
-                            UpdatePeriod: updatePeriod,
-                        }
-                    }
-                )
-            );
-    }
-
-    /**
-     *
-     * @param isMultipleTask 是否多任务，即用户是否设置了有效的调优参数。
-     * @param level 回测的级别，模拟 or 实盘。
-     * @description 生成回测 Options 中的 RetFlags 的值。
-     */
-    private getRetFlags(isMultipleTask: boolean, level: number): number {
-        if (isMultipleTask) {
-            return this.constant.BT_PROFIT_LOGS | this.constant.BT_CLOSE_PROFIT_LOGS | this.constant.BT_ACCOUNTS;
-        }
-
-        let result = this.constant.getRetFlags();
-
-        if (level === 0) {
-            return result | this.constant.BT_SYMBOLS | this.constant.BT_INDICATORS;
-        } else {
-            return result;
-        }
-    }
-
-    /**
-     * @description 生成回测 Options 中的 UpdatePeriod 的值。
-     */
-    private getUpdatePeriod(): Observable<number> {
-        return this.getSelectedLanguage()
-            .pipe(
-                map(language => language === 1 ? 5000 : 500)
-            );
-    }
-
-    /**
-     *
-     * @param start 回测开始时间
-     * @param end 回测结束时间
-     * @description 生成回测 Options 中的 SnapshotPeriod 字段的基础值。
-     */
-    private generateSnapshotPeriod(start: number, end: number): number {
-        let daySeconds = 24 * 60 * 60;
-
-        const range = end - start;
-
-        if (range / daySeconds <= 2) { // 2 天之内
-            return 60 * 5;
-        } else if (range / daySeconds < 30) {  // 一个月之内
-            return 60 * 60;
-        } else {
-            return daySeconds;
-        }
-    }
-
-    /**
-     * @method generatePutTaskExchange
-     * @description 生成回测时所需要的 Exchanges 字段的值。
-     */
-    private generatePutTaskExchange(): Observable<BacktestExchange[]> {
-        return this.getUIState()
-            .pipe(
-                map(state => {
-                    const { timeOptions, floorKlinePeriod, advancedOptions, platformOptions, isFaultTolerantMode, backtestLevel } = state;
-
-                    const { klinePeriodId } = timeOptions;
-
-                    const advanceConfig = this.generateAdvanceOptionsForExchange(advancedOptions, isFaultTolerantMode, backtestLevel, floorKlinePeriod);
-
-                    return platformOptions.map(option => {
-                        const { eid, stock, makerFee, takerFee } = option;
-
-                        const constantConfig: BacktestConstantOptions = omit(this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === eid), ['eid']) as BacktestConstantOptions;
-
-                        return {
-                            Id: eid,
-                            BaseCurrency: this.generateBaseCurrency(stock),
-                            FeeMaker: this.generateFee(makerFee),
-                            FeeTaker: this.generateFee(takerFee),
-
-                            // constant options
-                            ...constantConfig,
-                            DataSource: this.generateDataSource(option),
-
-                            // advance options
-                            ...advanceConfig,
-
-                            // platform options
-                            ...this.generatePlatformOptionsForExchange(option, klinePeriodId),
-                        }
-                    })
-                })
-            );
-    }
-
-    /**
-     * @description 生成回测字段 Exchange 中的高级选项的配置。
-     */
-    private generateAdvanceOptionsForExchange(option: AdvancedOption, isFaultTolerantMode: boolean, backtestLevel: number, floorKlinePeriod: number): BacktestAdvanceOptions {
-        const { faultTolerant, slipPoint, delay, barLen } = option;
-
-        return {
-            FaultTolerant: isFaultTolerantMode ? faultTolerant : 0,
-            SlipPoint: Math.max(0, slipPoint),
-            NetDelay: Math.max(1, delay),
-            MaxBarLen: Math.max(100, barLen),
-            Mode: backtestLevel,
-            BasePeriod: this.generateBasePeriod(backtestLevel, floorKlinePeriod),
-        };
-    }
-
-    /**
-     * @description 生成回测字段 Exchange 中的平台选项的配置。
-     */
-    private generatePlatformOptionsForExchange(platform: BacktestSelectedPair, klinePeriodId: number): BacktestPlatformOptions {
-        const { eid, name, stock, makerFee, takerFee, balance, remainingCurrency, minFee } = platform;
-        let label = '';
-
-        this.translate.get(name).subscribe(result => label = result);
-
-        return {
-            Name: eid,
-            Label: label,
-            Balance: balance || 0,
-            Stocks: remainingCurrency || 0,
-            Fee: [makerFee, takerFee],
-            MinFee: minFee || 0,
-            Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes,
-            Currency: stock,
-            QuoteCurrency: this.constant.BACKTEST_PLATFORMS.find(item => item.eid === eid).quoteCurrency,
-        };
-    }
-
-    /**
-     * @description 常量配置中的 DataSource 的值。
-     */
-    private generateDataSource(pair: BacktestSelectedPair): string {
-        return this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === pair.eid).DataSource || pair.stock;
-    }
-
-    /**
-     * @description 生成回测配置 Exchange 中的 FeeMaker, FeeTaker的值。
-     */
-    private generateFee(fee: number): number {
-        return fee * 1000;
-    }
-
-    /**
-     * @description 生成回测配置 Exchange 中BaseCurrency字段的值
-     */
-    private generateBaseCurrency(stock: string): string {
-        return stock.split('_')[0];
-    }
-
-    /**
-     * @description 生成回测配置 Exchange 中BasePeriod字段的值
-     */
-    private generateBasePeriod(backtestLevel: number, klinePeriodId: number): number {
-        return backtestLevel === 1 ? 1000 : this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60000;
+    resetBacktestState(): void {
+        this.store.dispatch(new Actions.ResetBacktestRelatedStateAction());
     }
 
     /* =======================================================Error handler======================================================= */

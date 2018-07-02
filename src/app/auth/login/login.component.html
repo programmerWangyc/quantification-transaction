@@ -15,8 +15,8 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="username.invalid && (username.dirty || username.touched)">
-                            <div *ngIf="username.errors.required">{{'USERNAME_TIP' | translate}}</div>
-                            <div *ngIf="!username.errors.required && username.errors.usernameFormat">{{loginForm.getError('usernameFormat', 'username') | translate}}</div>
+                            <div *ngIf="!!username.errors.required">{{'USERNAME_TIP' | translate}}</div>
+                            <div *ngIf="!username.errors.required && !!username.errors.usernameFormat">{{loginForm.getError('usernameFormat', 'username') | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
@@ -30,23 +30,23 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="password.invalid && (password.dirty || password.touched)">
-                            <div *ngIf="password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
-                            <div *ngIf="!password.errors.required && password.errors.passwordFormat">{{loginForm.getError('passwordFormat', 'password') | translate}}</div>
+                            <div *ngIf="!!password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
+                            <div *ngIf="!password.errors.required && !!password.errors.passwordFormat">{{loginForm.getError('passwordFormat', 'password') | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item *ngIf="needVerification | async; let require">
+                <nz-form-item *ngIf="needVerification | async">
                     <nz-form-label>{{'VERIFICATION_CODE' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
-                            <input formControlName="verificationCode" [nzSize]="inputSize" [required]="require" [placeholder]="'VERIFICATION_CODE' | translate"
+                            <input formControlName="verificationCode" [nzSize]="inputSize" [placeholder]="'VERIFICATION_CODE' | translate"
                                 nz-input>
                             <ng-template #prefix>
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="verificationCode.invalid && (verificationCode.dirty || verificationCode.touched)">
-                            <div *ngIf="verificationCode.errors.required">{{'VERIFICATION_CODE_TIP' | translate}}</div>
+                            <div *ngIf="!!verificationCode.errors.required">{{'VERIFICATION_CODE_TIP' | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>

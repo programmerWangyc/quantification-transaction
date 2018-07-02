@@ -1,6 +1,6 @@
-import { flatten } from 'lodash';
+import { flatten, isNumber } from 'lodash';
 import { from } from 'rxjs';
-import { concatMap ,  filter ,  map ,  reduce } from 'rxjs/operators';
+import { concatMap, filter, map, reduce } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../../app.config';
 import { Filter } from '../../backtest/arg-optimizer/arg-optimizer.component';
@@ -13,86 +13,117 @@ import {
     OptimizedVariableOverview,
 } from '../../backtest/backtest.interface';
 import { CompareLogic, MAIN_CODE_FLAG } from '../../backtest/providers/backtest.constant.service';
-import { BacktestIORequest, GetTemplatesRequest } from '../../interfaces/request.interface';
+import { BacktestIORequest, BacktestIOType, GetTemplatesRequest } from '../../interfaces/request.interface';
 import {
     BacktestIOResponse,
+    BacktestTaskResult,
     GetTemplatesResponse,
+    ServerBacktestResult,
     ServerSendBacktestMessage,
     TemplatesResponse,
 } from '../../interfaces/response.interface';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import * as actions from './backtest.action';
+import { BacktestMilestone } from '../../backtest/backtest.config';
 
 export interface AdvancedOption {
-    log: number;
-    profit: number;
+    barLen: number;
     chart: number;
-    slipPoint: number;
     delay: number;
     faultTolerant: number;
-    barLen: number;
+    log: number;
+    profit: number;
+    slipPoint: number;
 }
 
 const storedAdvancedOptions = JSON.parse(localStorage.getItem(LocalStorageKey.backtestAdvancedOptions));
 
 export interface UIState {
-    timeOptions: BacktestTimeConfig;
     advancedOptions: AdvancedOption;
-    floorKlinePeriod: number;
-    platformOptions: BacktestSelectedPair[];
-    runningNode: number;
-    isFaultTolerantMode: boolean;
     backtestCode: BacktestCode[];
+    backtestLevel: number;
+    backtestMilestone: number;
     backtestTaskFiler: Filter[];
     backtestTasks: BacktestTaskDescription[][];
-    backtestLevel: number;
+    floorKlinePeriod: number;
     isBacktesting: boolean;
+    isFaultTolerantMode: boolean;
+    platformOptions: BacktestSelectedPair[];
+    runningNode: number;
+    timeOptions: BacktestTimeConfig;
 }
 
 export const defaultAdvancedOptions: AdvancedOption = { log: 8000, profit: 8000, chart: 3000, slipPoint: 0, delay: 200, faultTolerant: 0.5, barLen: 300 };
 
 export const initialStateUIState: UIState = {
+    advancedOptions: storedAdvancedOptions || defaultAdvancedOptions,
+    backtestCode: [],
+    backtestLevel: 0,
+    backtestMilestone: NaN,
+    backtestTaskFiler: [],
+    backtestTasks: null,
+    floorKlinePeriod: K_LINE_PERIOD.find(item => item.minutes === 5).id,
+    isBacktesting: false,
+    isFaultTolerantMode: false,
+    platformOptions: null,
+    runningNode: 0,
     timeOptions: {
         start: null,
         end: null,
         klinePeriodId: K_LINE_PERIOD.find(item => item.minutes === 15).id,
     },
-    advancedOptions: storedAdvancedOptions || defaultAdvancedOptions,
-    floorKlinePeriod: K_LINE_PERIOD.find(item => item.minutes === 5).id,
-    platformOptions: null,
-    runningNode: 0,
-    isFaultTolerantMode: false,
-    backtestCode: [],
-    backtestTaskFiler: [],
-    backtestTasks: null,
-    backtestLevel: 0,
-    isBacktesting: false,
 }
 
 export interface RequestParams {
-    templateReq: GetTemplatesRequest;
     backtestReq: BacktestIORequest;
+    backtestReqType: string;
+    templateReq: GetTemplatesRequest;
+}
+
+export interface BacktestStateMemory<T> {
+    [BacktestIOType.deleteTask]: T;
+    [BacktestIOType.getTaskResult]: T;
+    [BacktestIOType.getTaskStatus]: T;
+    [BacktestIOType.putTask]: T;
+    [BacktestIOType.stopTask]: T;
 }
 
 export interface State {
     UIState: UIState;
-    requestParams: RequestParams;
-    templatesRes: GetTemplatesResponse;
-    templates: TemplatesResponse[];
     backtestRes: BacktestIOResponse;
-    serverMessage: ServerSendBacktestMessage;
+    backtestResults: BacktestIOResponse[];
+    backtestState: BacktestStateMemory<number | ServerBacktestResult<BacktestTaskResult | string>>;
+    requestParams: RequestParams;
+    serverMessage: ServerSendBacktestMessage<BacktestTaskResult>;
+    serverMessages: ServerSendBacktestMessage<BacktestTaskResult>[];
+    templates: TemplatesResponse[];
+    templatesRes: GetTemplatesResponse;
 }
+
+const initialRequestParams = {
+    backtestReq: null,
+    backtestReqType: null,
+    templateReq: null,
+};
+
+const initialBacktestState = {
+    [BacktestIOType.deleteTask]: null,
+    [BacktestIOType.getTaskResult]: null,
+    [BacktestIOType.getTaskStatus]: null,
+    [BacktestIOType.putTask]: null,
+    [BacktestIOType.stopTask]: null,
+};
 
 const initialState: State = {
     UIState: initialStateUIState,
-    requestParams: {
-        templateReq: null,
-        backtestReq: null,
-    },
-    templatesRes: null,
-    templates: [],
     backtestRes: null,
+    backtestResults: null,
+    backtestState: initialBacktestState,
+    requestParams: initialRequestParams,
     serverMessage: null,
+    serverMessages: null,
+    templates: [],
+    templatesRes: null,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -112,11 +143,68 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // backtest io
         case actions.EXECUTE_BACKTEST:
-            return { ...state, requestParams: { ...state.requestParams, backtestReq: action.payload }, UIState: { ...state.UIState, isBacktesting: true } };
+            return {
+                ...state,
+                backtestState: { GetTaskResult: null, PutTask: null, GetTaskStatus: null, DelTask: null, StopTask: null },
+                serverMessage: null,
+                requestParams: { ...state.requestParams, backtestReq: action.payload, backtestReqType: JSON.parse(action.payload.io)[0] },
+            };
+
+        case actions.GET_BACKTEST_RESULT:
+        case actions.GET_BACKTEST_STATUS:
+        case actions.DELETE_BACKTEST_TASK:
+        case actions.STOP_BACKTEST_TASK:
+            return {
+                ...state,
+                requestParams: { ...state.requestParams, backtestReq: action.payload, backtestReqType: JSON.parse(action.payload.io)[0] },
+            };
 
         case actions.EXECUTE_BACKTEST_FAIL:
-        case actions.EXECUTE_BACKTEST_SUCCESS:
-            return { ...state, backtestRes: action.payload, UIState: { ...state.UIState, isBacktesting: false } };
+        case actions.GET_BACKTEST_RESULT_FAIL:
+        case actions.GET_BACKTEST_STATUS_FAIL:
+        case actions.DELETE_BACKTEST_TASK_FAIL:
+        case actions.STOP_BACKTEST_TASK_FAIL:
+            return { ...state, backtestRes: action.payload };
+
+        case actions.EXECUTE_BACKTEST_SUCCESS: {
+            const result = getBacktestResult(action.payload);
+
+            return {
+                ...state,
+                backtestRes: { ...action.payload, result },
+                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.BACKTESTING },
+            };
+        }
+
+        case actions.GET_BACKTEST_STATUS_SUCCESS:
+        case actions.DELETE_BACKTEST_TASK_SUCCESS:
+        case actions.STOP_BACKTEST_TASK_SUCCESS: {
+            const result = getBacktestResult(action.payload);
+
+            return {
+                ...state,
+                backtestRes: { ...action.payload, result },
+                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+            };
+        }
+
+        case actions.GET_BACKTEST_RESULT_SUCCESS: {
+            const result = getBacktestResult(action.payload);
+
+            const backtestResults = state.backtestResults ? [...state.backtestResults, { ...action.payload }] : [{ ...action.payload }];
+
+            const isResultsAllReceived = backtestResults.length === 0 ? true:  backtestResults.length === state.UIState.backtestTasks.length;
+
+            return {
+                ...state,
+                backtestResults,
+                backtestRes: { ...action.payload, result },
+                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                UIState: { ...state.UIState, backtestMilestone: isResultsAllReceived ? NaN : state.UIState.backtestMilestone, isBacktesting: !isResultsAllReceived }
+            };
+        }
+
 
         /** ==============================================Server send message===================================================== **/
 
@@ -124,7 +212,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RECEIVE_SERVER_SEND_BACKTEST_EVENT: {
             const { output, status, uuid } = action.payload;
 
-            return { ...state, serverMessage: { output, uuid, status: JSON.parse(status) } };
+            const serverMessage = { output, uuid, status: <BacktestTaskResult>JSON.parse(status) };
+
+            const serverMessages = state.serverMessages ? [...state.serverMessages, serverMessage] : [serverMessage];
+
+            return { ...state, serverMessage, serverMessages, UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE } };
         }
 
         /** ==============================================Local action===================================================== **/
@@ -179,12 +271,28 @@ export function reducer(state = initialState, action: actions.Actions): State {
             const backtestCode = generateToBeTestedValues(state.UIState.backtestCode);
 
             // TODO: 在 service 中需要处理 backtest的空值，给用户提示。此时回测任务不应该被发出去
-            return { ...state, UIState: { ...state.UIState, backtestCode, backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler) } };
+            // 清空回测结果，服务端推送的消息，backtestIO的响应以及回测的状态。
+            return {
+                ...state,
+                UIState: { ...state.UIState, backtestCode, backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING, backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler) },
+                backtestRes: null,
+                serverMessage: null,
+                serverMessages: null,
+                backtestState: initialBacktestState,
+            };
         }
 
         // backtest level
         case actions.UPDATE_BACKTEST_LEVEL:
             return { ...state, UIState: { ...state.UIState, backtestLevel: action.payload } };
+
+        // loading
+        case actions.TOGGLE_BACKTEST_LOADING_STATE:
+            return { ...state, UIState: { ...state.UIState, isBacktesting: action.payload } };
+
+        // reset backtest related state
+        case actions.RESET_BACKTEST_RELATED_STATE:
+            return { ...state, backtestRes: null, serverMessage: null, serverMessages: null, backtestState: initialBacktestState };
 
         default:
             return state;
@@ -339,6 +447,12 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
     }
 }
 
+function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestTaskResult> {
+    let { result } = payload
+
+    return isNumber(result) ? result : JSON.parse(<string>result);
+}
+
 export const getUIState = (state: State) => state.UIState;
 
 export const getTemplatesRes = (state: State) => state.templatesRes;
@@ -348,3 +462,11 @@ export const getTemplates = (state: State) => state.templates;
 export const getBacktestReqParams = (state: State) => state.requestParams;
 
 export const getBacktestRes = (state: State) => state.backtestRes;
+
+export const getBacktestState = (state: State) => state.backtestState;
+
+export const getServerSendMessage = (state: State) => state.serverMessage;
+
+export const getBacktestServerMessages = (state: State) => state.serverMessages;
+
+export const getBacktestResults = (state: State) => state.backtestResults;

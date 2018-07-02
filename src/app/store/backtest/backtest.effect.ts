@@ -8,6 +8,7 @@ import { filter, map, switchMapTo } from 'rxjs/operators';
 import { ServerBacktestCode } from '../../backtest/backtest.config';
 import {
     BacktestIOResponse,
+    BacktestTaskResult,
     ServerBacktestResult,
     ServerSendBacktestMessage,
     ServerSendEventType,
@@ -27,7 +28,19 @@ export class BacktestEffect extends BaseEffect {
     templates$: Observable<ResponseAction> = this.getResponseAction(backtestActions.GET_TEMPLATES, backtestActions.ResponseActions);
 
     @Effect()
-    backtestIO$: Observable<ResponseAction> = this.getResponseAction(backtestActions.EXECUTE_BACKTEST, backtestActions.ResponseActions, isBacktestFail)
+    backtestIO$: Observable<ResponseAction> = this.getResponseAction(backtestActions.EXECUTE_BACKTEST, backtestActions.ResponseActions, isBacktestFail);
+
+    @Effect()
+    backtestResult$: Observable<ResponseAction> = this.getResponseAction(backtestActions.GET_BACKTEST_RESULT, backtestActions.ResponseActions, isBacktestFail);
+
+    @Effect()
+    backtestStatus$: Observable<ResponseAction> = this.getResponseAction(backtestActions.GET_BACKTEST_STATUS, backtestActions.ResponseActions, isBacktestFail)
+
+    @Effect()
+    deleteBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.DELETE_BACKTEST_TASK, backtestActions.ResponseActions, isBacktestFail)
+
+    @Effect()
+    stopBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.STOP_BACKTEST_TASK, backtestActions.ResponseActions, isBacktestFail)
 
     /**
      * @description 在模板依赖被取消后检查回测中的模板代码是否被用户选中，删除不需要的模板
@@ -43,8 +56,10 @@ export class BacktestEffect extends BaseEffect {
     serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
         .pipe(
             filter(isResponsive => isResponsive),
-            switchMapTo(this.ws.messages.pipe(filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))),
-            map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage>msg.result))
+            switchMapTo(this.ws.messages.pipe(
+                filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST)))
+            ),
+            map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage<string>>msg.result))
         );
 
     constructor(
@@ -69,13 +84,13 @@ export class BacktestEffect extends BaseEffect {
  * @function getBacktestErrorMessage
  * @description 将backtestIO接口返回的错误信息映射成提示消息。
  */
-export function getBacktestErrorMessage(result: number | ServerBacktestResult): string {
+export function getBacktestErrorMessage(result: number | ServerBacktestResult<BacktestTaskResult | string>): string {
     if (result === -1) {
         return 'BACKTEST_SERVER_OFFLINE';
     } else if (result === -2) {
         return 'BACKTEST_STRATEGY_EXPIRED';
     } else {
-        const { Code, Result } = <ServerBacktestResult>result;
+        const { Code, Result } = <ServerBacktestResult<BacktestTaskResult | string>>result;
 
         if (Code === ServerBacktestCode.SUCCESS || Code === ServerBacktestCode.ALREADY_EXIST) {
             return null;
@@ -86,5 +101,5 @@ export function getBacktestErrorMessage(result: number | ServerBacktestResult): 
 }
 
 export function isBacktestFail(response: BacktestIOResponse): boolean {
-    return !!response.error || !!getBacktestErrorMessage(isNumber(response.result) ? response.result : JSON.parse(response.result));
+    return !!response.error || !!getBacktestErrorMessage(isNumber(response.result) ? response.result : JSON.parse(<string>response.result));
 }

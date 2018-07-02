@@ -6,7 +6,7 @@ import { delayWhen, filter, map, mergeMap, switchMap, take } from 'rxjs/operator
 
 import { LoginRequest, SetPasswordRequest, SignupRequest } from '../../interfaces/request.interface';
 import { ErrorService } from '../../providers/error.service';
-import { ResetLoginErrorAction } from '../../store/auth/login.action';
+import { ResetLoginErrorAction, CloseSecondaryVerifyAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
@@ -215,6 +215,10 @@ export class AuthService {
 
     resetVerifyPwdResponse(): void {
         this.store.dispatch(new ResetVerifyPasswordResponseAction());
+    }
+
+    closeSecondaryVerify(): void {
+        this.store.dispatch(new CloseSecondaryVerifyAction());
     }
 
     /* =======================================================Error Handle======================================================= */

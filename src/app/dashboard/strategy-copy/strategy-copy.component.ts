@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { Observable, Subscription } from 'rxjs';
-import { combineLatest, filter, map, mapTo, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { filter, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
@@ -47,21 +47,26 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
     }
 
     initialPrivateModel() {
-        this.templates = this.strategyService.getCurrentDependance()
+        this.templates = combineLatest(
+            this.strategyService.getCurrentDependance(),
+            this.language
+        )
             .pipe(
-                combineLatest(this.language, (templates, language) => templates.filter(item => item.language === language))
-            );
+                map(([templates, language]) => templates.filter(item => item.language === language)),
+        );
 
-        this.needShowTemplateDependance = this.templates
-            .pipe(
-                map(list => !!list.length),
-                combineLatest(
-                    this.isTemplateCategorySelected
-                        .pipe(
-                            filter(sure => !sure)
-                        ),
-                    (hasTemplates, isNotTemplateCategory) => hasTemplates && isNotTemplateCategory
+        this.needShowTemplateDependance = combineLatest(
+            this.templates
+                .pipe(
+                    map(list => !!list.length)
+                ),
+            this.isTemplateCategorySelected
+                .pipe(
+                    filter(sure => !sure)
                 )
+        )
+            .pipe(
+                map(([hasTemplates, isNotTemplateCategory]) => hasTemplates && isNotTemplateCategory)
             );
     }
 

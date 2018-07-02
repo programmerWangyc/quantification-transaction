@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import * as fileSaver from 'file-saver';
 import { isBoolean, negate } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { from, Observable, of, Subject, Subscription } from 'rxjs';
-import { find, map, merge, mergeMap } from 'rxjs/operators';
+import { from, Observable, merge, of, Subject, Subscription } from 'rxjs';
+import { find, map, mergeMap } from 'rxjs/operators';
 
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
@@ -141,21 +141,28 @@ export class StrategyCreateMetaComponent {
          *  FIXME: 直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
          *  类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
          */
-        this.args = this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg))
-            .pipe(
-                map(args => args.map(this.transformToMetaArg)),
-                merge(this.args$.pipe(map(item => ({ ...item }))))
-            );
-
-        this.commandArgs = this.strategyService.getExistedStrategyArgs(this.strategyService.isCommandArg)
-            .pipe(
-                map(args => args.map(arg => this.transformToMetaArg({ ...arg, variableName: this.constant.withoutPrefix(arg.variableName, this.constant.COMMAND_PREFIX) }))),
-                merge(this.commandArgs$
-                    .pipe(
-                        map(item => ({ ...item }))
-                    )
+        this.args = merge(
+            this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg))
+                .pipe(
+                    map(args => args.map(this.transformToMetaArg))
+                ),
+            this.args$
+                .pipe(
+                    map(item => ({ ...item }))
                 )
-            );
+        );
+
+        this.commandArgs = merge(
+            this.strategyService.getExistedStrategyArgs(this.strategyService.isCommandArg)
+                .pipe(
+                    map(args => args.map(arg => this.transformToMetaArg({ ...arg, variableName: this.constant.withoutPrefix(arg.variableName, this.constant.COMMAND_PREFIX) })))
+                ),
+
+            this.commandArgs$
+                .pipe(
+                    map(item => ({ ...item }))
+                )
+        );
 
         this.hasCommandArgs = this.commandArgs
             .pipe(
@@ -170,17 +177,21 @@ export class StrategyCreateMetaComponent {
         /**
          * @description Multi source observables;
          */
-        this.language = this.strategy
-            .pipe(
-                map(strategy => strategy.language),
-                merge(this.language$)
-            );
+        this.language = merge(
+            this.strategy
+                .pipe(
+                    map(strategy => strategy.language)
+                ),
+            this.language$
+        );
 
-        this.category = this.strategy
-            .pipe(
-                map(strategy => strategy.category),
-                merge(this.category$)
-            );
+        this.category = merge(
+            this.strategy
+                .pipe(
+                    map(strategy => strategy.category)
+                ),
+            this.category$
+        );
 
         this.isTemplateCategorySelected = this.category
             .pipe(

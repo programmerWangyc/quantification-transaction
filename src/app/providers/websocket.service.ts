@@ -49,7 +49,7 @@ export class WebsocketService {
             params: data.params,
             token: localStorage.getItem(LocalStorageKey.token),
             version: this.constant.VERSION,
-            callbackId: data.method.join('-')
+            callbackId: data.callbackId,
         }
 
         const request = this.deflate(param);

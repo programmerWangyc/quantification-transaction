@@ -577,6 +577,7 @@
     "START_BACKTEST": "开始回测",
     "START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE": "回测完成接收日志",
     "BACKTEST_SYSTEM_LOADING": "正在加载回测系统···",
+    "BACKTESTING": "正在回测",
     "WAIT_FOR_COMPILING": "正在编译，请耐心等待···",
 
     "BACKTEST_FAULT_TOLERANT_DESCRIPTION": "容错模式下一些函数会随机失败, 模拟实盘环境",

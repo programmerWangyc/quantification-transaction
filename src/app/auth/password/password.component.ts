@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
-import { combineLatest, map } from 'rxjs/operators';
+import { combineLatest, Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';
@@ -45,15 +45,17 @@ export class PasswordComponent extends BaseComponent {
 
     launch() {
         this.subscription$$ = this.authService.launchSetPwd(
-            this.setPwd$
+            combineLatest(
+                this.setPwd$
+                    .pipe(
+                        map(password => this.encrypt.encryptPassword(password))
+                    ),
+                this.activatedRoute.params.pipe(
+                    map(param => param['token'])
+                )
+            )
                 .pipe(
-                    map(password => this.encrypt.encryptPassword(password)),
-                    combineLatest(
-                        this.activatedRoute.params.pipe(
-                            map(param => param['token'])
-                        ),
-                        (password, token) => ({ password, token })
-                    )
+                    map(([password, token]) => ({ password, token }))
                 )
         )
             .add(this.authService.showSetPasswordResponse())

@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { combineLatest, filter, map, mapTo, merge } from 'rxjs/operators';
+import { combineLatest, Observable, Subject, Subscription, merge } from 'rxjs';
+import { filter, map, mapTo } from 'rxjs/operators';
 
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -51,11 +51,12 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
 
-        this.templates = this.strategyService.getStrategyDependance()
+        this.templates = combineLatest(
+            this.strategyService.getStrategyDependance(),
+            this.language
+        )
             .pipe(
-                combineLatest(
-                    this.language,
-                    (templates, language) => templates.filter(item => item.language === language))
+                map(([templates, language]) => templates.filter(item => item.language === language))
             );
     }
 
@@ -64,13 +65,18 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
             /**
              * @description Besides user active acquisition, it needs to check the strategy whether has token already.
              */
-            .add(this.strategyService.launchOpStrategyToken(this.strategyService.hasToken(this.strategyId)
-                .pipe(
-                    filter(has => has),
-                    mapTo(OpStrategyTokenType.GET),
-                    merge(this.opToken$),
-                    map(opCode => ({ opCode, strategyId: this.strategyId }))
-                ))
+            .add(this.strategyService.launchOpStrategyToken(
+                merge(
+                    this.strategyService.hasToken(this.strategyId)
+                        .pipe(
+                            filter(has => has),
+                            mapTo(OpStrategyTokenType.GET)
+                        ),
+                    this.opToken$
+                )
+                    .pipe(
+                        map(opCode => ({ opCode, strategyId: this.strategyId }))
+                    ))
             )
             .add(this.strategyService.updateStrategySecretKeyState(this.strategyId));
     }

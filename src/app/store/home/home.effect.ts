@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs';
-import { zip } from 'rxjs/operators';
+import { zip } from 'rxjs';
 
 import { ResponseAction } from '../base.action';
 import { GET_EXCHANGE_LIST, ResponseActions as exchange } from '../exchange/exchange.action';
@@ -15,10 +15,10 @@ export class HomeEffect extends BaseEffect {
 
     @Effect()
     homeInfo$: Observable<ResponseAction> = this.getMultiResponseActions(
-        this.actions$.ofType(GET_SETTINGS)
-            .pipe(
-                zip(this.actions$.ofType(GET_EXCHANGE_LIST))
-            ),
+        zip(
+            this.actions$.ofType(GET_SETTINGS),
+            this.actions$.ofType(GET_EXCHANGE_LIST)
+        ),
         { ...pub, ...exchange }
     );
 

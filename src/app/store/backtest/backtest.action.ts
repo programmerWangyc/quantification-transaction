@@ -13,7 +13,7 @@ export const RECEIVE_SERVER_SEND_BACKTEST_EVENT = '[Backtest] RECEIVE_SERVER_SEN
 export class ReceiveServerSendBacktestEventAction implements Action {
     readonly type = RECEIVE_SERVER_SEND_BACKTEST_EVENT;
 
-    constructor(public payload: ServerSendBacktestMessage) { }
+    constructor(public payload: ServerSendBacktestMessage<string>) { }
 }
 
 /* ===========================================Api action=================================== */
@@ -58,6 +58,10 @@ export class GetTemplatesSuccessAction extends GetTemplatesAction implements Act
 }
 
 // backtest io
+/**
+ * 后台使用同一个API完成这些动作，这里做了拆分，不同的动作之间除了 type 不同样之外，接口其实
+ * 都一样。这么做完全是为了调试时看的更清楚，否则在调试工具里看的都是一个动作 -- EXECUTE_BACKTEST
+ */
 export enum BacktestIOOrder {
     nodeId,
     language,
@@ -101,6 +105,122 @@ export class BacktestIOSuccessAction extends BacktestIOAction implements Action 
     readonly type = EXECUTE_BACKTEST_SUCCESS;
 
     constructor(public payload: BacktestIOResponse) { super() };
+}
+
+// get backtest status;
+export const GET_BACKTEST_STATUS = '[Backtest] GET_BACKTEST_STATUS';
+
+class BacktestStatusAction extends BacktestIOAction {
+    callbackId = 'BacktestStatus';
+}
+
+export class BacktestStatusRequestAction extends BacktestStatusAction implements Action {
+    readonly type = GET_BACKTEST_STATUS;
+
+    constructor(public payload: BacktestIORequest) { super() }
+}
+
+export const GET_BACKTEST_STATUS_FAIL = '[Backtest] GET_BACKTEST_STATUS_FAIL';
+
+export class BacktestStatusFailAction extends BacktestStatusAction implements Action {
+    readonly type = GET_BACKTEST_STATUS_FAIL;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+export const GET_BACKTEST_STATUS_SUCCESS = '[Backtest] GET_BACKTEST_STATUS_SUCCESS';
+
+export class BacktestStatusSuccessAction extends BacktestStatusAction implements Action {
+    readonly type = GET_BACKTEST_STATUS_SUCCESS;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+// get backtest result;
+class BacktestResultAction extends BacktestIOAction {
+    callbackId = 'BacktestResult';
+}
+
+export const GET_BACKTEST_RESULT = '[Backtest] GET_BACKTEST_RESULT';
+
+export class BacktestResultRequestAction extends BacktestResultAction implements Action {
+    readonly type = GET_BACKTEST_RESULT;
+
+    constructor(public payload: BacktestIORequest) { super() }
+}
+
+export const GET_BACKTEST_RESULT_FAIL = '[Backtest] GET_BACKTEST_RESULT_FAIL';
+
+export class BacktestResultFailAction extends BacktestResultAction implements Action {
+    readonly type = GET_BACKTEST_RESULT_FAIL;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+export const GET_BACKTEST_RESULT_SUCCESS = '[Backtest] GET_BACKTEST_RESULT_SUCCESS';
+
+export class BacktestResultSuccessAction extends BacktestResultAction implements Action {
+    readonly type = GET_BACKTEST_RESULT_SUCCESS;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+// delete backtest task
+export class DeleteBacktestAction extends BacktestIOAction {
+    callbackId = 'DeleteBacktest';
+}
+
+export const DELETE_BACKTEST_TASK = '[Backtest] DELETE_BACKTEST_TASK';
+
+export class DeleteBacktestRequestAction extends DeleteBacktestAction implements Action {
+    readonly type = DELETE_BACKTEST_TASK;
+
+    constructor(public payload: BacktestIORequest) { super() }
+}
+
+export const DELETE_BACKTEST_TASK_FAIL = '[Backtest] DELETE_BACKTEST_TASK_FAIL';
+
+export class DeleteBacktestFailAction extends DeleteBacktestAction implements Action {
+    readonly type = DELETE_BACKTEST_TASK_FAIL;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+export const DELETE_BACKTEST_TASK_SUCCESS = '[Backtest] DELETE_BACKTEST_TASK_SUCCESS';
+
+export class DeleteBacktestSuccessAction extends DeleteBacktestAction implements Action {
+    readonly type = DELETE_BACKTEST_TASK_SUCCESS;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+// stop backtest task
+class StopBacktestAction extends BacktestIOAction {
+    callbackId = 'StopBacktest';
+}
+
+export const STOP_BACKTEST_TASK = '[Backtest] STOP_BACKTEST_TASK';
+
+export class StopBacktestRequestAction extends StopBacktestAction implements Action {
+    readonly type = STOP_BACKTEST_TASK;
+
+    constructor(public payload: BacktestIORequest) { super() }
+}
+
+export const STOP_BACKTEST_TASK_FAIL = '[Backtest] STOP_BACKTEST_TASK_FAIL';
+
+export class StopBacktestFailAction extends StopBacktestAction implements Action {
+    readonly type = STOP_BACKTEST_TASK_FAIL;
+
+    constructor(public payload: BacktestIOResponse) { super() }
+}
+
+export const STOP_BACKTEST_TASK_SUCCESS = '[Backtest] STOP_BACKTEST_TASK_SUCCESS';
+
+export class StopBacktestSuccessAction extends StopBacktestAction implements Action {
+    readonly type = STOP_BACKTEST_TASK_SUCCESS;
+
+    constructor(public payload: BacktestIOResponse) { super() }
 }
 
 /* ===========================================Local action=================================== */
@@ -177,7 +297,7 @@ export class CheckBacktestTemplateCodeAction implements Action {
     constructor(public payload: number[]) { }
 }
 
-export const UPDATE_BACKTEST_ARG_FILTER ='[Backtest] UPDATE_BACKTEST_ARG_FILTER';
+export const UPDATE_BACKTEST_ARG_FILTER = '[Backtest] UPDATE_BACKTEST_ARG_FILTER';
 
 export class UpdateBacktestArgFilterAction implements Action {
     readonly type = UPDATE_BACKTEST_ARG_FILTER;
@@ -201,12 +321,38 @@ export class UpdateBacktestLevelAction implements Action {
     constructor(public payload: number) { }
 }
 
+export const TOGGLE_BACKTEST_LOADING_STATE = '[Backtest] TOGGLE_BACKTEST_LOADING_STATE';
+
+export class ToggleBacktestLoadingStateAction implements Action {
+    readonly type = TOGGLE_BACKTEST_LOADING_STATE;
+
+    constructor(public payload: boolean) { }
+}
+
+export const RESET_BACKTEST_RELATED_STATE = '[Backtest] RESET_BACKTEST_RELATED_STATE';
+
+export class ResetBacktestRelatedStateAction implements Action {
+    readonly type = RESET_BACKTEST_RELATED_STATE;
+}
+
 export type ApiActions = GetTemplatesRequestAction
     | GetTemplatesFailAction
     | GetTemplatesSuccessAction
     | BacktestIORequestAction
     | BacktestIOFailAction
     | BacktestIOSuccessAction
+    | BacktestResultRequestAction
+    | BacktestResultFailAction
+    | BacktestResultSuccessAction
+    | BacktestStatusRequestAction
+    | BacktestStatusFailAction
+    | BacktestStatusSuccessAction
+    | DeleteBacktestRequestAction
+    | DeleteBacktestFailAction
+    | DeleteBacktestSuccessAction
+    | StopBacktestRequestAction
+    | StopBacktestFailAction
+    | StopBacktestSuccessAction
 
 export type Actions = ApiActions
     | UpdateSelectedKlinePeriodAction
@@ -222,10 +368,20 @@ export type Actions = ApiActions
     | GenerateToBeTestedValuesAction
     | UpdateBacktestLevelAction
     | ReceiveServerSendBacktestEventAction
+    | ToggleBacktestLoadingStateAction
+    | ResetBacktestRelatedStateAction
 
 export const ResponseActions = {
     GetTemplatesFailAction,
     GetTemplatesSuccessAction,
     BacktestIOFailAction,
     BacktestIOSuccessAction,
+    BacktestResultFailAction,
+    BacktestResultSuccessAction,
+    BacktestStatusFailAction,
+    BacktestStatusSuccessAction,
+    DeleteBacktestFailAction,
+    DeleteBacktestSuccessAction,
+    StopBacktestFailAction,
+    StopBacktestSuccessAction,
 }

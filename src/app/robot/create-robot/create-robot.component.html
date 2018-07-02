@@ -5,7 +5,7 @@
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
             <input formControlName="robotName" required nz-input [placeholder]="'ROBOT_NAME_REQUIRED' | translate">
             <nz-form-explain *ngIf="robotName.invalid && (robotName.dirty || robotName.touched)">
-                <div *ngIf="robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
+                <div *ngIf="!!robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
             </nz-form-explain>
         </nz-form-control>
     </nz-form-item>
@@ -62,7 +62,7 @@
                 <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
             </nz-select>
             <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
-                <div *ngIf="platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
+                <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
             </nz-form-explain>
         </nz-form-control>
     </nz-form-item>

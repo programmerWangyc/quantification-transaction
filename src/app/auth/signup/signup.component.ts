@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, merge, mergeMap } from 'rxjs/operators';
+import { Observable, Subject, merge, Subscription } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { AuthService } from '../../shared/providers/auth.service';
@@ -72,10 +72,12 @@ export class SignupComponent extends BaseComponent {
                 map(data => ({ username: data.username, email: data.email, password: this.encrypt.encryptPassword(data.passwordInfo.password), refUser: '', refUrl: '' }))
             )
         )
-            .add(this.authService.toggleAgreeState(this.toggleAgree$
-                .pipe(
-                    merge(this.getDialogResult())
-                ))
+            .add(this.authService.toggleAgreeState(
+                merge(
+                    this.toggleAgree$,
+                    this.getDialogResult()
+                )
+            )
             )
             .add(this.activatedRoute.params
                 .pipe(
@@ -109,7 +111,9 @@ export class SignupComponent extends BaseComponent {
         return this.dialog$.pipe(
             filter(v => v),
             mergeMap(_ => this.dialog.open(AgreementComponent).afterClosed()
-                .pipe(map(res => !!res))
+                .pipe(
+                    map(res => !!res)
+                )
             )
         );
     }

@@ -566,7 +566,7 @@ export class PluginRunAction extends ApiAction {
     order = null;
 
     getParams(params: any): WsRequest {
-        return { method: [this.command], params: [[JSON.stringify(params)]] };
+        return { method: [this.command], params: [[JSON.stringify(params)]], callbackId: this.command };
     }
 
     constructor() { super() };

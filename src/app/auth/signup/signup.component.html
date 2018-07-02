@@ -19,8 +19,8 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="username.invalid && (username.dirty || username.touched)">
-                            <div *ngIf="username.errors.required">{{'USERNAME_TIP' | translate}}</div>
-                            <div *ngIf="!username.errors.required && username.errors.usernameFormat">{{signupForm.getError('usernameFormat', 'username') | translate}}</div>
+                            <div *ngIf="!!username.errors.required">{{'USERNAME_TIP' | translate}}</div>
+                            <div *ngIf="!username.errors.required && !!username.errors.usernameFormat">{{signupForm.getError('usernameFormat', 'username') | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
@@ -35,8 +35,8 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="email.invalid && (email.dirty || email.touched)">
-                            <div *ngIf="email.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
-                            <div *ngIf="!email.errors.required && email.errors.emailFormat">{{signupForm.getError('emailFormat', 'email') | translate}}</div>
+                            <div *ngIf="!!email.errors.required">{{'EMAIL_REQUIRED_ERROR' | translate}}</div>
+                            <div *ngIf="!email.errors.required && !!email.errors.emailFormat">{{signupForm.getError('emailFormat', 'email') | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
@@ -51,8 +51,8 @@
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="password.invalid && (password.dirty || password.touched)">
-                            <div *ngIf="password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
-                            <div *ngIf="!password.errors.required && password.errors.passwordFormat">{{signupForm.getError('passwordFormat', 'passwordInfo.password') | translate}}</div>
+                            <div *ngIf="!!password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
+                            <div *ngIf="!password.errors.required && !!password.errors.passwordFormat">{{signupForm.getError('passwordFormat', 'passwordInfo.password') | translate}}</div>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>

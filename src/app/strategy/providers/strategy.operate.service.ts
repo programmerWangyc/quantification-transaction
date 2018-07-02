@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom, zip } from 'rxjs/operators';
+import { Observable, Subject, Subscription, zip } from 'rxjs';
+import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
@@ -124,18 +124,20 @@ export class StrategyOperateService extends StrategyService {
     }
 
     remindPublishRobot(): Subscription {
-        return this.getShareStrategyResponse()
-            .pipe(
-                filter(res => res.result),
-                zip(
-                    this.getRequestParams()
-                        .pipe(
-                            map(res => res.shareStrategy),
-                            filter(req => req && (req.type === fromReq.StrategyShareType.SELL)),
-                            distinctUntilKeyChanged('id')
-                        ),
-                    (_1, _2) => true
+        return zip(
+            this.getShareStrategyResponse()
+                .pipe(
+                    filter(res => res.result)
                 ),
+            this.getRequestParams()
+                .pipe(
+                    map(res => res.shareStrategy),
+                    filter(req => req && (req.type === fromReq.StrategyShareType.SELL)),
+                    distinctUntilKeyChanged('id')
+                )
+        )
+            .pipe(
+                map(([_1, _2]) => true),
                 withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN']))
             )
             .subscribe(([_1, translated]) => this.nzModal.success({ nzContent: translated.PUBLISH_STRATEGY_RELATED_ROBOT_TIP, nzOkText: translated.I_KNOWN }));

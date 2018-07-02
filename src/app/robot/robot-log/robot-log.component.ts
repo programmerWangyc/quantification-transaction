@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { includes } from 'lodash';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { combineLatest, filter, map, skip, startWith } from 'rxjs/operators';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, skip, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
@@ -82,12 +82,12 @@ export class RobotLogComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.logs = this.robotLog.getSemanticsRobotRunningLogs()
+        this.logs = combineLatest(
+            this.robotLog.getSemanticsRobotRunningLogs(),
+            this.search$
+        )
             .pipe(
-                combineLatest(
-                    this.search$,
-                    (logs, selectedTypes) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs
-                ),
+                map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
                 startWith([])
             );
 
@@ -107,14 +107,18 @@ export class RobotLogComponent extends BaseComponent {
     launch() {
         const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
-        this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(map(robotId => ({ robotId }))), this.allowSeparateRequest)
-            .add(this.robotLog.launchRobotLogs(id
-                .pipe(
-                    combineLatest(
-                        this.robotLog.getLogOffset(),
-                        (robotId, logOffset) => ({ robotId, logOffset })
-                    ),
-                    skip(1)))
+        this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(
+            map(robotId => ({ robotId }))), this.allowSeparateRequest
+        )
+            .add(this.robotLog.launchRobotLogs(
+                combineLatest(
+                    id,
+                    this.robotLog.getLogOffset()
+                ).pipe(
+                    map(([robotId, logOffset]) => ({ robotId, logOffset })),
+                    skip(1)
+                )
+            )
             )
             // .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))

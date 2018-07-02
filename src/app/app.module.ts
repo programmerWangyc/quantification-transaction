@@ -45,7 +45,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
         StoreModule.forRoot(reducers),
         StoreDevtoolsModule.instrument({
-            maxAge: 20
+            maxAge: 50
         }),
         EffectsModule.forRoot(EFFECTS),
         MatSnackBarModule,

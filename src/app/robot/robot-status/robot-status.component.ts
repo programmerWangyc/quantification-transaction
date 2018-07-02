@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { flatten, isString } from 'lodash';
-import { Observable, Subscription } from 'rxjs';
-import { map, merge, startWith } from 'rxjs/operators';
+import { merge, Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotStatusTable } from '../robot.interface';
@@ -61,15 +61,14 @@ export class RobotStatusComponent extends FoldableBusinessComponent implements B
 
         this.hasTabs = this.tabs.pipe(map(tabs => !!tabs.length));
 
-        this.hasStatusInfo = this.hasTabs
-            .pipe(
-                merge(this.labels
-                    .pipe(
-                        map(labels => !!labels.length),
-                        startWith(false)
-                    )
+        this.hasStatusInfo = merge(
+            this.hasTabs,
+            this.labels
+                .pipe(
+                    map(labels => !!labels.length),
+                    startWith(false)
                 )
-            );
+        );
     }
 
     launch() {

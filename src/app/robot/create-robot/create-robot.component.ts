@@ -2,8 +2,8 @@ import { Location } from '@angular/common';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { isEmpty } from 'lodash';
-import { Observable, of as observableOf, Subject, Subscription } from 'rxjs';
-import { concat, map, reduce } from 'rxjs/operators';
+import { concat, Observable, of as observableOf, Subject, Subscription } from 'rxjs';
+import { map, reduce } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
 import { SelectedPair, VariableOverview } from '../../interfaces/app.interface';
@@ -155,9 +155,11 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         let args = '';
 
         if (this.selectedStrategyArgs) {
-            this.encrypt.transformStrategyArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticArgs || []))
+            concat(
+                this.encrypt.transformStrategyArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticArgs || [])),
+                this.encrypt.transformTemplateArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticTemplateArgs || []))
+            )
                 .pipe(
-                    concat(this.encrypt.transformTemplateArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticTemplateArgs || []))),
                     reduce((acc, cur) => [...acc, ...cur], []),
                     map(result => JSON.stringify(result))
                 )

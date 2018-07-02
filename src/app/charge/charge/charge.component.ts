@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilKeyChanged, filter, map, mapTo, merge, startWith } from 'rxjs/operators';
+import { Observable, Subject, merge, Subscription } from 'rxjs';
+import { distinctUntilKeyChanged, filter, map, mapTo, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PaymentMethod } from '../charge.config';
@@ -70,9 +70,10 @@ export class ChargeComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPaymentArg(this.pay$
-            .pipe(
-                merge(this.getQRCodeIfWechart())
+        this.subscription$$ = this.chargeService.launchPaymentArg(
+            merge(
+                this.pay$,
+                this.getQRCodeIfWechart()
             )
         )
             .add(this.chargeService.goToAlipayPage())
@@ -96,21 +97,31 @@ export class ChargeComponent implements BaseComponent {
     }
 
     mapPaymentStateTo(start: string, processing: string, finish: string): Observable<string> {
-        return this.processState = this.pay$
+        const obs1 = merge(
+            this.pay$,
+            this.getQRCodeIfWechart()
+        )
             .pipe(
-                merge(this.getQRCodeIfWechart()),
-                map(_ => processing),
-                merge(this.chargeService.isRechargeSuccess().pipe(
-                    map(_ => finish)),
-                ),
-                merge(this.form.valueChanges.pipe(
-                    filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART),
-                    mapTo(start)),
-                )
-            )
-            .pipe(
-                startWith(start)
+                map(_ => processing)
             );
+
+        const obs2 = merge(
+            obs1,
+            this.chargeService.isRechargeSuccess()
+                .pipe(
+                    map(_ => finish)
+                )
+        );
+
+        return merge(
+            obs2,
+            this.form.valueChanges
+                .pipe(
+                    filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART),
+                    mapTo(start),
+                    startWith(start)
+                )
+        );
     }
 
     get chargeAmount(): AbstractControl {

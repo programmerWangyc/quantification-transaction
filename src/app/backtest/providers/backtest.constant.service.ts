@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 
-import { BacktestConstantOptions, CategoryType, BacktestPutTaskParams, BacktestPutTaskDescription, BacktestDescription } from '../../interfaces/request.interface';
+import { BacktestConstantOptions, CategoryType } from '../../interfaces/request.interface';
 import { ConstantService } from '../../providers/constant.service';
 import { ArgOptimizeSetting, BacktestPlatform } from '../backtest.interface';
 

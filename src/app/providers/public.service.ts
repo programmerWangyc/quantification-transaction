@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { isString } from 'lodash';
-import { Observable, of as observableOf, Subject, Subscription } from 'rxjs';
-import { combineLatest, distinctUntilChanged, filter, map, merge, startWith, tap } from 'rxjs/operators';
+import { combineLatest, Observable, of as observableOf, merge, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, startWith, tap } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
@@ -168,26 +168,28 @@ export class PublicService extends BaseService {
     }
 
     saveReferrer(): Subscription {
-        return this.refUser$$
-            .pipe(
-                combineLatest(
-                    this.checkReferrerUrl()
-                        .pipe(
-                            filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0),
-                            startWith('')
-                        ),
-                    (refUrl, refUser) => ({ refUrl, refUser })
+        return combineLatest(
+            this.refUser$$,
+            this.checkReferrerUrl()
+                .pipe(
+                    filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0),
+                    startWith('')
                 )
+        )
+            .pipe(
+                map(([refUrl, refUser]) => ({ refUrl, refUser }))
             )
             .subscribe(referrer => this.store.dispatch(new SetReferrerAction(referrer)));
     }
 
     getReferrer(): Observable<Referrer> {
-        return this.store.select(selectReferrer)
-            .pipe(
-                filter(referrer => !!referrer),
-                merge(this.getReferrerFromLocalStorage())
-            );
+        return merge(
+            this.store.pipe(
+                select(selectReferrer),
+                filter(referrer => !!referrer)
+            ),
+            this.getReferrerFromLocalStorage()
+        );
     }
 
     updateLanguage(language: Observable<string>): Subscription {

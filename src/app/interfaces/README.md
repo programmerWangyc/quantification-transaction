@@ -2,7 +2,7 @@
 
 ----
 
-* 每一个响应回来后，会在baseEffect中进行处理，此时需要知道每一条数据对应的是哪一个请求，因此给服务器发送数据时带上了一个由各个接口名称组成的callbackId，在获得响应时 baseEffect 根据此id将数据分解成不同的响应动作。
+* 每一个响应回来后，会在baseEffect中进行处理，此时需要知道每一条数据对应的是哪一个请求，因此给服务器发送数据时带上了一个callbackId，在获得响应时 baseEffect 根据此id将数据分解成不同的响应动作。这个callbackId 作为和API请求相关的动作的可选参数，如果不定义，将使用此动作的command字段的值，定义规则是此动作的类名去掉后缀，后缀参照 ‘ API action的命名 ’。此字段存在的意义在于拆分多用途的接口，模拟Restful风格。示例：backtestIO。
 
 * API 接口命名：每个响应接口的命名都是以接口的名称加response后缀组成，例如GetExchangeList接口，它的响应接口就是GetExchangeListResponse. 这种强耦合是为了处理响应的时候更加方便。如不一致，则baseEffect在分解响应动作时就会报错。为了保持一致，请求接口的命名就是接口的名称加上request后缀。
 

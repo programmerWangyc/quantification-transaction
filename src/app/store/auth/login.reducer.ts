@@ -43,6 +43,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RESET_LOGIN_ERROR:
             return { ...state, response: { ...state.response, error: null } };
 
+        case actions.CLOSE_SECONDARY_VERIFY:
+            return { ...state, needGoogleSecondaryVerificationCode: false };
+
         default:
             return state;
     }
