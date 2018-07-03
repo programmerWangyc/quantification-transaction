@@ -1,5 +1,4 @@
 import { TemplateVariableOverview, VariableOverview } from './app.interface';
-import { BacktestPutTaskParams } from './request.interface';
 
 /* =======================================================Abstract response========================================================= */
 
@@ -70,7 +69,7 @@ export interface ServerSendPaymentMessage {
 
 export interface ServerSendBacktestMessage<T> {
     output: string;
-    status: T; // default: string, JSON type string. parse result: BacktestTaskResult;
+    status: T; // default: string, JSON type string. parse result: BacktestResult;
     uuid: string;
 }
 
@@ -548,17 +547,13 @@ export interface GetTemplatesResponse extends ResponseUnit<TemplatesResponse[]> 
  * <<-----------------------------------------------------------------------------------
  * backtest task result start region
  */
-export interface ServerBacktestResult<T> {
-    Code: number;
-    Result: T; // string: uuid; object: BacktestTaskResult;
-}
 
-export interface BacktestChart {
+export interface BacktestResultChart {
     Cfg: string;
     Datas: any[];
 }
 
-export interface BacktestSnapshot {
+export interface BacktestResultSnapshot {
     Balance: number;
     BaseCurrency: string;
     Commission: number;
@@ -568,18 +563,101 @@ export interface BacktestSnapshot {
     QuoteCurrency: string;
     Stocks: number;
     Symbols: Object
-    TradeStatus: Object;
-
+    TradeStatus: BacktestResultTradeStatus;
 }
 
-export interface BacktestTaskResult {
+export interface BacktestResultTradeStatus {
+    sell: number;
+    buy: number;
+}
+
+export interface BacktestResultIndicators {
+}
+
+
+export interface BacktestTaskOptions {
+    DataServer: string;
+    MaxChartLogs: number;
+    MaxProfitLogs: number;
+    MaxRuntimeLogs: number;
+    NetDelay: number;
+    Period: number;
+    RetFlags: number;
+    SnapshortPeriod: number;
+    TimeBegin: number;
+    TimeEnd: number;
+    UpdatePeriod: number;
+}
+
+export interface BacktestResultExchange {
+    Balance: number;
+    BaseCurrency: string;
+    BasePeriod: number;
+    BasePrecision: number;
+    CurDots: number;
+    Currency: string;
+    DataSource: string;
+    Depth: number;
+    DepthDeep: number;
+    FaultTolerant: number;
+    Fee: number[];
+    FeeDenominator: number;
+    FeeMaker: number;
+    FeeMin: number;
+    FeeTaker: number;
+    Id: string;
+    Label: string;
+    MaxBarLen: number;
+    MinFee: number;
+    Mode: number;
+    Name: string;
+    NetDelay: number;
+    Period: number;
+    PriceTick: number;
+    QuoteCurrency: string;
+    QuotePrecision: number;
+    SlipPoint: number;
+    Stocks: number;
+    SymDots: number;
+}
+
+export interface BacktestTask {
+    Args: null;
+    End: number;
+    Exchanges: BacktestResultExchange[];
+    Options: BacktestTaskOptions;
+    Start: number;
+}
+
+export interface BacktestResultSymbols {
+    BTC_USD_OKCoin_EN: BTCUSDOKCoinEN;
+}
+
+export interface BTCUSDOKCoinEN {
+    Last: number;
+}
+
+export interface BacktestResultSnapshortClass {
+    Balance: number;
+    BaseCurrency: string;
+    Commission: number;
+    FrozenBalance: number;
+    FrozenStocks: number;
+    Id: string;
+    QuoteCurrency: string;
+    Stocks: number;
+    Symbols: BacktestResultSymbols;
+    TradeStatus: BacktestResultTradeStatus;
+}
+
+export interface BacktestResult {
     Accounts?: Object
-    Chart: BacktestChart;
+    Chart: BacktestResultChart;
     CloseProfitLogs?: Object;
     Elapsed: number;
     Exception: string;
     Finished: boolean;
-    Indicators: Object;
+    Indicators: BacktestResultIndicators;
     LoadBytes: number;
     LoadElapsed: number;
     LogsCount: number;
@@ -588,29 +666,28 @@ export interface BacktestTaskResult {
     ProfitLogs: any[];
     Progress: number;
     RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
-    Snapshorts: [number, BacktestSnapshot[]][];
-    Status: string;
+    Snapshort?: BacktestResultSnapshot[];
+    Snapshorts: Array<Array<BacktestResultSnapshortClass[] | number>>;
     Stderr: string;
-    Symbols: any[];
-    Task: BacktestPutTaskParams;
-    TaskStatus: number;
+    Task: BacktestTask;
+    TaskStatus?: number;
     Time: number;
+    Status: string;
+    Symbols: Array<Array<Array<number[]> | number | string>>;
+    TradeStatus?: BacktestResultTradeStatus;
 }
 
-/**
- * ServerBacktestResult 中的 Result 在不同接口中表示不同的含义
- * {
- *      PutTask: uuid;
- *      GetTaskStatus: 一个结构体，字段还不少；
- *      GetTaskResult: string | 结构体，
- * }
- */
+export interface ServerBacktestResult<T> {
+    Code: number;
+    Result: T; // string: uuid; object: BacktestResult;
+}
+
 /**
  * --------------------------------------------------------------------------------->>
  *  backtest task result endregion
  */
 
-export interface BacktestIOResponse extends ResponseUnit<ServerBacktestResult<string | BacktestTaskResult> | string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
+export interface BacktestIOResponse extends ResponseUnit<ServerBacktestResult<string | BacktestResult> | string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
 
 /** ===================================================Charge============================================== **/
 

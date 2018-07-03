@@ -92,10 +92,7 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this.backtestBtnText = this.backtestService.getBacktestBtnText();
 
-        this.isBacktestLoading = this.backtestService.getUIState()
-            .pipe(
-                map(state => state.isBacktesting)
-            );
+        this.isBacktestLoading = this.backtestService.isBacktesting()
 
         this.runningNode = this.backtestService.getRunningNode();
 

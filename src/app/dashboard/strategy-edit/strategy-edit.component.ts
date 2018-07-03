@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd';
-import { combineLatest, Observable, Subject, Subscription, merge } from 'rxjs';
+import { combineLatest, merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, mapTo } from 'rxjs/operators';
 
+import { BacktestService } from '../../backtest/providers/backtest.service';
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
@@ -32,8 +33,9 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
         public constant: StrategyConstantService,
+        public backtest: BacktestService,
     ) {
-        super(route, strategyService, nodeService, nzModal, constant);
+        super(route, strategyService, nodeService, nzModal, constant, backtest);
     }
 
     ngOnInit() {

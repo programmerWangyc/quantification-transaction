@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import * as fileSaver from 'file-saver';
 import { isBoolean, negate } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { from, Observable, merge, of, Subject, Subscription } from 'rxjs';
-import { find, map, mergeMap } from 'rxjs/operators';
+import { from, merge, Observable, of, Subject, Subscription } from 'rxjs';
+import { find, map, mergeMap, take } from 'rxjs/operators';
 
+import { BacktestService } from '../../backtest/providers/backtest.service';
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
 import { Strategy, StrategyDetail } from '../../interfaces/response.interface';
@@ -21,6 +22,8 @@ import {
 } from '../../strategy/strategy-codemirror/strategy-codemirror.component';
 import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
+import { StrategyDetailDeactivateGuard } from '../dashboard.interface';
+import { CanDeactivateComponent } from '../providers/guard.service';
 
 export interface Tab {
     name: string;
@@ -33,7 +36,7 @@ export interface Tab {
     templateUrl: './strategy-create-meta.component.html',
     styleUrls: ['./strategy-create-meta.component.scss']
 })
-export class StrategyCreateMetaComponent {
+export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
     /**
      * @description UI state related.
@@ -117,6 +120,7 @@ export class StrategyCreateMetaComponent {
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
         public constant: StrategyConstantService,
+        public backtestService: BacktestService,
     ) { }
 
     initialModel() {
@@ -252,8 +256,21 @@ export class StrategyCreateMetaComponent {
     /**
      * @description Router guard.
      */
-    canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-        return !this.codeMirror.isCodeChanged();
+    canDeactivate(): StrategyDetailDeactivateGuard[] {
+        const codeMirrorGuard: StrategyDetailDeactivateGuard = {
+            canDeactivate: of(!this.codeMirror.isCodeChanged()),
+            message: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM',
+        };
+
+        const backtestGuard: StrategyDetailDeactivateGuard = {
+            canDeactivate: this.backtestService.isBacktesting().pipe(
+                map(isTesting => !isTesting),
+                take(1)
+            ),
+            message: 'CONFIRM_LEAVE_REGARDLESS_BACKTESTING',
+        }
+
+        return [codeMirrorGuard, backtestGuard];
     }
 
     /**

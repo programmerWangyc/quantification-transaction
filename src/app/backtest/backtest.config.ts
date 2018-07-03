@@ -18,3 +18,14 @@ export enum BacktestMilestone {
     BACKTESTING,
     START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE
 }
+
+export enum BacktestStatistic {
+    Elapsed = 'Elapsed',
+    LoadBytes = 'LoadBytes',
+    LoadElapsed = 'LoadElapsed',
+    LogsCount = 'LogsCount',
+    Profit = 'Profit',
+    Progress = 'Progress',
+    TaskStatus = 'TaskStatus',
+    Time = 'Time',
+}

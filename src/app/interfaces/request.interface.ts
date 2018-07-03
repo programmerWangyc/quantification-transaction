@@ -390,10 +390,10 @@ export interface BacktestTimeRange {
 
 export interface BacktestPutTaskParams {
     Code: PutTaskCode[];
-    Options: BacktestPutTaskOptions;
-    Exchanges: BacktestExchange[];
-    Start: number; // 日期的数字表示
     End: number; //  日期的数字表示
+    Exchanges: BacktestExchange[];
+    Options: BacktestPutTaskOptions;
+    Start: number; // 日期的数字表示
 }
 
 export interface BacktestTask extends BacktestIO<BacktestTaskDes> { }

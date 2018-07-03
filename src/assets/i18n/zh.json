@@ -64,6 +64,9 @@
     "END_TIME": "结束时间",
     "LATEST_UPDATE": "最近更新",
     "LATEST_RUN": "最近运行",
+    "HOUR": "时",
+    "MINUTE": "分",
+    "SECOND": "秒",
     "ONE_MINUTE": "1分钟",
     "THREE_MINUTES": "3分钟",
     "FIVE_MINUTES": "5分钟",
@@ -584,5 +587,11 @@
     "FAULT_TOLERANT_MODE": "容错模式",
     "BACKTEST_SERVER_OFFLINE": "回测服务器不在线, 请重新选择执行回测任务的托管者, 然后刷新页面!",
     "BACKTEST_STRATEGY_EXPIRED": "该策略已到期, 不能进行回测, 请及时续费!",
-    "BACKTEST_SYSTEM_BUSY": "回测系统正忙, 请稍后重试!"
+    "BACKTEST_SYSTEM_BUSY": "回测系统正忙, 请稍后重试!",
+    "PROGRESS": "进度",
+    "TIME_CONSUMING": "耗时",
+    "TRANSACTIONS": "交易次数",
+    "BACKTEST_INFORMATION": "回测信息",
+    "BACKTEST_TASK": "回测任务",
+    "CONFIRM_LEAVE_REGARDLESS_BACKTESTING": "当前有回测任务正在运行，确定要退出吗？"
 }

@@ -1,0 +1,42 @@
+<div fxLayoutAlign="space-around center" class="backtest-info">
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'BACKTEST_TASK' | translate}}</h5>
+        <span>{{completedTasks | async}} / {{tasks | async}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'PROGRESS' | translate}}</h5>
+        <nz-progress [nzPercent]="percent | async | number: '1.0-2'" nzType="circle" nzWidth="64"></nz-progress>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'TIME_CONSUMING' | translate}}</h5>
+        <span>{{timeConsuming | async | number: '1.3-3' }}</span>
+        <span>{{'SECOND' | translate}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'TRANSACTIONS' | translate}}</h5>
+        <span>{{transactions | async}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'STATUS' | translate}}</h5>
+        <span>{{status | async | translate}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'LOG' | translate}}</h5>
+        <span>{{logTotal | async}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>{{'ACCUMULATE_PROFIT' | translate}}</h5>
+        <span>{{profit | async | number : '1.4-4'}}</span>
+    </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h5>Tick</h5>
+        <span>{{loadBytes | async | bytes}}</span>
+    </div>
+</div>

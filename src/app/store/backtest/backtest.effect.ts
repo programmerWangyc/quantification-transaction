@@ -8,7 +8,7 @@ import { filter, map, switchMapTo } from 'rxjs/operators';
 import { ServerBacktestCode } from '../../backtest/backtest.config';
 import {
     BacktestIOResponse,
-    BacktestTaskResult,
+    BacktestResult,
     ServerBacktestResult,
     ServerSendBacktestMessage,
     ServerSendEventType,
@@ -84,13 +84,13 @@ export class BacktestEffect extends BaseEffect {
  * @function getBacktestErrorMessage
  * @description 将backtestIO接口返回的错误信息映射成提示消息。
  */
-export function getBacktestErrorMessage(result: number | ServerBacktestResult<BacktestTaskResult | string>): string {
+export function getBacktestErrorMessage(result: number | ServerBacktestResult<BacktestResult | string>): string {
     if (result === -1) {
         return 'BACKTEST_SERVER_OFFLINE';
     } else if (result === -2) {
         return 'BACKTEST_STRATEGY_EXPIRED';
     } else {
-        const { Code, Result } = <ServerBacktestResult<BacktestTaskResult | string>>result;
+        const { Code, Result } = <ServerBacktestResult<BacktestResult | string>>result;
 
         if (Code === ServerBacktestCode.SUCCESS || Code === ServerBacktestCode.ALREADY_EXIST) {
             return null;

@@ -1,0 +1,15 @@
+h5 {
+    margin: 0 2em 0 0;
+}
+
+span {
+    font-size: 18px;
+}
+
+h5::after {
+    content: ':';
+}
+
+.backtest-info {
+    background: rgba(220, 245, 245, .2);
+}

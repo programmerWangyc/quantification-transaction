@@ -8,6 +8,7 @@ import { TextCenterDirective, TextDirectionDirective } from './directives/style.
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { BytesPipe } from './pipes/bytes.pipe';
 import { FromJSONPipe } from './pipes/from-json.pipe';
 import { OriginDataPipe } from './pipes/origin-data.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
@@ -33,6 +34,7 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         FromJSONPipe,
         SafeHtmlPipe,
         OriginDataPipe,
+        BytesPipe,
         SimpleNzConfirmWrapComponent,
     ],
 
@@ -51,6 +53,7 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         FromJSONPipe,
         SafeHtmlPipe,
         OriginDataPipe,
+        BytesPipe,
         SimpleNzConfirmWrapComponent,
     ]
 })

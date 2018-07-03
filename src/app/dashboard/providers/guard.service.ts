@@ -9,16 +9,17 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { find, map, mergeMap, tap } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { TipService } from '../../providers/tip.service';
 import { AppState, selectStrategyListResponse } from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
+import { StrategyDetailDeactivateGuard } from '../dashboard.interface';
 
 export interface CanDeactivateComponent {
-    canDeactivate(): Observable<boolean> | boolean | Promise<boolean>
+    canDeactivate(): StrategyDetailDeactivateGuard[];
 }
 
 @Injectable()
@@ -39,22 +40,26 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
             );
     }
 
+    /**
+     * @description 是否可以退出当前路由。
+     */
     canDeactivate(component: CanDeactivateComponent, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const canDeactivate = component.canDeactivate();
+        const guards = component.canDeactivate();
 
-        if (canDeactivate) {
-            return true;
-        } else {
-            //FIXME:  当焦点仍在 codemirror 中时，如果内容改变，切换路由会导致codemirror焦点的检测报错。
-            // const modal = this.nzModal.confirm({
-            //     nzContent: SimpleNzConfirmWrapComponent,
-            //     nzComponentParams: { content: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM' },
-            //     nzOnOk: () => modal.close(true),
-            //     nzOnCancel: () => modal.close(false),
-            // });
+        //FIXME:  当焦点仍在 codemirror 中时，如果内容改变，切换路由会导致codemirror焦点的检测报错。
+        // const modal = this.nzModal.confirm({
+        //     nzContent: SimpleNzConfirmWrapComponent,
+        //     nzComponentParams: { content: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM' },
+        //     nzOnOk: () => modal.close(true),
+        //     nzOnCancel: () => modal.close(false),
+        // });
 
-            // return modal.afterClose;
-            return this.tip.confirmOperateTip(ConfirmComponent, { message: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM', needTranslate: true });
-        }
+        return from(guards).pipe(
+            mergeMap(guard => guard.canDeactivate.pipe(
+                map(can => ({ can, message: guard.message }))
+            )),
+            find(guard => !guard.can),
+            mergeMap(item => !item ? of(true) : this.tip.confirmOperateTip(ConfirmComponent, { message: item.message, needTranslate: true }))
+        );
     }
 }

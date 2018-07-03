@@ -4,12 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { getBacktestErrorMessage } from '../store/backtest/backtest.effect';
-import {
-    BacktestTaskResult,
-    ResponseState,
-    RestartRobotResult,
-    ServerBacktestResult,
-} from './../interfaces/response.interface';
+import { BacktestResult, ResponseState, RestartRobotResult, ServerBacktestResult } from './../interfaces/response.interface';
 import { TipService } from './tip.service';
 
 
@@ -51,7 +46,7 @@ export class ErrorService {
         return Math.abs(result) === 1 ? 'DELETE_ROBOT_ERROR' : '';
     }
 
-    getBacktestError(result: number | ServerBacktestResult<string | BacktestTaskResult>): string {
+    getBacktestError(result: number | ServerBacktestResult<string | BacktestResult>): string {
         return getBacktestErrorMessage(result);
     }
 }

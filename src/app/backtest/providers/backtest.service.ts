@@ -1,23 +1,34 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subscription, timer, merge, combineLatest, of, concat, zip } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { isNumber, last } from 'lodash';
+import { concat, merge, Observable, of, Subscription, zip } from 'rxjs';
+import {
+    distinct,
+    distinctUntilChanged,
+    filter,
+    map,
+    mapTo,
+    partition,
+    switchMapTo,
+    take,
+    tap,
+    withLatestFrom,
+} from 'rxjs/operators';
 
-import { GetTemplatesRequest, BacktestIORequest, BacktestIOType, SettingTypes } from '../../interfaces/request.interface';
+import { environment } from '../../../environments/environment';
+import { BacktestIORequest, BacktestIOType, GetTemplatesRequest, SettingTypes } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
+import { PublicService } from '../../providers/public.service';
 import * as Actions from '../../store/backtest/backtest.action';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
-import { BacktestSelectedPair, TimeRange, BacktestCode } from '../backtest.interface';
-import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
-import { environment } from '../../../environments/environment';
-import { isNumber } from 'lodash';
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
-import { PublicService } from '../../providers/public.service';
+import { BacktestMilestone, ServerBacktestCode } from '../backtest.config';
+import { BacktestCode, BacktestSelectedPair, TimeRange } from '../backtest.interface';
 import { BacktestComputingService } from './backtest.computing.service';
-import { mapTo, take, switchMapTo, filter, map, partition, withLatestFrom, tap, distinct, distinctUntilChanged, switchMap, takeUntil, distinctUntilKeyChanged, scan, delayWhen } from 'rxjs/operators';
-import { ServerBacktestCode, BacktestMilestone } from '../backtest.config';
+import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { BacktestParamService } from './backtest.param.service';
 
 @Injectable()
@@ -215,7 +226,7 @@ export class BacktestService extends BacktestParamService {
             );
     }
 
-    private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult<string | fromRes.BacktestTaskResult>> {
+    private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult<string | fromRes.BacktestResult>> {
         return this.store
             .pipe(
                 select(fromRoot.selectBacktestIOResponse),
@@ -249,38 +260,14 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 当前查询当前回测状态的结果;
+     * @description 获取回测任务的结果。
      */
-    private getBacktestStatusResult(): Observable<fromRes.BacktestTaskResult> { // TODO: any： 回测状态查询的结果 回传的数据和轮询的数据应该是一样的结构（待确认）；
-        const dataFromPolling = this.store.pipe(
-            select(fromRoot.selectBacktestState),
-            map(state => state[BacktestIOType.getTaskStatus]),
-            filter(status => !!status && !isNumber(status)),
-            map((status: fromRes.ServerBacktestResult<fromRes.BacktestTaskResult>) => status.Result)
+    getBacktestTaskResults(): Observable<fromRes.BacktestIOResponse[]> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestResults),
+            this.filterTruth()
         );
-
-        const dataFromServerMsg = this.store.pipe(
-            select(fromRoot.selectBacktestServerSendMessage),
-            this.filterTruth(),
-            map(state => state.status)
-        );
-
-        return merge(dataFromPolling, dataFromServerMsg)
     }
-
-    /**
-     * @description 在发起putTask成功后，开始定时向服务器轮询回测的状态。回测中止后停止轮询。
-     */
-    // private commandPollingBacktestState(): Observable<any> {
-    //     return this.filterPutTaskSuccessfulResponse()
-    //         .pipe(
-    //             distinctUntilKeyChanged('Result'),
-    //             map(response => response.Code === ServerBacktestCode.SUCCESS ? 500 : 0),
-    //             switchMap(delay => timer(delay, 5000).pipe(
-    //                 takeUntil(this.isBacktestComplete())
-    //             ))
-    //         );
-    // }
 
     /* =======================================================UI state ======================================================= */
 
@@ -329,6 +316,78 @@ export class BacktestService extends BacktestParamService {
             .pipe(
                 map(res => res.backtestTaskFiler)
             );
+    }
+
+    /**
+     * @description 回测进度 = 收到的服务器响应数 / 回测任务数
+     */
+    getBacktestProgress(): Observable<number> {
+        return this.getUIState().pipe(
+            filter(state => !!state.backtestTasks),
+            map(state => state.backtestTasks.length || 1),
+            withLatestFrom(this.store.pipe(
+                select(fromRoot.selectBacktestServerMessages),
+                this.filterTruth(),
+                map(messages => messages.length)
+            ),
+                (total, completed) => (completed / total) * 100
+            )
+        );
+    }
+
+    /**
+     * @description 是否处于回测中状态。
+     */
+    isBacktesting(): Observable<boolean> {
+        return this.getUIState().pipe(
+            map(state => state.isBacktesting)
+        );
+    }
+
+    /**
+     * @param {string} statistic - 字段名称
+     * @description 获取回测的统计数据。
+     */
+    getBacktestStatistics(statistic: string): Observable<number> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestResults),
+            this.filterTruth(),
+            map(results => results.map(item => {
+                const { Result } = <fromRes.ServerBacktestResult<string>>item.result;
+
+                const messages = <fromRes.BacktestResult>JSON.parse(Result);
+
+                return messages[statistic];
+            })
+                .reduce((acc, cur) => acc + cur, 0)
+            )
+        );
+    }
+
+    /**
+     * @description 获取交易次数总计；
+     */
+    getTradeCount(): Observable<number> {
+        const accumulator = (a: number, c: fromRes.BacktestResultSnapshot) => a + c.TradeStatus.buy || 0 + c.TradeStatus.sell || 0;
+
+        return this.store.pipe(
+            select(fromRoot.selectBacktestResults),
+            this.filterTruth(),
+            map(messages => messages.reduce((acc, cur) => {
+                const { Result } = <fromRes.ServerBacktestResult<string>>cur.result;
+
+                const { TradeStatus, Snapshort, Snapshorts } = <fromRes.BacktestResult>JSON.parse(Result);
+
+                if (TradeStatus) acc = acc + TradeStatus.buy + TradeStatus.sell;
+
+                if (Snapshort) acc = acc + Snapshort.reduce(accumulator, 0);
+
+                if (Snapshorts && Snapshorts.length) acc = acc + (<fromRes.BacktestResultSnapshortClass[]>last(last(Snapshorts))).reduce(accumulator, 0);
+
+                return acc;
+            }, 0)),
+            filter(count => !isNaN(count))
+        );
     }
 
     /* =======================================================Local state change======================================================= */

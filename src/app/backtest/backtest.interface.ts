@@ -1,6 +1,6 @@
 import { VariableOverview } from '../interfaces/app.interface';
 import { BacktestPutTaskParams } from '../interfaces/request.interface';
-import { BacktestChart, BacktestSnapshot, BacktestTaskResult } from '../interfaces/response.interface';
+import { BacktestResult, BacktestResultChart, BacktestResultSnapshot } from '../interfaces/response.interface';
 
 export interface TimeRange {
     start: Date;
@@ -124,10 +124,10 @@ export interface WorkerBacktestChartCfg {
     __isStock: boolean;
 }
 
-export interface WorkerBacktestChart extends BacktestChart {
+export interface WorkerBacktestChart extends BacktestResultChart {
 }
 
-export interface WorkerBacktestSnapshot extends BacktestSnapshot {
+export interface WorkerBacktestSnapshot extends BacktestResultSnapshot {
 }
 
 export type WorkerBacktestRequest = [BacktestPutTaskParams, WorkerBacktestHttpCache, string];
@@ -142,7 +142,7 @@ export interface WorkerBacktestHttpCache {
     [key: string]: any;
 }
 
-export interface WorkerBacktestResponse extends BacktestTaskResult {
+export interface WorkerBacktestResponse extends BacktestResult {
     Accounts?: Object
     Chart: WorkerBacktestChart;
     CloseProfitLogs?: Object;
@@ -158,11 +158,11 @@ export interface WorkerBacktestResponse extends BacktestTaskResult {
     ProfitLogs: any[];
     Progress: number;
     RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
-    Snapshorts: [number, WorkerBacktestSnapshot[]][];
+    // Snapshorts: [number, WorkerBacktestSnapshot[]][];
     Status: string;
     Stderr: string;
     Symbols: any[];
-    Task: BacktestPutTaskParams;
+    // Task: BacktestPutTaskParams;
     TaskStatus: number;
     Time: number;
     httpCache?: WorkerBacktestHttpCache;

@@ -4,6 +4,7 @@ import { concatMap, filter, map, reduce } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../../app.config';
 import { Filter } from '../../backtest/arg-optimizer/arg-optimizer.component';
+import { BacktestMilestone } from '../../backtest/backtest.config';
 import {
     ArgOptimizeSetting,
     BacktestCode,
@@ -16,7 +17,7 @@ import { CompareLogic, MAIN_CODE_FLAG } from '../../backtest/providers/backtest.
 import { BacktestIORequest, BacktestIOType, GetTemplatesRequest } from '../../interfaces/request.interface';
 import {
     BacktestIOResponse,
-    BacktestTaskResult,
+    BacktestResult,
     GetTemplatesResponse,
     ServerBacktestResult,
     ServerSendBacktestMessage,
@@ -24,7 +25,6 @@ import {
 } from '../../interfaces/response.interface';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import * as actions from './backtest.action';
-import { BacktestMilestone } from '../../backtest/backtest.config';
 
 export interface AdvancedOption {
     barLen: number;
@@ -55,7 +55,7 @@ export interface UIState {
 
 export const defaultAdvancedOptions: AdvancedOption = { log: 8000, profit: 8000, chart: 3000, slipPoint: 0, delay: 200, faultTolerant: 0.5, barLen: 300 };
 
-export const initialStateUIState: UIState = {
+export const initialUIState: UIState = {
     advancedOptions: storedAdvancedOptions || defaultAdvancedOptions,
     backtestCode: [],
     backtestLevel: 0,
@@ -92,10 +92,10 @@ export interface State {
     UIState: UIState;
     backtestRes: BacktestIOResponse;
     backtestResults: BacktestIOResponse[];
-    backtestState: BacktestStateMemory<number | ServerBacktestResult<BacktestTaskResult | string>>;
+    backtestState: BacktestStateMemory<number | ServerBacktestResult<BacktestResult | string>>;
     requestParams: RequestParams;
-    serverMessage: ServerSendBacktestMessage<BacktestTaskResult>;
-    serverMessages: ServerSendBacktestMessage<BacktestTaskResult>[];
+    serverMessage: ServerSendBacktestMessage<BacktestResult>;
+    serverMessages: ServerSendBacktestMessage<BacktestResult>[];
     templates: TemplatesResponse[];
     templatesRes: GetTemplatesResponse;
 }
@@ -115,7 +115,7 @@ const initialBacktestState = {
 };
 
 const initialState: State = {
-    UIState: initialStateUIState,
+    UIState: initialUIState,
     backtestRes: null,
     backtestResults: null,
     backtestState: initialBacktestState,
@@ -192,9 +192,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_BACKTEST_RESULT_SUCCESS: {
             const result = getBacktestResult(action.payload);
 
-            const backtestResults = state.backtestResults ? [...state.backtestResults, { ...action.payload }] : [{ ...action.payload }];
+            const backtestResults = state.backtestResults ? [...state.backtestResults, { ...action.payload, result }] : [{ ...action.payload, result }];
 
-            const isResultsAllReceived = backtestResults.length === 0 ? true:  backtestResults.length === state.UIState.backtestTasks.length;
+            const isResultsAllReceived = state.UIState.backtestTasks.length === 0 ? true : backtestResults.length === state.UIState.backtestTasks.length;
 
             return {
                 ...state,
@@ -212,7 +212,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RECEIVE_SERVER_SEND_BACKTEST_EVENT: {
             const { output, status, uuid } = action.payload;
 
-            const serverMessage = { output, uuid, status: <BacktestTaskResult>JSON.parse(status) };
+            const serverMessage = { output, uuid, status: <BacktestResult>JSON.parse(status) };
 
             const serverMessages = state.serverMessages ? [...state.serverMessages, serverMessage] : [serverMessage];
 
@@ -275,10 +275,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return {
                 ...state,
                 UIState: { ...state.UIState, backtestCode, backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING, backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler) },
-                backtestRes: null,
-                serverMessage: null,
-                serverMessages: null,
-                backtestState: initialBacktestState,
+                ...resetState(),
             };
         }
 
@@ -292,13 +289,17 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // reset backtest related state
         case actions.RESET_BACKTEST_RELATED_STATE:
-            return { ...state, backtestRes: null, serverMessage: null, serverMessages: null, backtestState: initialBacktestState };
+            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null } };
 
         default:
             return state;
     }
 }
 
+/**
+ * @param data 回测代码
+ * @description 是否回测的主代码，也就是策略代码或模板代码。
+ */
 function isMineCode(data: BacktestCode): boolean {
     return data.name === MAIN_CODE_FLAG;
 }
@@ -447,10 +448,26 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
     }
 }
 
-function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestTaskResult> {
+/**
+ * @description 获取回测的结果，将结果解析出来。
+ */
+function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestResult> {
     let { result } = payload
 
-    return isNumber(result) ? result : JSON.parse(<string>result);
+    return isNumber(result) ? result : <ServerBacktestResult<string>>JSON.parse(<string>result);
+}
+
+/**
+ * @description 重置store的状态，恢复到初始状态。
+ */
+function resetState(): any {
+    return {
+        backtestRes: null,
+        serverMessage: null,
+        serverMessages: null,
+        backtestResults: null,
+        backtestState: initialBacktestState
+    }
 }
 
 export const getUIState = (state: State) => state.UIState;

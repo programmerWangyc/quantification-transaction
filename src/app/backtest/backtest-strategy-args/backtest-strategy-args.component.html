@@ -5,7 +5,7 @@
         <div nz-row>
             <div nz-col *ngFor="let item of data" [nzSpan]="12">
                 <nz-form-item [hidden]="isHide(item)" fxLayoutAlign="row center">
-                    <nz-form-label> {{item.variableDes}}</nz-form-label>
+                    <nz-form-label style="min-width: 5em;"> {{item.variableDes}}</nz-form-label>
                     <nz-form-control>
                         <ng-container [ngSwitch]="item.variableTypeId">
 
@@ -13,20 +13,20 @@
                                 <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
                                     [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
 
-                                <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)">{{'OPTIMIZE' | translate}}</nz-tag>
+                                <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)" style="margin: 0 0 0 7px;">{{'OPTIMIZE' | translate}}</nz-tag>
 
                                 <ng-container *ngIf="item.isOptimizing" #optimizeBlock>
-                                    <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto">
+                                    <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto; margin: 0 2px;">
                                         <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
                                             [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
-                                    <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto">
+                                    <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto; margin: 0 2px;">
                                         <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
                                             [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
-                                    <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;">
+                                    <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;margin: 0 2px;">
                                         <nz-input-number [(ngModel)]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
                                             style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>

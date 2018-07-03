@@ -29,9 +29,11 @@
     <div class="section form-item">
         <h4>{{'ARGUMENTS' | translate}}</h4>
 
-        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async" [id]="strategyId | async"></app-backtest-strategy-args>
+        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async"
+            [id]="strategyId | async"></app-backtest-strategy-args>
 
-        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true" [id]="item.id"></app-backtest-strategy-args>
+        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true"
+            [id]="item.id"></app-backtest-strategy-args>
     </div>
 
     <div class="section form-item" fxLayoutAlign="row center">
@@ -42,8 +44,23 @@
         <div class="fault-switch">
             <span [nz-tooltip]="'BACKTEST_FAULT_TOLERANT_DESCRIPTION' | translate">{{'FAULT_TOLERANT_MODE' | translate}}</span>
 
-            <nz-switch [ngModel]="isFaultTolerantMode | async" (ngModelChange)="toggleBacktestMode()" [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate">
+            <nz-switch [ngModel]="isFaultTolerantMode | async" (ngModelChange)="toggleBacktestMode()" [nzCheckedChildren]="'OPEN' | translate"
+                [nzUnCheckedChildren]="'CLOSE' | translate">
             </nz-switch>
         </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>{{'BACKTEST_INFORMATION' | translate}}</h3>
+
+    <div class="section form-item">
+        <h4>{{'OVERVIEW' | translate}}</h4>
+        <app-backtest-status></app-backtest-status>
+    </div>
+
+    <div class="section from-item">
+        <h4>{{'LOG' | translate}}</h4>
+        <app-backtest-log></app-backtest-log>
     </div>
 </div>

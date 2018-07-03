@@ -4,6 +4,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter, map, mapTo, switchMap } from 'rxjs/operators';
 
+import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
@@ -30,8 +31,9 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
         public constant: StrategyConstantService,
+        public backtest: BacktestService,
     ) {
-        super(route, strategyService, nodeService, nzModal, constant);
+        super(route, strategyService, nodeService, nzModal, constant, backtest);
     }
 
     ngOnInit() {
