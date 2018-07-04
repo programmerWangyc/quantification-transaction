@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { isNumber, last } from 'lodash';
+import { isNumber } from 'lodash';
 import { concat, merge, Observable, of, Subscription, zip } from 'rxjs';
 import {
     distinct,
@@ -30,13 +30,13 @@ import { BacktestCode, BacktestSelectedPair, TimeRange } from '../backtest.inter
 import { BacktestComputingService } from './backtest.computing.service';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { BacktestParamService } from './backtest.param.service';
+import { getTradeCount } from './backtest.result.service';
 
 @Injectable()
 export class BacktestService extends BacktestParamService {
 
     constructor(
-        private process: ProcessService,
-        private error: ErrorService,
+        private process: ProcessService, private error: ErrorService,
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
         private publicService: PublicService,
@@ -80,14 +80,19 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 服务端回测；1、第一个回测任务立即发起；2、之后的回测任务需要在服务端推送消息，也就是上个回测任务结束之后再发起。
+     * @description 服务端回测；
+     * 1、第一个回测任务立即发起；
+     * 2、之后的回测任务在当前回测的结果响应后发起，也就是上个回测任务的 result 接收完成后再发起。
+     * FIXME: 下一个回测任务应该在，收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
+     * 结果与请求无法对应，因此暂时在当前的任务结果接收完成后再发起下一次任务。
+     * 2、之后的回测任务需要在服务端推送消息，也就是上个回测任务结束之后再发起。
      */
     private launchServerBacktest(signal: Observable<boolean>): Subscription {
         const notify = concat(
             of(true),
             this.store.pipe(
-                select(fromRoot.selectBacktestServerSendMessage),
-                this.filterTruth(),
+                select(fromRoot.selectBacktestIOResponse),
+                filter(res => res && res.action === Actions.BacktestOperateCallbackId.result),
                 mapTo(true)
             )
         );
@@ -368,24 +373,14 @@ export class BacktestService extends BacktestParamService {
      * @description 获取交易次数总计；
      */
     getTradeCount(): Observable<number> {
-        const accumulator = (a: number, c: fromRes.BacktestResultSnapshot) => a + c.TradeStatus.buy || 0 + c.TradeStatus.sell || 0;
-
         return this.store.pipe(
             select(fromRoot.selectBacktestResults),
             this.filterTruth(),
             map(messages => messages.reduce((acc, cur) => {
                 const { Result } = <fromRes.ServerBacktestResult<string>>cur.result;
 
-                const { TradeStatus, Snapshort, Snapshorts } = <fromRes.BacktestResult>JSON.parse(Result);
-
-                if (TradeStatus) acc = acc + TradeStatus.buy + TradeStatus.sell;
-
-                if (Snapshort) acc = acc + Snapshort.reduce(accumulator, 0);
-
-                if (Snapshorts && Snapshorts.length) acc = acc + (<fromRes.BacktestResultSnapshortClass[]>last(last(Snapshorts))).reduce(accumulator, 0);
-
-                return acc;
-            }, 0)),
+                return getTradeCount(JSON.parse(Result)) + acc;
+           }, 0)),
             filter(count => !isNaN(count))
         );
     }

@@ -653,7 +653,7 @@ export interface BacktestResultSnapshortClass {
 export interface BacktestResult {
     Accounts?: Object
     Chart: BacktestResultChart;
-    CloseProfitLogs?: Object;
+    CloseProfitLogs?: any[];
     Elapsed: number;
     Exception: string;
     Finished: boolean;
@@ -663,7 +663,7 @@ export interface BacktestResult {
     LogsCount: number;
     Pending?: any;
     Profit: number;
-    ProfitLogs: any[];
+    ProfitLogs: Array<[number, number]>;
     Progress: number;
     RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
     Snapshort?: BacktestResultSnapshot[];

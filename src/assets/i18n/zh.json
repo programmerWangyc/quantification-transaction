@@ -593,5 +593,9 @@
     "TRANSACTIONS": "交易次数",
     "BACKTEST_INFORMATION": "回测信息",
     "BACKTEST_TASK": "回测任务",
-    "CONFIRM_LEAVE_REGARDLESS_BACKTESTING": "当前有回测任务正在运行，确定要退出吗？"
+    "CONFIRM_LEAVE_REGARDLESS_BACKTESTING": "当前有回测任务正在运行，确定要退出吗？",
+    "WINNING_RATE": "胜率",
+    "MAXIMUM_WITHDRAWAL": "最大回撤",
+    "SHARP": "夏普",
+    "ESTIMATED_REVENUE": "预估收益"
 }

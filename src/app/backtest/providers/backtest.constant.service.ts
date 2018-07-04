@@ -35,6 +35,7 @@ export interface CompareOperator {
 
 export interface BacktestConstantConfig extends BacktestConstantOptions {
     eid: string;
+    yearDays: number;
 }
 
 /** =====================================================Constant======================================================== **/
@@ -64,12 +65,12 @@ export const BACKTEST_PLATFORMS: BacktestPlatform[] = [
 ];
 
 export const BACKTEST_PLATFORMS_CONFIG: BacktestConstantConfig[] = [
-    { eid: 'OKCoin_EN', DataSource: '', SymDots: 3, BasePrecision: 3, CurDots: 3, QuotePrecision: 3, Depth: 11, DepthDeep: 11, PriceTick: 0.01, FeeMin: 0, FeeDenominator: 5, },
-    { eid: 'Bitfinex', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 4, QuotePrecision: 4, Depth: 11, DepthDeep: 11, PriceTick: 0.001, FeeMin: 0, FeeDenominator: 5, },
-    { eid: 'OKEX', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
-    { eid: 'Huobi', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
-    { eid: 'Futures_OKCoin', DataSource: 'this_week', SymDots: 0, BasePrecision: 0, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
-    { eid: 'Futures_CTP', DataSource: 'CTP', SymDots: 0, BasePrecision: 0, CurDots: 3, QuotePrecision: 3, Depth: 2, DepthDeep: 2, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, },
+    { eid: 'OKCoin_EN', DataSource: '', SymDots: 3, BasePrecision: 3, CurDots: 3, QuotePrecision: 3, Depth: 11, DepthDeep: 11, PriceTick: 0.01, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
+    { eid: 'Bitfinex', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 4, QuotePrecision: 4, Depth: 11, DepthDeep: 11, PriceTick: 0.001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
+    { eid: 'OKEX', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
+    { eid: 'Huobi', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
+    { eid: 'Futures_OKCoin', DataSource: 'this_week', SymDots: 0, BasePrecision: 0, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
+    { eid: 'Futures_CTP', DataSource: 'CTP', SymDots: 0, BasePrecision: 0, CurDots: 3, QuotePrecision: 3, Depth: 2, DepthDeep: 2, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 252, },
 ];
 
 export enum CompareLogic {
@@ -126,6 +127,8 @@ export class BacktestConstantService extends ConstantService {
     BT_ACCOUNTS_PNL = 1 << 8;
 
     BACK_END_LANGUAGES = BACK_END_LANGUAGES;
+
+    BACKTEST_RESULT_ELAPSED_RATE = 1000000000;// 没细看这个为啥是这么多0， 抄的。
 
     constructor() {
         super();

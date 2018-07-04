@@ -107,11 +107,18 @@ export class BacktestIOSuccessAction extends BacktestIOAction implements Action 
     constructor(public payload: BacktestIOResponse) { super() };
 }
 
+export enum BacktestOperateCallbackId {
+    result = 'BacktestResult',
+    status = 'BacktestStatus',
+    delete = 'DeleteBacktest',
+    stop = 'StopBacktest'
+}
+
 // get backtest status;
 export const GET_BACKTEST_STATUS = '[Backtest] GET_BACKTEST_STATUS';
 
 class BacktestStatusAction extends BacktestIOAction {
-    callbackId = 'BacktestStatus';
+    callbackId = BacktestOperateCallbackId.status;
 }
 
 export class BacktestStatusRequestAction extends BacktestStatusAction implements Action {
@@ -138,7 +145,7 @@ export class BacktestStatusSuccessAction extends BacktestStatusAction implements
 
 // get backtest result;
 class BacktestResultAction extends BacktestIOAction {
-    callbackId = 'BacktestResult';
+    callbackId = BacktestOperateCallbackId.result;
 }
 
 export const GET_BACKTEST_RESULT = '[Backtest] GET_BACKTEST_RESULT';
@@ -167,7 +174,7 @@ export class BacktestResultSuccessAction extends BacktestResultAction implements
 
 // delete backtest task
 export class DeleteBacktestAction extends BacktestIOAction {
-    callbackId = 'DeleteBacktest';
+    callbackId = BacktestOperateCallbackId.delete;
 }
 
 export const DELETE_BACKTEST_TASK = '[Backtest] DELETE_BACKTEST_TASK';
@@ -196,7 +203,7 @@ export class DeleteBacktestSuccessAction extends DeleteBacktestAction implements
 
 // stop backtest task
 class StopBacktestAction extends BacktestIOAction {
-    callbackId = 'StopBacktest';
+    callbackId = BacktestOperateCallbackId.stop;
 }
 
 export const STOP_BACKTEST_TASK = '[Backtest] STOP_BACKTEST_TASK';

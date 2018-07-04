@@ -65,7 +65,7 @@ export class ExchangeOptionsComponent implements OnInit {
         let platformSnapshot: BacktestSelectedPair = { eid, name, stock, makerFee: this.makerFee, takerFee: this.takerFee, };
 
         if (this.selectedPlatform === 'Futures_CTP') {
-            platformSnapshot = { ...platformSnapshot, minFee: this.minFee };
+            platformSnapshot = { ...platformSnapshot, minFee: this.minFee, balance: this.balance };
         } else if (this.selectedPlatform === 'Futures_OKCoin') {
             platformSnapshot = { ...platformSnapshot, remainingCurrency: this.currency };
         } else {

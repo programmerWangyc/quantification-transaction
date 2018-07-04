@@ -16,6 +16,7 @@ import { PIPES } from './pipes/index.pipe';
 import { BacktestComputingService } from './providers/backtest.computing.service';
 import { BacktestConstantService } from './providers/backtest.constant.service';
 import { BacktestParamService } from './providers/backtest.param.service';
+import { BacktestResultService } from './providers/backtest.result.service';
 import { BacktestService } from './providers/backtest.service';
 import { TimeOptionsComponent } from './time-options/time-options.component';
 
@@ -45,6 +46,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         BacktestConstantService,
         BacktestComputingService,
         BacktestParamService,
+        BacktestResultService,
     ],
 
     exports: [

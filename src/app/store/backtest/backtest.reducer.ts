@@ -160,7 +160,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
             };
 
         case actions.EXECUTE_BACKTEST_FAIL:
-        case actions.GET_BACKTEST_RESULT_FAIL:
         case actions.GET_BACKTEST_STATUS_FAIL:
         case actions.DELETE_BACKTEST_TASK_FAIL:
         case actions.STOP_BACKTEST_TASK_FAIL:
@@ -189,6 +188,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
             };
         }
 
+        // backtest result
+        case actions.GET_BACKTEST_RESULT_FAIL:
         case actions.GET_BACKTEST_RESULT_SUCCESS: {
             const result = getBacktestResult(action.payload);
 

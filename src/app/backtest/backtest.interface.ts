@@ -145,7 +145,7 @@ export interface WorkerBacktestHttpCache {
 export interface WorkerBacktestResponse extends BacktestResult {
     Accounts?: Object
     Chart: WorkerBacktestChart;
-    CloseProfitLogs?: Object;
+    CloseProfitLogs?: any[];
     Elapsed: number;
     Exception: string;
     Finished: boolean;
@@ -186,4 +186,13 @@ export interface BacktestCode {
     name: string;
     args: Array<OptimizedVariableOverview & VariableOverview>;
     id: number;
+}
+
+export interface BacktestLogResult {
+    elapsed: number;
+    profit: number;
+    tradeCount: number;
+    winningRate: number;
+    maxDrawdown: number;
+    sharpeRatio: number;
 }

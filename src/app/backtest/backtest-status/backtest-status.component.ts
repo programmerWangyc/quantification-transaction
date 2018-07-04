@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { BacktestStatistic } from '../backtest.config';
+import { BacktestConstantService } from '../providers/backtest.constant.service';
 import { BacktestService } from '../providers/backtest.service';
 
 @Component({
@@ -32,6 +33,7 @@ export class BacktestStatusComponent implements OnInit {
 
     constructor(
         private backtestService: BacktestService,
+        private constant: BacktestConstantService,
     ) { }
 
     ngOnInit() {
@@ -60,7 +62,7 @@ export class BacktestStatusComponent implements OnInit {
         );
 
         this.timeConsuming = this.backtestService.getBacktestStatistics(BacktestStatistic.Elapsed).pipe(
-            map(data => data / 1000000000) // 没细看这个为啥是这么多0， 抄的。
+            map(data => data / this.constant.BACKTEST_RESULT_ELAPSED_RATE)
         );
 
         this.transactions = this.backtestService.getTradeCount();
