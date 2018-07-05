@@ -1,5 +1,5 @@
 import { LocalStorageKey } from '../../app.config';
-import { PublicResponse, ResponseState, SettingsResponse, ServerSendEventType } from '../../interfaces/response.interface';
+import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse } from '../../interfaces/response.interface';
 import { EditorConfig, Referrer } from './../../interfaces/app.interface';
 import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';
@@ -24,7 +24,7 @@ export interface State {
     language: string;
     needFooter: boolean;
     editorConfig: EditorConfig;
-    serverSendMessageSubscribeState: { [key: string]: boolean }; // 用来控制是否处理服务端相应的
+    serverSendMessageSubscribeState: { [key: string]: boolean }; // 用来控制是否处理服务端相应的消息推送。
 }
 
 const editor = JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig));

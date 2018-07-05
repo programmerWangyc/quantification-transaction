@@ -35,8 +35,7 @@ export interface PublicResponse {
     token: string;
     username: string;
     version: number;
-    event?: string;
-}
+    event?: string; }
 
 /**
  * <------------

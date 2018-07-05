@@ -195,4 +195,5 @@ export interface BacktestLogResult {
     winningRate: number;
     maxDrawdown: number;
     sharpeRatio: number;
+    returns: number;
 }

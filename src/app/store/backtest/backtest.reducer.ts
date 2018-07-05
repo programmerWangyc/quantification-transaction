@@ -48,6 +48,7 @@ export interface UIState {
     floorKlinePeriod: number;
     isBacktesting: boolean;
     isFaultTolerantMode: boolean;
+    isForbiddenBacktest: boolean;
     platformOptions: BacktestSelectedPair[];
     runningNode: number;
     timeOptions: BacktestTimeConfig;
@@ -65,6 +66,7 @@ export const initialUIState: UIState = {
     floorKlinePeriod: K_LINE_PERIOD.find(item => item.minutes === 5).id,
     isBacktesting: false,
     isFaultTolerantMode: false,
+    isForbiddenBacktest: true,
     platformOptions: null,
     runningNode: 0,
     timeOptions: {
@@ -163,7 +165,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_BACKTEST_STATUS_FAIL:
         case actions.DELETE_BACKTEST_TASK_FAIL:
         case actions.STOP_BACKTEST_TASK_FAIL:
-            return { ...state, backtestRes: action.payload };
+            return { ...state, backtestRes: { ...action.payload, result: getBacktestResult(action.payload) } };
 
         case actions.EXECUTE_BACKTEST_SUCCESS: {
             const result = getBacktestResult(action.payload);
@@ -177,7 +179,16 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.GET_BACKTEST_STATUS_SUCCESS:
-        case actions.DELETE_BACKTEST_TASK_SUCCESS:
+        case actions.DELETE_BACKTEST_TASK_SUCCESS: {
+            const result = getBacktestResult(action.payload);
+
+            return {
+                ...state,
+                backtestRes: { ...action.payload, result },
+                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+            };
+        }
+
         case actions.STOP_BACKTEST_TASK_SUCCESS: {
             const result = getBacktestResult(action.payload);
 
@@ -185,6 +196,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 backtestRes: { ...action.payload, result },
                 backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                UIState: { ...state.UIState, isBacktesting: false, backtestMilestone: NaN, isForbiddenBacktest: false },
             };
         }
 
@@ -202,7 +214,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 backtestResults,
                 backtestRes: { ...action.payload, result },
                 backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
-                UIState: { ...state.UIState, backtestMilestone: isResultsAllReceived ? NaN : state.UIState.backtestMilestone, isBacktesting: !isResultsAllReceived }
+                UIState: {
+                    ...state.UIState,
+                    backtestMilestone: isResultsAllReceived ? NaN : state.UIState.backtestMilestone,
+                    isBacktesting: !isResultsAllReceived,
+                    isForbiddenBacktest: !isResultsAllReceived
+                }
             };
         }
 
@@ -245,7 +262,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // platform options
         case actions.UPDATE_BACKTEST_PLATFORM_OPTION:
-            return { ...state, UIState: { ...state.UIState, platformOptions: action.payload } };
+            return { ...state, UIState: { ...state.UIState, platformOptions: action.payload, isForbiddenBacktest: false } };
 
         // running node
         case actions.UPDATE_RUNNING_NODE:
@@ -275,7 +292,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
             // 清空回测结果，服务端推送的消息，backtestIO的响应以及回测的状态。
             return {
                 ...state,
-                UIState: { ...state.UIState, backtestCode, backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING, backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler) },
+                UIState: {
+                    ...state.UIState,
+                    backtestCode,
+                    backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING,
+                    backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler)
+                },
                 ...resetState(),
             };
         }
@@ -286,11 +308,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // loading
         case actions.TOGGLE_BACKTEST_LOADING_STATE:
-            return { ...state, UIState: { ...state.UIState, isBacktesting: action.payload } };
+            return { ...state, UIState: { ...state.UIState, isBacktesting: true, isForbiddenBacktest: true } };
 
         // reset backtest related state
         case actions.RESET_BACKTEST_RELATED_STATE:
-            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null } };
+            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null, backtestMilestone: NaN, backtestTaskFiler: null, } };
 
         default:
             return state;
@@ -467,7 +489,7 @@ function resetState(): any {
         serverMessage: null,
         serverMessages: null,
         backtestResults: null,
-        backtestState: initialBacktestState
+        backtestState: initialBacktestState,
     }
 }
 

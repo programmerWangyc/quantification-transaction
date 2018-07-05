@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { merge, Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, mapTo, startWith } from 'rxjs/operators';
 
 import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BaseComponent } from '../../base/base.component';
 import { VariableOverview } from '../../interfaces/app.interface';
-import { CategoryType } from '../../interfaces/request.interface';
+import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { StrategyService } from '../../strategy/providers/strategy.service';
@@ -39,6 +39,8 @@ export class BacktestSimulationComponent extends BaseComponent {
     fixedFloorKlinePeriodId$: Subject<number> = new Subject();
 
     runningNode$: Subject<number> = new Subject();
+
+    stopBacktest$: Subject<boolean> = new Subject();
 
     runningNode: Observable<number>;
 
@@ -92,7 +94,7 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this.backtestBtnText = this.backtestService.getBacktestBtnText();
 
-        this.isBacktestLoading = this.backtestService.isBacktesting()
+        this.isBacktestLoading = this.backtestService.isBacktesting();
 
         this.runningNode = this.backtestService.getRunningNode();
 
@@ -103,28 +105,37 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this.disableBacktest = this.backtestService.getUIState()
             .pipe(
-                map(res => !res.platformOptions || !res.platformOptions.length || res.isBacktesting)
+                map(res => res.isForbiddenBacktest)
             );
     }
 
     launch() {
-
-        // 打开订阅回测消息的开关。
-        this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, true);
-
         this.subscription$$ = this.backtestService.handleGetTemplatesError()
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
             .add(this.backtestService.updateRunningNode(this.runningNode$))
             .add(this.backtestService.launchBacktest(this.startBacktest$))
+            .add(this.backtestService.launchOperateBacktest(this.stopBacktest$, BacktestIOType.stopTask, true))
+            .add(this.switchReceiveMsgState().subscribe(state => this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, state)))
     }
 
     toggleBacktestMode() {
         this.backtestService.toggleBacktestMode();
     }
 
-    stopBacktest() {
-
+    /**
+     * @description 1、停止回测成功后中止接收服务端的推送消息。2、回测任务开始时将开始需要接收消息 3、页而销毁时停止接收消息
+     */
+    private switchReceiveMsgState(): Observable<boolean> {
+        return merge(
+            this.startBacktest$.pipe(
+                mapTo(true)
+            ),
+            this.backtestService.isStopSuccess().pipe(
+                filter(success => success),
+                mapTo(false)
+            )
+        );
     }
 
     private fixKlinePeriod(klinePeriodId: number): void {

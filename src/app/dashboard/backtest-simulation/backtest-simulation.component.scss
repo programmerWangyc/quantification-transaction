@@ -13,3 +13,20 @@
 .stop-btn {
     margin: 0 1em;
 }
+
+.command-btn-container {
+    width: 30%;
+    position: relative;
+    button:nth-child(1) {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+    }
+    button:nth-child(2) {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+    }
+}

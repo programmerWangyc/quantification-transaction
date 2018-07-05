@@ -1,54 +1,43 @@
 <nz-table #nzTable [nzData]="logs" [nzPageSize]="20" [nzShowPagination]="false">
-    <thead nz-thead>
+    <thead>
         <tr>
-            <th nz-th>
-                <span>{{'TIME' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'PLATFORM' | translate}}</span>
-            </th>
-            <th nz-th nzShowFilter [nzFilters]="filterTypes" (nzFilterChange)="search.next($event)">
-                <span>{{'TYPE' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'PRICE' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'AMOUNT' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'INFORMATION' | translate}}</span>
-            </th>
+            <th>{{'TIME' | translate}}</th>
+            <th>{{'PLATFORM' | translate}}</th>
+            <th nzShowFilter [nzFilters]="filterTypes" (nzFilterChange)="search.next($event)">{{'TYPE' | translate}}</th>
+            <th>{{'PRICE' | translate}}</th>
+            <th>{{'AMOUNT' | translate}}</th>
+            <th>{{'INFORMATION' | translate}}</th>
         </tr>
     </thead>
-    <tbody nz-tbody>
-        <tr nz-tbody-tr *ngFor="let data of nzTable.data" [ngStyle]="{color: data.extra | extraColorPicker, 'background-color': data.extra | extraBcgColorPicker}">
-            <td nz-td>{{data.date}}</td>
 
-            <td nz-td>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data" [ngStyle]="{color: data.extra | extraColorPicker, 'background-color': data.extra | extraBcgColorPicker}">
+            <td>{{data.date}}</td>
+
+            <td>
                 <!-- 0: 买入 1：卖出 2：撤消 3：错误 4：收益 5：消息 6：重启 -->
                 <span *ngIf="data.logType < 4">{{data.eid | eid2String}}</span>
             </td>
 
-            <td nz-td>
+            <td>
                 <span>{{data.logType | logType | translate}}</span>
                 <span *ngIf="!!(data.direction | directionType)">
                     {{data.direction | directionType | translate}} - {{data.contractType}}
                 </span>
             </td>
 
-            <td nz-td>
+            <td>
                 <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">
                     {{data.price | logPrice: data.logType}}
                 </span>
             </td>
 
-            <td nz-td>
+            <td>
                 <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">{{data.logType
                     < 2 ? data.amount : ''}}</span>
             </td>
 
-            <td nz-td>
+            <td>
                 <span [innerHTML]="data.extra | extraContent | safeHtml"></span>
                 <span *ngIf="data.extra | showExtraIcon" class="anticon anticon-rocket" style="margin-left: 8px;"></span>
             </td>

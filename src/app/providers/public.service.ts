@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { isString } from 'lodash';
-import { combineLatest, Observable, of as observableOf, merge, Subject, Subscription } from 'rxjs';
+import { combineLatest, merge, Observable, of as observableOf, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, startWith, tap } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../app.config';
@@ -14,6 +14,7 @@ import {
     selectLanguage,
     selectPublicResponse,
     selectReferrer,
+    selectServerMsgSubscribeState,
     selectSettings,
 } from '../store/index.reducer';
 import { EditorConfig, Referrer } from './../interfaces/app.interface';
@@ -159,6 +160,14 @@ export class PublicService extends BaseService {
                 map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
                 filter(this.isTruth)
             );
+    }
+
+    // server message subscribe state
+    getServerMsgSubscribeState(msgType: string): Observable<boolean> {
+        return this.store.pipe(
+            select(selectServerMsgSubscribeState),
+            map(res => res[msgType])
+        );
     }
 
     /* =======================================================Config operate======================================================= */

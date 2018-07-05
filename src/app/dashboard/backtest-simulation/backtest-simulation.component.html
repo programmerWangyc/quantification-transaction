@@ -37,9 +37,14 @@
     </div>
 
     <div class="section form-item" fxLayoutAlign="row center">
-        <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(isFaultTolerantMode)" [disabled]="disableBacktest | async">{{backtestBtnText | async | translate}}</button>
+        <div class="command-btn-container">
+            <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(isFaultTolerantMode)" [disabled]="disableBacktest | async">
+                <i class="anticon anticon-spin anticon-loading" *ngIf="isBacktestLoading | async"></i>
+                {{backtestBtnText | async | translate}}
+            </button>
 
-        <button nz-button *ngIf="isBacktestLoading | async " [nzType]="'danger'" (click)="stopBacktest()" class="stop-btn">{{'STOP' | translate}}</button>
+            <button nz-button *ngIf="isBacktestLoading | async " [nzType]="'danger'" (click)="stopBacktest$.next(true)" class="stop-btn">{{'STOP' | translate}}</button>
+        </div>
 
         <div class="fault-switch">
             <span [nz-tooltip]="'BACKTEST_FAULT_TOLERANT_DESCRIPTION' | translate">{{'FAULT_TOLERANT_MODE' | translate}}</span>

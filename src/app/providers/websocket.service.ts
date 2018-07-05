@@ -81,8 +81,9 @@ export class WebsocketService {
                 map(response => JSON.parse(response) as ResponseBody),
                 retryWhen(errors => errors
                     .pipe(
-                        tap(_ => this.tip.showTip('网络错误')),
-                        delay(5000)
+                        tap(_ => this.tip.messageError('NETWORK_DISCONNECTED')),
+                        delay(5000),
+                        tap(_ => this.tip.messageInfo('RECONNECTING'))
                     )
                 ),
                 share()
@@ -92,6 +93,7 @@ export class WebsocketService {
 
         this.connectionStatusSubscription = connectionStatus.subscribe(numberConnected => {
             console.log('current websocket status: ', numberConnected);
+            numberConnected && this.tip.messageSuccess('NETWORK_CONNECTED');
         });
 
         /**

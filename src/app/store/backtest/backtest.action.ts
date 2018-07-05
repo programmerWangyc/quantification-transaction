@@ -330,10 +330,8 @@ export class UpdateBacktestLevelAction implements Action {
 
 export const TOGGLE_BACKTEST_LOADING_STATE = '[Backtest] TOGGLE_BACKTEST_LOADING_STATE';
 
-export class ToggleBacktestLoadingStateAction implements Action {
+export class OpenBacktestLoadingStateAction implements Action {
     readonly type = TOGGLE_BACKTEST_LOADING_STATE;
-
-    constructor(public payload: boolean) { }
 }
 
 export const RESET_BACKTEST_RELATED_STATE = '[Backtest] RESET_BACKTEST_RELATED_STATE';
@@ -375,7 +373,7 @@ export type Actions = ApiActions
     | GenerateToBeTestedValuesAction
     | UpdateBacktestLevelAction
     | ReceiveServerSendBacktestEventAction
-    | ToggleBacktestLoadingStateAction
+    | OpenBacktestLoadingStateAction
     | ResetBacktestRelatedStateAction
 
 export const ResponseActions = {

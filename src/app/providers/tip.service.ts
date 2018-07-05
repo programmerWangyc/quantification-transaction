@@ -73,8 +73,8 @@ export class TipService {
         this.translate.get(content).subscribe(content => this.message.success(content, options));
     }
 
-    messageError(content: string, options?: NzMessageDataOptions): void {
-        this.translate.get(content).subscribe(content => this.message.error(content, options));
+    messageError(content: string, params = {}, options?: NzMessageDataOptions): void {
+        this.translate.get(content, params).subscribe(content => this.message.error(content, options));
     }
 
     messageInfo(content: string, params?: Object, option?: NzMessageDataOptions): void {

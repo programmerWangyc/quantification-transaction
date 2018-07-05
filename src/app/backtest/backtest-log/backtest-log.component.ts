@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 
+import { BacktestLogResult } from '../backtest.interface';
+import { BacktestResultService } from '../providers/backtest.result.service';
+
 export interface BacktestTaskLog {
     period: number;
     trade: number;
@@ -14,16 +17,23 @@ export interface BacktestTaskLog {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BacktestLogComponent implements OnInit {
-    logs: Observable<any[]>;
-
     cols: Observable<string[]>;
 
-    values: Observable<number[]>;
+    logs: Observable<BacktestLogResult[]>;
 
-    constructor() { }
+    tasks: number[][];
+
+    constructor(
+        private resultService: BacktestResultService,
+    ) { }
 
     ngOnInit() {
+        this.cols = this.resultService.getBacktestLogCols();
 
+        // 注意： 这条流上会有 null 抛出，代表这个回测结果失败。
+        this.logs = this.resultService.getBacktestLogResults();
+
+        this.resultService.getBacktestLogRows()
+            .subscribe(result => this.tasks = result)
     }
-
 }

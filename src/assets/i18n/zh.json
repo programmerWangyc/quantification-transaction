@@ -187,6 +187,9 @@
     "EQUAL": "等于",
     "LARGE": "大",
     "SMALL": "小",
+    "NETWORK_DISCONNECTED": "与服务器的连接已断开",
+    "RECONNECTING": "正在发起重连",
+    "NETWORK_CONNECTED": "与服务器连接正常",
 
     "HOME": "首页",
     "STRATEGY_SQUARE": "策略广场",
@@ -590,6 +593,7 @@
     "BACKTEST_SYSTEM_BUSY": "回测系统正忙, 请稍后重试!",
     "PROGRESS": "进度",
     "TIME_CONSUMING": "耗时",
+    "TIME_CONSUMING_WITH_UNIT": "耗时（秒）",
     "TRANSACTIONS": "交易次数",
     "BACKTEST_INFORMATION": "回测信息",
     "BACKTEST_TASK": "回测任务",
@@ -597,5 +601,8 @@
     "WINNING_RATE": "胜率",
     "MAXIMUM_WITHDRAWAL": "最大回撤",
     "SHARP": "夏普",
-    "ESTIMATED_REVENUE": "预估收益"
+    "ESTIMATED_REVENUE": "预估收益",
+
+    "STOP_BACKTEST_ERROR": "回测任务停止失败：{{error}}",
+    "STOP_BACKTEST_SUCCESS": "回测任务停止成功"
 }

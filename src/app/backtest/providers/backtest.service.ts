@@ -22,6 +22,7 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { PublicService } from '../../providers/public.service';
 import * as Actions from '../../store/backtest/backtest.action';
+import { isStopBacktestFail } from '../../store/backtest/backtest.effect';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
@@ -61,7 +62,7 @@ export class BacktestService extends BacktestParamService {
          *  注意：loading 将在回测结束后在 store 中被自动重置为false。
          */
         const generateToBeTestedValue$$ = start.subscribe(_ => {
-            this.store.dispatch(new Actions.ToggleBacktestLoadingStateAction(true));
+            this.store.dispatch(new Actions.OpenBacktestLoadingStateAction());
             this.store.dispatch(new Actions.GenerateToBeTestedValuesAction());
         });
 
@@ -74,9 +75,9 @@ export class BacktestService extends BacktestParamService {
                 this.store.pipe(
                     select(fromRoot.selectBacktestServerSendMessage),
                     this.filterTruth()
-                )
-                , BacktestIOType.getTaskResult)
-            );
+                ),
+                BacktestIOType.getTaskResult
+            ));
     }
 
     /**
@@ -93,6 +94,8 @@ export class BacktestService extends BacktestParamService {
             this.store.pipe(
                 select(fromRoot.selectBacktestIOResponse),
                 filter(res => res && res.action === Actions.BacktestOperateCallbackId.result),
+                withLatestFrom(this.publicService.getServerMsgSubscribeState(fromRes.ServerSendEventType.BACKTEST)),
+                filter(([_, onOff]) => onOff),
                 mapTo(true)
             )
         );
@@ -103,10 +106,9 @@ export class BacktestService extends BacktestParamService {
                     zip(
                         this.getPutTaskParameters(),
                         notify
+                    ).pipe(
+                        map(([params, _]) => params)
                     )
-                        .pipe(
-                            map(([params, _]) => params)
-                        )
                 )
             )
         );
@@ -195,16 +197,23 @@ export class BacktestService extends BacktestParamService {
 
     /**
      * @method launchOperateBacktest
-     * @param {Observable} command: 操作指令，指定操作应该发生的时机。
+     * @param { Observable } command: 操作指令，指定操作应该发生的时机。
      * @param { string } taskType: 指令的类型
+     * @param { boolean } force: 是否强制发起，默认情况下只在回测开关开启时才发起任务。
      * @description 发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
      */
-    launchOperateBacktest(command: Observable<any>, taskType: string): Subscription {
+    launchOperateBacktest(command: Observable<any>, taskType: string, force = false): Subscription {
+        const params = this.getBacktestTaskParams(taskType).pipe(
+            take(1)
+        );
+
         return this.process.processBacktestIO(
             command.pipe(
                 switchMapTo(
-                    this.getBacktestTaskParams(taskType).pipe(
-                        take(1)
+                    force ? params : params.pipe(
+                        withLatestFrom(this.publicService.getServerMsgSubscribeState(fromRes.ServerSendEventType.BACKTEST)),
+                        filter(([_, onOff]) => onOff),
+                        map(([params, _]) => params)
                     )
                 )
             )
@@ -231,12 +240,11 @@ export class BacktestService extends BacktestParamService {
             );
     }
 
-    private getBacktestIOResponse(): Observable<number | fromRes.ServerBacktestResult<string | fromRes.BacktestResult>> {
+    private getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store
             .pipe(
                 select(fromRoot.selectBacktestIOResponse),
-                filter(this.isTruth),
-                map(res => isNumber(res.result) ? <number>res.result : res.result)
+                filter(res => !!res && (callbackId ? res.action === callbackId : true))
             );
     }
 
@@ -271,6 +279,12 @@ export class BacktestService extends BacktestParamService {
         return this.store.pipe(
             select(fromRoot.selectBacktestResults),
             this.filterTruth()
+        );
+    }
+
+    isStopSuccess(): Observable<boolean> {
+        return this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.stop).pipe(
+            map(res => !isStopBacktestFail(res))
         );
     }
 
@@ -358,11 +372,15 @@ export class BacktestService extends BacktestParamService {
             select(fromRoot.selectBacktestResults),
             this.filterTruth(),
             map(results => results.map(item => {
-                const { Result } = <fromRes.ServerBacktestResult<string>>item.result;
+                const { Result, Code } = <fromRes.ServerBacktestResult<string>>item.result;
 
-                const messages = <fromRes.BacktestResult>JSON.parse(Result);
+                if (Code === ServerBacktestCode.SUCCESS) {
+                    const messages = <fromRes.BacktestResult>JSON.parse(Result);
 
-                return messages[statistic];
+                    return messages[statistic];
+                } else {
+                    return 0;
+                }
             })
                 .reduce((acc, cur) => acc + cur, 0)
             )
@@ -377,10 +395,10 @@ export class BacktestService extends BacktestParamService {
             select(fromRoot.selectBacktestResults),
             this.filterTruth(),
             map(messages => messages.reduce((acc, cur) => {
-                const { Result } = <fromRes.ServerBacktestResult<string>>cur.result;
+                const { Result, Code } = <fromRes.ServerBacktestResult<string>>cur.result;
 
-                return getTradeCount(JSON.parse(Result)) + acc;
-           }, 0)),
+                return Code === ServerBacktestCode.SUCCESS ? getTradeCount(JSON.parse(Result)) + acc : acc;
+            }, 0)),
             filter(count => !isNaN(count))
         );
     }
@@ -439,10 +457,18 @@ export class BacktestService extends BacktestParamService {
 
     handleBacktestIOError(): Subscription {
         return this.error.handleError(
-            this.getBacktestIOResponse()
-                .pipe(
-                    map(res => this.error.getBacktestError(res))
-                )
+            this.getBacktestIOResponse().pipe(
+                map(res => this.error.getBacktestError(res.result))
+            )
+        );
+    }
+
+    handleStopBacktestError(): Subscription {
+        return this.error.handleError(
+            of('STOP_BACKTEST_ERROR'),
+            this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.stop).pipe(
+                map(res => <string>res.result)
+            )
         );
     }
 }

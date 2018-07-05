@@ -1,18 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest, zip, from } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { cloneDeep, omit } from 'lodash';
 import * as moment from 'moment';
-import { PutTaskCode, PutTaskCodeArg, BacktestExchange, BacktestAdvanceOptions, BacktestPlatformOptions, BacktestConstantOptions, BacktestPutTaskOptions, BacktestPutTaskParams, BacktestIORequest, BacktestIOType } from '../../interfaces/request.interface';
-import { omit, cloneDeep } from 'lodash';
-import { VariableOverview } from '../../interfaces/app.interface';
+import { combineLatest, from, Observable } from 'rxjs';
+import { delay, distinctUntilChanged, filter, map, mergeMap, take } from 'rxjs/operators';
+
 import { VariableType } from '../../app.config';
-import { BacktestConstantService } from './backtest.constant.service';
-import { filter, map,  distinctUntilChanged, mergeMap, take, delay } from 'rxjs/operators';
-import { Store, select } from '@ngrx/store';
-import * as fromRoot from '../../store/index.reducer';
-import * as fromRes from '../../interfaces/response.interface';
 import { BaseService } from '../../base/base.service';
-import { UIState, AdvancedOption } from '../../store/backtest/backtest.reducer';
-import { BacktestCode, BacktestSelectedPair  } from '../backtest.interface';
+import { VariableOverview } from '../../interfaces/app.interface';
+import {
+    BacktestAdvanceOptions,
+    BacktestConstantOptions,
+    BacktestExchange,
+    BacktestIORequest,
+    BacktestIOType,
+    BacktestPlatformOptions,
+    BacktestPutTaskOptions,
+    BacktestPutTaskParams,
+    PutTaskCode,
+    PutTaskCodeArg,
+} from '../../interfaces/request.interface';
+import * as fromRes from '../../interfaces/response.interface';
+import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
+import * as fromRoot from '../../store/index.reducer';
+import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
+import { BacktestConstantService } from './backtest.constant.service';
 
 @Injectable()
 export class BacktestParamService extends BaseService {
@@ -147,7 +159,7 @@ export class BacktestParamService extends BaseService {
     /* =======================================================Backtest IO parameters======================================================= */
 
     /**
-     * @description 获取回测接口 backtestIO 的参数。
+     * @description 获取回测接口 putTask 的参数。
      */
     protected getPutTaskParameters(): Observable<BacktestIORequest> {
         return combineLatest(
@@ -160,9 +172,8 @@ export class BacktestParamService extends BaseService {
                 map(([{ is_owner }, language, node, task]) => ({
                     nodeId: is_owner ? node : 0,
                     language: is_owner ? language : language + 1000,
-                    info: task
+                    io: JSON.stringify([BacktestIOType.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(task)])
                 })),
-                map(({ nodeId, language, info }) => ({ nodeId, language, io: JSON.stringify([BacktestIOType.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(info)]) })),
                 distinctUntilChanged(this.compareAllValues())
             );
     }

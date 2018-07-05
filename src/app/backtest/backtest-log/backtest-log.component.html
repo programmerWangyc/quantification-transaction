@@ -1,54 +1,57 @@
 <nz-table #nzTable [nzData]="logs | async" [nzPageSize]="50" [nzShowPagination]="true" nzBordered>
-    <thead nz-thead>
+    <thead>
         <tr>
-            <th nz-th>
-                <span>{{'SEQUENCE_NUMBER' | translate}}</span>
-            </th>
-            <th nz-th *ngFor="let col of cols | async">
-                <span>{{col}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'TIME_CONSUMING' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'TRANSACTIONS' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'WINNING_RATE' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'MAXIMUM_WITHDRAWAL' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'SHARP' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'ESTIMATED_REVENUE' | translate}}</span>
-            </th>
-            <th nz-th>
-                <span>{{'PROFIT' | translate}}</span>
-            </th>
+            <th bt-text-center>{{'SEQUENCE_NUMBER' | translate}}</th>
+            <th bt-text-center *ngFor="let col of cols | async">{{col}}</th>
+            <th bt-text-center>{{'TIME_CONSUMING_WITH_UNIT' | translate}}</th>
+            <th bt-text-center>{{'TRANSACTIONS' | translate}}</th>
+            <th bt-text-center>{{'WINNING_RATE' | translate}}</th>
+            <th bt-text-center>{{'MAXIMUM_WITHDRAWAL' | translate}}</th>
+            <th bt-text-center>{{'SHARP' | translate}}</th>
+            <th bt-text-center>{{'ESTIMATED_REVENUE' | translate}}</th>
+            <th bt-text-center>{{'PROFIT' | translate}}</th>
+            <th bt-text-center>{{'STATUS' | translate}}</th>
         </tr>
     </thead>
-    <tbody nz-tbody>
-        <tr nz-tbody-tr *ngFor="let data of nzTable.data; index as idx">
-            <td nz-td>{{idx + 1}}</td>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data; index as idx">
+            <td>{{idx + 1}}</td>
 
-            <td nz-td *ngFor="let value of values | async">{{value}}</td>
+            <td *ngFor="let value of tasks[idx]">{{value}}</td>
 
-            <td nz-td>time_consuming: </td>
+            <ng-container *ngIf="!!data; else elseBlock">
+                <td>{{data.elapsed | number: '1.1-5'}}</td>
 
-            <td nz-td>trade_count: </td>
+                <td>{{data.tradeCount}}</td>
 
-            <td nz-td>winning_rate: </td>
+                <td>{{data.winningRate | percent: '1.1-2'}}</td>
 
-            <td nz-td></td>
+                <td>{{data.maxDrawdown | percent: '1.1-2'}}</td>
 
-            <td nz-td></td>
+                <td>{{data.sharpeRatio | number: '1.1-3'}}</td>
 
-            <td nz-td></td>
+                <td>{{data.returns | number: '1.1-3'}}</td>
 
-            <td nz-td></td>
+                <td>{{data.profit | number: '1.1-5'}}</td>
+
+                <td>
+                    <i class="anticon anticon-check-circle" style="color: #87d068"></i>
+                </td>
+            </ng-container>
+
+            <ng-template #elseBlock>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>
+                    <i class="anticon anticon-close-circle" style="color: #f04134"></i>
+                </td>
+            </ng-template>
+
         </tr>
     </tbody>
 </nz-table>
