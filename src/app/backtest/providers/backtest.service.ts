@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { isNumber } from 'lodash';
-import { concat, merge, Observable, of, Subscription, zip } from 'rxjs';
+import { isEmpty, isNull, isNumber } from 'lodash';
+import { concat, merge, never, Observable, of, Subscription, zip } from 'rxjs';
 import {
     distinct,
     distinctUntilChanged,
@@ -9,8 +9,11 @@ import {
     map,
     mapTo,
     partition,
+    skip,
+    switchMap,
     switchMapTo,
     take,
+    takeUntil,
     tap,
     withLatestFrom,
 } from 'rxjs/operators';
@@ -21,6 +24,7 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { PublicService } from '../../providers/public.service';
+import { TipService } from '../../providers/tip.service';
 import * as Actions from '../../store/backtest/backtest.action';
 import { isStopBacktestFail } from '../../store/backtest/backtest.effect';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
@@ -42,6 +46,7 @@ export class BacktestService extends BacktestParamService {
         public constant: BacktestConstantService,
         private publicService: PublicService,
         private computeService: BacktestComputingService,
+        public tipService: TipService,
     ) {
         super(store, constant);
     }
@@ -57,16 +62,22 @@ export class BacktestService extends BacktestParamService {
         //         (isJS, isOwner) => isJS && isOwner
         //     )
 
+
         /**
          *  回测前的动作：1、根据参数配置项生成需要测试的任务；2、将loading切换成回测中。
          *  注意：loading 的 false 状态逻辑只存在于 store 中。
          */
-        const generateToBeTestedValue$$ = start.subscribe(_ => {
-            this.store.dispatch(new Actions.OpenBacktestLoadingStateAction());
-            this.store.dispatch(new Actions.GenerateToBeTestedValuesAction());
-        });
+        const generateToBeTestedValue$$ = start.subscribe(_ => this.store.dispatch(new Actions.GenerateToBeTestedValuesAction()));
 
-        return this.launchServerBacktest(start)
+        const canStart = start.pipe(
+            switchMapTo(this.isBacktestArgsValid().pipe(
+                tap(isValid => !isValid && this.tipService.messageError('COMBINATION_ARGS_EMPTY_ERROR')),
+                switchMap(isValid => isValid ? of(true) : never()),
+                tap(_ => this.store.dispatch(new Actions.OpenBacktestLoadingStateAction()))
+            ))
+        )
+
+        return this.launchServerBacktest(canStart)
             .add(generateToBeTestedValue$$)
             //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
             .add(this.launchOperateBacktest(
@@ -110,7 +121,12 @@ export class BacktestService extends BacktestParamService {
                         this.getPutTaskParameters(),
                         notify
                     ).pipe(
-                        map(([params, _]) => params)
+                        map(([params, _]) => params),
+                        takeUntil(this.getUIState().pipe(
+                            map(state => state.backtestMilestone),
+                            skip(1),
+                            filter(milestone => isNull(milestone))
+                        ))
                     )
                 )
             )
@@ -327,7 +343,7 @@ export class BacktestService extends BacktestParamService {
                 map(state => {
                     const { backtestMilestone, isBacktesting } = state;
 
-                    if (!isNaN(backtestMilestone)) {
+                    if (!isNull(backtestMilestone)) {
                         return BacktestMilestone[backtestMilestone];
                     } else {
                         return isBacktesting ? 'BACKTESTING' : 'START_BACKTEST';
@@ -407,6 +423,19 @@ export class BacktestService extends BacktestParamService {
             }, 0)),
             filter(count => !isNaN(count))
         );
+    }
+
+    /**
+     * @description 回测的参数是否设置正确。
+     * 1、不是调优回测时，默认为 true；
+     * 2、调优回测时，是否生成了可供回测的参数组合；
+     */
+    isBacktestArgsValid(): Observable<boolean> {
+        return this.getUIState().pipe(
+            filter(({ backtestCode, backtestTasks }) => !!backtestCode && !!backtestTasks),
+            map(({ backtestCode, backtestTasks }) => this.isOptimizing(backtestCode) ? !isEmpty(backtestTasks) : true),
+            take(1)
+        )
     }
 
     /* =======================================================Local state change======================================================= */

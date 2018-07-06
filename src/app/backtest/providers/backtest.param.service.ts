@@ -23,6 +23,7 @@ import {
 import * as fromRes from '../../interfaces/response.interface';
 import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { BacktestLevel } from '../backtest.config';
 import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 
@@ -155,6 +156,15 @@ export class BacktestParamService extends BaseService {
             );
     }
 
+    /**
+     * @description 是否在参数调优情况下进行回测；检查回测代码的所有参数的 isOptimizing 字段。
+     */
+    isOptimizeBacktest(): Observable<boolean> {
+        return this.getUIState().pipe(
+            filter(state => !!state.backtestCode),
+            map(state => this.isOptimizing(state.backtestCode))
+        );
+    }
 
     /* =======================================================Backtest IO parameters======================================================= */
 
@@ -240,7 +250,9 @@ export class BacktestParamService extends BaseService {
             this.getUpdatePeriod()
         )
             .pipe(
-                map(([{ advancedOptions, timeOptions, backtestLevel, backtestTasks }, updatePeriod]) => {
+                map(([{ advancedOptions, timeOptions, backtestLevel, backtestCode }, updatePeriod]) => {
+                    const isOptimizeBacktest = this.isOptimizing(backtestCode);
+
                     const { log, profit, chart, delay } = advancedOptions;
 
                     const { start, end, klinePeriodId } = timeOptions;
@@ -249,13 +261,11 @@ export class BacktestParamService extends BaseService {
 
                     const finish = <number>moment(end).unix();
 
-                    const isMultipleTask = !!backtestTasks.length;
-
                     return {
-                        RetFlags: this.getRetFlags(isMultipleTask, backtestLevel),
-                        MaxRuntimeLogs: isMultipleTask ? 0 : log,
+                        RetFlags: this.getRetFlags(isOptimizeBacktest, backtestLevel),
+                        MaxRuntimeLogs: isOptimizeBacktest ? 0 : log,
                         MaxProfitLogs: profit,
-                        MaxChartLogs: isMultipleTask ? 0 : chart,
+                        MaxChartLogs: isOptimizeBacktest ? 0 : chart,
                         DataServer: 'https://www.fmz.com',
                         // CPP
                         TimeBegin: begin,
@@ -282,7 +292,7 @@ export class BacktestParamService extends BaseService {
 
         let result = this.constant.getRetFlags();
 
-        if (level === 0) {
+        if (level === BacktestLevel.simulation) {
             return result | this.constant.BT_SYMBOLS | this.constant.BT_INDICATORS;
         } else {
             return result;
@@ -326,6 +336,7 @@ export class BacktestParamService extends BaseService {
     private generatePutTaskExchange(): Observable<BacktestExchange[]> {
         return this.getUIState()
             .pipe(
+                filter(({ platformOptions, timeOptions }) => !!platformOptions && !!platformOptions.length && !!timeOptions.start && !!timeOptions.end),
                 map(state => {
                     const { timeOptions, floorKlinePeriod, advancedOptions, platformOptions, isFaultTolerantMode, backtestLevel } = state;
 
@@ -379,7 +390,7 @@ export class BacktestParamService extends BaseService {
      * @description 生成回测字段 Exchange 中的平台选项的配置。
      */
     private generatePlatformOptionsForExchange(platform: BacktestSelectedPair, klinePeriodId: number): BacktestPlatformOptions {
-        const { eid, name, stock, makerFee, takerFee, balance, remainingCurrency, minFee } = platform;
+        const { eid, stock, makerFee, takerFee, balance, remainingCurrency, minFee } = platform;
 
         return {
             Name: eid,
@@ -420,6 +431,10 @@ export class BacktestParamService extends BaseService {
      */
     private generateBasePeriod(backtestLevel: number, klinePeriodId: number): number {
         return backtestLevel === 1 ? 1000 : this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60000;
+    }
+
+    protected isOptimizing(data: BacktestCode[]): boolean {
+        return data.some(code => code.args.some(arg => arg.isOptimizing));
     }
 
 }

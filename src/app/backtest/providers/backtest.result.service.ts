@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
-import { head, isEmpty, isObject, last, range } from 'lodash';
+import { head, isEmpty, isNull, isObject, last, range } from 'lodash';
 import * as moment from 'moment';
 import { concat, from, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
@@ -386,7 +386,7 @@ export class BacktestResultService extends BaseService {
                 this.store.pipe(
                     select(fromRoot.selectBacktestResults),
                 ),
-                (milestone, results) => isNaN(milestone) && !!results && !!results.length
+                (milestone, results) => isNull(milestone) && !!results && !!results.length
             )
         );
     }

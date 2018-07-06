@@ -60,7 +60,7 @@ export const initialUIState: UIState = {
     advancedOptions: storedAdvancedOptions || defaultAdvancedOptions,
     backtestCode: [],
     backtestLevel: 0,
-    backtestMilestone: NaN,
+    backtestMilestone: null,
     backtestTaskFiler: [],
     backtestTasks: null,
     floorKlinePeriod: K_LINE_PERIOD.find(item => item.minutes === 5).id,
@@ -194,7 +194,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 backtestRes: { ...action.payload, result },
                 backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
-                UIState: { ...state.UIState, isBacktesting: false, backtestMilestone: NaN, isForbiddenBacktest: false },
+                UIState: { ...state.UIState, isBacktesting: false, backtestMilestone: null, isForbiddenBacktest: false },
             };
         }
 
@@ -214,7 +214,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
                 UIState: {
                     ...state.UIState,
-                    backtestMilestone: isResultsAllReceived ? NaN : state.UIState.backtestMilestone,
+                    backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
                     isBacktesting: !isResultsAllReceived,
                     isForbiddenBacktest: !isResultsAllReceived
                 }
@@ -260,7 +260,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // platform options
         case actions.UPDATE_BACKTEST_PLATFORM_OPTION:
-            return { ...state, UIState: { ...state.UIState, platformOptions: action.payload, isForbiddenBacktest: false } };
+            return { ...state, UIState: { ...state.UIState, platformOptions: action.payload, isForbiddenBacktest: !action.payload.length } };
 
         // running node
         case actions.UPDATE_RUNNING_NODE:
@@ -293,7 +293,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 UIState: {
                     ...state.UIState,
                     backtestCode,
-                    backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING,
                     backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler)
                 },
                 ...resetState(),
@@ -306,11 +305,19 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // loading
         case actions.TOGGLE_BACKTEST_LOADING_STATE:
-            return { ...state, UIState: { ...state.UIState, isBacktesting: true, isForbiddenBacktest: true } };
+            return {
+                ...state,
+                UIState: {
+                    ...state.UIState,
+                    isBacktesting: true,
+                    isForbiddenBacktest: true,
+                    backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING,
+                }
+            };
 
         // reset backtest related state
         case actions.RESET_BACKTEST_RELATED_STATE:
-            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null, backtestMilestone: NaN, backtestTaskFiler: null, } };
+            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null, backtestMilestone: null, backtestTaskFiler: null, } };
 
         default:
             return state;
@@ -402,18 +409,18 @@ function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][
         .pipe(
             map(({ id, name, args }) => ({ id, name, args: <OptimizedVariableOverview[]>args.filter(arg => arg.toBeTestedValues) })),
             filter(data => !!data.args.length),
-            concatMap(({ args, name }) => from(args)
-                .pipe(map(arg => arg.toBeTestedValues.map(value => ({
+            concatMap(({ args, name }) => from(args).pipe(
+                map(arg => arg.toBeTestedValues.map(value => ({
                     file: name,
                     variableName: arg.variableName,
                     variableDes: arg.variableDes,
                     variableValue: value
-                }))))
-            ),
+                })))
+            )),
             reduce((acc: BacktestTaskDescription[][], cur: BacktestTaskDescription[]) => acc.length === 0 ?
-                cur.map(item => [item]) :
-                flatten(acc.map(group => cur.map(item => [...group, item]))),
-                []),
+                cur.map(item => [item]) : flatten(acc.map(group => cur.map(item => [...group, item]))),
+                []
+            ),
     ).subscribe(result => tasks = result);
 
     return tasks;

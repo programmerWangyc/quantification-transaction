@@ -29,3 +29,8 @@ export enum BacktestStatistic {
     TaskStatus = 'TaskStatus',
     Time = 'Time',
 }
+
+export enum BacktestLevel {
+    simulation,
+    real
+}

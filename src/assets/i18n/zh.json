@@ -604,5 +604,6 @@
     "ESTIMATED_REVENUE": "预估收益",
 
     "STOP_BACKTEST_ERROR": "回测任务停止失败：{{error}}",
-    "STOP_BACKTEST_SUCCESS": "回测任务停止成功"
+    "STOP_BACKTEST_SUCCESS": "回测任务停止成功",
+    "COMBINATION_ARGS_EMPTY_ERROR": "没有检测到可用的调优参数组合，请调整调优参数的设置。"
 }

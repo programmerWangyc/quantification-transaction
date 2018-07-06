@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, mapTo, startWith } from 'rxjs/operators';
+import { filter, map, mapTo, startWith, switchMapTo } from 'rxjs/operators';
 
 import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
 import { BacktestService } from '../../backtest/providers/backtest.service';
@@ -52,6 +52,7 @@ export class BacktestSimulationComponent extends BaseComponent {
 
     isBacktestLoading: Observable<boolean>;
 
+    isOptimizeBacktest: Observable<boolean>;
 
     startBacktest$: Subject<boolean> = new Subject();
 
@@ -97,10 +98,11 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this.runningNode = this.backtestService.getRunningNode();
 
-        this.disableBacktest = this.backtestService.getUIState()
-            .pipe(
-                map(res => res.isForbiddenBacktest)
-            );
+        this.disableBacktest = this.backtestService.getUIState().pipe(
+            map(res => res.isForbiddenBacktest)
+        );
+
+        this.isOptimizeBacktest = this.backtestService.isOptimizeBacktest();
     }
 
     launch() {
@@ -119,7 +121,9 @@ export class BacktestSimulationComponent extends BaseComponent {
     private switchReceiveMsgState(): Observable<boolean> {
         return merge(
             this.startBacktest$.pipe(
-                mapTo(true)
+                switchMapTo(this.backtestService.isBacktestArgsValid().pipe(
+                    filter(isValid => isValid)
+                ))
             ),
             this.backtestService.isStopSuccess().pipe(
                 filter(success => success),

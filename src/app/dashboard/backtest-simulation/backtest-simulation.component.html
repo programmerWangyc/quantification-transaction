@@ -56,7 +56,7 @@
         <app-backtest-status></app-backtest-status>
     </div>
 
-    <div class="section form-item">
+    <div *ngIf="isOptimizeBacktest | async" class="section form-item">
         <h4>{{'LOG' | translate}}</h4>
         <app-backtest-log></app-backtest-log>
     </div>
