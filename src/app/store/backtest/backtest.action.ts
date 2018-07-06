@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 
 import { Filter } from '../../backtest/arg-optimizer/arg-optimizer.component';
 import { BacktestCode, BacktestSelectedPair, TimeRange } from '../../backtest/backtest.interface';
-import { BacktestIORequest, GetTemplatesRequest } from '../../interfaces/request.interface';
+import { BacktestIORequest, BacktestIOType, GetTemplatesRequest } from '../../interfaces/request.interface';
 import { BacktestIOResponse, GetTemplatesResponse, ServerSendBacktestMessage } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -57,6 +57,23 @@ export class GetTemplatesSuccessAction extends GetTemplatesAction implements Act
     constructor(public payload: GetTemplatesResponse) { super() };
 }
 
+
+export enum BacktestOperateCallbackId {
+    result = 'BacktestResult',
+    status = 'BacktestStatus',
+    delete = 'DeleteBacktest',
+    stop = 'StopBacktest',
+    backtest = 'BacktestIO',
+}
+
+export const backtestCallbackIdMapType: Map<string, string> = new Map([
+    [BacktestOperateCallbackId.backtest, BacktestIOType.putTask],
+    [BacktestOperateCallbackId.result, BacktestIOType.getTaskResult],
+    [BacktestOperateCallbackId.status, BacktestIOType.getTaskStatus],
+    [BacktestOperateCallbackId.delete, BacktestIOType.deleteTask],
+    [BacktestOperateCallbackId.stop, BacktestIOType.stopTask]
+]);
+
 // backtest io
 /**
  * 后台使用同一个API完成这些动作，这里做了拆分，不同的动作之间除了 type 不同样之外，接口其实
@@ -74,7 +91,7 @@ class BacktestIOAction extends ApiAction {
 
     noneParams = false;
 
-    command = 'BacktestIO';
+    command = BacktestOperateCallbackId.backtest
 
     order = BacktestIOOrder;
 
@@ -105,13 +122,6 @@ export class BacktestIOSuccessAction extends BacktestIOAction implements Action 
     readonly type = EXECUTE_BACKTEST_SUCCESS;
 
     constructor(public payload: BacktestIOResponse) { super() };
-}
-
-export enum BacktestOperateCallbackId {
-    result = 'BacktestResult',
-    status = 'BacktestStatus',
-    delete = 'DeleteBacktest',
-    stop = 'StopBacktest'
 }
 
 // get backtest status;

@@ -23,6 +23,8 @@ export class BacktestLogComponent implements OnInit {
 
     tasks: number[][];
 
+    canSave: Observable<boolean>;
+
     constructor(
         private resultService: BacktestResultService,
     ) { }
@@ -35,5 +37,11 @@ export class BacktestLogComponent implements OnInit {
 
         this.resultService.getBacktestLogRows()
             .subscribe(result => this.tasks = result)
+
+        this.canSave = this.resultService.canSaveResult();
+    }
+
+    onDownload() {
+        this.resultService.downloadLogs();
     }
 }

@@ -52,7 +52,6 @@ export class BacktestSimulationComponent extends BaseComponent {
 
     isBacktestLoading: Observable<boolean>;
 
-    isFaultTolerantMode: Observable<boolean>;
 
     startBacktest$: Subject<boolean> = new Subject();
 
@@ -98,11 +97,6 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this.runningNode = this.backtestService.getRunningNode();
 
-        this.isFaultTolerantMode = this.backtestService.getUIState()
-            .pipe(
-                map(state => state.isFaultTolerantMode)
-            );
-
         this.disableBacktest = this.backtestService.getUIState()
             .pipe(
                 map(res => res.isForbiddenBacktest)
@@ -117,10 +111,6 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.launchBacktest(this.startBacktest$))
             .add(this.backtestService.launchOperateBacktest(this.stopBacktest$, BacktestIOType.stopTask, true))
             .add(this.switchReceiveMsgState().subscribe(state => this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, state)))
-    }
-
-    toggleBacktestMode() {
-        this.backtestService.toggleBacktestMode();
     }
 
     /**

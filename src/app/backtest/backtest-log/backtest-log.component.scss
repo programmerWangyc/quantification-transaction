@@ -1,4 +1,12 @@
 
+.backtest-log{
+    position: relative;
+    button {
+        position: absolute;
+        top: -2em;
+        right: 0;
+    }
+}
 td {
     text-align: center;
 }

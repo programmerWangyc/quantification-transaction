@@ -59,7 +59,7 @@ export class BacktestService extends BacktestParamService {
 
         /**
          *  回测前的动作：1、根据参数配置项生成需要测试的任务；2、将loading切换成回测中。
-         *  注意：loading 将在回测结束后在 store 中被自动重置为false。
+         *  注意：loading 的 false 状态逻辑只存在于 store 中。
          */
         const generateToBeTestedValue$$ = start.subscribe(_ => {
             this.store.dispatch(new Actions.OpenBacktestLoadingStateAction());
@@ -68,8 +68,6 @@ export class BacktestService extends BacktestParamService {
 
         return this.launchServerBacktest(start)
             .add(generateToBeTestedValue$$)
-            // 回测命令响应成功后，开始轮询回测的状态
-            // .add(this.launchOperateBacktest(this.commandPollingBacktestState(), BacktestIOType.getTaskStatus))
             //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
             .add(this.launchOperateBacktest(
                 this.store.pipe(
@@ -77,7 +75,12 @@ export class BacktestService extends BacktestParamService {
                     this.filterTruth()
                 ),
                 BacktestIOType.getTaskResult
-            ));
+            ))
+            // 删除回测任务，在获取taskResult成功之后，将任务删除。
+            .add(this.launchOperateBacktest(
+                this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result),
+                BacktestIOType.deleteTask
+            ))
     }
 
     /**
@@ -240,6 +243,9 @@ export class BacktestService extends BacktestParamService {
             );
     }
 
+    /**
+     * @description 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
+     */
     private getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store
             .pipe(

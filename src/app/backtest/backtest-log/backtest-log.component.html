@@ -1,57 +1,64 @@
-<nz-table #nzTable [nzData]="logs | async" [nzPageSize]="50" [nzShowPagination]="true" nzBordered>
-    <thead>
-        <tr>
-            <th bt-text-center>{{'SEQUENCE_NUMBER' | translate}}</th>
-            <th bt-text-center *ngFor="let col of cols | async">{{col}}</th>
-            <th bt-text-center>{{'TIME_CONSUMING_WITH_UNIT' | translate}}</th>
-            <th bt-text-center>{{'TRANSACTIONS' | translate}}</th>
-            <th bt-text-center>{{'WINNING_RATE' | translate}}</th>
-            <th bt-text-center>{{'MAXIMUM_WITHDRAWAL' | translate}}</th>
-            <th bt-text-center>{{'SHARP' | translate}}</th>
-            <th bt-text-center>{{'ESTIMATED_REVENUE' | translate}}</th>
-            <th bt-text-center>{{'PROFIT' | translate}}</th>
-            <th bt-text-center>{{'STATUS' | translate}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let data of nzTable.data; index as idx">
-            <td>{{idx + 1}}</td>
+<div class="backtest-log">
+    <nz-table #nzTable [nzData]="logs | async" [nzPageSize]="50" [nzShowPagination]="true" nzBordered>
+        <thead>
+            <tr>
+                <th bt-text-center>{{'SEQUENCE_NUMBER' | translate}}</th>
+                <th bt-text-center *ngFor="let col of cols | async">{{col}}</th>
+                <th bt-text-center>{{'TIME_CONSUMING_WITH_UNIT' | translate}}</th>
+                <th bt-text-center>{{'TRANSACTIONS' | translate}}</th>
+                <th bt-text-center>{{'WINNING_RATE' | translate}}</th>
+                <th bt-text-center>{{'MAXIMUM_WITHDRAWAL' | translate}}</th>
+                <th bt-text-center>{{'SHARP' | translate}}</th>
+                <th bt-text-center>{{'ESTIMATED_REVENUE' | translate}}</th>
+                <th bt-text-center>{{'PROFIT' | translate}}</th>
+                <th bt-text-center>{{'STATUS' | translate}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of nzTable.data; index as idx">
+                <td>{{idx + 1}}</td>
 
-            <td *ngFor="let value of tasks[idx]">{{value}}</td>
+                <td *ngFor="let value of tasks[idx]">{{value}}</td>
 
-            <ng-container *ngIf="!!data; else elseBlock">
-                <td>{{data.elapsed | number: '1.1-5'}}</td>
+                <ng-container *ngIf="!!data; else elseBlock">
+                    <td>{{data.elapsed | number: '1.1-5'}}</td>
 
-                <td>{{data.tradeCount}}</td>
+                    <td>{{data.tradeCount}}</td>
 
-                <td>{{data.winningRate | percent: '1.1-2'}}</td>
+                    <td>{{data.winningRate | percent: '1.1-2'}}</td>
 
-                <td>{{data.maxDrawdown | percent: '1.1-2'}}</td>
+                    <td>{{data.maxDrawdown | percent: '1.1-2'}}</td>
 
-                <td>{{data.sharpeRatio | number: '1.1-3'}}</td>
+                    <td>{{data.sharpeRatio | number: '1.1-3'}}</td>
 
-                <td>{{data.returns | number: '1.1-3'}}</td>
+                    <td>{{data.returns | number: '1.1-3'}}</td>
 
-                <td>{{data.profit | number: '1.1-5'}}</td>
+                    <td>{{data.profit | number: '1.1-5'}}</td>
 
-                <td>
-                    <i class="anticon anticon-check-circle" style="color: #87d068"></i>
-                </td>
-            </ng-container>
+                    <td>
+                        <i class="anticon anticon-check-circle" style="color: #87d068"></i>
+                    </td>
+                </ng-container>
 
-            <ng-template #elseBlock>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>
-                    <i class="anticon anticon-close-circle" style="color: #f04134"></i>
-                </td>
-            </ng-template>
+                <ng-template #elseBlock>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>
+                        <i class="anticon anticon-close-circle" style="color: #f04134"></i>
+                    </td>
+                </ng-template>
 
-        </tr>
-    </tbody>
-</nz-table>
+            </tr>
+        </tbody>
+    </nz-table>
+
+    <button nz-button *ngIf="canSave | async" (click)="onDownload()" nzType="primary" nzSize="small" nzGhost>
+        <i class="anticon anticon-download"></i>
+        {{'DOWNLOAD' | translate}}
+    </button>
+</div>

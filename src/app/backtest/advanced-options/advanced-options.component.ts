@@ -29,6 +29,8 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     selectedMode = 0;
 
+    isFaultTolerantMode: Observable<boolean>;
+
     isAdvancedOptionsOpen = false;
 
     advancedOptions: Observable<AdvancedOptionConfig[]>;
@@ -79,6 +81,12 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
                     })
                 })
             );
+
+        this.isFaultTolerantMode = this.backtestService.getUIState()
+            .pipe(
+                map(state => state.isFaultTolerantMode)
+            );
+
     }
 
     updateMode(mode: number): void {
@@ -87,6 +95,10 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     changeOption(target: AdvancedOptionConfig): void {
         this.backtestService.updateAdvancedOption(target);
+    }
+
+    toggleBacktestMode() {
+        this.backtestService.toggleBacktestMode();
     }
 
     updatePeriod(id: number): void {

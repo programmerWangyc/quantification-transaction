@@ -38,20 +38,12 @@
 
     <div class="section form-item" fxLayoutAlign="row center">
         <div class="command-btn-container">
-            <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(isFaultTolerantMode)" [disabled]="disableBacktest | async">
+            <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(true)" [disabled]="disableBacktest | async">
                 <i class="anticon anticon-spin anticon-loading" *ngIf="isBacktestLoading | async"></i>
                 {{backtestBtnText | async | translate}}
             </button>
 
             <button nz-button *ngIf="isBacktestLoading | async " [nzType]="'danger'" (click)="stopBacktest$.next(true)" class="stop-btn">{{'STOP' | translate}}</button>
-        </div>
-
-        <div class="fault-switch">
-            <span [nz-tooltip]="'BACKTEST_FAULT_TOLERANT_DESCRIPTION' | translate">{{'FAULT_TOLERANT_MODE' | translate}}</span>
-
-            <nz-switch [ngModel]="isFaultTolerantMode | async" (ngModelChange)="toggleBacktestMode()" [nzCheckedChildren]="'OPEN' | translate"
-                [nzUnCheckedChildren]="'CLOSE' | translate">
-            </nz-switch>
         </div>
     </div>
 </div>
@@ -64,7 +56,7 @@
         <app-backtest-status></app-backtest-status>
     </div>
 
-    <div class="section from-item">
+    <div class="section form-item">
         <h4>{{'LOG' | translate}}</h4>
         <app-backtest-log></app-backtest-log>
     </div>

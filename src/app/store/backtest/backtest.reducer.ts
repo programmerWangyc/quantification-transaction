@@ -78,7 +78,6 @@ export const initialUIState: UIState = {
 
 export interface RequestParams {
     backtestReq: BacktestIORequest;
-    backtestReqType: string;
     templateReq: GetTemplatesRequest;
 }
 
@@ -104,7 +103,6 @@ export interface State {
 
 const initialRequestParams = {
     backtestReq: null,
-    backtestReqType: null,
     templateReq: null,
 };
 
@@ -149,7 +147,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 backtestState: { GetTaskResult: null, PutTask: null, GetTaskStatus: null, DelTask: null, StopTask: null },
                 serverMessage: null,
-                requestParams: { ...state.requestParams, backtestReq: action.payload, backtestReqType: JSON.parse(action.payload.io)[0] },
+                requestParams: { ...state.requestParams, backtestReq: action.payload },
             };
 
         case actions.GET_BACKTEST_RESULT:
@@ -158,7 +156,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.STOP_BACKTEST_TASK:
             return {
                 ...state,
-                requestParams: { ...state.requestParams, backtestReq: action.payload, backtestReqType: JSON.parse(action.payload.io)[0] },
+                requestParams: { ...state.requestParams, backtestReq: action.payload },
             };
 
         case actions.EXECUTE_BACKTEST_FAIL:
@@ -173,7 +171,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return {
                 ...state,
                 backtestRes: { ...action.payload, result },
-                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
                 UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.BACKTESTING },
             };
         }
@@ -185,7 +183,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return {
                 ...state,
                 backtestRes: { ...action.payload, result },
-                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
             };
         }
 
@@ -195,7 +193,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return {
                 ...state,
                 backtestRes: { ...action.payload, result },
-                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
                 UIState: { ...state.UIState, isBacktesting: false, backtestMilestone: NaN, isForbiddenBacktest: false },
             };
         }
@@ -213,7 +211,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 backtestResults,
                 backtestRes: { ...action.payload, result },
-                backtestState: { ...state.backtestState, [state.requestParams.backtestReqType]: result },
+                backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
                 UIState: {
                     ...state.UIState,
                     backtestMilestone: isResultsAllReceived ? NaN : state.UIState.backtestMilestone,

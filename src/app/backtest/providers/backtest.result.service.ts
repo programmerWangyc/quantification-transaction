@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import * as fileSaver from 'file-saver';
 import { head, isEmpty, isObject, last, range } from 'lodash';
 import * as moment from 'moment';
-import { from, of, zip } from 'rxjs';
+import { concat, from, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import {
     bufferCount,
@@ -48,6 +50,7 @@ export class BacktestResultService extends BaseService {
     constructor(
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
+        public translate: TranslateService,
     ) {
         super();
     }
@@ -309,6 +312,82 @@ export class BacktestResultService extends BaseService {
             this.getTotalAssets()
         ).pipe(
             map(([yearDays, { start, end }, totalAssets]) => (profit / totalAssets) * yearDays * this.PERIOD / (start - end))
+        );
+    }
+
+    /**
+     * @description 下载日志。
+     */
+    downloadLogs(): void {
+        const head = zip(
+            this.translate.get(['SEQUENCE_NUMBER', 'TIME_CONSUMING_WITH_UNIT', 'TRANSACTIONS', 'WINNING_RATE', 'MAXIMUM_WITHDRAWAL', 'SHARP', 'ESTIMATED_REVENUE', 'PROFIT']),
+            this.getBacktestLogCols()
+        ).pipe(
+            map(([constantCol, dynamicCols]) => [
+                constantCol.SEQUENCE_NUMBER,
+                ...dynamicCols,
+                constantCol.TIME_CONSUMING_WITH_UNIT,
+                constantCol.TRANSACTIONS,
+                constantCol.WINNING_RATE,
+                constantCol.MAXIMUM_WITHDRAWAL,
+                constantCol.SHARP,
+                constantCol.ESTIMATED_REVENUE,
+                constantCol.PROFIT,
+            ])
+        );
+
+        const data = zip(
+            this.getBacktestLogRows(),
+            this.getBacktestLogResults()
+        ).pipe(
+            mergeMap(([tasks, results]) => zip(
+                from(tasks),
+                from(results)
+            ).pipe(
+                map(([task, result], index) => result ? [
+                    index + 1,
+                    ...task,
+                    result.elapsed.toFixed(5),
+                    result.tradeCount,
+                    (result.winningRate * 100).toFixed(2) + '%',
+                    (result.maxDrawdown * 100).toFixed(2) + '%',
+                    result.sharpeRatio.toFixed(3),
+                    result.returns.toFixed(5),
+                    result.profit.toFixed(5)
+                ] : [index + 1, ...task, ...new Array(7).fill('-')]),
+                reduce((acc: number[][], cur: number[]) => [...acc, cur], [])
+            )),
+            take(1)
+        );
+
+        concat(
+            head,
+            data
+        ).pipe(
+            reduce((acc, cur) => [acc, ...cur]),
+            map(data => data.join('\n')),
+            withLatestFrom(this.getTimeRange())
+        ).subscribe(([data, { start, end }]) => {
+            fileSaver.saveAs(
+                new Blob([data], { type: 'text/csv;charset=utf8;' }),
+                'optimize_' + moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + "_" + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + ".csv"
+            );
+        });
+    }
+
+    /**
+     * @deprecated 是否允许用户下载回测结果。只有当回测完成并且有结果供下载时才可以下载。
+     */
+    canSaveResult(): Observable<boolean> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState),
+            map(state => state.backtestMilestone),
+            withLatestFrom(
+                this.store.pipe(
+                    select(fromRoot.selectBacktestResults),
+                ),
+                (milestone, results) => isNaN(milestone) && !!results && !!results.length
+            )
         );
     }
 }

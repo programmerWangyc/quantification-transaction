@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
 import { flatten, isEmpty, isNaN } from 'lodash';
 import * as moment from 'moment';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { from as observableFrom, Observable, of as observableOf, merge, combineLatest, zip, Subscription } from 'rxjs';
+import { combineLatest, from as observableFrom, merge, Observable, of as observableOf, Subscription, zip } from 'rxjs';
 import {
     filter,
     map,
@@ -667,7 +667,8 @@ export class RobotOperateService extends BaseService {
     }
 
     private getRobotOperateConfirm(robot: Observable<fromRes.RobotDetail | fromRes.Robot>): Observable<boolean> {
-        return robot.pipe(switchMap(robot => this.tipService.confirmOperateTip(
+        return robot.pipe(
+            switchMap(robot => this.tipService.confirmOperateTip(
             ConfirmComponent,
             { message: this.constantService.getRobotOperateMap(robot.status).tip, needTranslate: true }
         )));
