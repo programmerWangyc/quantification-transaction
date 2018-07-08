@@ -81,12 +81,23 @@ export interface RequestParams {
     templateReq: GetTemplatesRequest;
 }
 
+/**
+ * @description 文档工具不支持这种写法，要注意这个接口的字段应该和BacktestIOType的字段保持一致。
+ */
+// export interface BacktestStateMemory<T> {
+//     [BacktestIOType.deleteTask]: T;
+//     [BacktestIOType.getTaskResult]: T;
+//     [BacktestIOType.getTaskStatus]: T;
+//     [BacktestIOType.putTask]: T;
+//     [BacktestIOType.stopTask]: T;
+// }
+
 export interface BacktestStateMemory<T> {
-    [BacktestIOType.deleteTask]: T;
-    [BacktestIOType.getTaskResult]: T;
-    [BacktestIOType.getTaskStatus]: T;
-    [BacktestIOType.putTask]: T;
-    [BacktestIOType.stopTask]: T;
+    DelTask: T;
+    GetTaskStatus: T;
+    GetTaskResult: T;
+    PutTask: T; // [node , python|python2.7|python3|py, g++]  script
+    StopTask: T;
 }
 
 export interface State {
