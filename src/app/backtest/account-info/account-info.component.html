@@ -1,0 +1,41 @@
+<nz-table #nzTable [nzData]="data | async" [nzPageSize]="50" [nzShowPagination]="true" nzBordered>
+    <thead>
+        <tr>
+            <th bt-text-center>{{'NAME' | translate}}</th>
+            <th bt-text-center>{{'PRICING_CURRENCY' | translate}}</th>
+            <th bt-text-center>{{'TRADING_VARIETY' | translate}}</th>
+
+            <ng-container *ngIf="hasFutures | async">
+                <th bt-text-center>{{'CLOSE_PROFIT' | translate}}</th>
+                <th bt-text-center>{{'POSITION_PROFIT' | translate}}</th>
+                <th bt-text-center>{{'DEPOSIT' | translate}}</th>
+            </ng-container>
+
+            <th bt-text-center>{{'COMMISSION' | translate}}</th>
+            <th bt-text-center>
+                {{'ESTIMATED_REVENUE' | translate}}
+                <i class="anticon anticon-question-circle" [nz-tooltip]="'BACKTEST_RETURNS_TIP' | translate" style="color: #1890ff; margin: 0 0 0 12px;"></i>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data; index as idx">
+            <td>{{data.name}}</td>
+            <td>{{data.quoteCurrency}}</td>
+            <td>{{data.baseCurrency}}</td>
+            <ng-container *ngIf="hasFutures | async as has; else elseBlock">
+                <td>{{data.closeProfit | number: '1.1-8' | futuresResult: data.isFutures}}</td>
+                <td>{{data.positionProfit | number: '1.1-8' | futuresResult: data.isFutures}}</td>
+                <td>{{data.currentMargin | number: '1.1-8' | futuresResult: data.isFutures}}</td>
+                <td>{{data.commission | number: '1.1-8'}}</td>
+            </ng-container>
+            <ng-template #elseBlock>
+                <td>
+                    {{data.quoteCurrency}}: {{data.commission | number: '1.1-8'}}
+                    <!--TODO: 原代码中CommissionX的逻辑没有找到。-->
+                </td>
+            </ng-template>
+            <td>{{data.returns | number: '1.1-5'}}</td>
+        </tr>
+    </tbody>
+</nz-table>

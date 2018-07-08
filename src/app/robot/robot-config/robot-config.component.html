@@ -90,7 +90,7 @@
         {{'UPDATE_CONFIG' | translate}}
     </button>
 
-    <button nz-button *ngIf="hasArgs | async" [nzType]="'primary'" (click)="exportArgs()">
+    <button nz-button *ngIf="hasArgs | async" [nzType]="'primary'" (click)="exportArgs()" style="margin: 0 1em;">
         <i class="anticon anticon-upload"></i>
         <span>{{'EXPORT_ARGUMENT' | translate}}</span>
     </button>

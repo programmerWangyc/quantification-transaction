@@ -35,5 +35,17 @@ export class BaseService {
             return Object.keys(current).every(key => previous[key] === current[key]);
         }
     }
+
+    curryRight(fn) {
+        return (param1) => fn(param1)
+    }
+
+    curry2Right<T, R>(fn: (f: T, s: R) => any) {
+        return (param2: R) => {
+            return (param1: T) => {
+                return fn(param1, param2);
+            }
+        }
+    }
 }
 

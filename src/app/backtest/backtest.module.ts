@@ -5,6 +5,7 @@ import { RobotModule } from '../robot/robot.module';
 import { SharedModule } from '../shared/shared.module';
 import { StrategyModule } from '../strategy/strategy.module';
 import { ToolModule } from '../tool/tool.module';
+import { AccountInfoComponent } from './account-info/account-info.component';
 import { AdvancedOptionsComponent } from './advanced-options/advanced-options.component';
 import { ArgOptimizerComponent } from './arg-optimizer/arg-optimizer.component';
 import { BacktestLogComponent } from './backtest-log/backtest-log.component';
@@ -30,33 +31,35 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         // WorkerAppModule,
     ],
     declarations: [
-        TimeOptionsComponent,
+        AccountInfoComponent,
         AdvancedOptionsComponent,
-        ExchangeOptionsComponent,
-        DispenseOptionsComponent,
-        BacktestStrategyArgsComponent,
         ArgOptimizerComponent,
-        PIPES,
         BacktestLogComponent,
         BacktestStatusComponent,
+        BacktestStrategyArgsComponent,
+        DispenseOptionsComponent,
+        ExchangeOptionsComponent,
+        PIPES,
+        TimeOptionsComponent,
     ],
 
     providers: [
-        BacktestService,
-        BacktestConstantService,
         BacktestComputingService,
+        BacktestConstantService,
         BacktestParamService,
         BacktestResultService,
+        BacktestService,
     ],
 
     exports: [
-        TimeOptionsComponent,
+        AccountInfoComponent,
         AdvancedOptionsComponent,
-        ExchangeOptionsComponent,
-        DispenseOptionsComponent,
-        BacktestStrategyArgsComponent,
         BacktestLogComponent,
         BacktestStatusComponent,
+        BacktestStrategyArgsComponent,
+        DispenseOptionsComponent,
+        ExchangeOptionsComponent,
+        TimeOptionsComponent,
     ]
 
 })

@@ -123,7 +123,8 @@ export class RobotOperateService extends BaseService {
                                     : observableOf({ id })
                                 )
                             )
-                        )
+                        ),
+                        take(1)
                     )
                 )
             );

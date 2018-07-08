@@ -1,5 +1,6 @@
-import { OptimizeFilterDesPipe } from './backtest.pipe';
+import { FuturesResultPipe, OptimizeFilterDesPipe } from './backtest.pipe';
 
 export const PIPES = [
-    OptimizeFilterDesPipe
+    OptimizeFilterDesPipe,
+    FuturesResultPipe
 ];

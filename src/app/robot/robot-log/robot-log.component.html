@@ -6,7 +6,7 @@
             <i class="anticon anticon-sound"></i>
         </button>
         <nz-switch [(ngModel)]="isSoundOpen" (ngModelChange)="updateSoundState(isSoundOpen)" [nz-tooltip]="'SOUND_REMAINING' | translate"
-            [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate">
+            [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate" style="margin: 0 1em;">
         </nz-switch>
         <nz-select *ngIf="isSoundOpen" [nzMode]="'multiple'" [nzPlaceHolder]="'PLEASE_SELECT_LOG_TYPE' | translate" [(ngModel)]="monitoringSoundTypes"
             (ngModelChange)="updateMonitoringTypes($event)" class="log-type">

@@ -32,3 +32,11 @@ export class OptimizeFilterDesPipe implements PipeTransform {
         return result;
     }
 }
+
+
+@Pipe({ name: 'futuresResult' })
+export class FuturesResultPipe implements PipeTransform {
+    transform(value: number, isFuture: boolean): string | number {
+        return isFuture ? value : '-';
+    }
+}

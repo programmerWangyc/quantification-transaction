@@ -474,6 +474,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
             };
         }
 
+        // reset robot
+        case actions.RESET_ROBOT_STATE:
+            return {
+                ...state,
+                restartRobotRes: null,
+            }
+
         /** ==============================================Server send message===================================================== **/
 
         // server send message

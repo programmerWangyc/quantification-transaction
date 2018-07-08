@@ -35,7 +35,8 @@ export interface PublicResponse {
     token: string;
     username: string;
     version: number;
-    event?: string; }
+    event?: string;
+}
 
 /**
  * <------------
@@ -563,6 +564,7 @@ export interface BacktestResultSnapshot {
     Stocks: number;
     Symbols: Object
     TradeStatus: BacktestResultTradeStatus;
+    time?: number; // BacktestSnapshots 第一个元素。
 }
 
 export interface BacktestResultTradeStatus {
@@ -629,28 +631,24 @@ export interface BacktestTask {
 }
 
 export interface BacktestResultSymbols {
-    BTC_USD_OKCoin_EN: BTCUSDOKCoinEN;
+    [key: string]: BacktestResultSymbol;
 }
 
-export interface BTCUSDOKCoinEN {
+export interface BacktestResultSymbol {
     Last: number;
+    Long?: BacktestResultSymbolProfit;
+    Short?: BacktestResultSymbolProfit;
 }
 
-export interface BacktestResultSnapshortClass {
-    Balance: number;
-    BaseCurrency: string;
-    Commission: number;
-    FrozenBalance: number;
-    FrozenStocks: number;
-    Id: string;
-    QuoteCurrency: string;
-    Stocks: number;
-    Symbols: BacktestResultSymbols;
-    TradeStatus: BacktestResultTradeStatus;
+export interface BacktestResultSymbolProfit {
+    Profit: number;
+    Margin: number;
+    CloseProfit: number;
 }
+
+export type BacktestSnapShots = [number, BacktestResultSnapshot[]];
 
 export interface BacktestResult {
-    Accounts?: Object
     Chart: BacktestResultChart;
     CloseProfitLogs?: any[];
     Elapsed: number;
@@ -666,7 +664,7 @@ export interface BacktestResult {
     Progress: number;
     RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
     Snapshort?: BacktestResultSnapshot[];
-    Snapshorts: Array<Array<BacktestResultSnapshortClass[] | number>>;
+    Snapshorts: Array<BacktestSnapShots>;
     Stderr: string;
     Task: BacktestTask;
     TaskStatus?: number;

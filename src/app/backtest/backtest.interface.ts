@@ -197,3 +197,25 @@ export interface BacktestLogResult {
     sharpeRatio: number;
     returns: number;
 }
+
+export interface BacktestAccount {
+    name: string;
+    quoteCurrency: string; // 定价货币
+    baseCurrency: string; // 交易品种
+    commission: number; // 手续费
+    closeProfit?: number; // 平仓盈亏
+    positionProfit?: number; // 持仓盈亏
+    currentMargin?: number; // 保证金
+    returns: number; // 预估收益
+    isFutures: boolean;
+    isFuturesOkCoin: boolean;
+    symbol: string;
+    initialBalance?: number;
+    initialStocks: number;
+    // profitAndLose: BacktestProfitDescription[]; 知道干什么用的时候求，预感这里写上耦合了。
+}
+
+export interface BacktestProfitDescription {
+    time: number;
+    profit: number;
+}

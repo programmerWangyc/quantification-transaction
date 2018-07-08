@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { includes, isEmpty } from 'lodash';
 import * as moment from 'moment';
-import { ResetRobotDetailAction } from '../../store/robot/robot.action';
+import { ResetRobotDetailAction, ResetRobotStateAction } from '../../store/robot/robot.action';
 import * as fromReq from './../../interfaces/request.interface';
 import * as fromRes from './../../interfaces/response.interface';
 import { ErrorService } from './../../providers/error.service';
@@ -275,6 +275,10 @@ export class RobotService extends BaseService {
 
     resetRobotDetail(): void {
         this.store.dispatch(new ResetRobotDetailAction());
+    }
+
+    resetRobotState(): void {
+        this.store.dispatch(new ResetRobotStateAction());
     }
 
     /* =======================================================Error Handle======================================================= */

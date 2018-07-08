@@ -70,6 +70,12 @@ export class RobotListComponent extends BaseComponent {
 
     launch() {
         this.subscription$$ = this.robotService.launchRobotList(this.robotList$)
+            .add(this.robotOperate.handlePublicRobotError())
+            .add(this.robotService.handleRobotListError())
+            .add(this.robotOperate.handleRobotRestartError())
+            .add(this.robotOperate.handleDeleteRobotError())
+            .add(this.robotOperate.handleRobotStopError())
+            .add(this.watchDogService.handleSetWatchDogError())
             .add(this.robotOperate.launchPublicRobot(this.publicRobot$))
             .add(this.publicRobot$.subscribe(robot => this.currentPublicRobot = robot))
             .add(this.robotOperate.launchRestartRobot(this.restartRobot$, false))
@@ -78,12 +84,6 @@ export class RobotListComponent extends BaseComponent {
             .add(this.robotOperate.monitorDeleteRobotResult())
             .add(this.watchDogService.launchSetRobotWatchDog(this.setRobotWD$))
             .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestRobotWatchDogState()))
-            .add(this.robotOperate.handlePublicRobotError())
-            .add(this.robotService.handleRobotListError())
-            .add(this.robotOperate.handleRobotRestartError())
-            .add(this.robotOperate.handleDeleteRobotError())
-            .add(this.robotOperate.handleRobotStopError())
-            .add(this.watchDogService.handleSetWatchDogError())
     }
 
     ngOnDestroy() {

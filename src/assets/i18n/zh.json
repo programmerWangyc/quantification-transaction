@@ -172,6 +172,12 @@
     "DELAY": "延迟",
     "COLUMN_LENGTH": "柱长",
     "CHART": "图表",
+    "PRICING_CURRENCY": "定价货币",
+    "TRADING_VARIETY": "交易品种",
+    "COMMISSION": "手续费",
+    "CLOSE_PROFIT": "平仓盈亏",
+    "DEPOSIT": "保证金",
+    "POSITION_PROFIT": "持仓盈亏",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
@@ -385,6 +391,7 @@
     "GO_ON": "继续",
 
     "ACCOUNT_RECHARGE": "帐户充值",
+    "ACCOUNT_INFORMATION": "帐户信息",
     "RECHARGE_AMOUNT": "充值金额（元）",
     "PAYMENT_STEP": "充值步骤",
     "ALIPAY": "支付宝",
@@ -605,5 +612,6 @@
 
     "STOP_BACKTEST_ERROR": "回测任务停止失败：{{error}}",
     "STOP_BACKTEST_SUCCESS": "回测任务停止成功",
-    "COMBINATION_ARGS_EMPTY_ERROR": "没有检测到可用的调优参数组合，请调整调优参数的设置。"
+    "COMBINATION_ARGS_EMPTY_ERROR": "没有检测到可用的调优参数组合，请调整调优参数的设置。",
+    "BACKTEST_RETURNS_TIP": "预估收益指按最新价格全部平仓后的收益(含手续费), 期现混合时只显示现货总利润。"
 }

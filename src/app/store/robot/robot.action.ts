@@ -681,6 +681,12 @@ export class UpdateRobotWatchDogStateAction implements Action {
     constructor(public payload: SetRobotWDRequest) { }
 }
 
+export const RESET_ROBOT_STATE = '[Robot] RESET_ROBOT_STATE';
+
+export class ResetRobotStateAction implements Action {
+    readonly type = RESET_ROBOT_STATE;
+}
+
 export type ApiActions = GetRobotListRequestAction
     | CommandRobotFailAction
     | CommandRobotRequestAction
@@ -730,6 +736,7 @@ export type Actions = ApiActions
     | ResetRobotOperateAction
     | ToggleMonitorSoundAction
     | UpdateRobotWatchDogStateAction
+    | ResetRobotStateAction
 
 export const ResponseActions = {
     CommandRobotFailAction,

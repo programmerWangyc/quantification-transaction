@@ -64,20 +64,11 @@ export class BacktestService extends BacktestParamService {
 
 
         /**
-         *  回测前的动作：1、根据参数配置项生成需要测试的任务；2、将loading切换成回测中。
-         *  注意：loading 的 false 状态逻辑只存在于 store 中。
+         *  回测前的动作：根据参数配置项生成需要测试的任务；
          */
         const generateToBeTestedValue$$ = start.subscribe(_ => this.store.dispatch(new Actions.GenerateToBeTestedValuesAction()));
 
-        const canStart = start.pipe(
-            switchMapTo(this.isBacktestArgsValid().pipe(
-                tap(isValid => !isValid && this.tipService.messageError('COMBINATION_ARGS_EMPTY_ERROR')),
-                switchMap(isValid => isValid ? of(true) : never()),
-                tap(_ => this.store.dispatch(new Actions.OpenBacktestLoadingStateAction()))
-            ))
-        )
-
-        return this.launchServerBacktest(canStart)
+        return this.launchServerBacktest(this.guardBacktestStart(start))
             .add(generateToBeTestedValue$$)
             //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
             .add(this.launchOperateBacktest(
@@ -239,6 +230,20 @@ export class BacktestService extends BacktestParamService {
         );
     }
 
+    /**
+     * @description 回测开始的守卫。用户发起的回测动作只有经过守卫难以后才可以发起。
+     *  注意：loading 的 false 状态逻辑只存在于 store 中。
+     */
+    private guardBacktestStart(wantStart: Observable<boolean>): Observable<boolean> {
+        return wantStart.pipe(
+            switchMapTo(this.isBacktestArgsValid().pipe(
+                tap(isValid => !isValid && this.tipService.messageError('COMBINATION_ARGS_EMPTY_ERROR')),
+                switchMap(isValid => isValid ? of(true) : never()),
+                tap(_ => this.store.dispatch(new Actions.OpenBacktestLoadingStateAction()))
+            ))
+        );
+    }
+
     /* =======================================================Data acquisition======================================================= */
 
     getTemplatesParams(): Observable<GetTemplatesRequest> {
@@ -337,6 +342,13 @@ export class BacktestService extends BacktestParamService {
             );
     }
 
+    /**
+     * @description 获取回测按钮在不同状态下应该显示的文本信息；
+     * 1、正常状态显示 开始回测；
+     * 2、参数计算阶段显示 正在加载回测信息
+     * 3、发起回测后显示 回测中
+     * 4、获取日志时显示 正在拉取回测日志
+     */
     getBacktestBtnText(): Observable<string> {
         return this.getUIState()
             .pipe(

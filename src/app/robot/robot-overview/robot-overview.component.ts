@@ -1,5 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotDetail } from '../../interfaces/response.interface';
@@ -72,7 +72,7 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
         this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
             .add(this.robotOperate.launchStopRobot(this.stop$))
             .add(this.watchDogService.launchSetRobotWatchDog(this.watchDog$))
-            .add(this.robotOperate.handleRobotRestartError())
+            // .add(this.robotOperate.handleRobotRestartError()
             .add(this.robotOperate.handleRobotStopError())
             .add(this.watchDogService.handleSetWatchDogError());
     }
@@ -95,5 +95,7 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
         this.subscription$$.unsubscribe();
 
         this.robotService.resetRobotDetail();
+
+        this.robotService.resetRobotState();
     }
 }
