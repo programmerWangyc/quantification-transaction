@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { assignWith, compact, includes, isArray, last, omit, take, uniqBy } from 'lodash';
 import * as moment from 'moment';
-import { from as observableFrom, Observable, of as observableOf, Subscription, zip, merge, combineLatest } from 'rxjs';
+import { combineLatest, from as observableFrom, merge, Observable, of as observableOf, Subscription, zip } from 'rxjs';
 import {
     bufferCount,
     distinct,
@@ -23,7 +23,7 @@ import {
 } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { ChartUpdateIndicator, StrategyChartPoint } from '../../interfaces/app.interface';
+import { ChartUpdateIndicator } from '../../interfaces/app.interface';
 import {
     ChangeLogPageAction,
     ChangeProfitChartPageAction,
@@ -61,7 +61,7 @@ export class RobotLogService extends BaseService {
     /* =======================================================Serve Request======================================================= */
 
     /**
-     * @description  Launch get robot logs request.
+     *   Launch get robot logs request.
      * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
      * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
      * 前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点是会导致再一次的刷新。
@@ -87,7 +87,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Refresh logs if user want to;
+     *  Refresh logs if user want to;
      */
     launchRefreshRobotLogs(flag: Observable<boolean>): Subscription {
         return this.launchRobotLogs(flag
@@ -104,7 +104,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Get logs when the server notifies log updates.
+     *  Get logs when the server notifies log updates.
      */
     launchSyncLogsWhenServerRefreshed(): Subscription {
         // 获取一套新的日志请求参数。
@@ -189,7 +189,7 @@ export class RobotLogService extends BaseService {
     /* =======================================================Running log ====================================================== */
 
     /**
-     * @description The log information retrieved here is the semantic version of the original log.
+     *  The log information retrieved here is the semantic version of the original log.
      */
     getSemanticsRobotRunningLogs(): Observable<fromRes.RunningLog[]> {
         return combineLatest(
@@ -219,7 +219,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description
+     *
      * 1、自动获取的不一定比手动获取的更新，如手动获取发生在自动获取之后恰好日志又有更新时。
      * 2、只有通过比较手动获取和自动获取的Max值，其中较大者才一定是客户端所知道的最新的ID。
      */
@@ -257,7 +257,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
+     *  Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
      */
     getRobotLogPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
         return combineLatest(
@@ -287,7 +287,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Request parameter of getRobotLogs, corresponding to 'logOffset' field.
+     *  Request parameter of getRobotLogs, corresponding to 'logOffset' field.
      */
     getLogOffset(): Observable<number> {
         return combineLatest(
@@ -654,7 +654,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Predicate whether the robot status need to refresh log automatically.
+     *  Predicate whether the robot status need to refresh log automatically.
      */
     private isInValidStatusToSyncLogs(): Observable<boolean> {
         return this.robotService.getRobotDetail()
@@ -664,7 +664,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Predicate whether the log can be synchronized.
+     *  Predicate whether the log can be synchronized.
      */
     private canSyncLogs(): Observable<boolean> {
         return combineLatest(
@@ -683,7 +683,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     * @description Whether need to sync log with server;
+     *  Whether need to sync log with server;
      */
     private needSyncLogs(): Observable<boolean> {
         return this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_REFRESH)
@@ -699,14 +699,14 @@ export class RobotLogService extends BaseService {
      *
      * @param headLog The first data of the log that user actively pulls.
      * @param compareLog After the server notification, the program automatically obtains information.
-     * @description Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
+     *  Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
      */
     private isFresh(headLog: fromRes.RunningLog, compareLog: fromRes.RunningLog): boolean {
         return headLog ? headLog.date < compareLog.date : true;
     }
 
     /**
-     * @description After the program automatically obtains logs, it updates the log information the user sees.;
+     *  After the program automatically obtains logs, it updates the log information the user sees.;
      */
     private updateLogs(logs: fromRes.RunningLog[], newLogs: fromRes.RunningLog[]): fromRes.RunningLog[] {
         const result = newLogs.filter(item => this.isFresh(logs[0], item));

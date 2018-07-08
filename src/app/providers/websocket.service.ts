@@ -97,7 +97,7 @@ export class WebsocketService {
         });
 
         /**
-         * @description The messages flow is 'HOT', so refCount keep on it, it would be release current resource as soon as the refCount is equals to zero.
+         *  The messages flow is 'HOT', so refCount keep on it, it would be release current resource as soon as the refCount is equals to zero.
          * When next subscription come, the websocket instance would be re-initialized. So in order to prevent duplicate websocket instance object, we need
          * to keep at least one observer on this stream, the observer is the publicEffect observer provided by ngrx library. If no one plays this role, please
          * de-comment the code blow.

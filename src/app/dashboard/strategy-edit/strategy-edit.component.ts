@@ -65,7 +65,7 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     launchPrivate() {
         this.privateSub$$ = this.strategyService.handleOpStrategyTokenError()
             /**
-             * @description Besides user active acquisition, it needs to check the strategy whether has token already.
+             *  Besides user active acquisition, it needs to check the strategy whether has token already.
              */
             .add(this.strategyService.launchOpStrategyToken(
                 merge(

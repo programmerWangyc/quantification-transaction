@@ -81,7 +81,7 @@ export class RobotOperateService extends BaseService {
     }
 
     /**
-     * @description 1、验证能否切换平台；2、提示用户进行操作确认；3、如果公有节点需要验证密码；
+     *  1、验证能否切换平台；2、提示用户进行操作确认；3、如果公有节点需要验证密码；
      */
     launchRestartRobot(data: Observable<fromRes.RobotDetail | fromRes.Robot>, needVerifyPlatform = true): Subscription {
         const param1 = this.canChangePlatform()
@@ -149,7 +149,7 @@ export class RobotOperateService extends BaseService {
     }
 
     /**
-     * @description 是否需要编码参数
+     *  是否需要编码参数
      * 1 不需要：直接发送；
      * 2 需要：是否需要验证密码
      *      3 不需要： 编码并发送

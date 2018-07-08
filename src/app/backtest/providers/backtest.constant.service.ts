@@ -149,7 +149,7 @@ export class BacktestConstantService extends ConstantService {
     getBackTestPeriodTimeConfig(category: number): BacktestPeriodConfig {
 
         /**
-         * @description The 'subtract' method would be modify the origin data, it is not a pure function.
+         *  The 'subtract' method would be modify the origin data, it is not a pure function.
          */
         const now = moment();
 

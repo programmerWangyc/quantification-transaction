@@ -319,7 +319,7 @@ export interface BacktestPutTaskOptions {
 }
 
 /**
- * @description Used to semantic put task parameters;
+ *  Used to semantic put task parameters;
  */
 export interface BacktestPutTaskCodeArg {
     argName: string;
@@ -338,7 +338,7 @@ export type PutTaskCodeArg = [string, number | string | boolean, number];
 export type PutTaskCode = [string, PutTaskCodeArg[], string];
 
 /**
- * @description backtest Exchange field options;
+ *  backtest Exchange field options;
  */
 export interface BacktestExchangeOptions {
     BaseCurrency: string;

@@ -131,7 +131,7 @@ export class ArgListComponent implements OnInit {
 
 
     /**
-     * @description FIXME: 模板变量没有引用到，所以加了这个方法，why?
+     *  FIXME: 模板变量没有引用到，所以加了这个方法，why?
      */
     isSelectValueValid(str: string): boolean {
         return selectTypeValueFormat.test(str);

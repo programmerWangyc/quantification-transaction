@@ -86,7 +86,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 服务端回测；
+     *  服务端回测；
      * 1、第一个回测任务立即发起；
      * 2、之后的回测任务在当前回测的结果响应后发起，也就是上个回测任务的 result 接收完成后再发起。
      * FIXME: 下一个回测任务应该在，收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
@@ -127,7 +127,7 @@ export class BacktestService extends BacktestParamService {
     /**
      * TODO:
      * @method launchLocalBacktest
-     * @description 本地回测，在webworker中进行
+     *  本地回测，在webworker中进行
      */
     private launchLocalBacktest(signal: Observable<boolean>): Subscription {
 
@@ -180,7 +180,7 @@ export class BacktestService extends BacktestParamService {
 
     /**
      * @method launchGetTemplates
-     * @description 获取模板的逻辑依赖于当前的选中的模板中是否有源码，如果没有源码，在用户选中模板后去获取源码，不会重复获取。
+     *  获取模板的逻辑依赖于当前的选中的模板中是否有源码，如果没有源码，在用户选中模板后去获取源码，不会重复获取。
      */
     launchGetTemplates(): Subscription {
         return this.process.processGetTemplates(this.getTemplatesParams());
@@ -188,7 +188,7 @@ export class BacktestService extends BacktestParamService {
 
     /**
      * @param taskType 回测任务的类型，BacktestIOType 中除了 putTask 以外的类型。
-     * @description 获取操作的参数，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测。
+     *  获取操作的参数，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测。
      */
     private getBacktestTaskParams(taskType: string): Observable<BacktestIORequest> {
         const partialParam = withLatestFrom(
@@ -210,7 +210,7 @@ export class BacktestService extends BacktestParamService {
      * @param { Observable } command: 操作指令，指定操作应该发生的时机。
      * @param { string } taskType: 指令的类型
      * @param { boolean } force: 是否强制发起，默认情况下只在回测开关开启时才发起任务。
-     * @description 发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
+     *  发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
      */
     launchOperateBacktest(command: Observable<any>, taskType: string, force = false): Subscription {
         const params = this.getBacktestTaskParams(taskType).pipe(
@@ -231,7 +231,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 回测开始的守卫。用户发起的回测动作只有经过守卫难以后才可以发起。
+     *  回测开始的守卫。用户发起的回测动作只有经过守卫难以后才可以发起。
      *  注意：loading 的 false 状态逻辑只存在于 store 中。
      */
     private guardBacktestStart(wantStart: Observable<boolean>): Observable<boolean> {
@@ -265,7 +265,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
+     *  获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
      */
     private getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store
@@ -290,7 +290,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 获取当前回测任务的uuid
+     *  获取当前回测任务的uuid
      */
     private getUUid(): Observable<string> {
         return this.filterPutTaskSuccessfulResponse().pipe(
@@ -300,7 +300,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 获取回测任务的结果。
+     *  获取回测任务的结果。
      */
     getBacktestTaskResults(): Observable<fromRes.BacktestIOResponse[]> {
         return this.store.pipe(
@@ -343,7 +343,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 获取回测按钮在不同状态下应该显示的文本信息；
+     *  获取回测按钮在不同状态下应该显示的文本信息；
      * 1、正常状态显示 开始回测；
      * 2、参数计算阶段显示 正在加载回测信息
      * 3、发起回测后显示 回测中
@@ -372,7 +372,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 回测进度 = 收到的服务器响应数 / 回测任务数
+     *  回测进度 = 收到的服务器响应数 / 回测任务数
      */
     getBacktestProgress(): Observable<number> {
         return this.getUIState().pipe(
@@ -389,7 +389,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 是否处于回测中状态。
+     *  是否处于回测中状态。
      */
     isBacktesting(): Observable<boolean> {
         return this.getUIState().pipe(
@@ -399,7 +399,7 @@ export class BacktestService extends BacktestParamService {
 
     /**
      * @param {string} statistic - 字段名称
-     * @description 获取回测的统计数据。
+     *  获取回测的统计数据。
      */
     getBacktestStatistics(statistic: string): Observable<number> {
         return this.store.pipe(
@@ -422,7 +422,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 获取交易次数总计；
+     *  获取交易次数总计；
      */
     getTradeCount(): Observable<number> {
         return this.store.pipe(
@@ -438,7 +438,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @description 回测的参数是否设置正确。
+     *  回测的参数是否设置正确。
      * 1、不是调优回测时，默认为 true；
      * 2、调优回测时，是否生成了可供回测的参数组合；
      */

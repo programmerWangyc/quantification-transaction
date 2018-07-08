@@ -116,7 +116,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
     launch() {
         /**
-         * @description Be careful ensure observables that emit 'complete' notification added at last;
+         *  Be careful ensure observables that emit 'complete' notification added at last;
          */
         this.subscription$$ = this.platformService.getPlatformList().subscribe(list => this.platforms = list)
             .add(this.strategyService.getStrategyArgs(this.selectedStrategy$).subscribe(args => this.selectedStrategyArgs = args))

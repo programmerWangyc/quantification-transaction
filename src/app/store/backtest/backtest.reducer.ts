@@ -82,7 +82,7 @@ export interface RequestParams {
 }
 
 /**
- * @description 文档工具不支持这种写法，要注意这个接口的字段应该和BacktestIOType的字段保持一致。
+ *  文档工具不支持这种写法，要注意这个接口的字段应该和BacktestIOType的字段保持一致。
  */
 // export interface BacktestStateMemory<T> {
 //     [BacktestIOType.deleteTask]: T;
@@ -337,7 +337,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
 /**
  * @param data 回测代码
- * @description 是否回测的主代码，也就是策略代码或模板代码。
+ *  是否回测的主代码，也就是策略代码或模板代码。
  */
 function isMineCode(data: BacktestCode): boolean {
     return data.name === MAIN_CODE_FLAG;
@@ -347,7 +347,7 @@ function isMineCode(data: BacktestCode): boolean {
  *
  * @param fresh 新代码，大部分情况下应该是策略依赖的模板代码，只有每次进来的时候才是策略的代码。
  * @param list 回测的代码集合，store中存储的值。
- * @description 更新store中存储的需要参与回测的代码，包括策略代码和它依赖的模板。
+ *  更新store中存储的需要参与回测的代码，包括策略代码和它依赖的模板。
  */
 function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
     const index = list.findIndex(item => item.name === fresh.name);
@@ -369,7 +369,7 @@ function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
 
 /**
  * @function generateToBeTestedValues
- * @description 如果代码中的参数设置了调优，根据调优设置成新的字段存储被测试的参数值，同时生成回测任务，
+ *  如果代码中的参数设置了调优，根据调优设置成新的字段存储被测试的参数值，同时生成回测任务，
  */
 function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
     return data.map(code => {
@@ -383,7 +383,7 @@ function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
 
 /**
  * @function getToBeTestedValues
- * @description 根据参数的调优设置生成需要测试的值。
+ *  根据参数的调优设置生成需要测试的值。
  */
 function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
     let { step, begin, end } = data;
@@ -411,7 +411,7 @@ function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
 
 /**
  * @function generateBacktestTasks
- * @description 根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
+ *  根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
  */
 function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][] {
     let tasks: BacktestTaskDescription[][] = null;
@@ -443,7 +443,7 @@ interface FilterPredicateFun {
 
 /**
  * @function filterBacktestTasks
- * @description 过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
+ *  过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
  */
 function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[]): BacktestTaskDescription[][] {
     if (!filters || !filters.length) return data;
@@ -456,7 +456,7 @@ function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[
 /**
  * @function filterPredicateFunFactory
  * @param filter - 参数过滤器
- * @description 生成过滤器判定函数的工厂函数。
+ *  生成过滤器判定函数的工厂函数。
  * @returns 返回的函数用来判定回测任务的参数设置是否符合过滤器的描述。当参数设置符合过滤器的描述时，判定函数返回true，反之返回false。
  */
 function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
@@ -488,7 +488,7 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
 }
 
 /**
- * @description 获取回测的结果，将结果解析出来。
+ *  获取回测的结果，将结果解析出来。
  */
 function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestResult> {
     let { result } = payload
@@ -497,7 +497,7 @@ function getBacktestResult(payload: BacktestIOResponse): string | number | Serve
 }
 
 /**
- * @description 重置store的状态，恢复到初始状态。
+ *  重置store的状态，恢复到初始状态。
  */
 function resetState(): any {
     return {

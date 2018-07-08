@@ -39,7 +39,7 @@ export class BacktestParamService extends BaseService {
     /* =======================================================Data acquisition======================================================= */
 
     /**
-     * @description 获取当前的策略，数据来源于 strategy reducer。
+     *  获取当前的策略，数据来源于 strategy reducer。
      */
     protected getStrategyDetail(): Observable<fromRes.StrategyDetail> {
         return this.store.pipe(
@@ -50,7 +50,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 获取当前策略使用的编程语言
+     *  获取当前策略使用的编程语言
      */
     protected getSelectedLanguage(): Observable<number> {
         return this.store.pipe(
@@ -61,7 +61,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 获取回测的ui状态。
+     *  获取回测的ui状态。
      */
     getUIState(): Observable<UIState> {
         return this.store
@@ -71,7 +71,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 获取运行的节点，python时可以选择。
+     *  获取运行的节点，python时可以选择。
      */
     getRunningNode(): Observable<number> {
         return this.getUIState()
@@ -81,7 +81,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 获取回测任务，单个任务中包括策略的代码及策略所依赖的模板的代码，还包含此代码运行的参数及代码的ID。
+     *  获取回测任务，单个任务中包括策略的代码及策略所依赖的模板的代码，还包含此代码运行的参数及代码的ID。
      */
     private getToBeTestedTask(): Observable<BacktestCode[]> {
         return this.getUIState()
@@ -130,7 +130,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 获取当前策略所依赖的模板ID。
+     *  获取当前策略所依赖的模板ID。
      */
     private getSelectedTemplateIds(): Observable<number[]> {
         return this.store.select(fromRoot.selectStrategyUIState)
@@ -142,7 +142,7 @@ export class BacktestParamService extends BaseService {
 
     /**
      * @param releaseCache - 是否释放输出流中的缓存值。
-     * @description 获取用户选中的模板，模板数据源是strategy list 的响应和strategy detail 响应中的 templates字段
+     *  获取用户选中的模板，模板数据源是strategy list 的响应和strategy detail 响应中的 templates字段
      */
     getSelectedTemplates(releaseCache = true): Observable<fromRes.TemplateSnapshot[]> {
         releaseCache && fromRoot.selectStrategyDetailResponse.release();
@@ -157,7 +157,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 是否在参数调优情况下进行回测；检查回测代码的所有参数的 isOptimizing 字段。
+     *  是否在参数调优情况下进行回测；检查回测代码的所有参数的 isOptimizing 字段。
      */
     isOptimizeBacktest(): Observable<boolean> {
         return this.getUIState().pipe(
@@ -169,7 +169,7 @@ export class BacktestParamService extends BaseService {
     /* =======================================================Backtest IO parameters======================================================= */
 
     /**
-     * @description 获取回测接口 putTask 的参数。
+     *  获取回测接口 putTask 的参数。
      */
     protected getPutTaskParameters(): Observable<BacktestIORequest> {
         return combineLatest(
@@ -189,7 +189,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测任务的配置，几乎包含回测页面上所有的内容（除了运行的节点外）；
+     *  生成回测任务的配置，几乎包含回测页面上所有的内容（除了运行的节点外）；
      * 1、合并的3条流中，最有可能出问题的是生成code的流，它需要根据参数调优及参数过滤器生成每一个回测任务的code.
      */
     protected generatePutTaskParams(): Observable<BacktestPutTaskParams> {
@@ -204,7 +204,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测时所需要的Code字段的值。
+     *  生成回测时所需要的Code字段的值。
      */
     private generatePutTaskCode(): Observable<PutTaskCode[]> {
         const getValue = (overview: VariableOverview): string | boolean | number => {
@@ -242,7 +242,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测时所需的 Options 字段。
+     *  生成回测时所需的 Options 字段。
      */
     private generatePutTaskOptions(): Observable<BacktestPutTaskOptions> {
         return combineLatest(
@@ -283,7 +283,7 @@ export class BacktestParamService extends BaseService {
      *
      * @param isMultipleTask 是否多任务，即用户是否设置了有效的调优参数。
      * @param level 回测的级别，模拟 or 实盘。
-     * @description 生成回测 Options 中的 RetFlags 的值。
+     *  生成回测 Options 中的 RetFlags 的值。
      */
     private getRetFlags(isMultipleTask: boolean, level: number): number {
         if (isMultipleTask) {
@@ -300,7 +300,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测 Options 中的 UpdatePeriod 的值。
+     *  生成回测 Options 中的 UpdatePeriod 的值。
      */
     private getUpdatePeriod(): Observable<number> {
         return this.getSelectedLanguage()
@@ -313,7 +313,7 @@ export class BacktestParamService extends BaseService {
      *
      * @param start 回测开始时间
      * @param end 回测结束时间
-     * @description 生成回测 Options 中的 SnapshotPeriod 字段的基础值。
+     *  生成回测 Options 中的 SnapshotPeriod 字段的基础值。
      */
     private generateSnapshotPeriod(start: number, end: number): number {
         let daySeconds = 24 * 60 * 60;
@@ -331,7 +331,7 @@ export class BacktestParamService extends BaseService {
 
     /**
      * @method generatePutTaskExchange
-     * @description 生成回测时所需要的 Exchanges 字段的值。
+     *  生成回测时所需要的 Exchanges 字段的值。
      */
     private generatePutTaskExchange(): Observable<BacktestExchange[]> {
         return this.getUIState()
@@ -371,7 +371,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测字段 Exchange 中的高级选项的配置。
+     *  生成回测字段 Exchange 中的高级选项的配置。
      */
     private generateAdvanceOptionsForExchange(option: AdvancedOption, isFaultTolerantMode: boolean, backtestLevel: number, floorKlinePeriod: number): BacktestAdvanceOptions {
         const { faultTolerant, slipPoint, delay, barLen } = option;
@@ -387,7 +387,7 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 生成回测字段 Exchange 中的平台选项的配置。
+     *  生成回测字段 Exchange 中的平台选项的配置。
      */
     private generatePlatformOptionsForExchange(platform: BacktestSelectedPair, klinePeriodId: number): BacktestPlatformOptions {
         const { eid, stock, makerFee, takerFee, balance, remainingCurrency, minFee } = platform;
@@ -406,28 +406,28 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * @description 常量配置中的 DataSource 的值。
+     *  常量配置中的 DataSource 的值。
      */
     private generateDataSource(pair: BacktestSelectedPair): string {
         return this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === pair.eid).DataSource || pair.stock;
     }
 
     /**
-     * @description 生成回测配置 Exchange 中的 FeeMaker, FeeTaker的值。
+     *  生成回测配置 Exchange 中的 FeeMaker, FeeTaker的值。
      */
     private generateFee(fee: number): number {
         return fee * 1000;
     }
 
     /**
-     * @description 生成回测配置 Exchange 中BaseCurrency字段的值
+     *  生成回测配置 Exchange 中BaseCurrency字段的值
      */
     private generateBaseCurrency(stock: string): string {
         return stock.split('_')[0];
     }
 
     /**
-     * @description 生成回测配置 Exchange 中BasePeriod字段的值
+     *  生成回测配置 Exchange 中BasePeriod字段的值
      */
     private generateBasePeriod(backtestLevel: number, klinePeriodId: number): number {
         return backtestLevel === 1 ? 1000 : this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60000;

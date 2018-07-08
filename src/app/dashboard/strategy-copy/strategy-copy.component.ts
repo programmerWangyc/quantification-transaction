@@ -77,7 +77,7 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
 
     ngAfterViewInit() {
         /**
-         * @description 保存操作需要保证子组件渲染完成，参数需要父组件通过viewChild方式从子组件获取。
+         *  保存操作需要保证子组件渲染完成，参数需要父组件通过viewChild方式从子组件获取。
          */
         this.save$$ = this.strategyService.launchSaveStrategy(
             this.getSaveParams()

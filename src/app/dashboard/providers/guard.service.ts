@@ -41,7 +41,7 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
     }
 
     /**
-     * @description 是否可以退出当前路由。
+     *  是否可以退出当前路由。
      */
     canDeactivate(component: CanDeactivateComponent, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const guards = component.canDeactivate();

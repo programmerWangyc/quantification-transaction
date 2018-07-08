@@ -9,7 +9,7 @@ import { ApiAction } from '../base.action';
 
 /**
  * @enum LoginOrder
- * @description This enum indicate the parameter's order which send to the server. All parameters of this interface must be listed here event if the
+ *  This enum indicate the parameter's order which send to the server. All parameters of this interface must be listed here event if the
  * field may be optional, and the 'length' property must be the last member.
  */
 export enum LoginOrder {
@@ -21,7 +21,7 @@ export enum LoginOrder {
 
 /**
  * @class LoginAction
- * @description The base class of login action. This class holds complete parameter configuration information
+ *  The base class of login action. This class holds complete parameter configuration information
  * and can convert the data carried in the action into a format that meets the communication requirements.
  */
 export class LoginAction extends ApiAction {

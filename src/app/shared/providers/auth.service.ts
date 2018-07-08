@@ -6,7 +6,7 @@ import { delayWhen, filter, map, mergeMap, switchMap, take } from 'rxjs/operator
 
 import { LoginRequest, SetPasswordRequest, SignupRequest } from '../../interfaces/request.interface';
 import { ErrorService } from '../../providers/error.service';
-import { ResetLoginErrorAction, CloseSecondaryVerifyAction } from '../../store/auth/login.action';
+import { CloseSecondaryVerifyAction, ResetLoginErrorAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
@@ -199,7 +199,7 @@ export class AuthService {
     /* =======================================================Local Action======================================================= */
 
     /**
-     * @description This action must take place after the VerifyPasswordSuccessAction action.
+     *  This action must take place after the VerifyPasswordSuccessAction action.
      */
     storePwdTemporary(pwd: Observable<string>): Subscription {
         return pwd

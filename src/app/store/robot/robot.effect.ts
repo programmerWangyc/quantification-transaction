@@ -134,7 +134,7 @@ export class RobotEffect extends BaseEffect {
     }
 
     /**
-     * @description 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时除了机器人的状态变更外，其它的相关信息将不再被订阅。
+     *  这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时除了机器人的状态变更外，其它的相关信息将不再被订阅。
      */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
         return this.store.select(selectRobotRequestParameters)

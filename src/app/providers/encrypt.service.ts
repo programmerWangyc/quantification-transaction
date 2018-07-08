@@ -82,7 +82,7 @@ export class EncryptService {
     }
 
     /**
-     * @description Transform data to ary structure, usually for api interactive purpose;
+     *  Transform data to ary structure, usually for api interactive purpose;
      */
     private transformArgs(data: VariableOverview, isEncrypt = true): Observable<Array<string | number | boolean>> {
         const { variableName, variableValue, variableTypeId, originValue } = data;

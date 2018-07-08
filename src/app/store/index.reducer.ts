@@ -229,7 +229,7 @@ export const selectStrategyUIState = createSelector(getStrategyState, strategy.g
 
 /**
  * @function selectTemplateSnapshots
- * @description Get templates from strategy reducer, there are two resources, which one from strategy list that queried by category id equals to
+ *  Get templates from strategy reducer, there are two resources, which one from strategy list that queried by category id equals to
  * template flag and other comes from templates field of strategy detail.
  */
 export const selectTemplateSnapshots = createSelector(selectStrategyListResponse, selectStrategyDetailResponse, (list, detail) => {
@@ -278,7 +278,7 @@ export const selectTemplatesResponses = createSelector(getBacktest, backtest.get
 
 /**
  * @function selectBacktestTemplates
- * @description 把模板拿到后，检查是否获取过模板的源码，将获取过的源码添加到模板上以避免重复获取。
+ *  把模板拿到后，检查是否获取过模板的源码，将获取过的源码添加到模板上以避免重复获取。
  */
 export const selectBacktestTemplates = createSelector(selectTemplateSnapshots, selectTemplatesResponses, (snapshots, sources) => snapshots.map(snapshot => {
     const target = sources.find(item => item.id === snapshot.id);

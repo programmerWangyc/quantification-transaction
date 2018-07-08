@@ -93,7 +93,7 @@ export class AddArgComponent implements OnInit, OnDestroy {
 
     emit(param: StrategyMetaArg): void {
         /**
-         * @description 按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
+         *  按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
          */
         if (param.type === VariableType.BUTTON_TYPE) {
             this.add.next({ ...param, defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });

@@ -22,7 +22,7 @@ export interface isFail<T> {
 /**
  * @function isFail
  * @param data ResponseUnit<any>
- * @description Predicate the response is an error or not;
+ *  Predicate the response is an error or not;
  */
 export const isFail: isFail<any> = (data: ResponseUnit<any>) => !!data.error;
 
@@ -40,7 +40,7 @@ export class BaseEffect {
      * @param data ResponseBody
      * @param actionModule Collection of response actions;
      * @param resultFail Predicate whether the response is success.
-     * @description Used to split the response data to corresponding response actions.
+     *  Used to split the response data to corresponding response actions.
      */
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
         return zip(
@@ -59,7 +59,7 @@ export class BaseEffect {
      * @param actionName Request action name;
      * @param actionModule Collection of response actions;
      * @param resultFail Predicate whether the response is success.
-     * @description If a request calls only one interface, use this method.
+     *  If a request calls only one interface, use this method.
      */
     protected getResponseAction(actionName: string, actionModule: object, resultFail = isFail): Observable<ResponseAction> {
         return this.actions$.ofType(actionName)
@@ -79,7 +79,7 @@ export class BaseEffect {
      * @method getMultiResponseAction
      * @param source Collection of request actions.
      * @param actionModule Collection of response actions;
-     * @description If a request calls multiple interfaces, use this method.
+     *  If a request calls multiple interfaces, use this method.
      */
     protected getMultiResponseActions(source: Observable<Action[]>, actionModule: object): Observable<ResponseAction> {
         return source
@@ -96,7 +96,7 @@ export class BaseEffect {
 
     /**
      * @method mergeParams
-     * @description Merge multiple requests into one request.
+     *  Merge multiple requests into one request.
      */
     private mergeParams(source: WsRequest[]): WsRequest {
         const result = { method: [], params: [], callbackId: '' };

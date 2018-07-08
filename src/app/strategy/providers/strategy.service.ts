@@ -134,7 +134,7 @@ export class StrategyService extends BaseService {
     }
 
     /**
-     * @description Get secret key response from 'OpStrategyToken' api.
+     *  Get secret key response from 'OpStrategyToken' api.
      */
     getStrategyToken(): Observable<string> {
         return this.getOpStrategyTokenResponse()

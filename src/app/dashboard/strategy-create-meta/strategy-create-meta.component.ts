@@ -39,7 +39,7 @@ export interface Tab {
 export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
     /**
-     * @description UI state related.
+     *  UI state related.
      */
     subscription$$: Subscription;
 
@@ -51,7 +51,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     ];
 
     /**
-     * @description Used for interact with StrategyDesComponent;
+     *  Used for interact with StrategyDesComponent;
      */
     strategy: Observable<Strategy>;
 
@@ -64,14 +64,14 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     @ViewChild(StrategyDesComponent) StrategyDes: StrategyDesComponent;
 
     /**
-     * @description Data in these observable comes from api response and component output;
+     *  Data in these observable comes from api response and component output;
      */
     language: Observable<number>;
 
     category: Observable<number>;
 
     /**
-     * @description Used for interact with StrategyCodeMirrorComponent;
+     *  Used for interact with StrategyCodeMirrorComponent;
      */
     strategyDetail: Observable<StrategyDetail>;
 
@@ -84,7 +84,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     @ViewChild(StrategyDependanceComponent) dependance: StrategyDependanceComponent;
 
     /**
-     * @description Used for interact with AddArgComponent and ArgListComponent
+     *  Used for interact with AddArgComponent and ArgListComponent
      */
     args$: Subject<StrategyMetaArg> = new Subject();
 
@@ -103,12 +103,12 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     @ViewChild('strategyCommandArgs') strategyCommandArgs: ArgListComponent;
 
     /**
-     * @description Comes from router;
+     *  Comes from router;
      */
     strategyId: number;
 
     /**
-     * @description Loading state, if true when requesting and false after received response;
+     *  Loading state, if true when requesting and false after received response;
      */
     isLoading: Observable<boolean>;
 
@@ -127,7 +127,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         this.strategyId = +this.route.snapshot.paramMap.get('id');
 
         /**
-         * @description 这里的信息没有从detail里取，因为通过编辑或复制按钮进来时，从list上来取这些信息时更快，不需要等后台响应就可以拿到。
+         *  这里的信息没有从detail里取，因为通过编辑或复制按钮进来时，从list上来取这些信息时更快，不需要等后台响应就可以拿到。
          */
         this.strategy = this.strategyService.getStrategies()
             .pipe(
@@ -136,12 +136,12 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             );
 
         /**
-         * @description 当前策略的详细信息由响应数据提供。
+         *  当前策略的详细信息由响应数据提供。
          */
         this.strategyDetail = this.strategyService.getStrategyDetail();
 
         /**
-         * @description 主要是提供给参数列表组件使用，它的数据来源于响应中已有的参数及AddArgComponent输出的数据。
+         *  主要是提供给参数列表组件使用，它的数据来源于响应中已有的参数及AddArgComponent输出的数据。
          *  FIXME: 直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
          *  类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
          */
@@ -174,12 +174,12 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             );
 
         /**
-         * @description loading 状态控制
+         *  loading 状态控制
          */
         this.isLoading = this.strategyService.isLoading();
 
         /**
-         * @description Multi source observables;
+         *  Multi source observables;
          */
         this.language = merge(
             this.strategy
@@ -254,7 +254,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     }
 
     /**
-     * @description Router guard.
+     *  Router guard.
      */
     canDeactivate(): StrategyDetailDeactivateGuard[] {
         const codeMirrorGuard: StrategyDetailDeactivateGuard = {
@@ -276,7 +276,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
     /**
      * @method addCurrentPath
-     * @description 提供给子类使用，完善当前的路径信息。
+     *  提供给子类使用，完善当前的路径信息。
      */
     addCurrentPath(name): void {
         this.paths.push({ name });

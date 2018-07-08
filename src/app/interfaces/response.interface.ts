@@ -40,7 +40,7 @@ export interface PublicResponse {
 
 /**
  * <------------
- *  @description  Interfaces and enums below are all response related;
+ *    Interfaces and enums below are all response related;
  */
 
 /* =======================================================Server send message========================================================= */

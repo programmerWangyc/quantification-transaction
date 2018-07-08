@@ -22,7 +22,7 @@ export class UtilService {
      * @param distinctKey - The key used to distinct data.
      * @param getGroupName - Get grouped group name;
      * @returns Observable<GroupedList<T>[]> Grouped data.
-     * @description Save incoming data packets.
+     * Save incoming data packets.
      */
     getGroupedList<T>(source: Observable<T[]>, distinctKey: string, getGroupName = arg => String(arg)): Observable<GroupedList<T>[]> {
         return source

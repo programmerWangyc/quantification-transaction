@@ -70,7 +70,7 @@ export class BacktestStrategyArgsComponent implements OnInit {
     }
 
     /**
-     * @description 判定依赖于其它参数的参数是否应该显示，依赖的条件应该是一个表达式
+     *  判定依赖于其它参数的参数是否应该显示，依赖的条件应该是一个表达式
      * @example a@b>=2, 当b的值大于或等于2时应该向用户显示a参数；name@age<19,当 age 参数的值小于19时应该向用户展示name参数
      */
     comparableEstablishment(arg: VariableOverview): boolean {
@@ -89,7 +89,7 @@ export class BacktestStrategyArgsComponent implements OnInit {
     }
 
     /**
-     * @description 判定依赖于其它参数的参数是否应该显示，依赖的条件被当作一个布尔值
+     *  判定依赖于其它参数的参数是否应该显示，依赖的条件被当作一个布尔值
      * @example a@b，当b的值为 true，或可以转为true 的值时，a参数才可以显示。a@!b，当b的值为 false，或者可以转换成 false 的值时a参数才可以显示。
      */
     booleanableEstablishment(arg: VariableOverview): boolean {

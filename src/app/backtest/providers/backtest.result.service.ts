@@ -73,7 +73,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
+     *  获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
      */
     protected getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store
@@ -84,7 +84,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description custom operator, used to get backtest tasks in store;
+     *  custom operator, used to get backtest tasks in store;
      */
     private tasksOperator = () => <T>(source: Observable<T>): Observable<UIState> => {
         return source.pipe(
@@ -111,7 +111,7 @@ export class BacktestResultService extends BaseService {
 
 
     /**
-     * @description 下载日志。
+     *  下载日志。
      */
     downloadLogs(): void {
         const head = zip(
@@ -173,7 +173,7 @@ export class BacktestResultService extends BaseService {
     /** ============================================================调优状态下的日志信息================================================================== **/
 
     /**
-     * @description 获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
+     *  获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
      */
     getBacktestLogCols(): Observable<string[]> {
         return this.store.pipe(
@@ -183,7 +183,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
+     *  获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
      */
     getBacktestLogRows(): Observable<number[][]> {
         return this.store.pipe(
@@ -193,7 +193,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为空。
+     *  生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为空。
      */
     getBacktestLogResults(): Observable<BacktestLogResult[]> {
         return this.store.pipe(
@@ -226,7 +226,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 取出 Observable 中的结果;
+     *  取出 Observable 中的结果;
      */
     private unwrap(obs: Observable<any>): number {
         let result = null;
@@ -237,7 +237,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
+     *  获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
      */
     private getWinningRate(source: fromRes.BacktestResult): Observable<number> {
         const { ProfitLogs } = source;
@@ -264,7 +264,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取最大回撤值；
+     *  获取最大回撤值；
      */
     private getMaxDrawdown(source: fromRes.BacktestResult): Observable<number> {
         return this.getTotalAssets().pipe(
@@ -288,7 +288,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取总资产；优先使用余币的值。
+     *  获取总资产；优先使用余币的值。
      */
     private getTotalAssets(): Observable<number> {
         return this.store.pipe(
@@ -307,7 +307,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 计算回测任务的夏普比率
+     *  计算回测任务的夏普比率
      * @link www.baike.baidu.com SharpeRatio = (E(Rp) - Rf) / oP  E(Rp): 投资组合预期报酬率 Rf:无风险利率；oP: 投资组合的标准差；
      */
     private getSharpRatio(source: fromRes.BacktestResult): Observable<number> {
@@ -354,7 +354,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取回测的时间周期
+     *  获取回测的时间周期
      */
     private getTimeRange(): Observable<{ start: number; end: number }> {
         return this.store.pipe(
@@ -384,7 +384,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取年化交易天数，使用回测交易平台中的最小值。
+     *  获取年化交易天数，使用回测交易平台中的最小值。
      */
     private getYearDays(): Observable<number> {
         return this.store.pipe(
@@ -404,7 +404,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 获取年化预估收益
+     *  获取年化预估收益
      * @param source
      */
     private getAnnualizedReturns(source: fromRes.BacktestResult): Observable<number> {
@@ -428,7 +428,7 @@ export class BacktestResultService extends BaseService {
     /** ============================================================非调优状态下的帐户信息================================================================== **/
 
     /**
-     * @description 获取未调优状态下的回测结果。
+     *  获取未调优状态下的回测结果。
      */
     getBacktestAccountInfo(): Observable<BacktestAccount[]> {
         return this.getBacktestIOResponse(BacktestOperateCallbackId.result)
@@ -456,7 +456,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  @description 获取非期货的帐户信息；
+     *   获取非期货的帐户信息；
      */
     private getAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
         const subSnapshots = source.filter(this.curry2Right(this.isValidSnapshot)(account));
@@ -471,14 +471,14 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 计算收益值；
+     *  计算收益值；
      */
     private calculateProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): number {
         return snapshot.Balance + snapshot.FrozenBalance - account.initialBalance + (snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks) * snapshot.Symbols[account.symbol].Last;
     }
 
     /**
-     * @description 获取期货的帐户信息；
+     *  获取期货的帐户信息；
      */
     private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
         const subSnapshots = source.filter(item => item.Symbols);
@@ -494,7 +494,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 计算期货的收益值；
+     *  计算期货的收益值；
      */
     private calculateFuturesProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount, initial = 0): number {
         return account.isFuturesOkCoin ? initial + snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks :
@@ -502,7 +502,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 计算snapshot时的判定函数。
+     *  计算snapshot时的判定函数。
      */
     private isValidSnapshot(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): boolean {
         const { Symbols } = snapshot;
@@ -511,7 +511,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @description 生成帐户的初始信息。
+     *  生成帐户的初始信息。
      */
     private getAccountInitialInfo(source: fromRes.BacktestResultExchange): BacktestAccount {
         const { Id, BaseCurrency, QuoteCurrency, Balance, Stocks } = source;

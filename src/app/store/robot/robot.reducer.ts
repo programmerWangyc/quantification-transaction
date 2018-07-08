@@ -502,7 +502,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 }
 
 /**
- * @description Update robot arguments;
+ *  Update robot arguments;
  */
 function updateArg(args: VariableOverview[], target: VariableOverview | ImportedArg): VariableOverview[] {
     const index = args.findIndex(item => item.variableName === target.variableName);
@@ -515,7 +515,7 @@ function updateArg(args: VariableOverview[], target: VariableOverview | Imported
 }
 
 /**
- * @description Update robot template arguments;
+ *  Update robot template arguments;
  */
 function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverview | ImportedArg, templateFlag: string | number): TemplateVariableOverview[] {
     const target = args.find(item => item.name === templateFlag || item.id === templateFlag);
@@ -528,7 +528,7 @@ function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverv
 /**
  * @function createScriptArgs;
  * @param args Strategy args or template args;
- * @description This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
+ *  This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
  */
 export function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
     return args.map(ary => {
@@ -541,7 +541,7 @@ export function createScriptArgs(args: (string | number)[][]): VariableOverview[
 }
 
 /**
- * @description Converting data structure from array to dictionary;
+ *  Converting data structure from array to dictionary;
  */
 export function completionParams(arg: (string | number)[]): VariableOverview {
     if (arg.length === 3) {
@@ -570,7 +570,7 @@ export function completionParams(arg: (string | number)[]): VariableOverview {
 }
 
 /**
- * @description Digitized parameter types;
+ *  Digitized parameter types;
  */
 function getArgId(value: string | boolean | number): number {
     if (value === null) return 2;
@@ -596,7 +596,7 @@ function getArgId(value: string | boolean | number): number {
 // }
 
 /**
- * @description Delete characters that has a special meaning in the name of the variable name;
+ *  Delete characters that has a special meaning in the name of the variable name;
  */
 function updateVariableName(arg: VariableOverview): VariableOverview {
     let { variableName } = arg;
@@ -613,7 +613,7 @@ function updateVariableName(arg: VariableOverview): VariableOverview {
 }
 
 /**
- * @description Extract log information from source data and store them in some custom field.
+ *  Extract log information from source data and store them in some custom field.
  */
 function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
     const [run, profit, strategy] = source;
@@ -647,7 +647,7 @@ function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
 }
 
 /**
- * @description Modify the default log parameters which used for send request to serve.
+ *  Modify the default log parameters which used for send request to serve.
  */
 function modifyDefaultParams(data: DefaultParams, payload: Map<string[], any>): DefaultParams {
     const result = cloneDeep(data);
@@ -668,7 +668,7 @@ function modifyDefaultParams(data: DefaultParams, payload: Map<string[], any>): 
 }
 
 /**
- * @description Extract field information that needs to be updated from the message sent by the server;
+ *  Extract field information that needs to be updated from the message sent by the server;
  */
 function getKeyNameNeedUpdate(flag: number): string[] {
     const flagMap = [
@@ -684,7 +684,7 @@ function getKeyNameNeedUpdate(flag: number): string[] {
 }
 
 /**
- * @description Update robot detail field when serve send message arrived.
+ *  Update robot detail field when serve send message arrived.
  */
 function updateRobotDetailRes(data: GetRobotDetailResponse, keys: string[], source: LatestRobotInfo): GetRobotDetailResponse {
     if (data === null) return null;
@@ -701,7 +701,7 @@ function updateRobotDetailRes(data: GetRobotDetailResponse, keys: string[], sour
 }
 
 /**
- * @description Update robot field that in robot list when serve send message arrived.
+ *  Update robot field that in robot list when serve send message arrived.
  */
 function updateRobotListRes(data: RobotListResponse, keys: string[], source: LatestRobotInfo): RobotListResponse {
     if (!data) return data; // 避免直接从URL上访问机器人页面时，会报 can't read property 'all' of null 错误。

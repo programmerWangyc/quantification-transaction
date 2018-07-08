@@ -195,7 +195,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @description Used to check code content when language or category is changed.
+     *  Used to check code content when language or category is changed.
      */
     private checkContent(): void {
         const target = this.constant.LANGUAGE_INITIAL_VALUE.get(this._language);
@@ -220,7 +220,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @description Set editor font size, and update user favorite editor config;
+     *  Set editor font size, and update user favorite editor config;
      */
     setFontSize(): void {
         const ele = this.eleRef.nativeElement.querySelector('.CodeMirror');
@@ -231,7 +231,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @description Set editor theme, and update user favorite editor config;
+     *  Set editor theme, and update user favorite editor config;
      */
     setTheme(theme: string): void {
         this.codeOptions.theme = theme;
@@ -242,14 +242,14 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @description Format code use js-beautify
+     *  Format code use js-beautify
      */
     formatCode(): void {
         this.codeContent = beautify(this.codeContent);
     }
 
     /**
-     * @description Toggle edit mode between 'default' and 'vim';
+     *  Toggle edit mode between 'default' and 'vim';
      */
     toggleVimMode(): void {
         const editor = this.codeMirror.codeMirror;
@@ -266,7 +266,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @description Toggle edit area size. The method that code mirror applied has no effect, achieve the effect by dynamically toggle classes and attributes.
+     *  Toggle edit area size. The method that code mirror applied has no effect, achieve the effect by dynamically toggle classes and attributes.
      */
     toggleFullScreen(): void {
         this.isFullScreen = !this.isFullScreen;

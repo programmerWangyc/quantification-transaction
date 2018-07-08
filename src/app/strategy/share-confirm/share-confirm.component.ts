@@ -12,7 +12,7 @@ export enum ConfirmType {
 }
 
 /**
- * @description
+ *
  * Input: 1, targetType: Public type that the strategy want to be. 2, currentType: Public type that the strategy is hold on.
  * Output: The param of the close method, indicate the result of user selected.
  *
