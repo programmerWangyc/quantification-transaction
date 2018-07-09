@@ -43,7 +43,7 @@ export class StrategyOperateService extends StrategyService {
         super(store, error, process, utilService, nzModal, constant, translate);
     }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchShareStrategy(params: Observable<ShareStrategyStateSnapshot>): Subscription {
         return this.process.processShareStrategy(params
@@ -114,7 +114,7 @@ export class StrategyOperateService extends StrategyService {
         );
     }
 
-    /* =======================================================Date acquisition======================================================= */
+    //  =======================================================Date acquisition=======================================================
 
     getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
         return this.store.select(fromRoot.selectShareStrategyResponse)
@@ -206,7 +206,7 @@ export class StrategyOperateService extends StrategyService {
             );
     }
 
-    /* =======================================================Shortcut methods======================================================= */
+    //  =======================================================Shortcut methods=======================================================
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
         const { id, type, currentType } = param;
@@ -224,7 +224,7 @@ export class StrategyOperateService extends StrategyService {
             );
     }
 
-    /* =======================================================Error handler======================================================= */
+    //  =======================================================Error handler=======================================================
 
     handleShareStrategyError(): Subscription {
         return this.error.handleResponseError(this.getShareStrategyResponse())

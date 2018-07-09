@@ -46,7 +46,7 @@ export class StrategyService extends BaseService {
         public translate: TranslateService,
     ) { super() }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchStrategyList(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
         return this.process.processStrategyList(source);
@@ -69,7 +69,7 @@ export class StrategyService extends BaseService {
         return this.process.processStrategyDetail(source);
     }
 
-    /* =======================================================Date acquisition======================================================= */
+    //  =======================================================Date acquisition=======================================================
 
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.select(fromRoot.selectStrategyListResponse)
@@ -248,7 +248,7 @@ export class StrategyService extends BaseService {
             );
     }
 
-    /* =======================================================Local state change======================================================= */
+    //  =======================================================Local state change=======================================================
 
     resetState(): void {
         this.store.dispatch(new ResetStateAction());
@@ -262,7 +262,7 @@ export class StrategyService extends BaseService {
         this.store.dispatch(new UpdateStrategyLanguageAction(language));
     }
 
-    /* =======================================================Shortcut methods======================================================= */
+    //  =======================================================Shortcut methods=======================================================
 
     getCategoryName(id: number): string {
         return fromReq.CategoryType[id] || 'UNKNOWN_TYPE';
@@ -306,7 +306,7 @@ export class StrategyService extends BaseService {
 
     isCommandArg = this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX)
 
-    /* =======================================================Error handler======================================================= */
+    //  =======================================================Error handler=======================================================
 
     handleStrategyListError(): Subscription {
         return this.error.handleResponseError(this.getStrategyListResponse());

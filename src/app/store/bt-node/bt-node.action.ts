@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 import { ApiAction } from '../base.action';
 import { GetNodeListResponse } from './../../interfaces/response.interface';
 
-/* ===========================================Node list=================================== */
+//  ===========================================Node list===================================
 
 // node list
 export class GetNodeListAction extends ApiAction {
@@ -42,9 +42,9 @@ export class GetNodeListSuccessAction extends GetNodeListAction implements Actio
     constructor(public payload: GetNodeListResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
-/* none local action */
+//  none local action 
 
 export type ApiActions = GetNodeListRequestAction
     | GetNodeListFailAction

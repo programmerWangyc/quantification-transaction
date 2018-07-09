@@ -15,7 +15,7 @@ export class ReceiveServerSendPaymentEventAction implements Action {
     constructor(public payload: ServerSendPaymentMessage) { }
 }
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // pay orders
 export class GetPayOrders extends ApiAction {
@@ -102,7 +102,7 @@ export class GetPaymentArgSuccessAction extends GetPaymentArg implements Action 
     constructor(public payload: GetPaymentArgResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const RESET_RECHARGE = 'RESET_RECHARGE';
 

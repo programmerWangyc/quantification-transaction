@@ -27,7 +27,7 @@ export class WatchDogService {
         private tip: TipService,
     ) { }
 
-    /* =======================================================Api request======================================================= */
+    //  =======================================================Api request=======================================================
 
     launchSetRobotWatchDog(robot: Observable<RobotDetail | Robot>): Subscription {
         return this.process.processSetRobotWatchDog(
@@ -46,7 +46,7 @@ export class WatchDogService {
         );
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     private getSetWatchDogResponse(): Observable<SetRobotWDResponse> {
         return this.store.select(selectSetWatchDogResponse)
@@ -63,9 +63,9 @@ export class WatchDogService {
             );
     }
 
-    /* =======================================================Local state change======================================================= */
+    //  =======================================================Local state change=======================================================
 
-    /* =======================================================Error handle======================================================= */
+    //  =======================================================Error handle=======================================================
 
     handleSetWatchDogError(): Subscription {
         return this.error.handleResponseError(this.getSetWatchDogResponse());

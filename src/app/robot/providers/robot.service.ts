@@ -31,7 +31,7 @@ export class RobotService extends BaseService {
         super()
     }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchRobotList(data: Observable<fromReq.GetRobotListRequest>): Subscription {
         return this.process.processRobotList(data);
@@ -62,7 +62,7 @@ export class RobotService extends BaseService {
         );
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     // robot list
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
@@ -217,7 +217,7 @@ export class RobotService extends BaseService {
             );
     }
 
-    /* =======================================================Short cart method================================================== */
+    //  =======================================================Short cart method==================================================
 
     monitorServerSendRobotStatus(): Subscription {
         const param = this.getServerSendRobotMessage()
@@ -264,7 +264,7 @@ export class RobotService extends BaseService {
         }
     }
 
-    /* =======================================================Local state modify================================================== */
+    //  =======================================================Local state modify==================================================
 
     isLoading(type?: string): Observable<boolean> {
         return this.store.select(fromRoot.selectRobotUiState)
@@ -281,7 +281,7 @@ export class RobotService extends BaseService {
         this.store.dispatch(new ResetRobotStateAction());
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handleRobotListError(): Subscription {
         return this.error.handleResponseError(this.getRobotListResState());

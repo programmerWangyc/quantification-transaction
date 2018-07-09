@@ -22,7 +22,7 @@ import {
     VerifyKeyResponse,
 } from './../../interfaces/response.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 export enum GetStrategyListOrder {
     offset,
@@ -385,7 +385,7 @@ export class SaveStrategySuccessAction extends SaveStrategyAction implements Act
     constructor(public payload: SaveStrategyResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 // update strategy hasToken field
 export const UPDATE_STRATEGY_SECRET_KEY_STATE = '[Strategy] UPDATE_STRATEGY_SECRET_KEY_STATE';

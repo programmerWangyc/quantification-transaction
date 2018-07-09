@@ -45,13 +45,13 @@ export class PublicService extends BaseService {
         this.checkReferrerUser();
     }
 
-    /* =======================================================Server Request======================================================= */
+    //  =======================================================Server Request=======================================================
 
     launchGetSettings(type: string | Observable<string>, single = true): Subscription {
         return this.process.processSettings(isString(type) ? observableOf({ type }) : type.pipe(map(type => ({ type }))), single);
     }
 
-    /* =======================================================Date acquisition======================================================= */
+    //  =======================================================Date acquisition=======================================================
 
     getSettingsResponse(): Observable<ResponseState> {
         return this.store.select(selectSettingsResponse)
@@ -170,7 +170,7 @@ export class PublicService extends BaseService {
         );
     }
 
-    /* =======================================================Config operate======================================================= */
+    //  =======================================================Config operate=======================================================
 
     updateInformation(): Subscription {
         return this.updateToken().add(this.updateCurrentUser());
@@ -265,7 +265,7 @@ export class PublicService extends BaseService {
             .subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
     }
 
-    /* =======================================================Local state change======================================================= */
+    //  =======================================================Local state change=======================================================
 
     updateEditorConfig(config: EditorConfig): void {
         this.store.dispatch(new UpdateFavoriteEditorConfigAction(config));
@@ -275,7 +275,7 @@ export class PublicService extends BaseService {
         this.store.dispatch(new ToggleSubscribeServerSendMessageTypeAction({ message, status }));
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handleSettingsError(): Subscription {
         return this.error.handleResponseError(this.getSettingsResponse());

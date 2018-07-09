@@ -4,7 +4,7 @@ import { SetRobotWDRequest } from '../../interfaces/request.interface';
 import { ApiAction } from '../base.action';
 import { SetRobotWDResponse } from './../../interfaces/response.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 export enum SetRobotWDOrder {
     robotId,
@@ -51,9 +51,9 @@ export class SetRobotWDSuccessAction extends SetRobotWDAction implements Action 
     constructor(public payload: SetRobotWDResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
-/* none local action */
+//  none local action 
 
 export type ApiActions = SetRobotWDRequestAction
     | SetRobotWDFailAction

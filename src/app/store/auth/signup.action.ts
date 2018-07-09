@@ -4,7 +4,7 @@ import { SignupResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SignupRequest } from './../../interfaces/request.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // signup
 export enum SignupOrder {
@@ -54,7 +54,7 @@ export class SignupSuccessAction extends SignupAction implements Action {
     constructor(public payload: SignupResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const TOGGLE_AGREE_STATE = '[Signup] TOGGLE_AGREE_STATE';
 

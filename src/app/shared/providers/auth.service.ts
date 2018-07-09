@@ -50,7 +50,7 @@ export class AuthService {
         private tip: TipService,
     ) { }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchLogin(source: Observable<LoginRequest>): Subscription {
         return this.process.processLogin(source);
@@ -76,7 +76,7 @@ export class AuthService {
         return this.process.processVerifyPwd(source);
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     // login
     private getLoginResponse(): Observable<LoginResponse> {
@@ -196,7 +196,7 @@ export class AuthService {
             );
     }
 
-    /* =======================================================Local Action======================================================= */
+    //  =======================================================Local Action=======================================================
 
     /**
      *  This action must take place after the VerifyPasswordSuccessAction action.
@@ -221,7 +221,7 @@ export class AuthService {
         this.store.dispatch(new CloseSecondaryVerifyAction());
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handleLoginError(): Subscription {
         return this.error.handleResponseError(this.getLoginResponse());

@@ -1,6 +1,6 @@
 import { TemplateVariableOverview, VariableOverview } from './app.interface';
 
-/* =======================================================Abstract response========================================================= */
+//  =======================================================Abstract response=========================================================
 
 export type ResponseItem = string | number | boolean | { [key: string]: any } | JSON;
 
@@ -21,7 +21,7 @@ export interface ServerSendMessage<T> extends PublicResponse {
     result: T;
 }
 
-/* =======================================================Public section of response========================================================= */
+//  =======================================================Public section of response=========================================================
 
 export interface PublicResponse {
     balance: number;
@@ -43,7 +43,7 @@ export interface PublicResponse {
  *    Interfaces and enums below are all response related;
  */
 
-/* =======================================================Server send message========================================================= */
+//  =======================================================Server send message=========================================================
 
 export enum ServerSendEventType {
     ROBOT = 'robot',
@@ -73,7 +73,7 @@ export interface ServerSendBacktestMessage<T> {
     uuid: string;
 }
 
-/* =======================================================Auth response========================================================= */
+//  =======================================================Auth response=========================================================
 
 // login
 export interface LoginResponse extends ResponseUnit<number> { }
@@ -91,7 +91,7 @@ export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 export interface VerifyPasswordResponse extends ResponseUnit<boolean> { }
 
 
-/* =======================================================Auth response========================================================= */
+//  =======================================================Auth response=========================================================
 
 // get settings
 export interface IndexSetting {
@@ -100,7 +100,7 @@ export interface IndexSetting {
 
 export interface SettingsResponse extends ResponseUnit<string | IndexSetting> { }
 
-/* =======================================================Exchange response========================================================= */
+//  =======================================================Exchange response=========================================================
 
 // exchange list
 export interface ExchangeMetaData {

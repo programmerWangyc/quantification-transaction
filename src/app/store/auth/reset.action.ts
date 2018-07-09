@@ -4,7 +4,7 @@ import { ResetPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { ResetPasswordRequest } from './../../interfaces/request.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // reset password
 export class ResetPasswordAction extends ApiAction {
@@ -45,7 +45,7 @@ export class ResetPasswordSuccessAction extends ResetPasswordAction implements A
     constructor(public payload: ResetPasswordResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const RESET_RESET_PASSWORD = '[Auth] RESET_RESET_PASSWORD';
 

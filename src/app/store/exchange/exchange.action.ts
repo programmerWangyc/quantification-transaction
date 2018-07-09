@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 import { ApiAction } from '../base.action';
 import { GetExchangeListResponse } from './../../interfaces/response.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // exchange list
 export class GetExchangeListAction extends ApiAction {
@@ -42,9 +42,9 @@ export class GetExchangeListSuccessAction extends GetExchangeListAction implemen
     constructor(public payload: GetExchangeListResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
-/* none local action */
+//  none local action 
 
 export type ApiActions = GetExchangeListRequestAction
     | GetExchangeListFailAction

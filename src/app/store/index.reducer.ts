@@ -70,7 +70,7 @@ export const selectServerMsgSubscribeState = createSelector(getPubState, pub.get
 const getRouteState = (state: AppState) => state.route;
 export const selectRouteState = createSelector(getRouteState, (state) => state.state);
 
-/** ===================================================Auth=================================================== */
+//  ===================================================Auth===================================================
 
 // login
 const getLoginState = (state: AppState) => state.login;
@@ -96,7 +96,7 @@ const getVerifyPwdState = (state: AppState) => state.verifyPwd;
 export const selectVerifyPwdResponse = createSelector(getVerifyPwdState, verifyPwd.getVerifyResponse);
 export const selectTemporaryPwd = createSelector(getVerifyPwdState, verifyPwd.getTemporaryPwd);
 
-/** ===================================================Exchange=================================================== */
+//  ===================================================Exchange===================================================
 
 // exchange list
 const getExchangeState = (state: AppState) => state.exchange;
@@ -104,7 +104,7 @@ export const selectExchangeList = createSelector(getExchangeState, exchange.getE
 export const selectExchangeResponseState = createSelector(getExchangeState, exchange.getExchangeListResponseState);
 
 
-/** ===================================================Robot=================================================== */
+//  ===================================================Robot===================================================
 
 const getRobotState = (state: AppState) => state.robot;
 
@@ -174,26 +174,26 @@ export const selectServerSendRobotMessage = createSelector(getRobotState, robot.
 export const selectRobotRequestParameters = createSelector(getRobotState, robot.getRequestParameter);
 export const selectRobotLogRequestParameters = createSelector(selectRobotRequestParameters, state => state.robotLogs);
 
-/** ===================================================Node=================================================== */
+//  ===================================================Node===================================================
 
 const getBtNodeState = (state: AppState) => state.btNode;
 
 export const selectBtNodeListResponse = createSelector(getBtNodeState, btNode.getNodeListResponse);
 
-/** ===================================================Platform=================================================== */
+//  ===================================================Platform===================================================
 
 const getPlatformState = (state: AppState) => state.platform;
 
 export const selectPlatformListResponse = createSelector(getPlatformState, platform.getPlatformListResponse);
 
-/** ===================================================Watch dog=================================================== */
+//  ===================================================Watch dog===================================================
 
 const getWatchDogState = (state: AppState) => state.watchDog;
 
 export const selectSetWatchDogResponse = createSelector(getWatchDogState, watchDog.getSetWDResponse);
 export const selectSetWatchDogRequest = createSelector(getWatchDogState, watchDog.getSetWDRequest);
 
-/** ===================================================Strategy====================================================== */
+//  ===================================================Strategy======================================================
 
 const getStrategyState = (state: AppState) => state.strategy;
 
@@ -248,7 +248,7 @@ export const selectTemplateSnapshots = createSelector(selectStrategyListResponse
     return [...availableTemplates, ...currentTemplates];
 })
 
-/** ===================================================Charge====================================================== */
+//  ===================================================Charge======================================================
 
 const getChargeState = (state: AppState) => state.charge;
 
@@ -265,7 +265,7 @@ export const selectPaymentArgRequestParams = createSelector(selectChargeRequestP
 // server send payment message
 export const selectServerSendRechargeMessage = createSelector(getChargeState, charge.getServerSendMessage);
 
-/** ===================================================Backtest====================================================== */
+//  ===================================================Backtest======================================================
 
 const getBacktest = (state: AppState) => state.backtest;
 

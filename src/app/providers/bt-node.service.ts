@@ -30,7 +30,7 @@ export class BtNodeService {
         private utilService: UtilService,
     ) { }
 
-    /* =======================================================Serve Request======================================================= */
+    // =======================================================Serve Request=======================================================
 
     /**
      * Request node list from server.
@@ -39,7 +39,7 @@ export class BtNodeService {
         return this.process.processGetNodeList(data, allowSeparateRequest);
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    // =======================================================Date Acquisition=======================================================
 
     /**
      * Get node list response.
@@ -62,25 +62,25 @@ export class BtNodeService {
     }
 
     /**
+     * 获取分组后的 node list.
      * @param getName  The method to generate group name.
      * @param key The key used to distinct data.
-     * 获取分组后的 node list.
      */
     getGroupedNodeList(key: string, getName?: (arg: number | boolean) => string): Observable<GroupedNode[]> {
         return this.utilService.getGroupedList(this.getNodeList(), key, getName);
     }
 
     /**
-     * @param id  Node id.
      * 生成代理节点的名称。
+     * @param id  Node id.
      */
     getAgentName(id: number): string {
         return id === 0 ? 'PRIVATE_AGENT' : 'PUBLIC_AGENT';
     }
 
     /**
-     * @param str 代理节点的名称。
      * 根据代理节点的名称获取它的id。
+     * @param str 代理节点的名称。
      */
     reverseGetAgentName(str: string): number {
         return str === 'PRIVATE_AGENT' ? 0 : 1;
@@ -101,8 +101,8 @@ export class BtNodeService {
     }
 
     /**
-     * @param conditions Collection of predicate functions;
      * 获取符合条件的节点集合。
+     * @param conditions Collection of predicate functions;
      */
     getSpecificNodeList(...conditions: NodeFilterFn[]): Observable<BtNode[]> {
         return this.getNodeList()
@@ -111,7 +111,7 @@ export class BtNodeService {
             );
     }
 
-    /* =======================================================Shortcut methods======================================================= */
+    // =======================================================Shortcut methods=======================================================
 
     /**
      * Predicate whether the node is main node.
@@ -127,7 +127,7 @@ export class BtNodeService {
         return node.version.indexOf('plugin') !== -1;
     }
 
-    /* =======================================================Error Handle======================================================= */
+    // =======================================================Error Handle==========================================================
 
     /**
      * Handle the error of node list request.

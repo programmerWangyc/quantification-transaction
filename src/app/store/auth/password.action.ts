@@ -4,7 +4,7 @@ import { SetPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { SetPasswordRequest } from './../../interfaces/request.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // set password
 export enum SetPasswordOrder {
@@ -51,7 +51,7 @@ export class SetPasswordSuccessAction extends SetPasswordAction implements Actio
     constructor(public payload: SetPasswordResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const RESET_SET_PASSWORD = '[Auth] RESET_SET_PASSWORD';
 

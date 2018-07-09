@@ -51,7 +51,7 @@ export class BacktestService extends BacktestParamService {
         super(store, constant);
     }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchBacktest(start: Observable<boolean>): Subscription {
         // TODO: 本地回测时使用，用于发出本地回测的信号。
@@ -244,7 +244,7 @@ export class BacktestService extends BacktestParamService {
         );
     }
 
-    /* =======================================================Data acquisition======================================================= */
+    //  =======================================================Data acquisition=======================================================
 
     getTemplatesParams(): Observable<GetTemplatesRequest> {
         return this.getSelectedTemplates()
@@ -315,7 +315,7 @@ export class BacktestService extends BacktestParamService {
         );
     }
 
-    /* =======================================================UI state ======================================================= */
+    //  =======================================================UI state =======================================================
 
     getSelectedKlinePeriod(): Observable<number> {
         return this.getUIState()
@@ -450,7 +450,7 @@ export class BacktestService extends BacktestParamService {
         )
     }
 
-    /* =======================================================Local state change======================================================= */
+    //  =======================================================Local state change=======================================================
 
     updateSelectedTimeRange(range: TimeRange): void {
         this.store.dispatch(new Actions.UpdateSelectedTimeRangeAction(range));
@@ -496,7 +496,7 @@ export class BacktestService extends BacktestParamService {
         this.store.dispatch(new Actions.ResetBacktestRelatedStateAction());
     }
 
-    /* =======================================================Error handler======================================================= */
+    //  =======================================================Error handler=======================================================
 
     handleGetTemplatesError(): Subscription {
         return this.error.handleResponseError(this.getGetTemplatesResponse());

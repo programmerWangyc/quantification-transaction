@@ -5,7 +5,7 @@ import { PublicResponse, SettingsResponse } from '../../interfaces/response.inte
 import { ApiAction } from '../base.action';
 import { SettingsRequest } from './../../interfaces/request.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // public
 export const SET_PUBLIC_INFORMATION = '[Public] SET_PUBLIC_INFORMATION';
@@ -61,7 +61,7 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const SET_LANGUAGE = '[Public] SET_LANGUAGE';
 

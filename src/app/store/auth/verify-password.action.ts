@@ -4,7 +4,7 @@ import { VerifyPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 import { VerifyPasswordRequest } from './../../interfaces/request.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // verify password
 export class VerifyPasswordAction extends ApiAction {
@@ -45,7 +45,7 @@ export class VerifyPasswordSuccessAction extends VerifyPasswordAction implements
     constructor(public payload: VerifyPasswordResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const RESET_VERIFY_PASSWORD = '[Auth] RESET_VERIFY_PASSWORD';
 

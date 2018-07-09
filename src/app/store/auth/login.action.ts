@@ -5,7 +5,7 @@ import { LoginResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 /**
  * @enum LoginOrder
@@ -62,7 +62,7 @@ export class LoginSuccessAction extends LoginAction implements Action {
     constructor(public payload: LoginResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const RESET_LOGIN_ERROR = '[Login] RESET_LOGIN_ERROR';
 

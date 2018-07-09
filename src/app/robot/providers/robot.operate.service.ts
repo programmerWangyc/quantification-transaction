@@ -74,7 +74,7 @@ export class RobotOperateService extends BaseService {
         super();
     }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchPublicRobot(data: Observable<fromRes.Robot>): Subscription {
         return this.process.processPublicRobot(this.getPublicRobotRequest(data));
@@ -245,7 +245,7 @@ export class RobotOperateService extends BaseService {
         );
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     // publish robot
     getPublicRobotResponse(): Observable<fromRes.PublicRobotResponse> {
@@ -629,7 +629,7 @@ export class RobotOperateService extends BaseService {
             );
     }
 
-    /* =======================================================Short cart method================================================== */
+    //  =======================================================Short cart method==================================================
 
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
         return combineLatest(
@@ -719,7 +719,7 @@ export class RobotOperateService extends BaseService {
             );
     }
 
-    /* =======================================================Local state modify================================================== */
+    //  =======================================================Local state modify==================================================
 
     updateRobotArg(variable: VariableOverview | ImportedArg, templateFlag?: string | number): void {
         this.store.dispatch(new ModifyRobotArgAction(variable, templateFlag));
@@ -733,7 +733,7 @@ export class RobotOperateService extends BaseService {
         return target.subscribe(request => this.store.dispatch(new UpdateRobotWatchDogStateAction(request)));
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handlePublicRobotError(): Subscription {
         return this.error.handleResponseError(this.getPublicRobotResponse());

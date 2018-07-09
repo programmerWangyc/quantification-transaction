@@ -16,7 +16,7 @@ export class ReceiveServerSendBacktestEventAction implements Action {
     constructor(public payload: ServerSendBacktestMessage<string>) { }
 }
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // get templates
 class GetTemplatesAction extends ApiAction {
@@ -240,7 +240,7 @@ export class StopBacktestSuccessAction extends StopBacktestAction implements Act
     constructor(public payload: BacktestIOResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
 export const UPDATE_SELECTED_KLINE_PERIOD = '[Backtest] UPDATE_SELECTED_KLINE_PERIOD';
 

@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 import { ApiAction } from '../base.action';
 import { GetPlatformListResponse } from './../../interfaces/response.interface';
 
-/* ===========================================Api action=================================== */
+//  ===========================================Api action===================================
 
 // platform list
 export class GetPlatformListAction extends ApiAction {
@@ -44,9 +44,9 @@ export class GetPlatformListSuccessAction extends GetPlatformListAction implemen
     constructor(public payload: GetPlatformListResponse) { super() }
 }
 
-/* ===========================================Local action=================================== */
+//  ===========================================Local action===================================
 
-/* none local action */
+//  none local action 
 
 export type ApiActions = GetPlatformListRequestAction
     | GetPlatformListFailAction

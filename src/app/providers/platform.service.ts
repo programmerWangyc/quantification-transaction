@@ -28,13 +28,13 @@ export class PlatformService {
         private process: ProcessService,
     ) { }
 
-    /* =======================================================Serve Request======================================================= */
+    //  =======================================================Serve Request=======================================================
 
     launchGetPlatformList(data: Observable<any>): Subscription {
         return this.process.processGetPlatformList(data);
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     private getPlatformListResponse(): Observable<GetPlatformListResponse> {
         return this.store.select(fromRoot.selectPlatformListResponse)
@@ -84,7 +84,7 @@ export class PlatformService {
         );
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handlePlatformListError(): Subscription {
         return this.error.handleResponseError(this.getPlatformListResponse());

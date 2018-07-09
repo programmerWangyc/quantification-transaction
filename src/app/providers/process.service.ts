@@ -29,7 +29,7 @@ export class ProcessService {
         private tip: TipService
     ) { }
 
-    /** ===================================================Auth=================================================== */
+    //  ===================================================Auth===================================================
 
     processLogin(params: Observable<Request.LoginRequest>): Subscription {
         return params.subscribe(data => this.store.dispatch(new LoginRequestAction(data)));
@@ -55,13 +55,13 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new VerifyPasswordRequestAction(params)));
     }
 
-    /** ===================================================Exchange=================================================== */
+    //  ===================================================Exchange===================================================
 
     processExchangeList(params: Observable<Request.GetExchangeListRequest>): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetExchangeListRequestAction()));
     }
 
-    /** ===================================================Robot=================================================== */
+    //  ===================================================Robot===================================================
 
     processRobotList(params: Observable<Request.GetRobotListRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new RobotActions.GetRobotListRequestAction(params)));
@@ -111,25 +111,25 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new RobotActions.PluginRunRequestAction(params)));
     }
 
-    /** ===================================================Node list=================================================== */
+    //  ===================================================Node list===================================================
 
     processGetNodeList(params: Observable<Request.GetNodeListRequest>, allowSeparateRequest = false): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetNodeListRequestAction(null, allowSeparateRequest)));
     }
 
-    /** ===================================================Platform list=================================================== */
+    //  ===================================================Platform list===================================================
 
     processGetPlatformList(params: Observable<Request.GetPlatformListRequest>): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetPlatformListRequestAction()));
     }
 
-    /** ===================================================Watch dog=================================================== */
+    //  ===================================================Watch dog===================================================
 
     processSetRobotWatchDog(params: Observable<Request.SetRobotWDRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new SetRobotWDRequestAction(params)));
     }
 
-    /** ===================================================Strategy====================================================== */
+    //  ===================================================Strategy======================================================
 
     processStrategyList(params: Observable<Request.GetStrategyListRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyListRequestAction(params)));
@@ -163,7 +163,7 @@ export class ProcessService {
         return params.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
     }
 
-    /** ===================================================Backtest====================================================== */
+    //  ===================================================Backtest======================================================
 
     processGetTemplates(params: Observable<Request.GetTemplatesRequest>): Subscription {
         return params.subscribe(params => this.store.dispatch(new BacktestActions.GetTemplatesRequestAction(params)));
@@ -196,7 +196,7 @@ export class ProcessService {
         });
     }
 
-    /** ===================================================Charge====================================================== */
+    //  ===================================================Charge======================================================
 
     processPayOrders(params: Observable<any>): Subscription {
         return params.subscribe(_ => this.store.dispatch(new GetPayOrdersRequestAction()));

@@ -30,6 +30,11 @@ import { BacktestAccount, BacktestLogResult } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 
 
+/**
+ * 获取交易次数，递归查找所有的 'TradeStatus' 字段，累积其sell， buy字段。
+ * @param data 需要查找的对象
+ * @returns 交易总次数
+ */
 export function getTradeCount(data: Object): number {
     return Object.entries(data).reduce((acc, [key, value]) => {
         if (key === 'TradeStatus') { // 定死的Key；
@@ -44,6 +49,12 @@ export function getTradeCount(data: Object): number {
     }, 0);
 }
 
+/**
+ * 获取收益，递归查找所有的 'Long' ，'Short' 字段，将各字段的值进行累积。
+ * @param data 查找的对象
+ * @param initial 计算的初始值
+ * @returns 收益的统计结果对象
+ */
 export function getProfit(data: Object, initial: fromRes.BacktestResultSymbolProfit): fromRes.BacktestResultSymbolProfit {
     return Object.entries(data).reduce((acc, [key, value]) => {
         if (key === 'Long' || key === 'Short') {
@@ -94,7 +105,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * @deprecated 是否允许用户下载回测结果。只有当回测完成并且有结果供下载时才可以下载。
+     * 是否允许用户下载回测结果。只有当回测完成并且有结果供下载时才可以下载。
      */
     canSaveResult(): Observable<boolean> {
         return this.store.pipe(
@@ -111,7 +122,7 @@ export class BacktestResultService extends BaseService {
 
 
     /**
-     *  下载日志。
+     * 下载日志。
      */
     downloadLogs(): void {
         const head = zip(
@@ -170,7 +181,7 @@ export class BacktestResultService extends BaseService {
         });
     }
 
-    /** ============================================================调优状态下的日志信息================================================================== **/
+    // ============================================================调优状态下的日志信息==================================================================
 
     /**
      *  获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
@@ -307,8 +318,8 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  计算回测任务的夏普比率
-     * @link www.baike.baidu.com SharpeRatio = (E(Rp) - Rf) / oP  E(Rp): 投资组合预期报酬率 Rf:无风险利率；oP: 投资组合的标准差；
+     * 计算回测任务的夏普比率
+     * {@link www.baike.baidu.com} SharpeRatio = (E(Rp) - Rf) / oP  E(Rp): 投资组合预期报酬率 Rf:无风险利率；oP: 投资组合的标准差；
      */
     private getSharpRatio(source: fromRes.BacktestResult): Observable<number> {
         return this.getRatio(source).pipe(
@@ -335,6 +346,9 @@ export class BacktestResultService extends BaseService {
         );
     }
 
+    /**
+     * 获取周期内的夏普比率。
+     */
     private getRatio(source: fromRes.BacktestResult): Observable<number[]> {
         return this.getTimeRange().pipe(
             mergeMap(({ start, end }) => from(range(start, end, this.PERIOD)).pipe(
@@ -372,6 +386,11 @@ export class BacktestResultService extends BaseService {
         );
     }
 
+    /**
+     * 获取按天计算后的收益值
+     * @param source 回测结果
+     * @param endTime 结束时间
+     */
     private getDayProfit(source: fromRes.BacktestResult, endTime: number): Observable<number> {
         return from(source.ProfitLogs).pipe(
             takeWhile(([time, _]) => time < endTime),
@@ -405,7 +424,6 @@ export class BacktestResultService extends BaseService {
 
     /**
      *  获取年化预估收益
-     * @param source
      */
     private getAnnualizedReturns(source: fromRes.BacktestResult): Observable<number> {
         const { ProfitLogs } = source;
@@ -425,7 +443,7 @@ export class BacktestResultService extends BaseService {
         );
     }
 
-    /** ============================================================非调优状态下的帐户信息================================================================== **/
+    // ============================================================非调优状态下的帐户信息==================================================================
 
     /**
      *  获取未调优状态下的回测结果。
@@ -456,7 +474,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *   获取非期货的帐户信息；
+     *  获取非期货的帐户信息；
      */
     private getAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
         const subSnapshots = source.filter(this.curry2Right(this.isValidSnapshot)(account));

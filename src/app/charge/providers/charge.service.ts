@@ -46,7 +46,7 @@ export class ChargeService extends BaseService {
         this.renderer2 = this.rendererFactory.createRenderer(null, null);
     }
 
-    /* =======================================================Server request======================================================= */
+    //  =======================================================Server request=======================================================
 
     launchPaymentArg(data: Observable<RechargeFormModal>, strategyId: Observable<number> = observableOf(0)): Subscription {
         return this.process.processPaymentArg(
@@ -64,7 +64,7 @@ export class ChargeService extends BaseService {
         return this.process.processPayOrders(data);
     }
 
-    /* =======================================================Date Acquisition======================================================= */
+    //  =======================================================Date Acquisition=======================================================
 
     // payment
     private getPaymentArgsResponse(): Observable<GetPaymentArgResponse> {
@@ -174,15 +174,15 @@ export class ChargeService extends BaseService {
             );
     }
 
-    /* =======================================================Short cart method================================================== */
+    //  =======================================================Short cart method==================================================
 
-    /* =======================================================Local state modify================================================== */
+    //  =======================================================Local state modify==================================================
 
     resetRecharge(): void {
         this.store.dispatch(new ResetRechargeAction());
     }
 
-    /* =======================================================Error Handle======================================================= */
+    //  =======================================================Error Handle=======================================================
 
     handlePaymentsArgsError(): Subscription {
         return this.error.handleResponseError(this.getPaymentArgsResponse());
