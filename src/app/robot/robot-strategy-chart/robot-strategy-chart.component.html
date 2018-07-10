@@ -2,6 +2,7 @@
     <nz-tabset>
         <nz-tab *ngFor="let option of options | async; index as idx" [nzTitle]="option | strategyChartTitle: idx">
             <div class="chart">
+                <!--FIXME: ignore this error-->
                 <chart [type]="option.__isStock === false ? 'Chart' : 'StockChart'" [options]="option" (load)="chart$.next($event.context)"></chart>
             </div>
         </nz-tab>

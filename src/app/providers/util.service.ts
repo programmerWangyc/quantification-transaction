@@ -3,6 +3,8 @@ import { isArray, isString } from 'lodash';
 import { from as observableFrom, Observable } from 'rxjs';
 import { groupBy, map, mergeMap, reduce } from 'rxjs/operators';
 
+import { ChartSize } from '../interfaces/app.interface';
+
 
 export interface GroupedList<T> {
     groupName: string;
@@ -40,5 +42,21 @@ export class UtilService {
                     )
                 )
             );
+    }
+
+    /**
+     * 获取图表对象及它的窗口尺寸以调整图表的大小。
+     * @param charts highcharts object collection;
+     */
+    createChartSize(charts: Highcharts.ChartObject[]): ChartSize {
+        const chart = document.getElementsByClassName('chart');
+
+        const target = window.getComputedStyle(chart[0]);
+
+        const width = parseInt(target.width);
+
+        const height = parseInt(target.height);
+
+        return { charts, width, height };
     }
 }

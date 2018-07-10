@@ -573,6 +573,7 @@ export interface BacktestResultTradeStatus {
 }
 
 export interface BacktestResultIndicators {
+    [key: string]: any[];
 }
 
 
@@ -648,6 +649,44 @@ export interface BacktestResultSymbolProfit {
 
 export type BacktestSnapShots = [number, BacktestResultSnapshot[]];
 
+// time, open, high, low, close, volume
+export enum BacktestSymbolRecordIndex {
+    time,
+    open,
+    high,
+    low,
+    close,
+    volume
+}
+
+export type BacktestSymbolRecords = [number, number, number, number, number, number];
+
+// node's eid, node's stock, symbol, kline period, records
+export enum BacktestSymbolIndex {
+    eid,
+    stock,
+    symbol,
+    klinePeriod,
+    records
+}
+
+export type BacktestSymbol = [string, string, string, number, BacktestSymbolRecords[]];
+
+export enum BacktestRuntimeLogIndex {
+    id,
+    time,
+    logType,
+    eid,
+    orderId,
+    price,
+    amount,
+    extra, // 样式的信息
+    contractType,
+    direction
+}
+
+export type BacktestRuntimeLog = [string, number, number, string | number, string, number, number, string, string, string];
+
 export interface BacktestResult {
     Chart: BacktestResultChart;
     CloseProfitLogs?: any[];
@@ -662,15 +701,15 @@ export interface BacktestResult {
     Profit: number;
     ProfitLogs: Array<[number, number]>;
     Progress: number;
-    RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
-    Snapshort?: BacktestResultSnapshot[];
+    RuntimeLogs: BacktestRuntimeLog[] // 每一个元素都是一个长度为10的数组
+    Snapshort?: BacktestResultSnapshot[]
     Snapshorts: Array<BacktestSnapShots>;
     Stderr: string;
     Task: BacktestTask;
     TaskStatus?: number;
     Time: number;
     Status: string;
-    Symbols: Array<Array<Array<number[]> | number | string>>;
+    Symbols: BacktestSymbol[];
     TradeStatus?: BacktestResultTradeStatus;
 }
 

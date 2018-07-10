@@ -6,7 +6,6 @@
             <th bt-text-center>{{'TRADING_VARIETY' | translate}}</th>
 
             <ng-container *ngIf="hasFutures | async">
-                <th bt-text-center>{{'CLOSE_PROFIT' | translate}}</th>
                 <th bt-text-center>{{'POSITION_PROFIT' | translate}}</th>
                 <th bt-text-center>{{'DEPOSIT' | translate}}</th>
             </ng-container>
@@ -24,7 +23,6 @@
             <td>{{data.quoteCurrency}}</td>
             <td>{{data.baseCurrency}}</td>
             <ng-container *ngIf="hasFutures | async as has; else elseBlock">
-                <td>{{data.closeProfit | number: '1.1-8' | futuresResult: data.isFutures}}</td>
                 <td>{{data.positionProfit | number: '1.1-8' | futuresResult: data.isFutures}}</td>
                 <td>{{data.currentMargin | number: '1.1-8' | futuresResult: data.isFutures}}</td>
                 <td>{{data.commission | number: '1.1-8'}}</td>

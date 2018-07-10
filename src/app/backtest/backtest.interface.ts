@@ -149,7 +149,6 @@ export interface WorkerBacktestResponse extends BacktestResult {
     Elapsed: number;
     Exception: string;
     Finished: boolean;
-    Indicators: Object;
     LoadBytes: number;
     LoadElapsed: number;
     LogsCount: number;
@@ -157,7 +156,6 @@ export interface WorkerBacktestResponse extends BacktestResult {
     Profit: number;
     ProfitLogs: any[];
     Progress: number;
-    RuntimeLogs: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
     // Snapshorts: [number, WorkerBacktestSnapshot[]][];
     Status: string;
     Stderr: string;
@@ -203,7 +201,6 @@ export interface BacktestAccount {
     quoteCurrency: string; // 定价货币
     baseCurrency: string; // 交易品种
     commission: number; // 手续费
-    closeProfit?: number; // 平仓盈亏
     positionProfit?: number; // 持仓盈亏
     currentMargin?: number; // 保证金
     returns: number; // 预估收益
@@ -218,4 +215,16 @@ export interface BacktestAccount {
 export interface BacktestProfitDescription {
     time: number;
     profit: number;
+}
+
+export interface BacktestOrderLog {
+    x: number;
+    title: string;
+    text: string;
+    shape?: string;
+    color?: string;
+}
+
+export interface BacktestOrderLogs {
+    [key: string]: BacktestOrderLog[];
 }

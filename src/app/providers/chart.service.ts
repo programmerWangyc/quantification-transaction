@@ -11,7 +11,6 @@ import { RobotLogs, StrategyLog } from './../interfaces/response.interface';
 import { UtilService } from './util.service';
 
 
-
 @Injectable()
 export class ChartService {
     typeButtons: Highstock.RangeSelectorButton[];
@@ -25,24 +24,26 @@ export class ChartService {
         this.initialConfig();
     }
 
-    initialConfig() {
+    /**
+     * Init highcharts config.
+     */
+    private initialConfig() {
 
         this.setDefaultOptions();
 
         concat(
-            observableFrom(this.TYPE_BUTTON_RANGE)
-                .pipe(
-                    mergeMap(count => this.translate.get('SOME_HOURS', { count })
-                        .pipe(
-                            map(text => ({ type: 'hour', count, text }))
-                        )
+            observableFrom(this.TYPE_BUTTON_RANGE).pipe(
+                mergeMap(count => this.translate.get('SOME_HOURS', { count })
+                    .pipe(
+                        map(text => ({ type: 'hour', count, text }))
                     )
-                ),
-            this.translate.get('ALL')
-                .pipe(
-                    map(text => ({ type: 'all', text })),
-                    reduce((acc, cur) => [...acc, cur], [])
                 )
+            ),
+            this.translate.get('ALL').pipe(
+                map(text => ({ type: 'all', text })),
+            )
+        ).pipe(
+            reduce((acc, cur) => [...acc, cur], [])
         )
             .subscribe((result: Highstock.RangeSelectorButton[]) => this.typeButtons = result);
     }
@@ -50,7 +51,7 @@ export class ChartService {
     /**
      *  Set highstock global configuration;
      */
-    setDefaultOptions() {
+    private setDefaultOptions() {
 
         const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
 
@@ -90,6 +91,11 @@ export class ChartService {
             .subscribe(lang => Highstock.setOptions({ lang, credits: { enabled: false }, global: { useUTC: false } }));
     }
 
+    // ========================================Robot detail chart section=============================================
+
+    /**
+     * Get robot profit log options;
+     */
     getRobotProfitLogsOptions(data: [number, number][]): Highstock.Options {
         let seriesName = ''
 
@@ -172,9 +178,6 @@ export class ChartService {
         }
     }
 
-    /**
-     * @returns { boolean } - Indicate the program is completed.
-     */
     updateRobotStrategyChartLabel(charts: Highcharts.ChartObject[], automatic: RobotLogs, manual: RobotLogs): ChartUpdateIndicator[] {
         const needUpdate = automatic.chart !== '';
 

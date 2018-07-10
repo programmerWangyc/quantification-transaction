@@ -1,4 +1,5 @@
 <nz-card *ngIf="isShow | async" [nzTitle]="'PROFIT_CURVE' | translate" [nzExtra]="extra">
+    <!--FIXME: ignore this error-->
     <chart type="StockChart" [options]="options | async" (load)="chart$.next($event.context)" class="chart"></chart>
 
     <div fxLayoutAlign="space-between center" class="pagination">

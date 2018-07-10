@@ -32,6 +32,9 @@
     "BACKTEST": "回测",
     "MAKE_CODE": "制码",
     "RENT": "租用",
+    "SYMBOL": "品种",
+    "MARKET_PRICE": "市价",
+    "ORDER_ID": "单号",
 
     "STATUS": "状态",
     "STATUS_INFORMATION": "状态信息",
@@ -178,6 +181,7 @@
     "CLOSE_PROFIT": "平仓盈亏",
     "DEPOSIT": "保证金",
     "POSITION_PROFIT": "持仓盈亏",
+    "FULL_SCREEN": "全屏",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
@@ -613,5 +617,8 @@
     "STOP_BACKTEST_ERROR": "回测任务停止失败：{{error}}",
     "STOP_BACKTEST_SUCCESS": "回测任务停止成功",
     "COMBINATION_ARGS_EMPTY_ERROR": "没有检测到可用的调优参数组合，请调整调优参数的设置。",
-    "BACKTEST_RETURNS_TIP": "预估收益指按最新价格全部平仓后的收益(含手续费), 期现混合时只显示现货总利润。"
+    "BACKTEST_RETURNS_TIP": "预估收益指按最新价格全部平仓后的收益(含手续费), 期现混合时只显示现货总利润。",
+
+    "QUOTE_DATA": "行情数据",
+    "QUOTE_DATA_TIP": "重新组合过的行情信息"
 }

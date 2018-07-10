@@ -1,6 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, skip, withLatestFrom } from 'rxjs/operators';
 
@@ -38,7 +37,6 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
         public eleRef: ElementRef,
         public render: Renderer2,
         private robotLog: RobotLogService,
-        private translate: TranslateService,
         private route: ActivatedRoute,
     ) {
         super(render, eleRef);

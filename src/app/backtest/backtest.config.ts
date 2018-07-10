@@ -34,3 +34,9 @@ export enum BacktestLevel {
     simulation,
     real
 }
+
+export enum BacktestRuntimeLogType {
+    BUY,
+    SELL,
+    CANCEL,
+}

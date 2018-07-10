@@ -68,7 +68,7 @@ export class RobotLogService extends BaseService {
      * 第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
      * 最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
      */
-    launchRobotLogs(data: Observable<{ [key: string]: number }>, allowSeparateRequest = true, isSyncAction = false //  indicate the action is  sync action or not): Subscription {
+    launchRobotLogs(data: Observable<{ [key: string]: number }>, allowSeparateRequest = true, isSyncAction = false /* indicate the action is  sync action or not */): Subscription {
         return this.process.processRobotLogs(
             data
                 .pipe(

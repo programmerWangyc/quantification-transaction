@@ -83,3 +83,9 @@ export interface ChartUpdateIndicator {
 export interface EditorConfig {
     [key: string]: string | number | boolean;
 }
+
+export interface ChartSize {
+    charts: Highcharts.ChartObject[];
+    height: number;
+    width: number;
+}

@@ -55,16 +55,16 @@ export function getTradeCount(data: Object): number {
  * @param initial 计算的初始值
  * @returns 收益的统计结果对象
  */
-export function getProfit(data: Object, initial: fromRes.BacktestResultSymbolProfit): fromRes.BacktestResultSymbolProfit {
+export function getProfit(data: Object, initial: { Profit: number; Margin: number }): { Profit: number; Margin: number } {
     return Object.entries(data).reduce((acc, [key, value]) => {
         if (key === 'Long' || key === 'Short') {
-            const { Profit, Margin, CloseProfit } = <fromRes.BacktestResultSymbolProfit>value
+            const { Profit, Margin } = <fromRes.BacktestResultSymbolProfit>value
 
-            return { Profit: acc.Profit + Profit, Margin: acc.Margin + Margin, CloseProfit: acc.CloseProfit + CloseProfit };
+            return { Profit: acc.Profit + Profit, Margin: acc.Margin + Margin };
         } else if (isObject(value)) {
-            const { Profit, Margin, CloseProfit } = getProfit(value, acc);
+            const { Profit, Margin } = getProfit(value, acc);
 
-            return { Profit: acc.Profit + Profit, Margin: acc.Margin + Margin, CloseProfit: acc.CloseProfit + CloseProfit };
+            return { Profit: acc.Profit + Profit, Margin: acc.Margin + Margin };
         } else {
             return acc;
         }
@@ -101,6 +101,24 @@ export class BacktestResultService extends BaseService {
         return source.pipe(
             select(fromRoot.selectBacktestUIState),
             filter(state => !!state.backtestTasks && !!state.backtestTasks.length)
+        );
+    }
+
+    /**
+     * custom operator, used to get backtest result in store
+     */
+
+    protected backtestResult = () => (source: Observable<fromRes.BacktestIOResponse>): Observable<fromRes.BacktestResult> => {
+        return source.pipe(
+            map(res => {
+                const { Result } = <fromRes.ServerBacktestResult<string>>res.result;
+
+                if (!Result) {
+                    return null;
+                } else {
+                    return <fromRes.BacktestResult>JSON.parse(Result);
+                }
+            })
         );
     }
 
@@ -370,7 +388,7 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取回测的时间周期
      */
-    private getTimeRange(): Observable<{ start: number; end: number }> {
+    protected getTimeRange(): Observable<{ start: number; end: number }> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
             filter(state => !!state.timeOptions),
@@ -451,11 +469,8 @@ export class BacktestResultService extends BaseService {
     getBacktestAccountInfo(): Observable<BacktestAccount[]> {
         return this.getBacktestIOResponse(BacktestOperateCallbackId.result)
             .pipe(
-                map(res => {
-                    const { Result } = <fromRes.ServerBacktestResult<string>>res.result;
-
-                    const data = <fromRes.BacktestResult>JSON.parse(Result);
-
+                this.backtestResult(),
+                map(data => {
                     const { Exchanges } = data.Task;
 
                     const { Snapshorts } = data;
@@ -503,12 +518,12 @@ export class BacktestResultService extends BaseService {
 
         const snapshot = last(subSnapshots);
 
-        const { Profit, CloseProfit, Margin } = subSnapshots.reduce((acc, cur) => cur.Symbols ? getProfit(cur.Symbols, acc) : acc
-            , { Profit: 0, Margin: 0, CloseProfit: 0 });
+        const { Profit, Margin } = subSnapshots.reduce((acc, cur) => cur.Symbols ? getProfit(cur.Symbols, acc) : acc
+            , { Profit: 0, Margin: 0 });
 
         const returns = snapshot ? this.calculateFuturesProfit(snapshot, account, Profit + Margin) : 0;
 
-        return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, closeProfit: CloseProfit, returns };
+        return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, returns };
     }
 
     /**
@@ -540,7 +555,6 @@ export class BacktestResultService extends BaseService {
 
         return {
             baseCurrency: BaseCurrency,
-            closeProfit: 0,
             commission: 0,
             currentMargin: 0,
             initialBalance: !isFuturesOkCoin ? Balance : null,

@@ -1,10 +1,10 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { bufferCount, delay, map, skip, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
+import { UtilService } from '../../providers/util.service';
 import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from '../robot.config';
 
@@ -47,8 +47,8 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
         public eleRef: ElementRef,
         public render: Renderer2,
         private robotLog: RobotLogService,
-        private translate: TranslateService,
         private route: ActivatedRoute,
+        private util: UtilService,
     ) {
         super(render, eleRef);
     }
@@ -66,8 +66,8 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
 
         this.isShow = this.robotLog.hasStrategyChart();
 
-        this.charts = this.options
-            .pipe(
+        // resize chart
+        this.charts = this.options.pipe(
                 switchMap(options => this.chart$
                     .pipe(
                         bufferCount(options.length)
@@ -77,36 +77,25 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.strategyLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams()
-            .pipe(
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(
                 map(item => item.chartLimit)
             );
     }
 
     launch() {
-        const id = this.route.paramMap.pipe(map(param => +param.get('id')));
+        const id = this.route.paramMap.pipe(
+            map(param => +param.get('id'))
+        );
 
         this.subscription$$ = this.robotLog.updateStrategyCharts(this.charts)
-            .add(this.charts
-                .pipe(
+            .add(this.charts.pipe(
                     delay(30),
-                    map(charts => {
-                        const chart = document.getElementsByClassName('chart');
-
-                        const target = window.getComputedStyle(chart[0]);
-
-                        const width = parseInt(target.width);
-
-                        const height = parseInt(target.height);
-
-                        return { charts, width, height };
-                    })
+                    map(this.util.createChartSize)
                 )
                 .subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height)))
             )
             .add(this.robotLog.launchRobotLogs(
-                this.robotLog.getStrategyOffset()
-                    .pipe(
+                this.robotLog.getStrategyOffset().pipe(
                         withLatestFrom(
                             id,
                             (chartOffset, robotId) => ({

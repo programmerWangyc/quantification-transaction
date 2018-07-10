@@ -627,8 +627,8 @@ function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
             eid: <string>eid,
             orderId: <string>orderId,
             extra: <string>extra,
-            contractType: <string>contractType,
-            direction: <string>contractType,
+            contractType: <string>contractType, // FIXME: contractType === direction ?
+            direction: <string>direction,
             price: parseFloat((<number>price).toFixed(12)),
             amount: parseFloat((<number>amount).toFixed(6)),
             date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
