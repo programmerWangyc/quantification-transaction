@@ -1,28 +1,37 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { range } from 'lodash';
+import { isEmpty, last, range } from 'lodash';
 import * as moment from 'moment';
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { from, Observable, of, zip } from 'rxjs';
+import { map, mergeMap, reduce, take, withLatestFrom } from 'rxjs/operators';
 
 import * as fromRes from '../../interfaces/response.interface';
 import { ChartService } from '../../providers/chart.service';
 import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action';
 import * as fromRoot from '../../store/index.reducer';
 import { BacktestRuntimeLogType } from '../backtest.config';
-import { BacktestOrderLog, BacktestOrderLogs } from '../backtest.interface';
+import {
+    BacktestOrderLog,
+    BacktestOrderLogs,
+    BacktestProfitChartSubtitleConfig,
+    BacktestProfitDescription,
+} from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestResultService } from './backtest.result.service';
 import { BacktestSandboxService, SymbolRecord } from './backtest.sandbox.service';
 
-export interface BacktestProfitChart {
+export interface BacktestChart {
     title: string;
     option: Highcharts.Options;
 }
 
 @Injectable()
 export class BacktestChartService extends BacktestResultService {
+    protected fullscreenLabel: string;
+
+    protected floatingProfitLoseLabel: string;
+
     constructor(
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
@@ -31,6 +40,14 @@ export class BacktestChartService extends BacktestResultService {
         public chartService: ChartService,
     ) {
         super(store, constant, translate);
+        this.init();
+    }
+
+    init() {
+        this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE']).subscribe(res => {
+            this.fullscreenLabel = res.FULL_SCREEN;
+            this.floatingProfitLoseLabel = res.FLOATING_PROFIT_LOSE;
+        });
     }
 
     // ============================================================行情图表的数据处理==================================================================
@@ -38,7 +55,7 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 获取回测结果的行情数据，供生成图表使用；
      */
-    getProfitChartOptions(): Observable<BacktestProfitChart[]> {
+    getQuotaChartOptions(): Observable<BacktestChart[]> {
         return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
             this.backtestResult(),
             withLatestFrom(this.getTimeRange()),
@@ -66,7 +83,7 @@ export class BacktestChartService extends BacktestResultService {
 
                     const seriesTail3 = this.get_RSI_KDJ_MACD_EMA_Series(Indicators, openHighLowClose, recordArr);
 
-                    const option = { ...this.getBacktestProfitLogOptions(start, klinePeriod), yAxis, series: [...partialSeries, seriesTail1, ...seriesTail2, ...seriesTail3] } as Highstock.Options;
+                    const option = { ...this.getQuotaChartConfig(start, klinePeriod), yAxis, series: [...partialSeries, seriesTail1, ...seriesTail2, ...seriesTail3] } as Highstock.Options;
 
                     return { title, option };
                 });
@@ -361,14 +378,11 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * Get backtest profit log options;
      */
-    private getBacktestProfitLogOptions(startTime: number, period: number): any {
-        let fullscreenLabel = '';
-
-        this.translate.get('FULL_SCREEN').subscribe(label => fullscreenLabel = label);
-
+    private getQuotaChartConfig(startTime: number, period: number): any {
         return {
+            // 此属性在官方配置中没有
             lang: {
-                _fullscreen: fullscreenLabel,
+                _fullscreen: this.fullscreenLabel,
             },
             legend: {
                 enabled: true,
@@ -419,6 +433,10 @@ export class BacktestChartService extends BacktestResultService {
         };
     }
 
+    /**
+     * Map kline period to range select button id.
+     * @param period kline period
+     */
     private getBacktestRangeSelected(period: number): number {
         if (period === 0) {
             return 0; // 1小时
@@ -429,5 +447,153 @@ export class BacktestChartService extends BacktestResultService {
         } else if (period > 3) {
             return 3; // all
         }
+    }
+
+    // ============================================================浮动盈亏的数据处理==================================================================
+
+    /**
+     * 获取收益类图表的 highcharts 配置信息
+     */
+    getProfitChartConfig(series: any[], subtitle: string): any {
+        return {
+            subtitle: {
+                text: subtitle
+            },
+            plotOptions: {
+                series: {
+                    turboThreshold: 0
+                }
+            },
+            rangeSelector: {
+                buttons: this.chartService.typeButtons,
+                selected: 3,
+                inputEnabled: false
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            series,
+            // 此属性在官方配置中没有
+            lang: {
+                _fullscreen: this.fullscreenLabel,
+            },
+            // exporting: {
+            //     buttons: {
+            //         hideButton: {
+            //             _titleKey: "_fullscreen",
+            //             text: $translate.instant("ui.g.fullscreen"),
+            //             onclick: function () {
+            //                 toggleFullScreen(this.renderTo);
+            //             }
+            //         },
+            //     }
+            // }
+        }
+    }
+
+    /**
+     * Whether need to display floating profit and lose chart for user;
+     */
+    hasFloatPLChart(): Observable<boolean> {
+        return this.getBacktestAccountInfo().pipe(
+            map(accounts => accounts.some(account => account.profitAndLose && !isEmpty(account.profitAndLose)))
+        );
+    }
+
+    /**
+     * 获取浮云盈亏图表的配置信息
+     */
+    getFloatPLChartOptions(): Observable<BacktestChart[]> {
+        return this.getBacktestAccountInfo(_ => true).pipe(
+            mergeMap(accounts => from(accounts).pipe(
+                mergeMap(account => {
+                    const { name, baseCurrency, quoteCurrency, profitAndLose, initialBalance, initialStocks } = account;
+
+                    const initialNetWorth = initialBalance || initialStocks;
+
+                    const title = [name, baseCurrency, quoteCurrency].join('_');
+
+                    return zip(
+                        this.getMaxDrawdown(profitAndLose),
+                        this.getStandardDeviation(profitAndLose),
+                        this.getSharpRatio(profitAndLose),
+                        this.getAnnualizedReturns(profitAndLose),
+                        this.getTotalReturns(profitAndLose),
+                        this.getYearDays()
+                    ).pipe(
+                        take(1),
+                        map(([maxDrawdownInfo, volatility, sharpRatio, annualizedReturns, totalReturns, yearDays]) => {
+                            const { startDrawdownTime, maxAssetsTime, maxDrawdown, maxDrawdownTime } = maxDrawdownInfo;
+
+                            const titleConfig: BacktestProfitChartSubtitleConfig = {
+                                initialNetWorth,
+                                totalReturns: (totalReturns * 100).toFixed(3) + '%',
+                                yearDays,
+                                annualizedReturns: (annualizedReturns * 100).toFixed(3) + '%',
+                                volatility: volatility === 0 ? '--' : volatility.toFixed(3),
+                                sharpRatio: volatility === 0 ? '--' : sharpRatio.toFixed(3),
+                                maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%',
+                                totalAssets: initialNetWorth,
+                            };
+
+                            const subtitle = this.unwrap(this.translate.get('FLOATING_PROFIT_SUBTITLE', titleConfig));
+
+                            const data = profitAndLose.map(({ time, profit }) => {
+                                if (maxAssetsTime === time) {
+                                    return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit })) }
+                                } else if (maxDrawdownTime === time) {
+                                    return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })) }
+                                } else {
+                                    return null;
+                                }
+                            }).filter(data => !!data);
+
+                            const series = this.generateFloatingPLSeries(data, profitAndLose, maxDrawdownTime, startDrawdownTime);
+
+                            const option = this.getProfitChartConfig(series, subtitle);
+
+                            return <BacktestChart>{ option, title };
+                        })
+                    )
+                }),
+                reduce((acc: BacktestChart[], cur: BacktestChart) => [...acc, cur], [])
+            ))
+        );
+    }
+
+    /**
+     * Generate floating profit and lose chart series;
+     */
+    private generateFloatingPLSeries(data: any[], profitAndLose: BacktestProfitDescription[], maxDrawdownTime: number, startDrawdownTime: number): any {
+        let obj1 = {
+            name: this.floatingProfitLoseLabel,
+            data: profitAndLose.map(({ time, profit }) => [time, profit]),
+            id: 'primary',
+            tooltip: { valueDecimals: 8, xDateFormat: '%Y-%m-%d %H:%M:%S' },
+            yAxis: 0,
+        }
+
+        const obj2 = { zoneAxis: 'x', zones: [{ value: startDrawdownTime, dashStyle: 'solid' }, { value: maxDrawdownTime, dashStyle: 'shortdash' }] };
+
+        const head = maxDrawdownTime > startDrawdownTime ? Object.assign({}, obj1, obj2) : obj1;
+
+        const tail = { name: this.unwrap(this.translate.get('EVENT')), type: 'flags', shape: 'circlepin', onSeries: 'primary', data };
+
+        return data.length > 0 ? [head, tail] : [head];
+    }
+
+    /**
+     * Get total returns;
+     * @param source Backtest result;
+     */
+    private getTotalReturns(source: BacktestProfitDescription[]): Observable<number> {
+        if (isEmpty(source)) return of(0);
+
+        const { profit } = last(source);
+
+        //TODO: 这里可能有BUG，总资产是从父类的方法上拿来的，可以需要实现子类自己的 getTotalAssets 方法。
+        return this.getTotalAssets().pipe(
+            map(assets => profit / assets)
+        );
     }
 }

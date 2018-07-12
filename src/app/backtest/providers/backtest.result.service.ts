@@ -26,7 +26,13 @@ import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action'
 import { UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { ServerBacktestCode } from '../backtest.config';
-import { BacktestAccount, BacktestLogResult } from '../backtest.interface';
+import {
+    BacktestAccount,
+    BacktestAssetsAndTime,
+    BacktestLogResult,
+    BacktestMaxDrawDownDescription,
+    BacktestProfitDescription,
+} from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 
 
@@ -69,6 +75,10 @@ export function getProfit(data: Object, initial: { Profit: number; Margin: numbe
             return acc;
         }
     }, initial);
+}
+
+export interface MaxDrawdownResultFn {
+    (maxDrawdown: number, [time, profit]: [number, number]): number;
 }
 
 @Injectable()
@@ -222,7 +232,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为空。
+     *  生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为null。
      */
     getBacktestLogResults(): Observable<BacktestLogResult[]> {
         return this.store.pipe(
@@ -237,16 +247,18 @@ export class BacktestResultService extends BaseService {
                     } else {
                         const data = <fromRes.BacktestResult>JSON.parse(response.Result);
 
-                        const { Elapsed, Profit } = data;
+                        const { Elapsed, Profit, ProfitLogs } = data;
+
+                        const profitLogs = ProfitLogs.map(([time, profit]) => ({ time, profit }));
 
                         return {
                             elapsed: Elapsed / this.constant.BACKTEST_RESULT_ELAPSED_RATE,
                             profit: Profit,
                             tradeCount: getTradeCount(data),
-                            winningRate: this.unwrap(this.getWinningRate(data)),
-                            maxDrawdown: this.unwrap(this.getMaxDrawdown(data)),
-                            sharpeRatio: this.unwrap(this.getSharpRatio(data)),
-                            returns: this.unwrap(this.getAnnualizedReturns(data))
+                            winningRate: this.unwrap(this.getWinningRate(profitLogs)),
+                            maxDrawdown: this.unwrap(this.getMaxDrawdown(profitLogs)).maxDrawdown,
+                            sharpeRatio: this.unwrap(this.getSharpRatio(profitLogs)),
+                            returns: this.unwrap(this.getAnnualizedReturns(profitLogs))
                         }
                     }
                 })
@@ -257,7 +269,7 @@ export class BacktestResultService extends BaseService {
     /**
      *  取出 Observable 中的结果;
      */
-    private unwrap(obs: Observable<any>): number {
+    protected unwrap<T>(obs: Observable<T>): T {
         let result = null;
 
         obs.subscribe(res => result = res);
@@ -268,13 +280,11 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
      */
-    private getWinningRate(source: fromRes.BacktestResult): Observable<number> {
-        const { ProfitLogs } = source;
-
-        if (!ProfitLogs || ProfitLogs.length === 0) {
+    protected getWinningRate(source: BacktestProfitDescription[]): Observable<number> {
+        if (!source || source.length === 0) {
             return of(0);
         } else {
-            return from(ProfitLogs.map(profit => profit[1])).pipe(
+            return from(source.map(item => item.profit)).pipe(
                 bufferCount(2, 1),
                 reduce((acc: [number][], cur: [number, number]) => [...acc, cur], []),
                 map(res => {
@@ -286,32 +296,38 @@ export class BacktestResultService extends BaseService {
                         }
                     }, 1) : 1;
 
-                    return wins / ProfitLogs.length;
+                    return wins / source.length;
                 })
             )
         }
     }
 
     /**
-     *  获取最大回撤值；
+     *  获取最大回撤的信息集合；
      */
-    private getMaxDrawdown(source: fromRes.BacktestResult): Observable<number> {
+    protected getMaxDrawdown(source: BacktestProfitDescription[]): Observable<BacktestMaxDrawDownDescription> {
         return this.getTotalAssets().pipe(
             take(1),
             map(totalAssets => {
-                const { ProfitLogs } = source;
+                const initial: BacktestMaxDrawDownDescription = { maxAssets: 0, startDrawdownTime: 0, maxDrawdown: 0, maxAssetsTime: 0, maxDrawdownTime: 0 };
 
-                return ProfitLogs.reduce((maxDrawdown, [time, profit]) => {
-                    const assets = profit + totalAssets;
+                return source.reduce(({ startDrawdownTime, maxDrawdown, maxAssets, maxAssetsTime, maxDrawdownTime }, { time, profit }) => {
+                    const currentAssets = profit + totalAssets;
 
-                    const drawDown = 1 - (profit + totalAssets) / assets;
+                    if (currentAssets > maxAssets) {
+                        maxAssets = currentAssets;
 
-                    if (assets > 0 && drawDown > maxDrawdown) {
-                        return drawDown;
-                    } else {
-                        return maxDrawdown;
+                        maxAssetsTime = time;
                     }
-                }, 0)
+
+                    const drawDown = 1 - (profit + totalAssets) / maxAssets;
+
+                    if (maxAssets > 0 && drawDown > maxDrawdown) {
+                        return { startDrawdownTime: maxAssetsTime, maxDrawdown: drawDown, maxAssets, maxAssetsTime, maxDrawdownTime: 0 };
+                    } else {
+                        return { startDrawdownTime, maxDrawdown, maxAssets, maxAssetsTime, maxDrawdownTime: 0 };
+                    }
+                }, initial);
             })
         );
     }
@@ -319,7 +335,7 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取总资产；优先使用余币的值。
      */
-    private getTotalAssets(): Observable<number> {
+    protected getTotalAssets(): Observable<number> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
             filter(state => !!state.platformOptions && !!state.platformOptions.length),
@@ -339,24 +355,8 @@ export class BacktestResultService extends BaseService {
      * 计算回测任务的夏普比率
      * {@link www.baike.baidu.com} SharpeRatio = (E(Rp) - Rf) / oP  E(Rp): 投资组合预期报酬率 Rf:无风险利率；oP: 投资组合的标准差；
      */
-    private getSharpRatio(source: fromRes.BacktestResult): Observable<number> {
-        return this.getRatio(source).pipe(
-            defaultIfEmpty([]),
-            map(radios => {
-                if (radios.length === 0 || radios.every(radio => radio === 0)) {
-                    return 0;
-                } else {
-                    const total = radios.length;
-
-                    const average = radios.reduce((acc, cur) => acc + cur) / total;
-
-                    const variance = radios.reduce((acc, cur) => acc + Math.pow(cur - average, 2), 0) / average;
-
-                    const standardDeviation = Math.sqrt(variance);
-
-                    return standardDeviation;
-                }
-            }),
+    protected getSharpRatio(source: BacktestProfitDescription[]): Observable<number> {
+        return this.getStandardDeviation(source).pipe(
             withLatestFrom(
                 this.getAnnualizedReturns(source),
                 (standardDeviation, annualizedReturns) => standardDeviation === 0 ? 0 : annualizedReturns / standardDeviation
@@ -365,9 +365,33 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
+     * 计算标准差；
+     */
+    protected getStandardDeviation(source: BacktestProfitDescription[]): Observable<number> {
+        return this.getRatio(source).pipe(
+            defaultIfEmpty([]),
+            map((radios: number[]) => {
+                if (radios.length === 0 || radios.every(radio => radio === 0)) {
+                    return 0;
+                } else {
+                    const total = radios.length;
+
+                    const average = radios.reduce((acc, cur) => acc + cur) / total;
+
+                    const variance = radios.reduce((acc, cur) => acc + Math.pow(cur - average, 2), 0) / total;
+
+                    const standardDeviation = Math.sqrt(variance);
+
+                    return standardDeviation;
+                }
+            })
+        );
+    }
+
+    /**
      * 获取周期内的夏普比率。
      */
-    private getRatio(source: fromRes.BacktestResult): Observable<number[]> {
+    private getRatio(source: BacktestProfitDescription[]): Observable<number[]> {
         return this.getTimeRange().pipe(
             mergeMap(({ start, end }) => from(range(start, end, this.PERIOD)).pipe(
                 mergeMap(day => zip(
@@ -409,10 +433,10 @@ export class BacktestResultService extends BaseService {
      * @param source 回测结果
      * @param endTime 结束时间
      */
-    private getDayProfit(source: fromRes.BacktestResult, endTime: number): Observable<number> {
-        return from(source.ProfitLogs).pipe(
-            takeWhile(([time, _]) => time < endTime),
-            map(([_, profit]) => profit),
+    private getDayProfit(source: BacktestProfitDescription[], endTime: number): Observable<number> {
+        return from(source).pipe(
+            takeWhile(({ time }) => time < endTime),
+            map(({ profit }) => profit),
             startWith(0),
             bufferCount(2, 1),
             reduce((acc: [number][], cur: [number, number]) => [...acc, cur], []),
@@ -423,7 +447,7 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取年化交易天数，使用回测交易平台中的最小值。
      */
-    private getYearDays(): Observable<number> {
+    protected getYearDays(): Observable<number> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
             filter(state => !!state.platformOptions && !!state.platformOptions.length),
@@ -443,46 +467,68 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取年化预估收益
      */
-    private getAnnualizedReturns(source: fromRes.BacktestResult): Observable<number> {
-        const { ProfitLogs } = source;
+    protected getAnnualizedReturns(source: BacktestProfitDescription[]): Observable<number> {
+        if (isEmpty(source)) return of(0);
 
-        if (isEmpty(ProfitLogs)) {
-            return of(0);
+        const { profit } = last(source);
+
+        return this.getAssetsAndTimeInfo(source).pipe(
+            map(info => {
+                if (!info) {
+                    return 0;
+                } else {
+                    const { yearDays, start, end, totalAssets } = info;
+
+                    return (profit / totalAssets) * yearDays * this.PERIOD / (end - start);
+                }
+            })
+        );
+    }
+
+    /**
+     * 获取和时间值和收益值
+     */
+    protected getAssetsAndTimeInfo(source: BacktestProfitDescription[]): Observable<BacktestAssetsAndTime> {
+        if (isEmpty(source)) {
+            return of(null);
         }
-
-        const [_, profit] = last(ProfitLogs);
 
         return zip(
             this.getYearDays(),
             this.getTimeRange(),
             this.getTotalAssets()
         ).pipe(
-            map(([yearDays, { start, end }, totalAssets]) => (profit / totalAssets) * yearDays * this.PERIOD / (start - end))
+            map(([yearDays, { start, end }, totalAssets]) => ({ yearDays, start, end, totalAssets }))
         );
     }
+
+
 
     // ============================================================非调优状态下的帐户信息==================================================================
 
     /**
      *  获取未调优状态下的回测结果。
+     * @param futuresDataFilter: 期货的数据过滤器，用来在生成期货信息时过滤出有效的snapshot。
      */
-    getBacktestAccountInfo(): Observable<BacktestAccount[]> {
+    getBacktestAccountInfo(futuresDataFilter = (data: fromRes.BacktestResultSnapshot) => !!data.Symbols): Observable<BacktestAccount[]> {
         return this.getBacktestIOResponse(BacktestOperateCallbackId.result)
             .pipe(
                 this.backtestResult(),
                 map(data => {
                     const { Exchanges } = data.Task;
 
-                    const { Snapshorts } = data;
+                    const { Snapshorts, Snapshort, Time } = data;
 
-                    const snapshots = lodashZip(...Snapshorts.map(([time, snapshots]) => snapshots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
+                    const snapshotList = Snapshort ? <fromRes.BacktestSnapShots[]>[[Time, Snapshort]] : Snapshorts || [];
+
+                    const snapshots = lodashZip(...snapshotList.map(([time, snapshots]) => snapshots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
 
                     return Exchanges.map((exchange, index) => {
                         const account = this.getAccountInitialInfo(exchange);
 
                         const source = snapshots[index];
 
-                        return account.isFutures ? this.getFuturesAccount(account, source) : this.getAccount(account, source);
+                        return account.isFutures ? this.getFuturesAccount(account, source, futuresDataFilter) : this.getAccount(account, source);
                     })
                 })
             );
@@ -500,7 +546,9 @@ export class BacktestResultService extends BaseService {
 
         const commission = snapshot.Commission;
 
-        return { ...account, returns, commission, };
+        const profitAndLose = subSnapshots.map(snapshot => ({ time: snapshot.time, profit: this.calculateProfit(snapshot, account) }));
+
+        return { ...account, returns, commission, profitAndLose };
     }
 
     /**
@@ -513,8 +561,8 @@ export class BacktestResultService extends BaseService {
     /**
      *  获取期货的帐户信息；
      */
-    private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
-        const subSnapshots = source.filter(item => item.Symbols);
+    private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[], filter: (data: fromRes.BacktestResultSnapshot) => boolean): BacktestAccount {
+        const subSnapshots = source.filter(filter);
 
         const snapshot = last(subSnapshots);
 
@@ -523,7 +571,15 @@ export class BacktestResultService extends BaseService {
 
         const returns = snapshot ? this.calculateFuturesProfit(snapshot, account, Profit + Margin) : 0;
 
-        return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, returns };
+        const profitAndLose = subSnapshots.map(snapshot => {
+            const { Profit, Margin } = snapshot.Symbols ? getProfit(snapshot.Symbols, { Profit: 0, Margin: 0 }) : { Profit: 0, Margin: 0 };
+
+            const profit = this.calculateFuturesProfit(snapshot, account, Profit + Margin);
+
+            return { time: snapshot.time, profit };
+        })
+
+        return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, returns, profitAndLose };
     }
 
     /**
@@ -546,7 +602,7 @@ export class BacktestResultService extends BaseService {
     /**
      *  生成帐户的初始信息。
      */
-    private getAccountInitialInfo(source: fromRes.BacktestResultExchange): BacktestAccount {
+    protected getAccountInitialInfo(source: fromRes.BacktestResultExchange): BacktestAccount {
         const { Id, BaseCurrency, QuoteCurrency, Balance, Stocks } = source;
 
         const isFutures = Id.includes('Futures_');

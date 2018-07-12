@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { bufferCount, delay, map, switchMap } from 'rxjs/operators';
+import { bufferCount, delay, map, switchMap, tap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { UtilService } from '../../providers/util.service';
 import { BacktestChart, BacktestChartService } from '../providers/backtest.chart.service';
 
 @Component({
-    selector: 'app-backtest-profit-chart',
-    templateUrl: './backtest-profit-chart.component.html',
-    styleUrls: ['./backtest-profit-chart.component.scss']
+    selector: 'app-profit-lose',
+    templateUrl: './profit-lose.component.html',
+    styleUrls: ['./profit-lose.component.scss']
 })
-export class BacktestProfitChartComponent extends BaseComponent {
+export class ProfitLoseComponent extends BaseComponent {
     data: Observable<BacktestChart[]>;
 
-    charts: Observable<Highcharts.ChartObject[]>;
+    charts: Observable<Highstock.ChartObject[]>;
 
-    chart$: Subject<Highcharts.ChartObject> = new Subject();
+    chart$: Subject<Highstock.ChartObject> = new Subject();
 
     subscription$$: Subscription;
 
@@ -34,7 +34,8 @@ export class BacktestProfitChartComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.data = this.chartService.getQuotaChartOptions();
+        this.data = this.chartService.getFloatPLChartOptions()
+            .pipe(tap(v => console.log(v)))
 
         this.charts = this.data.pipe(
             switchMap(options => this.chart$.pipe(
@@ -55,5 +56,4 @@ export class BacktestProfitChartComponent extends BaseComponent {
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }
-
 }

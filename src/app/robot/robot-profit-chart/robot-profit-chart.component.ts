@@ -57,7 +57,9 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.profitLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(map(item => item.profitLimit));
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(
+            map(item => item.profitLimit)
+        );
     }
 
     launch() {

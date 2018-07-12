@@ -687,6 +687,8 @@ export enum BacktestRuntimeLogIndex {
 
 export type BacktestRuntimeLog = [string, number, number, string | number, string, number, number, string, string, string];
 
+export type BacktestProfitLog = [number, number]; // time, profit
+
 export interface BacktestResult {
     Chart: BacktestResultChart;
     CloseProfitLogs?: any[];
@@ -699,7 +701,7 @@ export interface BacktestResult {
     LogsCount: number;
     Pending?: any;
     Profit: number;
-    ProfitLogs: Array<[number, number]>;
+    ProfitLogs: BacktestProfitLog[];
     Progress: number;
     RuntimeLogs: BacktestRuntimeLog[] // 每一个元素都是一个长度为10的数组
     Snapshort?: BacktestResultSnapshot[]

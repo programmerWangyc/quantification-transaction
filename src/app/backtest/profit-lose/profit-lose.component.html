@@ -1,0 +1,10 @@
+
+<nz-card>
+    <nz-tabset>
+        <nz-tab *ngFor="let item of data | async" [nzTitle]="item.title">
+            <div class="chart">
+                <chart type="StockChart" [options]="item.option" (load)="chart$.next($event.context)"></chart>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</nz-card>

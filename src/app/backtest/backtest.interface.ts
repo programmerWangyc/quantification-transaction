@@ -209,7 +209,7 @@ export interface BacktestAccount {
     symbol: string;
     initialBalance?: number;
     initialStocks: number;
-    // profitAndLose: BacktestProfitDescription[]; 知道干什么用的时候求，预感这里写上耦合了。
+    profitAndLose?: BacktestProfitDescription[]; // 知道干什么用的时候求，预感这里写上耦合了。
 }
 
 export interface BacktestProfitDescription {
@@ -227,4 +227,31 @@ export interface BacktestOrderLog {
 
 export interface BacktestOrderLogs {
     [key: string]: BacktestOrderLog[];
+}
+
+export interface BacktestAssetsAndTime {
+    yearDays: number;
+    start: number;
+    end: number;
+    totalAssets: number;
+}
+
+export interface BacktestMaxDrawDownDescription {
+    startDrawdownTime: number;
+    maxDrawdown: number;
+    maxAssets: number;
+    maxAssetsTime: number;
+    maxDrawdownTime: number;
+}
+
+export interface BacktestProfitChartSubtitleConfig {
+    initialNetWorth: number;
+    totalReturns: string;
+    yearDays: number;
+    annualizedReturns: string;
+    volatility: number | string;
+    sharpRatio: number | string;
+    maxDrawdown: number | string;
+    winningRate?: number;
+    totalAssets: number;
 }

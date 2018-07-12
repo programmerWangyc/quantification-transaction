@@ -16,6 +16,7 @@ import { BacktestStrategyArgsComponent } from './backtest-strategy-args/backtest
 import { DispenseOptionsComponent } from './dispense-options/dispense-options.component';
 import { ExchangeOptionsComponent } from './exchange-options/exchange-options.component';
 import { PIPES } from './pipes/index.pipe';
+import { ProfitLoseComponent } from './profit-lose/profit-lose.component';
 import { BacktestChartService } from './providers/backtest.chart.service';
 import { BacktestComputingService } from './providers/backtest.computing.service';
 import { BacktestConstantService } from './providers/backtest.constant.service';
@@ -49,6 +50,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         ExchangeOptionsComponent,
         PIPES,
         TimeOptionsComponent,
+        ProfitLoseComponent,
     ],
 
     providers: [
@@ -70,6 +72,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         BacktestStrategyArgsComponent,
         DispenseOptionsComponent,
         ExchangeOptionsComponent,
+        ProfitLoseComponent,
         TimeOptionsComponent,
     ],
 })
