@@ -26,11 +26,25 @@ export interface BacktestChart {
     option: Highcharts.Options;
 }
 
+interface BacktestChartSourceData {
+    startDrawdownTime: number;
+    maxAssetsTime: number;
+    maxDrawdown: number;
+    maxDrawdownTime: number;
+    volatility: number;
+    sharpRatio: number;
+    annualizedReturns: number;
+    totalReturns: number;
+    yearDays: number;
+}
+
 @Injectable()
 export class BacktestChartService extends BacktestResultService {
     protected fullscreenLabel: string;
 
     protected floatingProfitLoseLabel: string;
+
+    protected accumulateProfitLabel: string;
 
     constructor(
         public store: Store<fromRoot.AppState>,
@@ -44,9 +58,10 @@ export class BacktestChartService extends BacktestResultService {
     }
 
     init() {
-        this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE']).subscribe(res => {
+        this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE', 'ACCUMULATE_PROFIT']).subscribe(res => {
             this.fullscreenLabel = res.FULL_SCREEN;
             this.floatingProfitLoseLabel = res.FLOATING_PROFIT_LOSE;
+            this.accumulateProfitLabel = res.ACCUMULATE_PROFIT;
         });
     }
 
@@ -71,7 +86,7 @@ export class BacktestChartService extends BacktestResultService {
 
                     const yAxis = this.generateYAxis(Indicators);
 
-                    const partialSeries = this.generateSeries(item, orderLogs);
+                    const partialSeries = this.generateQuotaChartSeries(item, orderLogs);
 
                     const recordArr = records.map(this.generateRecords);
 
@@ -216,7 +231,7 @@ export class BacktestChartService extends BacktestResultService {
      * 根据symbol字段生成图表的 series。 生成的 series 是一个 混合类型，包含3种type：candlestick, flags, column。
      * 均在 Highstock 下的series 中有定义 ，但是接口文档中没有找到对应的字段，所以这里用了any;
      */
-    private generateSeries(data: fromRes.BacktestSymbol, orderLogs: BacktestOrderLogs): any[] {
+    private generateQuotaChartSeries(data: fromRes.BacktestSymbol, orderLogs: BacktestOrderLogs): any[] {
         const [eid, stock, symbol, klinePeriod, records] = data;
 
         const openHighLowCloseArr = records.map(this.generateOpenHighLowClose)
@@ -373,7 +388,7 @@ export class BacktestChartService extends BacktestResultService {
         return result;
     }
 
-    // ========================================Backtest chart section=============================================
+    // ========================================Backtest chart section===============================================================================
 
     /**
      * Get backtest profit log options;
@@ -511,50 +526,12 @@ export class BacktestChartService extends BacktestResultService {
 
                     const initialNetWorth = initialBalance || initialStocks;
 
-                    const title = [name, baseCurrency, quoteCurrency].join('_');
-
                     return zip(
-                        this.getMaxDrawdown(profitAndLose),
-                        this.getStandardDeviation(profitAndLose),
-                        this.getSharpRatio(profitAndLose),
-                        this.getAnnualizedReturns(profitAndLose),
-                        this.getTotalReturns(profitAndLose),
-                        this.getYearDays()
+                        of([name, baseCurrency, quoteCurrency].join('_')),
+                        this.generateChartOptions(profitAndLose, initialNetWorth)
                     ).pipe(
-                        take(1),
-                        map(([maxDrawdownInfo, volatility, sharpRatio, annualizedReturns, totalReturns, yearDays]) => {
-                            const { startDrawdownTime, maxAssetsTime, maxDrawdown, maxDrawdownTime } = maxDrawdownInfo;
-
-                            const titleConfig: BacktestProfitChartSubtitleConfig = {
-                                initialNetWorth,
-                                totalReturns: (totalReturns * 100).toFixed(3) + '%',
-                                yearDays,
-                                annualizedReturns: (annualizedReturns * 100).toFixed(3) + '%',
-                                volatility: volatility === 0 ? '--' : volatility.toFixed(3),
-                                sharpRatio: volatility === 0 ? '--' : sharpRatio.toFixed(3),
-                                maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%',
-                                totalAssets: initialNetWorth,
-                            };
-
-                            const subtitle = this.unwrap(this.translate.get('FLOATING_PROFIT_SUBTITLE', titleConfig));
-
-                            const data = profitAndLose.map(({ time, profit }) => {
-                                if (maxAssetsTime === time) {
-                                    return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit })) }
-                                } else if (maxDrawdownTime === time) {
-                                    return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })) }
-                                } else {
-                                    return null;
-                                }
-                            }).filter(data => !!data);
-
-                            const series = this.generateFloatingPLSeries(data, profitAndLose, maxDrawdownTime, startDrawdownTime);
-
-                            const option = this.getProfitChartConfig(series, subtitle);
-
-                            return <BacktestChart>{ option, title };
-                        })
-                    )
+                        map(([title, option]) => ({ title, option }))
+                    );
                 }),
                 reduce((acc: BacktestChart[], cur: BacktestChart) => [...acc, cur], [])
             ))
@@ -562,9 +539,75 @@ export class BacktestChartService extends BacktestResultService {
     }
 
     /**
+     * Generate config data for every tab, includes tab's title and options for for highcharts;
+     * @param data Profit source data;
+     * @param initialNetWorth total assets;
+     * @param title Tab title
+     */
+    private generateChartOptions(profit: BacktestProfitDescription[], initialNetWorth: number, showWinningRate?: number): Observable<Highstock.Options> {
+        return this.getChartOptionSource(profit).pipe(
+            take(1),
+            map(source => {
+                const series = this.generateSeries(profit, source);
+
+                const subtitle = this.generateSubtitle(initialNetWorth, source, showWinningRate);
+
+                return this.getProfitChartConfig(series, subtitle);
+            })
+        )
+    }
+
+    /**
+     * Generate subtitle for chart option;
+     * @returns Subtitle text.
+     */
+    private generateSubtitle(totalAssets: number, source: BacktestChartSourceData, winningRate: number): string {
+        const { totalReturns, yearDays, annualizedReturns, volatility, sharpRatio, maxDrawdown } = source;
+
+        const config: BacktestProfitChartSubtitleConfig = {
+            initialNetWorth: totalAssets,
+            totalReturns: (totalReturns * 100).toFixed(3) + '%',
+            yearDays,
+            annualizedReturns: (annualizedReturns * 100).toFixed(3) + '%',
+            volatility: volatility === 0 ? '--' : volatility.toFixed(3),
+            sharpRatio: volatility === 0 ? '--' : sharpRatio.toFixed(3),
+            maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%',
+            totalAssets,
+        };
+
+        if (winningRate === undefined) {
+            return this.unwrap(this.translate.get('FLOATING_PROFIT_SUBTITLE', config));
+        } else {
+            return this.unwrap(this.translate.get('PROFIT_SUBTITLE', { ...config, winningRate }));
+        }
+    }
+
+    /**
+     * Generate chart config information;
+     */
+    private getChartOptionSource(profit: BacktestProfitDescription[]): Observable<BacktestChartSourceData> {
+        return zip(
+            this.getMaxDrawdown(profit),
+            this.getStandardDeviation(profit),
+            this.getSharpRatio(profit),
+            this.getAnnualizedReturns(profit),
+            this.getTotalReturns(profit),
+            this.getYearDays()
+        ).pipe(
+            map(([maxDrawdownInfo, volatility, sharpRatio, annualizedReturns, totalReturns, yearDays]) => {
+                const { startDrawdownTime, maxAssetsTime, maxDrawdown, maxDrawdownTime } = maxDrawdownInfo;
+
+                return { startDrawdownTime, maxAssetsTime, maxDrawdown, maxDrawdownTime, volatility, sharpRatio, annualizedReturns, totalReturns, yearDays };
+            })
+        );
+    }
+
+    /**
      * Generate floating profit and lose chart series;
      */
-    private generateFloatingPLSeries(data: any[], profitAndLose: BacktestProfitDescription[], maxDrawdownTime: number, startDrawdownTime: number): any {
+    private generateSeries(profitAndLose: BacktestProfitDescription[], info: BacktestChartSourceData): any {
+        const { startDrawdownTime, maxDrawdownTime } = info;
+
         let obj1 = {
             name: this.floatingProfitLoseLabel,
             data: profitAndLose.map(({ time, profit }) => [time, profit]),
@@ -577,9 +620,28 @@ export class BacktestChartService extends BacktestResultService {
 
         const head = maxDrawdownTime > startDrawdownTime ? Object.assign({}, obj1, obj2) : obj1;
 
+        const data = this.generateFlagTypeSeriesData(profitAndLose, info);
+
         const tail = { name: this.unwrap(this.translate.get('EVENT')), type: 'flags', shape: 'circlepin', onSeries: 'primary', data };
 
         return data.length > 0 ? [head, tail] : [head];
+    }
+
+    /**
+     * 获取类型为 flags 的系列的源数据；
+     */
+    private generateFlagTypeSeriesData(profit: BacktestProfitDescription[], info: BacktestChartSourceData): any {
+        const { maxAssetsTime, maxDrawdownTime, maxDrawdown } = info;
+
+        return profit.map(({ time, profit }) => {
+            if (maxAssetsTime === time) {
+                return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit })) }
+            } else if (maxDrawdownTime === time) {
+                return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })) }
+            } else {
+                return null;
+            }
+        }).filter(this.isTruth);
     }
 
     /**
@@ -596,4 +658,26 @@ export class BacktestChartService extends BacktestResultService {
             map(assets => profit / assets)
         );
     }
+
+    // ============================================================收益曲线的数据处理==================================================================
+
+    /**
+     * 获取收益曲线的highcharts配置。
+     */
+    getProfitCurveOptions(): Observable<Highstock.Options> {
+        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
+            this.backtestResult(),
+            map(({ ProfitLogs }) => ProfitLogs),
+            withLatestFrom(this.getTotalAssets(true)),
+            mergeMap(([profitLogs, totalAssets]) => {
+                const profit = profitLogs.map(([time, profit]) => ({ time, profit }));
+
+                return this.getWinningRate(profit).pipe(
+                    mergeMap(winningRate => this.generateChartOptions(profit, totalAssets, winningRate))
+                );
+            }),
+            take(1)
+        );
+    }
+
 }

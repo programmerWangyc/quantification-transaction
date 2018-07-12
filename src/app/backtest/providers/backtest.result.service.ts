@@ -333,9 +333,9 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取总资产；优先使用余币的值。
+     *  获取总资产；默认优先使用余币的值。
      */
-    protected getTotalAssets(): Observable<number> {
+    protected getTotalAssets(isBalancePrior = false): Observable<number> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
             filter(state => !!state.platformOptions && !!state.platformOptions.length),
@@ -346,7 +346,7 @@ export class BacktestResultService extends BaseService {
 
                 const remainCurrency = platformOptions.reduce((acc, cur) => acc + cur.remainingCurrency, 0);
 
-                return remainCurrency || balance;
+                return isBalancePrior ? balance || remainCurrency : remainCurrency || balance;
             })
         );
     }
@@ -486,7 +486,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * 获取和时间值和收益值
+     * 获取时间值和收益值
      */
     protected getAssetsAndTimeInfo(source: BacktestProfitDescription[]): Observable<BacktestAssetsAndTime> {
         if (isEmpty(source)) {

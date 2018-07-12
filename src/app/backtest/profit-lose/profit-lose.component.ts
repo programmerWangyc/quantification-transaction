@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { bufferCount, delay, map, switchMap, tap } from 'rxjs/operators';
+import { bufferCount, delay, map, switchMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { UtilService } from '../../providers/util.service';
@@ -34,8 +34,7 @@ export class ProfitLoseComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.data = this.chartService.getFloatPLChartOptions()
-            .pipe(tap(v => console.log(v)))
+        this.data = this.chartService.getFloatPLChartOptions();
 
         this.charts = this.data.pipe(
             switchMap(options => this.chart$.pipe(
@@ -49,7 +48,7 @@ export class ProfitLoseComponent extends BaseComponent {
             delay(30),
             map(this.utilService.createChartSize)
         )
-            .subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height)))
+            .subscribe(({ charts, width, height }) => (<Highcharts.ChartObject[]>charts).forEach(chart => chart.setSize(width, height)))
 
     }
 

@@ -48,7 +48,7 @@ export class BacktestProfitChartComponent extends BaseComponent {
             delay(30),
             map(this.utilService.createChartSize)
         )
-            .subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height)))
+            .subscribe(({ charts, width, height }) => (<Highcharts.ChartObject[]>charts).forEach(chart => chart.setSize(width, height)))
 
     }
 

@@ -623,6 +623,7 @@
     "QUOTE_DATA_TIP": "重新组合过的行情信息",
     "FLOATING_PROFIT_LOSE": "浮动盈亏",
     "FLOATING_PROFIT_SUBTITLE": "初始净值：{{initialNetWorth}}，累计收益：{{totalReturns}}，年化收益({{yearDays}}天)：{{annualizedReturns}}，夏普比率：{{sharpRatio}}，年化波动率：{{volatility}}，最大回撤：{{maxDrawdown}}",
+    "PROFIT_SUBTITLE": "初始净值：{{initialNetWorth}}，累计收益：{{totalReturns}}，年化收益({{yearDays}}天)：{{annualizedReturns}}，夏普比率：{{sharpRatio}}，年化波动率：{{volatility}}，最大回撤：{{maxDrawdown}}，胜率：{{winningRate}}",
     "MAX_PROFIT": "最高收益：{{profit}}",
     "MAX_DRAWDOWN_PROFIT": "最大回撤： {{maxDrawDown}}，累计收益：{{profit}}",
     "EVENT": "事件",

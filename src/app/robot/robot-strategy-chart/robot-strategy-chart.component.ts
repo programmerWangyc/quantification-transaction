@@ -92,7 +92,7 @@ export class RobotStrategyChartComponent extends FoldableBusinessComponent imple
                     delay(30),
                     map(this.util.createChartSize)
                 )
-                .subscribe(({ charts, width, height }) => charts.forEach(chart => chart.setSize(width, height)))
+                .subscribe(({ charts, width, height }) => (<Highcharts.ChartObject[]>charts).forEach(chart => chart.setSize(width, height)))
             )
             .add(this.robotLog.launchRobotLogs(
                 this.robotLog.getStrategyOffset().pipe(

@@ -85,7 +85,7 @@ export interface EditorConfig {
 }
 
 export interface ChartSize {
-    charts: Highcharts.ChartObject[];
+    charts: Highcharts.ChartObject[] | Highcharts.ChartObject;
     height: number;
     width: number;
 }

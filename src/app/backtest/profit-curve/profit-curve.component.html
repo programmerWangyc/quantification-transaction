@@ -1,0 +1,4 @@
+<nz-card >
+    <!--FIXME: ignore this error-->
+    <chart type="StockChart" [options]="data | async" (load)="chart$.next($event.context)" class="chart"></chart>
+</nz-card>
