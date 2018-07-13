@@ -3,12 +3,12 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { startWith } from 'rxjs/internal/operators/startWith';
 
 import { BaseComponent } from '../../base/base.component';
+import { GetRobotListRequest } from '../../interfaces/request.interface';
 import { Robot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
-import { GetRobotListRequest } from './../../interfaces/request.interface';
-import { RobotOperateService } from './../providers/robot.operate.service';
-import { RobotService } from './../providers/robot.service';
+import { RobotOperateService } from '../providers/robot.operate.service';
+import { RobotService } from '../providers/robot.service';
 
 @Component({
     selector: 'app-robot-list',

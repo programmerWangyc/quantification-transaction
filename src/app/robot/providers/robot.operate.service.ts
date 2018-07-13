@@ -23,7 +23,17 @@ import {
 
 import { VariableType } from '../../app.config';
 import { BaseService } from '../../base/base.service';
+import { SelectedPair, TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
+import * as fromReq from '../../interfaces/request.interface';
+import * as fromRes from '../../interfaces/response.interface';
+import { BtNodeService } from '../../providers/bt-node.service';
+import { EncryptService } from '../../providers/encrypt.service';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import { PublicService } from '../../providers/public.service';
+import { TipService } from '../../providers/tip.service';
 import { AuthService } from '../../shared/providers/auth.service';
+import * as fromRoot from '../../store/index.reducer';
 import {
     ModifyRobotArgAction,
     ResetRobotOperateAction,
@@ -34,19 +44,9 @@ import { OPERATE_ROBOT_LOADING_TAIL, OPERATE_ROBOT_REQUEST_TAIL, RobotOperateTyp
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
 import { DeleteRobotComponent } from '../delete-robot/delete-robot.component';
-import { RobotConstantService } from '../providers/robot.constant.service';
 import { CommandRobotTip } from '../robot.config';
 import { ImportedArg } from '../robot.interface';
-import { SelectedPair, TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
-import * as fromReq from './../../interfaces/request.interface';
-import * as fromRes from './../../interfaces/response.interface';
-import { BtNodeService } from './../../providers/bt-node.service';
-import { EncryptService } from './../../providers/encrypt.service';
-import { ErrorService } from './../../providers/error.service';
-import { ProcessService } from './../../providers/process.service';
-import { PublicService } from './../../providers/public.service';
-import { TipService } from './../../providers/tip.service';
-import * as fromRoot from './../../store/index.reducer';
+import { RobotConstantService } from './robot.constant.service';
 
 
 export interface RobotDebugFormModal {

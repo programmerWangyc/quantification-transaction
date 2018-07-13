@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
+import { VerifyPasswordRequest } from '../../interfaces/request.interface';
 import { VerifyPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { VerifyPasswordRequest } from './../../interfaces/request.interface';
 
 //  ===========================================Api action===================================
 

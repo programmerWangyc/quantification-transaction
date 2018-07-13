@@ -3,8 +3,8 @@ import { isNumber } from 'lodash';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
+import { BacktestResult, ResponseState, RestartRobotResult, ServerBacktestResult } from '../interfaces/response.interface';
 import { getBacktestErrorMessage } from '../store/backtest/backtest.effect';
-import { BacktestResult, ResponseState, RestartRobotResult, ServerBacktestResult } from './../interfaces/response.interface';
 import { TipService } from './tip.service';
 
 

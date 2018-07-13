@@ -5,21 +5,21 @@ import { isString } from 'lodash';
 import { Observable, zip } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
-import { ServerSendRobotEventType } from '../../robot/robot.config';
-import { ResponseAction } from '../base.action';
-import * as btNodeActions from '../bt-node/bt-node.action';
-import { AppState, selectRobotRequestParameters } from '../index.reducer';
-import * as platformActions from '../platform/platform.action';
 import {
     CommandRobotResponse,
     DeleteRobotResponse,
     RestartRobotResponse,
     ServerSendEventType,
     ServerSendRobotMessage,
-} from './../../interfaces/response.interface';
-import { TipService } from './../../providers/tip.service';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
+} from '../../interfaces/response.interface';
+import { TipService } from '../../providers/tip.service';
+import { WebsocketService } from '../../providers/websocket.service';
+import { ServerSendRobotEventType } from '../../robot/robot.config';
+import { ResponseAction } from '../base.action';
+import { BaseEffect } from '../base.effect';
+import * as btNodeActions from '../bt-node/bt-node.action';
+import { AppState, selectRobotRequestParameters } from '../index.reducer';
+import * as platformActions from '../platform/platform.action';
 import * as robotActions from './robot.action';
 
 

@@ -1,15 +1,37 @@
 import { Injectable } from '@angular/core';
 import { isArray, isString } from 'lodash';
+import * as moment from 'moment';
 import { from as observableFrom, Observable } from 'rxjs';
 import { groupBy, map, mergeMap, reduce } from 'rxjs/operators';
 
 import { ChartSize } from '../interfaces/app.interface';
+import { RunningLog } from './../interfaces/response.interface';
 
 
 export interface GroupedList<T> {
     groupName: string;
     values: T[];
 }
+
+export function getRunningLogs(source: (string | number)[][]): RunningLog[] {
+    return source.map(ary => {
+        let [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
+
+        return {
+            id: <number>id,
+            logType: <number>logType,
+            eid: <string>eid,
+            orderId: <string>orderId,
+            extra: <string>extra,
+            contractType: <string>contractType, // FIXME: contractType === direction ?
+            direction: <string>direction,
+            price: parseFloat((<number>price).toFixed(12)),
+            amount: parseFloat((<number>amount).toFixed(6)),
+            date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+        };
+    });
+}
+
 @Injectable()
 export class UtilService {
 
@@ -59,4 +81,9 @@ export class UtilService {
 
         return { charts, width, height };
     }
+
+    /**
+     * 获取运行日志，此方法会将长度为10的数组转换成字典形式。
+     */
+    getRunningLogs = getRunningLogs
 }

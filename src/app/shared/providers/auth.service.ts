@@ -4,36 +4,33 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { delayWhen, filter, map, mergeMap, switchMap, take } from 'rxjs/operators';
 
-import { LoginRequest, SetPasswordRequest, SignupRequest } from '../../interfaces/request.interface';
-import { ErrorService } from '../../providers/error.service';
-import { CloseSecondaryVerifyAction, ResetLoginErrorAction } from '../../store/auth/login.action';
-import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
-import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
-import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
-import {
-    AppState,
-    selectLoginResponse,
-    selectNeedGoogleSecondaryVer,
-    selectResetPasswordResponse,
-    selectSignupResponse,
-} from '../../store/index.reducer';
-import { VerifyPasswordRequest } from './../../interfaces/request.interface';
+import { LoginRequest, SetPasswordRequest, SignupRequest, VerifyPasswordRequest } from '../../interfaces/request.interface';
 import {
     LoginResponse,
     ResetPasswordResponse,
     SetPasswordResponse,
     SignupResponse,
     VerifyPasswordResponse,
-} from './../../interfaces/response.interface';
-import { ProcessService } from './../../providers/process.service';
-import { TipService } from './../../providers/tip.service';
-import { ResetVerifyPasswordResponseAction, StorePwdTemporaryAction } from './../../store/auth/verify-password.action';
+} from '../../interfaces/response.interface';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import { TipService } from '../../providers/tip.service';
+import { CloseSecondaryVerifyAction, ResetLoginErrorAction } from '../../store/auth/login.action';
+import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
+import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
+import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
+import { ResetVerifyPasswordResponseAction, StorePwdTemporaryAction } from '../../store/auth/verify-password.action';
 import {
+    AppState,
     selectAgreeState,
+    selectLoginResponse,
+    selectNeedGoogleSecondaryVer,
+    selectResetPasswordResponse,
     selectSetPwdResponse,
+    selectSignupResponse,
     selectTemporaryPwd,
     selectVerifyPwdResponse,
-} from './../../store/index.reducer';
+} from '../../store/index.reducer';
 
 
 

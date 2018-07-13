@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
+import { SetPasswordRequest } from '../../interfaces/request.interface';
 import { SetPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { SetPasswordRequest } from './../../interfaces/request.interface';
 
 //  ===========================================Api action===================================
 

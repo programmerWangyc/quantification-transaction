@@ -1,9 +1,9 @@
 import { Action } from '@ngrx/store';
 
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
+import { SettingsRequest } from '../../interfaces/request.interface';
 import { PublicResponse, SettingsResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { SettingsRequest } from './../../interfaces/request.interface';
 
 //  ===========================================Api action===================================
 

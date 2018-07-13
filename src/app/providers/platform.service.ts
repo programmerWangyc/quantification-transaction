@@ -5,7 +5,7 @@ import { filter, groupBy, map, mergeMap, reduce } from 'rxjs/operators';
 
 import { GetPlatformListResponse, Platform } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
-import { AppState } from './../store/index.reducer';
+import { AppState } from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 

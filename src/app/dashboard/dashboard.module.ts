@@ -6,11 +6,12 @@ import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router
 import { BacktestModule } from '../backtest/backtest.module';
 import { ChargeModule } from '../charge/charge.module';
 import { RobotModule } from '../robot/robot.module';
+import { SharedModule } from '../shared/shared.module';
 import { DASHBOARD_EFFECTS } from '../store/index.effect';
 import { CustomSerializer } from '../store/router/router.reducer';
 import { StrategyModule } from '../strategy/strategy.module';
-import { SharedModule } from './../shared/shared.module';
-import { ToolModule } from './../tool/tool.module';
+import { ToolModule } from '../tool/tool.module';
+import { BacktestSimulationComponent } from './backtest-simulation/backtest-simulation.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
@@ -29,7 +30,6 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
-import { BacktestSimulationComponent } from './backtest-simulation/backtest-simulation.component';
 
 @NgModule({
     imports: [

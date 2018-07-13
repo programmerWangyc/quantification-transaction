@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 
-import { PublicService } from './../../providers/public.service';
+import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-footer',

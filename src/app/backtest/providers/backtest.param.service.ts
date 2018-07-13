@@ -111,11 +111,7 @@ export class BacktestParamService extends BaseService {
                                     } else {
                                         const target = optimizeArgs.find(item => item.variableName === arg.variableName);
 
-                                        if (target) {
-                                            return { ...arg, variableValue: target.variableValue };
-                                        } else {
-                                            return arg;
-                                        }
+                                        return target ? { ...arg, variableValue: target.variableValue } : arg;
                                     }
                                 });
 

@@ -7,10 +7,10 @@ import { filter, map, tap } from 'rxjs/operators';
 
 import { ServerSendEventType, ServerSendPaymentMessage } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
+import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
+import { BaseEffect } from '../base.effect';
 import { AppState, selectPaymentArgRequestParams } from '../index.reducer';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
 import * as chargeActions from './charge.action';
 
 @Injectable()

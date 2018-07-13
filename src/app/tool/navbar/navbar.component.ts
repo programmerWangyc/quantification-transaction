@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Path } from '../../app.config';
-import { PublicService } from './../../providers/public.service';
+import { PublicService } from '../../providers/public.service';
 
 export interface Link {
     path: string;

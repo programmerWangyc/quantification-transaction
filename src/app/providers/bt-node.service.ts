@@ -5,8 +5,8 @@ import { filter, map } from 'rxjs/operators';
 
 import { GetNodeListResponse } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
-import { BtNode } from './../interfaces/response.interface';
-import { AppState } from './../store/index.reducer';
+import { BtNode } from '../interfaces/response.interface';
+import { AppState } from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { GroupedList, UtilService } from './util.service';

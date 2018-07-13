@@ -5,9 +5,8 @@ import { from as observableFrom, Observable, of as observableOf, zip } from 'rxj
 import { catchError, filter, map, mapTo, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import { WsRequest } from '../interfaces/request.interface';
-import { ResponseBody, ResponseItem } from '../interfaces/response.interface';
-import { ResponseUnit } from './../interfaces/response.interface';
-import { WebsocketService } from './../providers/websocket.service';
+import { ResponseBody, ResponseItem, ResponseUnit } from '../interfaces/response.interface';
+import { WebsocketService } from '../providers/websocket.service';
 import { RequestAction, ResponseAction } from './base.action';
 import { ApiActions, failTail, successTail } from './index.action';
 

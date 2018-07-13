@@ -1,14 +1,15 @@
-import { map } from 'rxjs/operators';
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isString, last, zip } from 'lodash';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Robot, RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
 import { RobotOperateType } from '../../store/robot/robot.reducer';
 import { RobotConstantService } from '../providers/robot.constant.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { LogTypes } from '../robot.config';
+import { ConstantService } from './../../providers/constant.service';
 
 
 @Pipe({
@@ -48,7 +49,7 @@ export class PlatformStockPipe implements PipeTransform {
     name: 'eid2String'
 })
 export class Eid2StringPipe implements PipeTransform {
-    constructor(private constantService: RobotConstantService) { }
+    constructor(private constantService: ConstantService) { }
 
     transform(value: string): string {
         const coin = this.constantService.COINS[value];

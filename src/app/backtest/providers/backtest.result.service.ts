@@ -11,6 +11,7 @@ import {
     defaultIfEmpty,
     filter,
     map,
+    mapTo,
     mergeMap,
     min,
     reduce,
@@ -22,6 +23,7 @@ import {
 
 import { BaseService } from '../../base/base.service';
 import * as fromRes from '../../interfaces/response.interface';
+import { LogPricePipe } from '../../robot/pipes/robot.pipe';
 import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action';
 import { UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
@@ -33,6 +35,8 @@ import {
     BacktestMaxDrawDownDescription,
     BacktestProfitDescription,
 } from '../backtest.interface';
+import { UtilService } from './../../providers/util.service';
+import { Eid2StringPipe, ExtraContentPipe, LogTypePipe } from './../../robot/pipes/robot.pipe';
 import { BacktestConstantService } from './backtest.constant.service';
 
 
@@ -89,6 +93,7 @@ export class BacktestResultService extends BaseService {
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
         public translate: TranslateService,
+        public utilService: UtilService,
     ) {
         super();
     }
@@ -117,7 +122,6 @@ export class BacktestResultService extends BaseService {
     /**
      * custom operator, used to get backtest result in store
      */
-
     protected backtestResult = () => (source: Observable<fromRes.BacktestIOResponse>): Observable<fromRes.BacktestResult> => {
         return source.pipe(
             map(res => {
@@ -148,65 +152,11 @@ export class BacktestResultService extends BaseService {
         );
     }
 
-
     /**
-     * 下载日志。
+     * The name of the file to be download;
      */
-    downloadLogs(): void {
-        const head = zip(
-            this.translate.get(['SEQUENCE_NUMBER', 'TIME_CONSUMING_WITH_UNIT', 'TRANSACTIONS', 'WINNING_RATE', 'MAXIMUM_WITHDRAWAL', 'SHARP', 'ESTIMATED_REVENUE', 'PROFIT']),
-            this.getBacktestLogCols()
-        ).pipe(
-            map(([constantCol, dynamicCols]) => [
-                constantCol.SEQUENCE_NUMBER,
-                ...dynamicCols,
-                constantCol.TIME_CONSUMING_WITH_UNIT,
-                constantCol.TRANSACTIONS,
-                constantCol.WINNING_RATE,
-                constantCol.MAXIMUM_WITHDRAWAL,
-                constantCol.SHARP,
-                constantCol.ESTIMATED_REVENUE,
-                constantCol.PROFIT,
-            ])
-        );
-
-        const data = zip(
-            this.getBacktestLogRows(),
-            this.getBacktestLogResults()
-        ).pipe(
-            mergeMap(([tasks, results]) => zip(
-                from(tasks),
-                from(results)
-            ).pipe(
-                map(([task, result], index) => result ? [
-                    index + 1,
-                    ...task,
-                    result.elapsed.toFixed(5),
-                    result.tradeCount,
-                    (result.winningRate * 100).toFixed(2) + '%',
-                    (result.maxDrawdown * 100).toFixed(2) + '%',
-                    result.sharpeRatio.toFixed(3),
-                    result.returns.toFixed(5),
-                    result.profit.toFixed(5)
-                ] : [index + 1, ...task, ...new Array(7).fill('-')]),
-                reduce((acc: number[][], cur: number[]) => [...acc, cur], [])
-            )),
-            take(1)
-        );
-
-        concat(
-            head,
-            data
-        ).pipe(
-            reduce((acc, cur) => [acc, ...cur]),
-            map(data => data.join('\n')),
-            withLatestFrom(this.getTimeRange())
-        ).subscribe(([data, { start, end }]) => {
-            fileSaver.saveAs(
-                new Blob([data], { type: 'text/csv;charset=utf8;' }),
-                'optimize_' + moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + "_" + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + ".csv"
-            );
-        });
+    private createFileName(start: number, end: number): string {
+        return moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + "_" + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + ".csv"
     }
 
     // ============================================================调优状态下的日志信息==================================================================
@@ -502,7 +452,76 @@ export class BacktestResultService extends BaseService {
         );
     }
 
+    /**
+     * 下载调优回测日志。
+     */
+    downloadLogs(): void {
+        const head = zip(
+            this.translate.get(['SEQUENCE_NUMBER', 'TIME_CONSUMING_WITH_UNIT', 'TRANSACTIONS', 'WINNING_RATE', 'MAXIMUM_WITHDRAWAL', 'SHARP', 'ESTIMATED_REVENUE', 'PROFIT']),
+            this.getBacktestLogCols()
+        ).pipe(
+            map(([constantCol, dynamicCols]) => [
+                constantCol.SEQUENCE_NUMBER,
+                ...dynamicCols,
+                constantCol.TIME_CONSUMING_WITH_UNIT,
+                constantCol.TRANSACTIONS,
+                constantCol.WINNING_RATE,
+                constantCol.MAXIMUM_WITHDRAWAL,
+                constantCol.SHARP,
+                constantCol.ESTIMATED_REVENUE,
+                constantCol.PROFIT,
+            ])
+        );
 
+        const data = zip(
+            this.getBacktestLogRows(),
+            this.getBacktestLogResults()
+        ).pipe(
+            mergeMap(([tasks, results]) => zip(
+                from(tasks),
+                from(results)
+            ).pipe(
+                map(([task, result], index) => result ? [
+                    index + 1,
+                    ...task,
+                    result.elapsed.toFixed(5),
+                    result.tradeCount,
+                    (result.winningRate * 100).toFixed(2) + '%',
+                    (result.maxDrawdown * 100).toFixed(2) + '%',
+                    result.sharpeRatio.toFixed(3),
+                    result.returns.toFixed(5),
+                    result.profit.toFixed(5)
+                ] : [index + 1, ...task, ...new Array(7).fill('-')]),
+                reduce((acc: number[][], cur: number[]) => [...acc, cur], [])
+            )),
+            take(1)
+        );
+
+        this.exportFile(
+            concat(head, data),
+            this.getTimeRange().pipe(
+                map(({ start, end }) => 'optimize_' + this.createFileName(start, end))
+            )
+        );
+    }
+
+    /**
+     * 导出文件；
+     * @param source File content;
+     * @param filename File name;
+     */
+    private exportFile(source: Observable<any[][]>, filename: Observable<string>): void {
+        source.pipe(
+            reduce((acc, cur) => [acc, ...cur]),
+            map(data => data.join('\n')),
+            withLatestFrom(filename)
+        ).subscribe(([data, name]) => {
+            fileSaver.saveAs(
+                new Blob([data], { type: 'text/csv;charset=utf8;' }),
+                name
+            );
+        });
+    }
 
     // ============================================================非调优状态下的帐户信息==================================================================
 
@@ -625,4 +644,75 @@ export class BacktestResultService extends BaseService {
         }
     }
 
+    // ============================================================非调优状态下的日志信息==================================================================
+
+    /**
+     * 获取回测的运行日志
+     */
+    private getRuntimeLogs(): Observable<fromRes.RuntimeLog[]> {
+        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
+            this.backtestResult(),
+            filter(({ RuntimeLogs }) => !!RuntimeLogs && !!RuntimeLogs.length),
+            map(({ RuntimeLogs }) => RuntimeLogs)
+        );
+    }
+
+    /**
+     * 是否有产生的回测日志信息
+     */
+    hasRunningLogs(): Observable<boolean> {
+        return this.getRuntimeLogs().pipe(
+            mapTo(true)
+        );
+    }
+
+    /**
+     * 获取回测运行日志信息
+     */
+    getRunningLogs(): Observable<fromRes.RunningLog[]> {
+        return this.getRuntimeLogs().pipe(
+            map(logs => this.utilService.getRunningLogs(logs))
+        );
+    }
+
+    /**
+     * Download running logs
+     */
+    downloadRunningLog(): void {
+        const head = this.translate.get(['TIME', 'PLATFORM', 'ORDER_ID', 'TYPE', 'PRICE', 'AMOUNT', 'INFORMATION']).pipe(
+            map(res => [res.TIME, res.PLATFORM, res.ORDER_ID, res.TYPE, res.PRICE, res.AMOUNT, res.INFORMATION])
+        );
+
+        const data = this.getRunningLogs().pipe(
+            map(logs => logs.map(log => {
+                let { date, eid, orderId, logType, price, amount, extra } = log;
+
+                const platform = new Eid2StringPipe(this.constant);
+
+                const type = new LogTypePipe();
+
+                const logPrice = new LogPricePipe(this.translate)
+
+                const logExtra = new ExtraContentPipe();
+
+                return [
+                    date,
+                    platform.transform(eid),
+                    Number(orderId) > 0 ? orderId : '',
+                    this.unwrap(this.translate.get(type.transform(logType))),
+                    logPrice.transform(price, logType),
+                    logType < 2 ? amount : '',
+                    logExtra.transform(extra)
+                ];
+            })),
+            take(1)
+        );
+
+        this.exportFile(
+            concat(head, data),
+            this.getTimeRange().pipe(
+                map(({ start, end }) => this.createFileName(start, end))
+            )
+        );
+    }
 }

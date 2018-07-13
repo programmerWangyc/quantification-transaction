@@ -1,4 +1,4 @@
-import { GetNodeListResponse } from './../../interfaces/response.interface';
+import { GetNodeListResponse } from '../../interfaces/response.interface';
 import * as actions from './bt-node.action';
 
 export interface State {

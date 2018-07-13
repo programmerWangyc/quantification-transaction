@@ -4,8 +4,8 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { map, skip, withLatestFrom } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
+import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from '../robot.config';
-import { RobotLogService } from './../providers/robot.log.service';
 
 
 @Component({

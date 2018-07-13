@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription, merge } from 'rxjs';
-import { filter, map, mapTo, tap } from 'rxjs/operators';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { LoginRequest } from '../../interfaces/request.interface';
+import { EncryptService } from '../../providers/encrypt.service';
 import { AuthService } from '../../shared/providers/auth.service';
 import { passwordValidator, usernameValidator } from '../../validators/validators';
-import { EncryptService } from './../../providers/encrypt.service';
 
 @Component({
     selector: 'app-login',
@@ -45,13 +45,12 @@ export class LoginComponent extends BaseComponent {
     }
 
     initialModel(): void {
-        this.needVerification = this.authService.needVerification()
-            .pipe(
-                tap(need => {
-                    this.verificationCode.setValidators(need ? [Validators.required] : null);
-                    this.verificationCode.updateValueAndValidity();
-                })
-            );
+        this.needVerification = this.authService.needVerification().pipe(
+            tap(need => {
+                this.verificationCode.setValidators(need ? [Validators.required] : null);
+                this.verificationCode.updateValueAndValidity();
+            })
+        );
     }
 
     createForm(): void {
@@ -68,10 +67,9 @@ export class LoginComponent extends BaseComponent {
                 map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) }))
             )
         )
-            .add(this.authService.isLoginSuccess()
-                .pipe(
-                    filter(success => success)
-                )
+            .add(this.authService.isLoginSuccess().pipe(
+                filter(success => success)
+            )
                 .subscribe(_ => this.router.navigateByUrl('/dashboard/robot'))
             )
             .add(this.username.valueChanges.subscribe(_ => this.authService.closeSecondaryVerify()))

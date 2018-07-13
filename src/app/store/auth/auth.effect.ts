@@ -2,11 +2,16 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs';
 
-import { LoginResponse, SignupResponse } from '../../interfaces/response.interface';
+import {
+    LoginResponse,
+    ResetPasswordResponse,
+    SetPasswordResponse,
+    SignupResponse,
+    VerifyPasswordResponse,
+} from '../../interfaces/response.interface';
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
-import { ResetPasswordResponse, SetPasswordResponse, VerifyPasswordResponse } from './../../interfaces/response.interface';
 import { LOGIN, ResponseActions as loginAction } from './login.action';
 import { ResponseActions as setAction, SET_PASSWORD } from './password.action';
 import { RESET_PASSWORD, ResponseActions as resetAction } from './reset.action';

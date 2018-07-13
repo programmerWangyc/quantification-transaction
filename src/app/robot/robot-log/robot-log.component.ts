@@ -6,11 +6,11 @@ import { filter, map, skip, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
+import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
+import { TipService } from '../../providers/tip.service';
+import { RobotLogService } from '../providers/robot.log.service';
+import { RobotService } from '../providers/robot.service';
 import { LogTypes, SemanticsLog } from '../robot.config';
-import { PAGE_SIZE_SELECT_VALUES } from './../../providers/constant.service';
-import { TipService } from './../../providers/tip.service';
-import { RobotLogService } from './../providers/robot.log.service';
-import { RobotService } from './../providers/robot.service';
 
 
 

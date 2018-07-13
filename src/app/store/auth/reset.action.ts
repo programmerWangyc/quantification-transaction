@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
+import { ResetPasswordRequest } from '../../interfaces/request.interface';
 import { ResetPasswordResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { ResetPasswordRequest } from './../../interfaces/request.interface';
 
 //  ===========================================Api action===================================
 

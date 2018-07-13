@@ -1,11 +1,16 @@
 import { Action } from '@ngrx/store';
 
+import { VariableOverview } from '../../interfaces/app.interface';
 import {
     CommandRobotRequest,
     DeleteRobotRequest,
+    GetRobotDetailRequest,
     GetRobotListRequest,
+    GetRobotLogsRequest,
     ModifyRobotRequest,
     PluginRunRequest,
+    PublicRobotRequest,
+    RestartRobotRequest,
     SaveRobotRequest,
     SetRobotWDRequest,
     StopRobotRequest,
@@ -15,9 +20,13 @@ import {
 import {
     CommandRobotResponse,
     DeleteRobotResponse,
+    GetRobotDetailResponse,
     GetRobotListResponse,
+    GetRobotLogsResponse,
     ModifyRobotResponse,
     PluginRunResponse,
+    PublicRobotResponse,
+    RestartRobotResponse,
     SaveRobotResponse,
     ServerSendRobotMessage,
     StopRobotResponse,
@@ -25,19 +34,6 @@ import {
 } from '../../interfaces/response.interface';
 import { ImportedArg } from '../../robot/robot.interface';
 import { ApiAction } from '../base.action';
-import { VariableOverview } from './../../interfaces/app.interface';
-import {
-    GetRobotDetailRequest,
-    GetRobotLogsRequest,
-    PublicRobotRequest,
-    RestartRobotRequest,
-} from './../../interfaces/request.interface';
-import {
-    GetRobotDetailResponse,
-    GetRobotLogsResponse,
-    PublicRobotResponse,
-    RestartRobotResponse,
-} from './../../interfaces/response.interface';
 
 
 /** =====================================================Server send event========================================= **/

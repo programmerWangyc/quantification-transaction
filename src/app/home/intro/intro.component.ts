@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { BaseComponent } from '../../base/base.component';
-import { SettingTypes } from './../../interfaces/request.interface';
-import { PublicService } from './../../providers/public.service';
-import { HomeService } from './../providers/home.service';
+import { SettingTypes } from '../../interfaces/request.interface';
+import { PublicService } from '../../providers/public.service';
+import { HomeService } from '../providers/home.service';
 
 @Component({
     selector: 'app-intro',

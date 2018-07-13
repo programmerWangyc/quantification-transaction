@@ -1,5 +1,5 @@
+import { Exchange, GetExchangeListResponse, ResponseState } from '../../interfaces/response.interface';
 import * as actions from './exchange.action';
-import { ExchangeListResponse, GetExchangeListResponse, Exchange, ResponseState } from './../../interfaces/response.interface';
 
 export interface State {
     response: ResponseState;

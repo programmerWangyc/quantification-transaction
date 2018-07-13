@@ -1,0 +1,49 @@
+<div class="backtest">
+    <h3>{{'BACKTEST_INFORMATION' | translate}}</h3>
+
+    <div class="backtest backtest-item">
+        <h4>{{'OVERVIEW' | translate}}</h4>
+        <app-backtest-status></app-backtest-status>
+    </div>
+
+    <div *ngIf="isOptimizeBacktest | async" class="backtest backtest-item">
+        <h4>{{'LOG' | translate}}</h4>
+        <app-backtest-log></app-backtest-log>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>{{'ACCOUNT_INFORMATION' | translate}}</h4>
+        <app-account-info></app-account-info>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>
+            {{'QUOTE_DATA' | translate}}
+            <i class="anticon anticon-question-circle" [nz-tooltip]="'QUOTE_DATA_TIP' | translate" style="color: #1890ff; margin: 0 0 0 12px;"></i>
+        </h4>
+        <app-quota-chart></app-quota-chart>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>{{'FLOATING_PROFIT_LOSE' | translate}}</h4>
+        <app-profit-lose></app-profit-lose>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>
+            {{'PROFIT_CURVE' | translate}}
+            <i class="anticon anticon-question-circle" [nz-tooltip]="'BACKTEST_PROFIT_CURVE_TIP' | translate" style="color: #1890ff; margin: 0 0 0 12px;"></i>
+        </h4>
+        <app-profit-curve></app-profit-curve>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>{{'STRATEGY_CHART' | translate}}</h4>
+        <app-backtest-strategy-chart></app-backtest-strategy-chart>
+    </div>
+
+    <div class="backtest backtest-item">
+        <h4>{{'LOG_INFORMATION' | translate}}</h4>
+        <app-backtest-log-info></app-backtest-log-info>
+    </div>
+</div>

@@ -6,7 +6,9 @@ import { distinctUntilChanged, filter, map, startWith, tap } from 'rxjs/operator
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
+import { EditorConfig, Referrer } from '../interfaces/app.interface';
 import { SettingTypes } from '../interfaces/request.interface';
+import { PublicResponse, ResponseState } from '../interfaces/response.interface';
 import {
     AppState,
     selectEditorConfig,
@@ -16,17 +18,15 @@ import {
     selectReferrer,
     selectServerMsgSubscribeState,
     selectSettings,
+    selectSettingsResponse,
 } from '../store/index.reducer';
-import { EditorConfig, Referrer } from './../interfaces/app.interface';
-import { PublicResponse, ResponseState } from './../interfaces/response.interface';
-import { selectSettingsResponse } from './../store/index.reducer';
 import {
     SetLanguageAction,
     SetReferrerAction,
     ToggleFooterAction,
     ToggleSubscribeServerSendMessageTypeAction,
     UpdateFavoriteEditorConfigAction,
-} from './../store/public/public.action';
+} from '../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 

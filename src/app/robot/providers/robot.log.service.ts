@@ -24,21 +24,21 @@ import {
 
 import { BaseService } from '../../base/base.service';
 import { ChartUpdateIndicator } from '../../interfaces/app.interface';
+import * as fromReq from '../../interfaces/request.interface';
+import * as fromRes from '../../interfaces/response.interface';
+import { ChartService } from '../../providers/chart.service';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import * as fromRoot from '../../store/index.reducer';
 import {
     ChangeLogPageAction,
     ChangeProfitChartPageAction,
     ChangeStrategyChartPageAction,
+    ModifyDefaultParamsAction,
     MonitorSoundTypeAction,
     ToggleMonitorSoundAction,
 } from '../../store/robot/robot.action';
 import { ServerSendRobotEventType } from '../robot.config';
-import * as fromReq from './../../interfaces/request.interface';
-import * as fromRes from './../../interfaces/response.interface';
-import { ChartService } from './../../providers/chart.service';
-import { ErrorService } from './../../providers/error.service';
-import { ProcessService } from './../../providers/process.service';
-import * as fromRoot from './../../store/index.reducer';
-import { ModifyDefaultParamsAction } from './../../store/robot/robot.action';
 import { RobotService } from './robot.service';
 
 

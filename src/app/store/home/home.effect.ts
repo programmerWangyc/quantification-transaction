@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { Observable } from 'rxjs';
-import { zip } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 
+import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
+import { BaseEffect } from '../base.effect';
 import { GET_EXCHANGE_LIST, ResponseActions as exchange } from '../exchange/exchange.action';
 import { GET_SETTINGS, ResponseActions as pub } from '../public/public.action';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
 
 
 @Injectable()

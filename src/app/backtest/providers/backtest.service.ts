@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { isEmpty, isNull, isNumber } from 'lodash';
 import { concat, merge, never, Observable, of, Subscription, zip } from 'rxjs';
 import {
@@ -18,7 +19,6 @@ import {
     withLatestFrom,
 } from 'rxjs/operators';
 
-import { environment } from '../../../environments/environment';
 import { BacktestIORequest, BacktestIOType, GetTemplatesRequest, SettingTypes } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';

@@ -5,9 +5,9 @@ import { cloneDeep, compact, flatten, isArray, isEmpty, isEqual, isNumber, isObj
 import { concat, from as observableFrom, zip } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 
+import { ChartUpdateIndicator, StrategyChartData, StrategyChartPoint } from '../interfaces/app.interface';
+import { RobotLogs, StrategyLog } from '../interfaces/response.interface';
 import { StrategyChartSeriesData } from '../robot/robot.config';
-import { ChartUpdateIndicator, StrategyChartData, StrategyChartPoint } from './../interfaces/app.interface';
-import { RobotLogs, StrategyLog } from './../interfaces/response.interface';
 import { UtilService } from './util.service';
 
 

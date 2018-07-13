@@ -1,0 +1,53 @@
+<div class="backtest-log">
+    <nz-table #nzTable [nzData]="logs | async">
+        <thead>
+            <tr>
+                <th>{{'TIME' | translate}}</th>
+                <th>{{'PLATFORM' | translate}}</th>
+                <th>{{'TYPE' | translate}}</th>
+                <th>{{'PRICE' | translate}}</th>
+                <th>{{'AMOUNT' | translate}}</th>
+                <th>{{'INFORMATION' | translate}}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let data of nzTable.data" [ngStyle]="{color: data.extra | extraColorPicker, 'background-color': data.extra | extraBcgColorPicker}">
+                <td>{{data.date}}</td>
+
+                <td>
+                    <!-- 0: 买入 1：卖出 2：撤消 3：错误 4：收益 5：消息 6：重启 -->
+                    <span *ngIf="data.logType < 4">{{data.eid | eid2String}}</span>
+                </td>
+
+                <td>
+                    <span>{{data.logType | logType | translate}}</span>
+                    <span *ngIf="!!(data.direction | directionType)">
+                        {{data.direction | directionType | translate}} - {{data.contractType}}
+                    </span>
+                </td>
+
+                <td>
+                    <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">
+                        {{data.price | logPrice: data.logType}}
+                    </span>
+                </td>
+
+                <td>
+                    <span *ngIf="data.logType === 0 || data.logType === 2 || data.logType === 4">{{data.logType
+                        < 2 ? data.amount : ''}}</span>
+                </td>
+
+                <td>
+                    <span [innerHTML]="data.extra | extraContent | safeHtml"></span>
+                    <span *ngIf="data.extra | showExtraIcon" class="anticon anticon-rocket" style="margin-left: 8px;"></span>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+    <button nz-button *ngIf="canSave | async" (click)="onDownload()" nzType="primary" nzSize="small" nzGhost>
+        <i class="anticon anticon-download"></i>
+        {{'DOWNLOAD' | translate}}
+    </button>
+</div>

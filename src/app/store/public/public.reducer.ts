@@ -1,7 +1,7 @@
 import { LocalStorageKey } from '../../app.config';
+import { EditorConfig, Referrer } from '../../interfaces/app.interface';
+import { SettingsRequest } from '../../interfaces/request.interface';
 import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse } from '../../interfaces/response.interface';
-import { EditorConfig, Referrer } from './../../interfaces/app.interface';
-import { SettingsRequest } from './../../interfaces/request.interface';
 import * as actions from './public.action';
 
 export interface Settings {

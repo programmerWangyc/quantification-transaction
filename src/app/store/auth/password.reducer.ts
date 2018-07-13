@@ -1,4 +1,4 @@
-import { SetPasswordResponse } from './../../interfaces/response.interface';
+import { SetPasswordResponse } from '../../interfaces/response.interface';
 import * as actions from './password.action';
 
 export interface State {

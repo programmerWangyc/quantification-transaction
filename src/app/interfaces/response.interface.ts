@@ -241,12 +241,16 @@ export interface RobotDetailResponse {
 
 export interface GetRobotDetailResponse extends ResponseUnit<RobotDetailResponse> { }
 
+export type RuntimeLog = [string, number, number, string | number, string, number, number, string, string, string]
+
+export type CommonLog = Array<string | number>;
+
 // robot logs
 export interface LogOverview {
     Total: number;
     Max: number;
     Min: number;
-    Arr: Array<string | number>[]; // 每一个元素都是一个长度为10的数组
+    Arr: Array<string | number>[];
 }
 
 export interface RunningLog {
@@ -266,7 +270,7 @@ export interface RunningLogOverview {
     Total: number;
     Max: number;
     Min: number;
-    Arr: RunningLog[];
+    Arr: RunningLog[]; // 每一个元素都是一个长度为10的数组
 }
 
 
@@ -548,9 +552,11 @@ export interface GetTemplatesResponse extends ResponseUnit<TemplatesResponse[]> 
  * backtest task result start region
  */
 
+export type BacktestResultChartData = [number, string/* JSON type string*/];
+
 export interface BacktestResultChart {
-    Cfg: string;
-    Datas: any[];
+    Cfg: string; // JSON type string;
+    Datas: BacktestResultChartData[];
 }
 
 export interface BacktestResultSnapshot {
@@ -685,8 +691,6 @@ export enum BacktestRuntimeLogIndex {
     direction
 }
 
-export type BacktestRuntimeLog = [string, number, number, string | number, string, number, number, string, string, string];
-
 export type BacktestProfitLog = [number, number]; // time, profit
 
 export interface BacktestResult {
@@ -703,7 +707,7 @@ export interface BacktestResult {
     Profit: number;
     ProfitLogs: BacktestProfitLog[];
     Progress: number;
-    RuntimeLogs: BacktestRuntimeLog[] // 每一个元素都是一个长度为10的数组
+    RuntimeLogs: RuntimeLog[] // 每一个元素都是一个长度为10的数组
     Snapshort?: BacktestResultSnapshot[]
     Snapshorts: Array<BacktestSnapShots>;
     Stderr: string;

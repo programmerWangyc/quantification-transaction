@@ -1,5 +1,5 @@
 import { SetRobotWDRequest } from '../../interfaces/request.interface';
-import { SetRobotWDResponse } from './../../interfaces/response.interface';
+import { SetRobotWDResponse } from '../../interfaces/response.interface';
 import * as actions from './watch-dog.action';
 
 export interface State {

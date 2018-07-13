@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { PublicService } from './../providers/public.service';
+import { PublicService } from '../providers/public.service';
 
 
 @Component({

@@ -3,9 +3,9 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
-import { VariableOverview } from './../../interfaces/app.interface';
-import { RobotOperateService } from './../providers/robot.operate.service';
-import { RobotService } from './../providers/robot.service';
+import { VariableOverview } from '../../interfaces/app.interface';
+import { RobotOperateService } from '../providers/robot.operate.service';
+import { RobotService } from '../providers/robot.service';
 
 
 @Component({

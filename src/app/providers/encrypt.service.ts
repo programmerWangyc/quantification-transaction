@@ -4,8 +4,8 @@ import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
 import { map, mergeMap, reduce, take } from 'rxjs/operators';
 
 import { VariableType } from '../app.config';
-import { TemplateVariableOverview, VariableOverview } from './../interfaces/app.interface';
-import { AuthService } from './../shared/providers/auth.service';
+import { TemplateVariableOverview, VariableOverview } from '../interfaces/app.interface';
+import { AuthService } from '../shared/providers/auth.service';
 import { ConstantService } from './constant.service';
 
 

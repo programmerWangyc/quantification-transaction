@@ -52,8 +52,6 @@ export class BacktestSimulationComponent extends BaseComponent {
 
     isBacktestLoading: Observable<boolean>;
 
-    isOptimizeBacktest: Observable<boolean>;
-
     startBacktest$: Subject<boolean> = new Subject();
 
     disableBacktest: Observable<boolean>;
@@ -101,8 +99,6 @@ export class BacktestSimulationComponent extends BaseComponent {
         this.disableBacktest = this.backtestService.getUIState().pipe(
             map(res => res.isForbiddenBacktest)
         );
-
-        this.isOptimizeBacktest = this.backtestService.isOptimizeBacktest();
     }
 
     launch() {

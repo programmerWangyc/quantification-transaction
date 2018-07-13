@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
+import { SignupRequest } from '../../interfaces/request.interface';
 import { SignupResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { SignupRequest } from './../../interfaces/request.interface';
 
 //  ===========================================Api action===================================
 

@@ -4,12 +4,12 @@ import { Observable, Subscription } from 'rxjs';
 import { filter, mapTo, mergeMap, switchMapTo } from 'rxjs/operators';
 
 import { SetRobotWDRequest } from '../../interfaces/request.interface';
+import { Robot, RobotDetail, SetRobotWDResponse } from '../../interfaces/response.interface';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import { TipService } from '../../providers/tip.service';
+import { AppState, selectSetWatchDogRequest, selectSetWatchDogResponse } from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { Robot, RobotDetail, SetRobotWDResponse } from './../../interfaces/response.interface';
-import { ErrorService } from './../../providers/error.service';
-import { ProcessService } from './../../providers/process.service';
-import { TipService } from './../../providers/tip.service';
-import { AppState, selectSetWatchDogRequest, selectSetWatchDogResponse } from './../../store/index.reducer';
 
 
 export enum SetWatchDogTip {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SettingTypes } from '../../interfaces/request.interface';
-import { PublicService } from './../../providers/public.service';
+import { PublicService } from '../../providers/public.service';
 
 
 @Component({

@@ -5,9 +5,9 @@ import { combineLatest, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { EncryptService } from '../../providers/encrypt.service';
 import { AuthService } from '../../shared/providers/auth.service';
 import { passwordMatchValidator, passwordValidator } from '../../validators/validators';
-import { EncryptService } from './../../providers/encrypt.service';
 
 @Component({
     selector: 'app-password',
@@ -46,17 +46,15 @@ export class PasswordComponent extends BaseComponent {
     launch() {
         this.subscription$$ = this.authService.launchSetPwd(
             combineLatest(
-                this.setPwd$
-                    .pipe(
-                        map(password => this.encrypt.encryptPassword(password))
-                    ),
+                this.setPwd$.pipe(
+                    map(password => this.encrypt.encryptPassword(password))
+                ),
                 this.activatedRoute.params.pipe(
                     map(param => param['token'])
                 )
+            ).pipe(
+                map(([password, token]) => ({ password, token }))
             )
-                .pipe(
-                    map(([password, token]) => ({ password, token }))
-                )
         )
             .add(this.authService.showSetPasswordResponse())
             .add(this.authService.handleSetPasswordError());

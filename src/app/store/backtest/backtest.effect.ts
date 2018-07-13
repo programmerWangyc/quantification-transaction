@@ -14,11 +14,11 @@ import {
     ServerSendEventType,
 } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
+import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
+import { BaseEffect } from '../base.effect';
 import { AppState, selectServerMsgSubscribeState } from '../index.reducer';
 import { UPDATE_STRATEGY_DEPENDANCE_TEMPLATES, UpdateStrategyDependanceTemplatesAction } from '../strategy/strategy.action';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
 import * as backtestActions from './backtest.action';
 
 

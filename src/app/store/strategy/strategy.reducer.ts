@@ -9,7 +9,6 @@ import {
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
-import { createScriptArgs } from '../robot/robot.reducer';
 import {
     DeleteStrategyResponse,
     GenKeyResponse,
@@ -20,7 +19,8 @@ import {
     ShareStrategyResponse,
     Strategy,
     VerifyKeyResponse,
-} from './../../interfaces/response.interface';
+} from '../../interfaces/response.interface';
+import { createScriptArgs } from '../robot/robot.reducer';
 import * as actions from './strategy.action';
 
 export interface RequestParams {

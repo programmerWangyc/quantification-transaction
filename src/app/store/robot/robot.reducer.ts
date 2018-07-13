@@ -1,49 +1,44 @@
 import { cloneDeep, partition } from 'lodash';
-import * as moment from 'moment';
 
+import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
 import {
     CommandRobotRequest,
     DeleteRobotRequest,
+    GetRobotDetailRequest,
+    GetRobotLogsRequest,
     ModifyRobotRequest,
     PluginRunRequest,
     PublicRobotRequest,
+    RestartRobotRequest,
     SaveRobotRequest,
+    StopRobotRequest,
+    SubscribeRobotRequest,
 } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse,
     DeleteRobotResponse,
+    GetRobotDetailResponse,
+    GetRobotLogsResponse,
     LogOverview,
     ModifyRobotResponse,
     PluginRunResponse,
+    ProfitLog,
+    PublicRobotResponse,
+    ResponseState,
     RestartRobotResponse,
+    RobotListResponse,
     RunningLog,
     SaveRobotResponse,
     SemanticsLogsOverview,
     ServerSendRobotMessage,
     StopRobotResponse,
     StrategyLog,
+    SubscribeRobotResponse,
 } from '../../interfaces/response.interface';
-import { ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG } from '../../providers/constant.service';
+import { COMMAND_PREFIX, ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG } from '../../providers/constant.service';
+import { getRunningLogs } from '../../providers/util.service';
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ImportedArg } from '../../robot/robot.interface';
-import { TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
-import {
-    GetRobotDetailRequest,
-    GetRobotLogsRequest,
-    RestartRobotRequest,
-    StopRobotRequest,
-    SubscribeRobotRequest,
-} from './../../interfaces/request.interface';
-import {
-    GetRobotDetailResponse,
-    GetRobotLogsResponse,
-    ProfitLog,
-    PublicRobotResponse,
-    ResponseState,
-    RobotListResponse,
-    SubscribeRobotResponse,
-} from './../../interfaces/response.interface';
-import { COMMAND_PREFIX } from './../../providers/constant.service';
 import * as actions from './robot.action';
 
 interface LatestRobotInfo extends ServerSendRobotMessage {
@@ -618,22 +613,7 @@ function updateVariableName(arg: VariableOverview): VariableOverview {
 function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
     const [run, profit, strategy] = source;
 
-    const runningLog: RunningLog[] = run.Arr.map(ary => {
-        let [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
-
-        return {
-            id: <number>id,
-            logType: <number>logType,
-            eid: <string>eid,
-            orderId: <string>orderId,
-            extra: <string>extra,
-            contractType: <string>contractType, // FIXME: contractType === direction ?
-            direction: <string>direction,
-            price: parseFloat((<number>price).toFixed(12)),
-            amount: parseFloat((<number>amount).toFixed(6)),
-            date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
-        };
-    });
+    const runningLog: RunningLog[] = getRunningLogs(run.Arr);
 
     const profitLog: ProfitLog[] = profit.Arr.map(([id, profit, time]) => ({ id, profit, time } as ProfitLog));
 

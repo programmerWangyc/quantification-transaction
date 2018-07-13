@@ -3,8 +3,8 @@ import { Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
-import { EncryptService } from './../../providers/encrypt.service';
-import { AuthService } from './../../shared/providers/auth.service';
+import { EncryptService } from '../../providers/encrypt.service';
+import { AuthService } from '../../shared/providers/auth.service';
 
 
 @Component({

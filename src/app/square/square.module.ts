@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 
-import { SharedModule } from './../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { ContainerComponent } from './container/container.component';
 import { SquareRoutingModule } from './square.routing.module';
 import { SquareComponent } from './square/square.component';

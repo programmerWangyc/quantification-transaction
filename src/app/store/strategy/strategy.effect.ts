@@ -6,9 +6,9 @@ import { tap } from 'rxjs/internal/operators/tap';
 
 import { DeleteStrategyResponse } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
+import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
+import { BaseEffect } from '../base.effect';
 import * as strategyActions from './strategy.action';
 
 
@@ -43,20 +43,19 @@ export class StrategyEffect extends BaseEffect {
     strategyDetail$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_DETAIL, strategyActions.ResponseActions);
 
     @Effect()
-    saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions)
-        .pipe(
-            tap((action: strategyActions.SaveStrategyFailAction | strategyActions.SaveStrategySuccessAction) => {
-                const result = action.payload.result;
+    saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions).pipe(
+        tap((action: strategyActions.SaveStrategyFailAction | strategyActions.SaveStrategySuccessAction) => {
+            const result = action.payload.result;
 
-                if (!result) {
-                    this.tip.messageError('STRATEGY_NAME_DUPLICATE_ERROR');
-                } else {
-                    const message = isString(result) ? 'SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY' : 'SAVE_SUCCESS';
+            if (!result) {
+                this.tip.messageError('STRATEGY_NAME_DUPLICATE_ERROR');
+            } else {
+                const message = isString(result) ? 'SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY' : 'SAVE_SUCCESS';
 
-                    this.tip.messageSuccess(message);
-                }
-            })
-        );
+                this.tip.messageSuccess(message);
+            }
+        })
+    );
 
     constructor(
         public actions$: Actions,

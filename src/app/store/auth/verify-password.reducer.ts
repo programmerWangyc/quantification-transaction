@@ -1,4 +1,4 @@
-import { VerifyPasswordResponse } from './../../interfaces/response.interface';
+import { VerifyPasswordResponse } from '../../interfaces/response.interface';
 import * as actions from './verify-password.action';
 
 export interface State {

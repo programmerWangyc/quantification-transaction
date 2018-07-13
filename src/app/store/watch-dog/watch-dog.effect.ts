@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { TipService } from '../../providers/tip.service';
+import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
-import { WebsocketService } from './../../providers/websocket.service';
-import { BaseEffect } from './../base.effect';
+import { BaseEffect } from '../base.effect';
 import {
     ResponseActions as watchDog,
     SET_ROBOT_WATCH_DOG,
@@ -18,10 +18,9 @@ import {
 export class WatchDogEffect extends BaseEffect {
 
     @Effect()
-    watchDog$: Observable<ResponseAction> = this.getResponseAction(SET_ROBOT_WATCH_DOG, watchDog)
-        .pipe(
-            tap((action: SetRobotWDFailAction | SetRobotWDSuccessAction) => this.tip.showTip(action.payload.result ? 'OPERATE_SUCCESS' : 'OPERATE_FAIL'))
-        );
+    watchDog$: Observable<ResponseAction> = this.getResponseAction(SET_ROBOT_WATCH_DOG, watchDog).pipe(
+        tap((action: SetRobotWDFailAction | SetRobotWDSuccessAction) => this.tip.showTip(action.payload.result ? 'OPERATE_SUCCESS' : 'OPERATE_FAIL'))
+    );
 
     constructor(
         public actions$: Actions,

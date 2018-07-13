@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { isEmpty, last, range } from 'lodash';
+import { flatten, groupBy, isArray, isEmpty, last, omit, range } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of, zip } from 'rxjs';
-import { map, mergeMap, reduce, take, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mergeMap, reduce, take, withLatestFrom } from 'rxjs/operators';
 
 import * as fromRes from '../../interfaces/response.interface';
 import { ChartService } from '../../providers/chart.service';
@@ -16,7 +16,9 @@ import {
     BacktestOrderLogs,
     BacktestProfitChartSubtitleConfig,
     BacktestProfitDescription,
+    BacktestStrategyCharts,
 } from '../backtest.interface';
+import { UtilService } from './../../providers/util.service';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestResultService } from './backtest.result.service';
 import { BacktestSandboxService, SymbolRecord } from './backtest.sandbox.service';
@@ -46,22 +48,26 @@ export class BacktestChartService extends BacktestResultService {
 
     protected accumulateProfitLabel: string;
 
+    protected chartLabel: string;
+
     constructor(
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
         public translate: TranslateService,
         public sandbox: BacktestSandboxService,
         public chartService: ChartService,
+        public util: UtilService
     ) {
-        super(store, constant, translate);
+        super(store, constant, translate, util);
         this.init();
     }
 
     init() {
-        this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE', 'ACCUMULATE_PROFIT']).subscribe(res => {
+        this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE', 'ACCUMULATE_PROFIT', 'CHART']).subscribe(res => {
             this.fullscreenLabel = res.FULL_SCREEN;
             this.floatingProfitLoseLabel = res.FLOATING_PROFIT_LOSE;
             this.accumulateProfitLabel = res.ACCUMULATE_PROFIT;
+            this.chartLabel = res.CHART;
         });
     }
 
@@ -109,7 +115,7 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 获取订单日志
      */
-    private getOrderLogs(source: fromRes.BacktestRuntimeLog[]): BacktestOrderLogs {
+    private getOrderLogs(source: fromRes.RuntimeLog[]): BacktestOrderLogs {
         return source.reduce((acc, log) => {
             const result = this.getBacktestOrderLog(log);
 
@@ -130,7 +136,7 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 生成订单日志
      */
-    private getBacktestOrderLog(data: fromRes.BacktestRuntimeLog): BacktestOrderLog {
+    private getBacktestOrderLog(data: fromRes.RuntimeLog): BacktestOrderLog {
         const [id, time, logType, eid, orderId, price, amount, extra, contractType, direction] = data;
 
         const result = { x: time };
@@ -170,7 +176,7 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 生成订单日志的Key值
      */
-    private generateOrderLogKey(data: fromRes.BacktestSymbol | fromRes.BacktestRuntimeLog): string {
+    private generateOrderLogKey(data: fromRes.BacktestSymbol | fromRes.RuntimeLog): string {
         if (data.length === 10) {
             const [id, time, logType, eid, orderId, price, amount, extra, contractType, direction] = data;
 
@@ -680,4 +686,97 @@ export class BacktestChartService extends BacktestResultService {
         );
     }
 
+    // ============================================================策略图表的数据处理==================================================================
+
+    /**
+     * 获取策略图表的原始数据
+     */
+    private getStrategyChartSource(): Observable<BacktestStrategyCharts> {
+        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
+            this.backtestResult(),
+            filter(({ Chart }) => !!Chart && !!Chart.Cfg),
+            map(({ Chart }) => {
+                try {
+                    const res = JSON.parse(Chart.Cfg.replace(/useHTML/gi, '__disableHTML'));
+
+                    return { charts: isArray(res) ? res : [res], data: Chart.Datas };
+                } catch (e) {
+                    return null;
+                }
+            })
+        );
+    }
+
+    /**
+     * Whether show strategy chart;
+     */
+    hasStrategyCharts(): Observable<boolean> {
+        return this.getStrategyChartSource().pipe(
+            map(res => !!res)
+        );
+    }
+
+    /**
+     * Strategy chart configurations;
+     */
+    getStrategyChartOptions(): Observable<BacktestChart[]> {
+        return this.getStrategyChartSource().pipe(
+            map(({ charts, data }) => {
+                const source = Object.entries(groupBy(data, ([idx]) => idx)).map(([key, value]) => ({
+                    id: Number(key),
+                    value: value.map(item => {
+                        try {
+                            return JSON.parse(<string>last(item));
+                        } catch (e) {
+                            return null;
+                        }
+                    })
+                }));
+
+                const optimizedSeries = flatten(charts.map((chart, index) => {
+                    const { series } = chart;
+
+                    return series && !!series.length ? series.map(series => ({ ...series, chartIndex: index })) : [];
+                })).map((series, index) => {
+                    const data = source.find(item => item.id === index);
+
+                    return data ? { ...series, data: [...series.data, ...data.value.filter(item => !!item)] } : series;
+                });
+
+                return charts.map((chart, index) => {
+                    const option = {
+                        ...chart,
+                        ...this.getStrategyChartConfig(),
+                        series: optimizedSeries.filter(item => item.chartIndex === index).reduce((acc, cur) => [...acc, omit(cur, 'chartIndex')], [])
+                    };
+
+                    try {
+                        return { title: chart.title.text, option };
+                    } catch (e) {
+                        return { title: this.chartLabel + '-' + index, option };
+                    }
+                });
+            })
+        );
+    }
+
+    private getStrategyChartConfig(): Object {
+        return {
+            // 此属性在官方配置中没有
+            lang: {
+                _fullscreen: this.fullscreenLabel,
+            },
+            // exporting: {
+            //     buttons: {
+            //         hideButton: {
+            //             _titleKey: "_fullscreen",
+            //             text: fullscreenLabel,
+            //             onclick: function() {
+            //                 util.toggleFullScreen(document.getElementById(eleId));
+            //             }
+            //         },
+            //     }
+            // }
+        }
+    }
 }

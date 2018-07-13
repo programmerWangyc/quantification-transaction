@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { ChartModule } from 'angular2-highcharts';
 
 import { ChargeModule } from '../charge/charge.module';
+import { SharedModule } from '../shared/shared.module';
 import { StrategyModule } from '../strategy/strategy.module';
-import { SharedModule } from './../shared/shared.module';
-import { ToolModule } from './../tool/tool.module';
+import { ToolModule } from '../tool/tool.module';
 import { CreateRobotComponent } from './create-robot/create-robot.component';
 import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';

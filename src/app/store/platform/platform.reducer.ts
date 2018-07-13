@@ -1,4 +1,4 @@
-import { GetPlatformListResponse, Platform } from './../../interfaces/response.interface';
+import { GetPlatformListResponse, Platform } from '../../interfaces/response.interface';
 import * as actions from './platform.action';
 
 export interface State {

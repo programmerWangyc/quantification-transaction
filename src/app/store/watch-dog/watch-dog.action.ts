@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
 import { SetRobotWDRequest } from '../../interfaces/request.interface';
+import { SetRobotWDResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { SetRobotWDResponse } from './../../interfaces/response.interface';
 
 //  ===========================================Api action===================================
 

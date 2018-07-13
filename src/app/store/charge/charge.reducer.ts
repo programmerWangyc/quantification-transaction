@@ -1,9 +1,5 @@
 import { GetPaymentArgRequest } from '../../interfaces/request.interface';
-import {
-    GetPaymentArgResponse,
-    GetPayOrdersResponse,
-    ServerSendPaymentMessage,
-} from './../../interfaces/response.interface';
+import { GetPaymentArgResponse, GetPayOrdersResponse, ServerSendPaymentMessage } from '../../interfaces/response.interface';
 import * as actions from './charge.action';
 
 export interface RequestParams {

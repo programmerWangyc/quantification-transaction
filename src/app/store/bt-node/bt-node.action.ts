@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 
+import { GetNodeListResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { GetNodeListResponse } from './../../interfaces/response.interface';
 
 //  ===========================================Node list===================================
 

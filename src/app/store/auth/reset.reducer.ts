@@ -1,4 +1,4 @@
-import { ResetPasswordResponse } from './../../interfaces/response.interface';
+import { ResetPasswordResponse } from '../../interfaces/response.interface';
 import * as actions from './reset.action';
 
 export interface State {

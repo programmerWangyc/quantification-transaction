@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 
-import { SharedModule } from './../shared/shared.module';
-import { HomeEffect } from './../store/home/home.effect';
-import { ToolModule } from './../tool/tool.module';
+import { SharedModule } from '../shared/shared.module';
+import { HomeEffect } from '../store/home/home.effect';
+import { ToolModule } from '../tool/tool.module';
 import { ContactComponent } from './contact/contact.component';
 import { DetailComponent } from './detail/detail.component';
 import { EntranceComponent } from './entrance/entrance.component';

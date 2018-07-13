@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { SharedModule } from './../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { TextCenterDirective, TextDirectionDirective } from './directives/style.directive';
 import { FooterComponent } from './footer/footer.component';

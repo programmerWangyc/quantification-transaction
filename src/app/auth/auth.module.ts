@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MarkdownModule } from 'ngx-markdown';
 
-import { SharedModule } from './../shared/shared.module';
-import { ToolModule } from './../tool/tool.module';
+import { SharedModule } from '../shared/shared.module';
+import { ToolModule } from '../tool/tool.module';
 import { AgreementComponent } from './agreement/agreement.component';
 import { AuthComponent } from './auth.component';
 import { routing } from './auth.routing';

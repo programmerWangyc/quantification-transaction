@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 
+import { GetExchangeListResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
-import { GetExchangeListResponse } from './../../interfaces/response.interface';
 
 //  ===========================================Api action===================================
 

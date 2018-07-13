@@ -3,9 +3,9 @@ import { Observable, Subject, Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotDetail } from '../../interfaces/response.interface';
-import { WatchDogService } from './../../shared/providers/watch-dog.service';
-import { RobotOperateService } from './../providers/robot.operate.service';
-import { RobotService } from './../providers/robot.service';
+import { WatchDogService } from '../../shared/providers/watch-dog.service';
+import { RobotOperateService } from '../providers/robot.operate.service';
+import { RobotService } from '../providers/robot.service';
 
 interface RobotStatusBtn {
     status: string;

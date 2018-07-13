@@ -10,7 +10,6 @@ import {
     ShareStrategyRequest,
     VerifyKeyRequest,
 } from '../../interfaces/request.interface';
-import { ApiAction } from '../base.action';
 import {
     DeleteStrategyResponse,
     GenKeyResponse,
@@ -20,7 +19,8 @@ import {
     SaveStrategyResponse,
     ShareStrategyResponse,
     VerifyKeyResponse,
-} from './../../interfaces/response.interface';
+} from '../../interfaces/response.interface';
+import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
 

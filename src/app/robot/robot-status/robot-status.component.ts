@@ -4,9 +4,9 @@ import { merge, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
+import { RobotLogService } from '../providers/robot.log.service';
+import { RobotService } from '../providers/robot.service';
 import { RobotStatusTable } from '../robot.interface';
-import { RobotLogService } from './../providers/robot.log.service';
-import { RobotService } from './../providers/robot.service';
 
 
 @Component({

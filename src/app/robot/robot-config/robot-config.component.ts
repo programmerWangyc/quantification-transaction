@@ -6,14 +6,14 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
+import { SelectedPair, TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
+import { ModifyRobotRequest } from '../../interfaces/request.interface';
+import { BtNode, Platform } from '../../interfaces/response.interface';
+import { BtNodeService } from '../../providers/bt-node.service';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
-import { SelectedPair, TemplateVariableOverview, VariableOverview } from './../../interfaces/app.interface';
-import { ModifyRobotRequest } from './../../interfaces/request.interface';
-import { BtNode, Platform } from './../../interfaces/response.interface';
-import { BtNodeService } from './../../providers/bt-node.service';
-import { PlatformService } from './../../providers/platform.service';
-import { RobotOperateService } from './../providers/robot.operate.service';
-import { RobotService } from './../providers/robot.service';
+import { PlatformService } from '../../providers/platform.service';
+import { RobotOperateService } from '../providers/robot.operate.service';
+import { RobotService } from '../providers/robot.service';
 
 
 

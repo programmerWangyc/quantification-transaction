@@ -1,6 +1,11 @@
 import { VariableOverview } from '../interfaces/app.interface';
 import { BacktestPutTaskParams } from '../interfaces/request.interface';
-import { BacktestResult, BacktestResultChart, BacktestResultSnapshot } from '../interfaces/response.interface';
+import {
+    BacktestResult,
+    BacktestResultChart,
+    BacktestResultChartData,
+    BacktestResultSnapshot,
+} from '../interfaces/response.interface';
 
 export interface TimeRange {
     start: Date;
@@ -254,4 +259,9 @@ export interface BacktestProfitChartSubtitleConfig {
     maxDrawdown: number | string;
     winningRate?: number;
     totalAssets: number;
+}
+
+export interface BacktestStrategyCharts {
+    charts: Array<Highcharts.Options | Highstock.Options>;
+    data: BacktestResultChartData[];
 }

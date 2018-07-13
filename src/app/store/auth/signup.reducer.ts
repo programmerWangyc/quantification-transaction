@@ -1,4 +1,4 @@
-import { SignupResponse } from './../../interfaces/response.interface';
+import { SignupResponse } from '../../interfaces/response.interface';
 import * as actions from './signup.action';
 
 export interface State {

@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, merge, Subscription } from 'rxjs';
+import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { EncryptService } from '../../providers/encrypt.service';
+import { PublicService } from '../../providers/public.service';
 import { AuthService } from '../../shared/providers/auth.service';
 import { emailValidator, passwordMatchValidator, passwordValidator, usernameValidator } from '../../validators/validators';
 import { AgreementComponent } from '../agreement/agreement.component';
-import { EncryptService } from './../../providers/encrypt.service';
-import { PublicService } from './../../providers/public.service';
 
 export interface SignupFormModel {
     username: string;
@@ -67,10 +67,9 @@ export class SignupComponent extends BaseComponent {
     }
 
     launch(): void {
-        this.subscription$$ = this.authService.launchSignup(this.signup$
-            .pipe(
-                map(data => ({ username: data.username, email: data.email, password: this.encrypt.encryptPassword(data.passwordInfo.password), refUser: '', refUrl: '' }))
-            )
+        this.subscription$$ = this.authService.launchSignup(this.signup$.pipe(
+            map(data => ({ username: data.username, email: data.email, password: this.encrypt.encryptPassword(data.passwordInfo.password), refUser: '', refUrl: '' }))
+        )
         )
             .add(this.authService.toggleAgreeState(
                 merge(
@@ -79,11 +78,10 @@ export class SignupComponent extends BaseComponent {
                 )
             )
             )
-            .add(this.activatedRoute.params
-                .pipe(
-                    map(params => params['ref']),
-                    filter(ref => !!ref)
-                )
+            .add(this.activatedRoute.params.pipe(
+                map(params => params['ref']),
+                filter(ref => !!ref)
+            )
                 .subscribe(this.publicService.refUser$$)
             )
             .add(this.authService.isSignupSuccess()

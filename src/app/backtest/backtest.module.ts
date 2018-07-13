@@ -9,10 +9,13 @@ import { ToolModule } from '../tool/tool.module';
 import { AccountInfoComponent } from './account-info/account-info.component';
 import { AdvancedOptionsComponent } from './advanced-options/advanced-options.component';
 import { ArgOptimizerComponent } from './arg-optimizer/arg-optimizer.component';
+import { BacktestChartComponent } from './backtest-chart/backtest-chart.component';
+import { BacktestLogInfoComponent } from './backtest-log-info/backtest-log-info.component';
 import { BacktestLogComponent } from './backtest-log/backtest-log.component';
-import { BacktestProfitChartComponent } from './backtest-profit-chart/backtest-profit-chart.component';
+import { BacktestResultComponent } from './backtest-result/backtest-result.component';
 import { BacktestStatusComponent } from './backtest-status/backtest-status.component';
 import { BacktestStrategyArgsComponent } from './backtest-strategy-args/backtest-strategy-args.component';
+import { BacktestStrategyChartComponent } from './backtest-strategy-chart/backtest-strategy-chart.component';
 import { DispenseOptionsComponent } from './dispense-options/dispense-options.component';
 import { ExchangeOptionsComponent } from './exchange-options/exchange-options.component';
 import { PIPES } from './pipes/index.pipe';
@@ -25,6 +28,7 @@ import { BacktestParamService } from './providers/backtest.param.service';
 import { BacktestResultService } from './providers/backtest.result.service';
 import { BacktestSandboxService } from './providers/backtest.sandbox.service';
 import { BacktestService } from './providers/backtest.service';
+import { QuotaChartComponent } from './quota-chart/quota-chart.component';
 import { TimeOptionsComponent } from './time-options/time-options.component';
 
 @NgModule({
@@ -44,7 +48,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         AdvancedOptionsComponent,
         ArgOptimizerComponent,
         BacktestLogComponent,
-        BacktestProfitChartComponent,
+        QuotaChartComponent,
         BacktestStatusComponent,
         BacktestStrategyArgsComponent,
         DispenseOptionsComponent,
@@ -53,6 +57,10 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         TimeOptionsComponent,
         ProfitLoseComponent,
         ProfitCurveComponent,
+        BacktestStrategyChartComponent,
+        BacktestChartComponent,
+        BacktestLogInfoComponent,
+        BacktestResultComponent,
     ],
 
     providers: [
@@ -66,17 +74,12 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
     ],
 
     exports: [
-        AccountInfoComponent,
         AdvancedOptionsComponent,
-        BacktestLogComponent,
-        BacktestProfitChartComponent,
-        BacktestStatusComponent,
         BacktestStrategyArgsComponent,
         DispenseOptionsComponent,
         ExchangeOptionsComponent,
-        ProfitLoseComponent,
-        ProfitCurveComponent,
         TimeOptionsComponent,
+        BacktestResultComponent,
     ],
 })
 export class BacktestModule { }

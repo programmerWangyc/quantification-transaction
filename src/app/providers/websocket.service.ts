@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { QueueingSubject } from 'queueing-subject';
+import { QueueingSubject } from 'queueing-subject/lib';
 import { Observable, Subscription } from 'rxjs';
-import websocketConnect, { IWebSocket } from 'rxjs-websockets';
+import websocketConnect, { IWebSocket } from 'rxjs-websockets/lib';
 import { delay, filter, map, retryWhen, share, tap } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../app.config';
-import { WsRequest } from './../interfaces/request.interface';
-import { ResponseBody } from './../interfaces/response.interface';
+import { WsRequest } from '../interfaces/request.interface';
+import { ResponseBody } from '../interfaces/response.interface';
 import { ConstantService } from './constant.service';
 import { TipService } from './tip.service';
 
