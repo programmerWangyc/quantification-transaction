@@ -38,7 +38,7 @@ export interface BacktestConstantConfig extends BacktestConstantOptions {
     yearDays: number;
 }
 
-/** =====================================================Constant======================================================== **/
+// =====================================================Constant========================================================
 
 export const BACKTEST_MODES: BacktestMode[] = [
     { id: 0, name: 'SIMULATION_LEVEL_TICK' },

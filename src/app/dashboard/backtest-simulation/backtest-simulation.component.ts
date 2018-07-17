@@ -108,15 +108,19 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.updateRunningNode(this.runningNode$))
             .add(this.backtestService.launchBacktest(this.startBacktest$))
             .add(this.backtestService.launchOperateBacktest(this.stopBacktest$, BacktestIOType.stopTask, true))
+            .add(this.backtestService.stopRunWorker(this.stopBacktest$))
             .add(this.switchReceiveMsgState().subscribe(state => this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, state)))
     }
 
     /**
-     *  1、停止回测成功后中止接收服务端的推送消息。2、回测任务开始时将开始需要接收消息 3、页而销毁时停止接收消息
+     * 1、停止回测成功后中止接收服务端的推送消息
+     * 2、回测任务开始，且不是本地回测时需要接收消息
+     * 3、页而销毁时停止接收消息
      */
     private switchReceiveMsgState(): Observable<boolean> {
         return merge(
-            this.startBacktest$.pipe(
+            this.backtestService.isLocalBacktest(this.startBacktest$).pipe(
+                filter(isLocalBacktest => !isLocalBacktest),
                 switchMapTo(this.backtestService.isBacktestArgsValid().pipe(
                     filter(isValid => isValid)
                 ))

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
-import { head, isEmpty, isNull, isObject, last, range, zip as lodashZip } from 'lodash';
+import { head, isEmpty, isNull, isNumber, isObject, last, range, zip as lodashZip } from 'lodash';
 import * as moment from 'moment';
-import { concat, from, of, zip } from 'rxjs';
+import { concat, from, merge, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import {
     bufferCount,
@@ -16,6 +16,7 @@ import {
     min,
     reduce,
     startWith,
+    switchMap,
     take,
     takeWhile,
     withLatestFrom,
@@ -23,7 +24,8 @@ import {
 
 import { BaseService } from '../../base/base.service';
 import * as fromRes from '../../interfaces/response.interface';
-import { LogPricePipe } from '../../robot/pipes/robot.pipe';
+import { UtilService } from '../../providers/util.service';
+import { Eid2StringPipe, ExtraContentPipe, LogPricePipe, LogTypePipe } from '../../robot/pipes/robot.pipe';
 import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action';
 import { UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
@@ -35,28 +37,14 @@ import {
     BacktestMaxDrawDownDescription,
     BacktestProfitDescription,
 } from '../backtest.interface';
-import { UtilService } from './../../providers/util.service';
-import { Eid2StringPipe, ExtraContentPipe, LogTypePipe } from './../../robot/pipes/robot.pipe';
 import { BacktestConstantService } from './backtest.constant.service';
 
+export interface MaxDrawdownResultFn {
+    (maxDrawdown: number, [time, profit]: [number, number]): number;
+}
 
-/**
- * 获取交易次数，递归查找所有的 'TradeStatus' 字段，累积其sell， buy字段。
- * @param data 需要查找的对象
- * @returns 交易总次数
- */
-export function getTradeCount(data: Object): number {
-    return Object.entries(data).reduce((acc, [key, value]) => {
-        if (key === 'TradeStatus') { // 定死的Key；
-            const { sell = 0, buy = 0 } = value;
-
-            return acc + sell + buy;
-        } else if (isObject(value)) {
-            return acc + getTradeCount(value);
-        } else {
-            return acc;
-        }
-    }, 0);
+export interface BacktestResultFilterer {
+    (res: fromRes.BacktestResult): boolean;
 }
 
 /**
@@ -81,10 +69,6 @@ export function getProfit(data: Object, initial: { Profit: number; Margin: numbe
     }, initial);
 }
 
-export interface MaxDrawdownResultFn {
-    (maxDrawdown: number, [time, profit]: [number, number]): number;
-}
-
 @Injectable()
 export class BacktestResultService extends BaseService {
     PERIOD = 24 * 60 * 60 * 1000;
@@ -98,19 +82,36 @@ export class BacktestResultService extends BaseService {
         super();
     }
 
+    // ==============================================Shortcut methods============================================
+
     /**
-     *  获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
+     * 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
      */
     protected getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectBacktestIOResponse),
-                filter(res => !!res && (callbackId ? res.action === callbackId : true))
-            );
+        return this.store.pipe(
+            select(fromRoot.selectBacktestIOResponse),
+            filter(res => !!res && (callbackId ? res.action === callbackId : true))
+        );
     }
 
     /**
-     *  custom operator, used to get backtest tasks in store;
+     * 获取回测结果，包括服务端的回测结果及webworker中的回测结果；
+     */
+    getBacktestResult(): Observable<WorkerBacktest.WorkerResult> {
+        const workerRes = this.store.pipe(
+            select(fromRoot.selectWorkerResult),
+            this.filterTruth()
+        );
+
+        const serverRes = this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
+            this.backtestResult()
+        );
+
+        return merge(serverRes, workerRes);
+    }
+
+    /**
+     * custom operator, used to get backtest tasks in store;
      */
     private tasksOperator = () => <T>(source: Observable<T>): Observable<UIState> => {
         return source.pipe(
@@ -132,7 +133,8 @@ export class BacktestResultService extends BaseService {
                 } else {
                     return <fromRes.BacktestResult>JSON.parse(Result);
                 }
-            })
+            }),
+            this.filterTruth()
         );
     }
 
@@ -159,65 +161,24 @@ export class BacktestResultService extends BaseService {
         return moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + "_" + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + ".csv"
     }
 
-    // ============================================================调优状态下的日志信息==================================================================
-
     /**
-     *  获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
+     * 获取回测完成的结果。
+     * @param ignore 结果的过滤函数，接收Code作为参数，当响应的code满足指定条件时将被忽略，输出null。
      */
-    getBacktestLogCols(): Observable<string[]> {
-        return this.store.pipe(
-            this.tasksOperator(),
-            map(state => head(state.backtestTasks).map(item => item.variableDes))
-        );
-    }
-
-    /**
-     *  获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
-     */
-    getBacktestLogRows(): Observable<number[][]> {
-        return this.store.pipe(
-            this.tasksOperator(),
-            map(state => state.backtestTasks.map(data => data.map(task => task.variableValue)))
-        );
-    }
-
-    /**
-     *  生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为null。
-     */
-    getBacktestLogResults(): Observable<BacktestLogResult[]> {
+    getBacktestResults(ignore?: (code: number) => boolean): Observable<fromRes.BacktestResult[]> {
         return this.store.pipe(
             select(fromRoot.selectBacktestResults),
             this.filterTruth(),
-            map(results => {
-                return results.map(result => {
-                    const response = (<fromRes.ServerBacktestResult<string>>result.result);
+            map(results => results.map(result => {
+                const response = (<fromRes.ServerBacktestResult<string>>result.result);
 
-                    if (result.error || response.Code !== ServerBacktestCode.SUCCESS) {
-                        return null;
-                    } else {
-                        const data = <fromRes.BacktestResult>JSON.parse(response.Result);
-
-                        const { Elapsed, Profit, ProfitLogs } = data;
-
-                        const profitLogs = ProfitLogs.map(([time, profit]) => ({ time, profit }));
-
-                        return {
-                            elapsed: Elapsed / this.constant.BACKTEST_RESULT_ELAPSED_RATE,
-                            profit: Profit,
-                            tradeCount: getTradeCount(data),
-                            winningRate: this.unwrap(this.getWinningRate(profitLogs)),
-                            maxDrawdown: this.unwrap(this.getMaxDrawdown(profitLogs)).maxDrawdown,
-                            sharpeRatio: this.unwrap(this.getSharpRatio(profitLogs)),
-                            returns: this.unwrap(this.getAnnualizedReturns(profitLogs))
-                        }
-                    }
-                })
-            })
+                return result.error || ignore && ignore(response.Code) ? null : <fromRes.BacktestResult>JSON.parse(response.Result);
+            }))
         );
     }
 
     /**
-     *  取出 Observable 中的结果;
+     * 取出 Observable 中的结果;
      */
     protected unwrap<T>(obs: Observable<T>): T {
         let result = null;
@@ -228,7 +189,163 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
+     * 当是任务是否已经成功或存在
+     */
+    private isTaskSuccessOrExist(code: number): boolean {
+        return code === ServerBacktestCode.SUCCESS || code === ServerBacktestCode.ALREADY_EXIST;
+    }
+
+    //================================================Backtest status panel===============================================
+
+    /**
+     * 获取回测的统计数据。
+     * @param statisticKey 字段名称
+     */
+    getBacktestStatistics(statisticKey: string, filterer: BacktestResultFilterer = res => res.Finished): Observable<number> {
+        return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
+            switchMap(results => from(results).pipe(
+                this.filterTruth(),
+                filter(filterer),
+                map(result => {
+                    const statisticRes = result[statisticKey];
+
+                    if (isNumber(statisticRes)) {
+                        return statisticRes;
+                    } else {
+                        throw new TypeError(`The statistic result of ${statisticKey} is not a number.`)
+                    }
+                }),
+                reduce((acc, cur) => acc + cur, 0)
+            ))
+        );
+    }
+
+    /**
+     * 获取回测的进度。
+     */
+    getBacktestProgress(): Observable<number> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState),
+            map(state => state.isOptimizedBacktest),
+            switchMap(isOptimize => isOptimize ? this.getOptimizedBacktestProgress() : this.getNormalBacktestProgress())
+        );
+    }
+
+    /**
+     * 非调优状态下回测时，显示 回测状态的 Progress 字段的值；
+     */
+    private getNormalBacktestProgress(): Observable<number> {
+        const middleStatus = this.store.pipe(
+            select(fromRoot.selectBacktestState),
+            map(state => state.GetTaskStatus),
+            filter(state => !!state && !isNumber(state) && this.isTaskSuccessOrExist(state.Code)),
+            map((status: fromRes.ServerBacktestResult<string>) => {
+                const { Code, Result } = status;
+
+                const result = <fromRes.BacktestResult>JSON.parse(Result);
+
+                return result.Progress;
+            })
+        );
+
+        const completeStatus = this.getBacktestResults().pipe(
+            switchMap(results => from(results).pipe(
+                filter(result => result.Finished),
+                map(result => result.Progress),
+                take(1)
+            ))
+        );
+
+        return merge(middleStatus, completeStatus);
+    }
+
+    /**
+     * 调优状态下回测，显示 已完成的任务 / 任务总数；
+     */
+    private getOptimizedBacktestProgress(): Observable<number> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState),
+            filter(state => !!state.backtestTasks),
+            map(state => state.backtestTasks.length || 1),
+            withLatestFrom(this.store.pipe(
+                select(fromRoot.selectBacktestResults),
+                this.filterTruth(),
+                map(results => results.length)
+            ),
+                (total, completed) => (completed / total) * 100
+            )
+        );
+    }
+
+    /**
+     * 获取交易次数，从各个包含 'TradeStatus' 字段的数据上统计交易次数。累积其sell， buy字段。
+     * @param data 回测结果
+     * @returns 交易总次数
+     */
+    private calTradeCount(data: fromRes.BacktestResult): number {
+        const { TradeStatus, Snapshort, Snapshorts } = data;
+
+        const acc = (acc: number, cur: number) => acc + cur;
+
+        const cal = (data: fromRes.BacktestResultTradeStatus): number => Object.values(data || {}).reduce(acc, 0);
+
+        const calShort = (data: fromRes.BacktestResultSnapshot[]) => data ? data.map(item => cal(item.TradeStatus)).reduce(acc, 0) : 0;
+
+        const calShorts = (data: fromRes.BacktestSnapShots[]) => data && data.length > 0 ? calShort(data[data.length - 1][1]) : 0;
+
+        return cal(TradeStatus) + calShort(Snapshort) + calShorts(Snapshorts);
+    }
+
+    /**
+     * 获取交易次数总计；
+     */
+    getTradeCount(): Observable<number> {
+        return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
+            switchMap(results => from(results).pipe(
+                filter(res => res.Finished),
+                map(res => this.calTradeCount(res)),
+                reduce((acc, cur) => acc + cur, 0)
+            )),
+            filter(count => !isNaN(count))
+        );
+    }
+
+    /**
+     * 获取当前正在回测的任务的序号
+     */
+    getIndexOfBacktestingTask(): Observable<number> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState),
+            map(state => state.backtestingTasIndex),
+            filter(idx => !!idx),
+            startWith(0)
+        );
+    }
+
+    // ============================================================调优状态下的日志信息==================================================================
+
+    /**
+     * 获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
+     */
+    getBacktestLogCols(): Observable<string[]> {
+        return this.store.pipe(
+            this.tasksOperator(),
+            map(state => head(state.backtestTasks).map(item => item.variableDes))
+        );
+    }
+
+    /**
+     * 获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
+     */
+    getBacktestLogRows(): Observable<number[][]> {
+        return this.store.pipe(
+            this.tasksOperator(),
+            map(state => state.backtestTasks.map(data => data.map(task => task.variableValue)))
+        );
+    }
+
+    /**
+     * 获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
      */
     protected getWinningRate(source: BacktestProfitDescription[]): Observable<number> {
         if (!source || source.length === 0) {
@@ -248,12 +365,12 @@ export class BacktestResultService extends BaseService {
 
                     return wins / source.length;
                 })
-            )
+            );
         }
     }
 
     /**
-     *  获取最大回撤的信息集合；
+     * 获取最大回撤的信息集合；
      */
     protected getMaxDrawdown(source: BacktestProfitDescription[]): Observable<BacktestMaxDrawDownDescription> {
         return this.getTotalAssets().pipe(
@@ -283,7 +400,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取总资产；默认优先使用余币的值。
+     * 获取总资产；默认优先使用余币的值。
      */
     protected getTotalAssets(isBalancePrior = false): Observable<number> {
         return this.store.pipe(
@@ -360,7 +477,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取回测的时间周期
+     * 获取回测的时间周期
      */
     protected getTimeRange(): Observable<{ start: number; end: number }> {
         return this.store.pipe(
@@ -395,7 +512,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取年化交易天数，使用回测交易平台中的最小值。
+     * 获取年化交易天数，使用回测交易平台中的最小值。
      */
     protected getYearDays(): Observable<number> {
         return this.store.pipe(
@@ -415,7 +532,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  获取年化预估收益
+     * 获取年化预估收益
      */
     protected getAnnualizedReturns(source: BacktestProfitDescription[]): Observable<number> {
         if (isEmpty(source)) return of(0);
@@ -449,6 +566,31 @@ export class BacktestResultService extends BaseService {
             this.getTotalAssets()
         ).pipe(
             map(([yearDays, { start, end }, totalAssets]) => ({ yearDays, start, end, totalAssets }))
+        );
+    }
+
+    /**
+     * 生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为null。
+     */
+    getBacktestLogResults(): Observable<BacktestLogResult[]> {
+        const generateLogResult = (data: fromRes.BacktestResult): BacktestLogResult => {
+            const { Elapsed, Profit, ProfitLogs } = data;
+
+            const profitLogs = ProfitLogs.map(([time, profit]) => ({ time, profit }));
+
+            return {
+                elapsed: Elapsed / this.constant.BACKTEST_RESULT_ELAPSED_RATE,
+                profit: Profit,
+                tradeCount: this.calTradeCount(data),
+                winningRate: this.unwrap(this.getWinningRate(profitLogs)),
+                maxDrawdown: this.unwrap(this.getMaxDrawdown(profitLogs)).maxDrawdown,
+                sharpeRatio: this.unwrap(this.getSharpRatio(profitLogs)),
+                returns: this.unwrap(this.getAnnualizedReturns(profitLogs))
+            }
+        }
+
+        return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
+            map(results => results.map(result => !!result ? generateLogResult(result) : null))
         );
     }
 
@@ -526,35 +668,33 @@ export class BacktestResultService extends BaseService {
     // ============================================================非调优状态下的帐户信息==================================================================
 
     /**
-     *  获取未调优状态下的回测结果。
+     * 获取未调优状态下的回测结果。
      * @param futuresDataFilter: 期货的数据过滤器，用来在生成期货信息时过滤出有效的snapshot。
      */
     getBacktestAccountInfo(futuresDataFilter = (data: fromRes.BacktestResultSnapshot) => !!data.Symbols): Observable<BacktestAccount[]> {
-        return this.getBacktestIOResponse(BacktestOperateCallbackId.result)
-            .pipe(
-                this.backtestResult(),
-                map(data => {
-                    const { Exchanges } = data.Task;
+        return this.getBacktestResult().pipe(
+            map(data => {
+                const { Exchanges } = data.Task;
 
-                    const { Snapshorts, Snapshort, Time } = data;
+                const { Snapshorts, Snapshort, Time } = data;
 
-                    const snapshotList = Snapshort ? <fromRes.BacktestSnapShots[]>[[Time, Snapshort]] : Snapshorts || [];
+                const snapshotList = Snapshort ? <fromRes.BacktestSnapShots[]>[[Time, Snapshort]] : Snapshorts || [];
 
-                    const snapshots = lodashZip(...snapshotList.map(([time, snapshots]) => snapshots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
+                const snapshots = lodashZip(...snapshotList.map(([time, snapshots]) => snapshots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
 
-                    return Exchanges.map((exchange, index) => {
-                        const account = this.getAccountInitialInfo(exchange);
+                return Exchanges.map((exchange, index) => {
+                    const account = this.getAccountInitialInfo(exchange);
 
-                        const source = snapshots[index];
+                    const source = snapshots[index];
 
-                        return account.isFutures ? this.getFuturesAccount(account, source, futuresDataFilter) : this.getAccount(account, source);
-                    })
+                    return account.isFutures ? this.getFuturesAccount(account, source, futuresDataFilter) : this.getAccount(account, source);
                 })
-            );
+            })
+        );
     }
 
     /**
-     *  获取非期货的帐户信息；
+     * 获取非期货的帐户信息；
      */
     private getAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
         const subSnapshots = source.filter(this.curry2Right(this.isValidSnapshot)(account));
@@ -571,14 +711,14 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  计算收益值；
+     * 计算收益值；
      */
     private calculateProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): number {
         return snapshot.Balance + snapshot.FrozenBalance - account.initialBalance + (snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks) * snapshot.Symbols[account.symbol].Last;
     }
 
     /**
-     *  获取期货的帐户信息；
+     * 获取期货的帐户信息；
      */
     private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[], filter: (data: fromRes.BacktestResultSnapshot) => boolean): BacktestAccount {
         const subSnapshots = source.filter(filter);
@@ -602,7 +742,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  计算期货的收益值；
+     * 计算期货的收益值；
      */
     private calculateFuturesProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount, initial = 0): number {
         return account.isFuturesOkCoin ? initial + snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks :
@@ -610,7 +750,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  计算snapshot时的判定函数。
+     * 计算snapshot时的判定函数。
      */
     private isValidSnapshot(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): boolean {
         const { Symbols } = snapshot;
@@ -619,7 +759,7 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     *  生成帐户的初始信息。
+     * 生成帐户的初始信息。
      */
     protected getAccountInitialInfo(source: fromRes.BacktestResultExchange): BacktestAccount {
         const { Id, BaseCurrency, QuoteCurrency, Balance, Stocks } = source;
@@ -650,8 +790,7 @@ export class BacktestResultService extends BaseService {
      * 获取回测的运行日志
      */
     private getRuntimeLogs(): Observable<fromRes.RuntimeLog[]> {
-        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
-            this.backtestResult(),
+        return this.getBacktestResult().pipe(
             filter(({ RuntimeLogs }) => !!RuntimeLogs && !!RuntimeLogs.length),
             map(({ RuntimeLogs }) => RuntimeLogs)
         );
@@ -671,7 +810,7 @@ export class BacktestResultService extends BaseService {
      */
     getRunningLogs(): Observable<fromRes.RunningLog[]> {
         return this.getRuntimeLogs().pipe(
-            map(logs => this.utilService.getRunningLogs(logs))
+            map(logs => this.utilService.getRunningLogs(logs, true))
         );
     }
 

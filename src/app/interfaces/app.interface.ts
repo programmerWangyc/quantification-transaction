@@ -1,6 +1,6 @@
 import { NavigationExtras } from '@angular/router';
 
-/** ==========================================================Global======================================== **/
+// ==========================================================Global========================================
 
 export interface Breadcrumb {
     name: string;
@@ -13,7 +13,7 @@ export interface RouterInfo {
     extras?: NavigationExtras;
 }
 
-/** ==========================================================Front end custom data structure======================================== **/
+// ==========================================================Front end custom data structure========================================
 
 export interface Referrer {
     refUser: string;

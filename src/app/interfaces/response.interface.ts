@@ -128,7 +128,7 @@ export interface ExchangeListResponse {
 export interface GetExchangeListResponse extends ResponseUnit<ExchangeListResponse> { }
 
 
-/** ===================================================Robot========================================= **/
+// ===================================================Robot=========================================
 
 // robot list
 export interface Robot {
@@ -377,7 +377,7 @@ export interface PluginRunResult {
 
 export interface PluginRunResponse extends ResponseUnit<string> { }
 
-/** ===================================================Node list========================================= **/
+// ===================================================Node list=========================================
 
 // node list
 export interface BtNode {
@@ -403,7 +403,7 @@ export interface NodeListResponse {
 
 export interface GetNodeListResponse extends ResponseUnit<NodeListResponse> { }
 
-/** ===================================================Platform list========================================= **/
+// ===================================================Platform list=========================================
 
 // platform list
 export interface Platform {
@@ -422,12 +422,12 @@ export interface PlatformListResponse {
 
 export interface GetPlatformListResponse extends ResponseUnit<PlatformListResponse> { }
 
-/** ===================================================Watch dog========================================= **/
+// ===================================================Watch dog=========================================
 
 // robot watch dog
 export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
 
-/** ===================================================Strategy============================================== **/
+// ===================================================Strategy==============================================
 
 // strategy list
 export enum StrategyPublicState {
@@ -536,7 +536,7 @@ export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailRe
 // save strategy
 export interface SaveStrategyResponse extends ResponseUnit<string | boolean> { }
 
-/** ===================================================Backtest============================================== **/
+// ===================================================Backtest==============================================
 
 // get templates
 export interface TemplatesResponse {
@@ -731,7 +731,7 @@ export interface ServerBacktestResult<T> {
 
 export interface BacktestIOResponse extends ResponseUnit<ServerBacktestResult<string | BacktestResult> | string | number> { } // string: 解析后的结果就是 ServerBacktestResult;
 
-/** ===================================================Charge============================================== **/
+// ===================================================Charge==============================================
 
 export interface PayOrder {
     date: string;

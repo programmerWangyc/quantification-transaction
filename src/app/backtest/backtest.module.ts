@@ -41,7 +41,6 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         ChartModule.forRoot(
             require('highcharts/highstock')
         ),
-        // WorkerAppModule,
     ],
     declarations: [
         AccountInfoComponent,

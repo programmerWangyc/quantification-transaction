@@ -103,7 +103,10 @@ export function getBacktestErrorMessage(result: string | number | ServerBacktest
     }
 }
 
-export function isBacktestFail(response: BacktestIOResponse): boolean {
+/**
+ * Whether BacktestIO api execute fail;
+ */
+function isBacktestFail(response: BacktestIOResponse): boolean {
     return !!response.error || !!getBacktestErrorMessage(isNumber(response.result) ? response.result : JSON.parse(<string>response.result));
 }
 

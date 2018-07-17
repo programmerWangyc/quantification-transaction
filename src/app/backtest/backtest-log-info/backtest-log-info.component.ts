@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 
-import { RunningLog } from './../../interfaces/response.interface';
-import { BacktestResultService } from './../providers/backtest.result.service';
+import { RunningLog } from '../../interfaces/response.interface';
+import { BacktestResultService } from '../providers/backtest.result.service';
 
 @Component({
     selector: 'app-backtest-log-info',

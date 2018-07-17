@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Robot, RobotPublicStatus, RobotStatus } from '../../interfaces/response.interface';
+import { ConstantService } from '../../providers/constant.service';
 import { RobotOperateType } from '../../store/robot/robot.reducer';
 import { RobotConstantService } from '../providers/robot.constant.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { LogTypes } from '../robot.config';
-import { ConstantService } from './../../providers/constant.service';
 
 
 @Pipe({

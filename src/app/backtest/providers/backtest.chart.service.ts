@@ -8,7 +8,7 @@ import { filter, map, mergeMap, reduce, take, withLatestFrom } from 'rxjs/operat
 
 import * as fromRes from '../../interfaces/response.interface';
 import { ChartService } from '../../providers/chart.service';
-import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action';
+import { UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
 import { BacktestRuntimeLogType } from '../backtest.config';
 import {
@@ -18,7 +18,6 @@ import {
     BacktestProfitDescription,
     BacktestStrategyCharts,
 } from '../backtest.interface';
-import { UtilService } from './../../providers/util.service';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestResultService } from './backtest.result.service';
 import { BacktestSandboxService, SymbolRecord } from './backtest.sandbox.service';
@@ -77,11 +76,10 @@ export class BacktestChartService extends BacktestResultService {
      * 获取回测结果的行情数据，供生成图表使用；
      */
     getQuotaChartOptions(): Observable<BacktestChart[]> {
-        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
-            this.backtestResult(),
+        return this.getBacktestResult().pipe(
             withLatestFrom(this.getTimeRange()),
             map(([res, { start }]) => {
-                const { Symbols, RuntimeLogs, Indicators } = res;
+                const { Symbols = [], RuntimeLogs = [], Indicators = {} } = res;
 
                 const orderLogs = this.getOrderLogs(RuntimeLogs);
 
@@ -671,9 +669,9 @@ export class BacktestChartService extends BacktestResultService {
      * 获取收益曲线的highcharts配置。
      */
     getProfitCurveOptions(): Observable<Highstock.Options> {
-        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
-            this.backtestResult(),
+        return this.getBacktestResult().pipe(
             map(({ ProfitLogs }) => ProfitLogs),
+            filter(logs => !!logs),
             withLatestFrom(this.getTotalAssets(true)),
             mergeMap(([profitLogs, totalAssets]) => {
                 const profit = profitLogs.map(([time, profit]) => ({ time, profit }));
@@ -692,8 +690,7 @@ export class BacktestChartService extends BacktestResultService {
      * 获取策略图表的原始数据
      */
     private getStrategyChartSource(): Observable<BacktestStrategyCharts> {
-        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
-            this.backtestResult(),
+        return this.getBacktestResult().pipe(
             filter(({ Chart }) => !!Chart && !!Chart.Cfg),
             map(({ Chart }) => {
                 try {

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
 import { UtilService } from '../../providers/util.service';
+import { BacktestChartComponent } from '../backtest-chart/backtest-chart.component';
 import { BacktestChartService } from '../providers/backtest.chart.service';
-import { BacktestChartComponent } from './../backtest-chart/backtest-chart.component';
 
 @Component({
     selector: 'app-profit-curve',

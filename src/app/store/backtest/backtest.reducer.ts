@@ -52,6 +52,8 @@ export interface UIState {
     platformOptions: BacktestSelectedPair[];
     runningNode: number;
     timeOptions: BacktestTimeConfig;
+    backtestingTasIndex: number;
+    isOptimizedBacktest: boolean;
 }
 
 export const defaultAdvancedOptions: AdvancedOption = { log: 8000, profit: 8000, chart: 3000, slipPoint: 0, delay: 200, faultTolerant: 0.5, barLen: 300 };
@@ -74,6 +76,8 @@ export const initialUIState: UIState = {
         end: null,
         klinePeriodId: K_LINE_PERIOD.find(item => item.minutes === 15).id,
     },
+    backtestingTasIndex: 0,
+    isOptimizedBacktest: false,
 }
 
 export interface RequestParams {
@@ -110,6 +114,7 @@ export interface State {
     serverMessages: ServerSendBacktestMessage<BacktestResult>[];
     templates: TemplatesResponse[];
     templatesRes: GetTemplatesResponse;
+    workerResult: WorkerBacktest.WorkerResult;
 }
 
 const initialRequestParams = {
@@ -135,12 +140,16 @@ const initialState: State = {
     serverMessages: null,
     templates: [],
     templatesRes: null,
+    workerResult: null
 }
 
+/**
+ * @ignore
+ */
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
 
-        /** ==============================================Api action===================================================== **/
+        // ==============================================Api action=====================================================
 
         // get templates
         case actions.GET_TEMPLATES:
@@ -159,6 +168,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 backtestState: { GetTaskResult: null, PutTask: null, GetTaskStatus: null, DelTask: null, StopTask: null },
                 serverMessage: null,
                 requestParams: { ...state.requestParams, backtestReq: action.payload },
+                UIState: { ...state.UIState, backtestingTasIndex: state.UIState.backtestingTasIndex + 1 },
             };
 
         case actions.GET_BACKTEST_RESULT:
@@ -191,10 +201,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.DELETE_BACKTEST_TASK_SUCCESS: {
             const result = getBacktestResult(action.payload);
 
+            const isComplete = state.UIState.backtestTasks.length === 0 ? true : state.backtestResults.length === state.UIState.backtestTasks.length;
+
             return {
                 ...state,
                 backtestRes: { ...action.payload, result },
-                backtestState: { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
+                backtestState: isComplete ? initialBacktestState : { ...state.backtestState, [actions.backtestCallbackIdMapType.get(action.payload.action)]: result },
             };
         }
 
@@ -227,13 +239,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     ...state.UIState,
                     backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
                     isBacktesting: !isResultsAllReceived,
-                    isForbiddenBacktest: !isResultsAllReceived
+                    isForbiddenBacktest: !isResultsAllReceived,
+                    backtestingTasIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTasIndex,
                 }
             };
         }
 
 
-        /** ==============================================Server send message===================================================== **/
+        // ==============================================Server send message=====================================================
 
         // server send message
         case actions.RECEIVE_SERVER_SEND_BACKTEST_EVENT: {
@@ -246,7 +259,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, serverMessage, serverMessages, UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE } };
         }
 
-        /** ==============================================Local action===================================================== **/
+        // ==============================================Local action=====================================================
 
         // time range
         case actions.UPDATE_SELECTED_TIME_RANGE:
@@ -297,14 +310,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GENERATE_TO_BE_TESTED_VALUES: {
             const backtestCode = generateToBeTestedValues(state.UIState.backtestCode);
 
-            // TODO: 在 service 中需要处理 backtest的空值，给用户提示。此时回测任务不应该被发出去
             // 清空回测结果，服务端推送的消息，backtestIO的响应以及回测的状态。
             return {
                 ...state,
                 UIState: {
                     ...state.UIState,
                     backtestCode,
-                    backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler)
+                    backtestTasks: filterBacktestTasks(generateBacktestTasks(backtestCode), state.UIState.backtestTaskFiler),
+                    isOptimizedBacktest: state.UIState.backtestCode.some(code => code.args.some(arg => arg.isOptimizing)),
                 },
                 ...resetState(),
             };
@@ -318,6 +331,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.TOGGLE_BACKTEST_LOADING_STATE:
             return {
                 ...state,
+                backtestResults: [],
+                backtestState: initialBacktestState,
+                backtestRes: null,
+                workerResult: null,
                 UIState: {
                     ...state.UIState,
                     isBacktesting: true,
@@ -328,7 +345,44 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // reset backtest related state
         case actions.RESET_BACKTEST_RELATED_STATE:
-            return { ...state, ...resetState(), UIState: { ...state.UIState, backtestTasks: null, backtestMilestone: null, backtestTaskFiler: null, } };
+            return initialState;
+
+        // webworker success
+        case actions.WORKER_BACKTEST_SUCCESS: {
+            const result = action.payload;
+
+            const isResultsAllReceived = result.Finished;
+
+            const forgeResponse = { error: null, result: { Code: 0, Result: JSON.stringify(result) }, action: actions.BacktestOperateCallbackId.result };
+
+            const backtestResults = state.backtestResults ? [...state.backtestResults, forgeResponse] : [forgeResponse];
+
+            return {
+                ...state,
+                workerResult: action.payload,
+                backtestResults,
+                backtestRes: forgeResponse,
+                UIState: {
+                    ...state.UIState,
+                    isBacktesting: !isResultsAllReceived,
+                    isForbiddenBacktest: !isResultsAllReceived,
+                    backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
+                    backtestingTasIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTasIndex,
+                }
+            };
+        }
+
+        // webworker status updated
+        case actions.WORKER_BACKTEST_STATUS_UPDATED:
+            return {
+                ...state,
+                backtestState: { ...state.backtestState, GetTaskStatus: { Code: 0, Result: JSON.stringify(action.payload) } }
+            }
+
+        // backtesting index;
+        case actions.INCREASE_BACKTESTING_TASK_INDEX: {
+            return { ...state, UIState: { ...state.UIState, backtestingTasIndex: state.UIState.backtestingTasIndex + 1 } };
+        }
 
         default:
             return state;
@@ -336,18 +390,17 @@ export function reducer(state = initialState, action: actions.Actions): State {
 }
 
 /**
+ * 是否回测的主代码，也就是策略代码或模板代码。
  * @param data 回测代码
- *  是否回测的主代码，也就是策略代码或模板代码。
  */
 function isMineCode(data: BacktestCode): boolean {
     return data.name === MAIN_CODE_FLAG;
 }
 
 /**
- *
- * @param fresh 新代码，大部分情况下应该是策略依赖的模板代码，只有每次进来的时候才是策略的代码。
+ * 更新store中存储的需要参与回测的代码，包括策略代码和它依赖的模板。
+ * @param fresh 新代码，大部分情况下应该是策略依赖的模板代码，只有首次进来的时候才是策略的代码。
  * @param list 回测的代码集合，store中存储的值。
- *  更新store中存储的需要参与回测的代码，包括策略代码和它依赖的模板。
  */
 function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
     const index = list.findIndex(item => item.name === fresh.name);
@@ -359,7 +412,7 @@ function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
     }
 
     if (index < 0) {
-        return [...list, fresh];
+        return [fresh, ...list]; // 顺序不能变，策略代码必须放在最后；
     } else {
         list[index] = fresh;
 
@@ -368,8 +421,7 @@ function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
 }
 
 /**
- * @function generateToBeTestedValues
- *  如果代码中的参数设置了调优，根据调优设置成新的字段存储被测试的参数值，同时生成回测任务，
+ * 如果代码中的参数设置了调优，根据调优设置成新的字段存储被测试的参数值，同时生成回测任务，
  */
 function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
     return data.map(code => {
@@ -382,8 +434,7 @@ function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
 }
 
 /**
- * @function getToBeTestedValues
- *  根据参数的调优设置生成需要测试的值。
+ * 根据参数的调优设置生成需要测试的值。
  */
 function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
     let { step, begin, end } = data;
@@ -410,28 +461,26 @@ function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
 }
 
 /**
- * @function generateBacktestTasks
- *  根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
+ * 根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
  */
 function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][] {
     let tasks: BacktestTaskDescription[][] = null;
 
-    from(data)
-        .pipe(
-            map(({ id, name, args }) => ({ id, name, args: <OptimizedVariableOverview[]>args.filter(arg => arg.toBeTestedValues) })),
-            filter(data => !!data.args.length),
-            concatMap(({ args, name }) => from(args).pipe(
-                map(arg => arg.toBeTestedValues.map(value => ({
-                    file: name,
-                    variableName: arg.variableName,
-                    variableDes: arg.variableDes,
-                    variableValue: value
-                })))
-            )),
-            reduce((acc: BacktestTaskDescription[][], cur: BacktestTaskDescription[]) => acc.length === 0 ?
-                cur.map(item => [item]) : flatten(acc.map(group => cur.map(item => [...group, item]))),
-                []
-            ),
+    from(data).pipe(
+        map(({ id, name, args }) => ({ id, name, args: <OptimizedVariableOverview[]>args.filter(arg => arg.toBeTestedValues) })),
+        filter(data => !!data.args.length),
+        concatMap(({ args, name }) => from(args).pipe(
+            map(arg => arg.toBeTestedValues.map(value => ({
+                file: name,
+                variableName: arg.variableName,
+                variableDes: arg.variableDes,
+                variableValue: value
+            })))
+        )),
+        reduce((acc: BacktestTaskDescription[][], cur: BacktestTaskDescription[]) => acc.length === 0 ?
+            cur.map(item => [item]) : flatten(acc.map(group => cur.map(item => [...group, item]))),
+            []
+        ),
     ).subscribe(result => tasks = result);
 
     return tasks;
@@ -442,8 +491,7 @@ interface FilterPredicateFun {
 }
 
 /**
- * @function filterBacktestTasks
- *  过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
+ * 过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
  */
 function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[]): BacktestTaskDescription[][] {
     if (!filters || !filters.length) return data;
@@ -454,9 +502,8 @@ function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[
 }
 
 /**
- * @function filterPredicateFunFactory
+ * 生成过滤器判定函数的工厂函数。
  * @param filter - 参数过滤器
- *  生成过滤器判定函数的工厂函数。
  * @returns 返回的函数用来判定回测任务的参数设置是否符合过滤器的描述。当参数设置符合过滤器的描述时，判定函数返回true，反之返回false。
  */
 function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
@@ -488,7 +535,7 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
 }
 
 /**
- *  获取回测的结果，将结果解析出来。
+ * 获取回测的结果，将结果解析出来。
  */
 function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestResult> {
     let { result } = payload
@@ -497,7 +544,7 @@ function getBacktestResult(payload: BacktestIOResponse): string | number | Serve
 }
 
 /**
- *  重置store的状态，恢复到初始状态。
+ * 重置store的状态，恢复到初始状态。
  */
 function resetState(): any {
     return {
@@ -526,3 +573,5 @@ export const getServerSendMessage = (state: State) => state.serverMessage;
 export const getBacktestServerMessages = (state: State) => state.serverMessages;
 
 export const getBacktestResults = (state: State) => state.backtestResults;
+
+export const getWorkerResult = (state: State) => state.workerResult;

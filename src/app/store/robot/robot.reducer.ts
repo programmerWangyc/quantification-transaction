@@ -402,7 +402,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RUN_PLUGIN_SUCCESS:
             return { ...state, pluginRunRes: action.payload, uiState: { ...state.uiState, debugLoading: false } };
 
-        /** ==============================================Local action===================================================== **/
+        // ==============================================Local action=====================================================
 
         // strategy arguments
         case actions.MODIFY_ROBOT_ARG: {
@@ -476,7 +476,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 restartRobotRes: null,
             }
 
-        /** ==============================================Server send message===================================================== **/
+        // ==============================================Server send message=====================================================
 
         // server send message
         case actions.RECEIVE_SERVER_SEND_ROBOT_EVENT: {

@@ -1,12 +1,12 @@
 <div fxLayoutAlign="space-around center" class="backtest-info">
     <div fxLayoutAlign="space-between center">
         <h5>{{'BACKTEST_TASK' | translate}}</h5>
-        <span>{{completedTasks | async}} / {{tasks | async}}</span>
+        <span>{{processingTaskIndex | async}} / {{tasks | async}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
         <h5>{{'PROGRESS' | translate}}</h5>
-        <nz-progress [nzPercent]="percent | async | number: '1.0-2'" nzType="circle" nzWidth="64"></nz-progress>
+        <nz-progress [nzPercent]="progress | async | number: '1.0-2'" nzType="circle" nzWidth="64"></nz-progress>
     </div>
 
     <div fxLayoutAlign="space-between center">

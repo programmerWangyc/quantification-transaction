@@ -627,5 +627,7 @@
     "MAX_PROFIT": "最高收益：{{profit}}",
     "MAX_DRAWDOWN_PROFIT": "最大回撤： {{maxDrawDown}}，累计收益：{{profit}}",
     "EVENT": "事件",
-    "FLOATING_PL_CHART_DASH": "虚线指最大回撤区间"
+    "FLOATING_PL_CHART_DASH": "虚线指最大回撤区间",
+    "BACKTEST_PROFIT_CURVE_TIP": "LogProfit打印的数字",
+    "BACKTEST_HISTORY_INFO_EMPTY": "获取历史数据失败或为空，请稍后或更改时间段重试。"
 }

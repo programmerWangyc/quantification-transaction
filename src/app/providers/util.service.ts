@@ -5,7 +5,7 @@ import { from as observableFrom, Observable } from 'rxjs';
 import { groupBy, map, mergeMap, reduce } from 'rxjs/operators';
 
 import { ChartSize } from '../interfaces/app.interface';
-import { RunningLog } from './../interfaces/response.interface';
+import { RunningLog } from '../interfaces/response.interface';
 
 
 export interface GroupedList<T> {
@@ -13,9 +13,19 @@ export interface GroupedList<T> {
     values: T[];
 }
 
-export function getRunningLogs(source: (string | number)[][]): RunningLog[] {
+/**
+ * 获取运行日志，source里的元素将被转换成字典形式。
+ * @param source Source data of log;
+ * @param isBacktest Wether the source data produced by backtest or robot;
+ * @returns 字典形式的运行日志；
+ */
+export function getRunningLogs(source: (string | number)[][], isBacktest = false): RunningLog[] {
     return source.map(ary => {
-        let [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
+        if (isBacktest) {
+            var [id, date, logType, eid, orderId, price, amount, extra, contractType, direction] = ary;
+        } else {
+            var [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
+        }
 
         return {
             id: <number>id,
@@ -37,6 +47,9 @@ export class UtilService {
 
     constructor() { }
 
+    /**
+     * @ignore
+     */
     toArray<T>(value: T): T[] {
         return isArray(value) ? value : [value];
     }
@@ -83,7 +96,7 @@ export class UtilService {
     }
 
     /**
-     * 获取运行日志，此方法会将长度为10的数组转换成字典形式。
+     * @ignore
      */
     getRunningLogs = getRunningLogs
 }

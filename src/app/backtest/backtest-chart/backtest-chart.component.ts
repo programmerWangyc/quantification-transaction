@@ -3,8 +3,8 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { bufferCount, delay, map, switchMap } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { UtilService } from '../../providers/util.service';
 import { BacktestChart, BacktestChartService } from '../providers/backtest.chart.service';
-import { UtilService } from './../../providers/util.service';
 
 @Component({
     selector: 'app-backtest-chart',

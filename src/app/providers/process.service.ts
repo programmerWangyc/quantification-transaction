@@ -21,6 +21,9 @@ import * as RobotActions from '../store/robot/robot.action';
 import { TipService } from './tip.service';
 import { BacktestIOType } from '../interfaces/request.interface';
 
+/**
+ * @ignore
+ */
 @Injectable()
 export class ProcessService {
 
@@ -193,6 +196,18 @@ export class ProcessService {
             const Action = getAction(params);
 
             this.store.dispatch(new Action(params))
+        });
+    }
+
+    processWorkBacktest(result: Observable<WorkerBacktest.WorkerResult>): Subscription {
+        return result.subscribe(result => {
+            const { Finished } = result;
+
+            if (Finished) {
+                this.store.dispatch(new BacktestActions.WorkerBacktestSuccessAction(result))
+            } else {
+                this.store.dispatch(new BacktestActions.WorkerBacktestStatusUpdatedAction(result));
+            }
         });
     }
 

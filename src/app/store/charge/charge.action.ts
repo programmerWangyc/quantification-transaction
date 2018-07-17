@@ -4,7 +4,7 @@ import { GetPaymentArgRequest } from '../../interfaces/request.interface';
 import { GetPaymentArgResponse, GetPayOrdersResponse, ServerSendPaymentMessage } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
-/** =====================================================Server send event========================================= **/
+// =====================================================Server send event=========================================
 
 // payment success
 export const RECEIVE_SERVER_SEND_PAYMENT_EVENT = 'RECEIVE_SERVER_SEND_PAYMENT_EVENT';

@@ -36,7 +36,7 @@ import { ImportedArg } from '../../robot/robot.interface';
 import { ApiAction } from '../base.action';
 
 
-/** =====================================================Server send event========================================= **/
+// =====================================================Server send event=========================================
 
 export const RECEIVE_SERVER_SEND_ROBOT_EVENT = '[Robot] RECEIVE_SERVER_SEND_ROBOT_EVENT';
 
@@ -46,7 +46,7 @@ export class ReceiveServerSendRobotEventAction implements Action {
     constructor(public payload: ServerSendRobotMessage) { }
 }
 
-/** =====================================================Robot list========================================= **/
+// =====================================================Robot list=========================================
 
 export enum RobotListOrder {
     start,
@@ -93,7 +93,7 @@ export class GetRobotListSuccessAction extends GetRobotListAction implements Act
     constructor(public payload: GetRobotListResponse) { super() }
 }
 
-/** =====================================================Public robot========================================= **/
+// =====================================================Public robot=========================================
 
 export enum PublicRobotOrder {
     id,
@@ -139,7 +139,7 @@ export class PublicRobotSuccessAction extends PublicRobotAction implements Actio
     constructor(public payload: PublicRobotResponse) { super() }
 }
 
-/** =====================================================Robot Detail========================================= **/
+// =====================================================Robot Detail=========================================
 
 class GetRobotDetailAction extends ApiAction {
     isSingleParams = true;
@@ -179,7 +179,7 @@ export class GetRobotDetailSuccessAction extends GetRobotDetailAction implements
     constructor(public payload: GetRobotDetailResponse) { super() }
 }
 
-/** =====================================================Robot Subscribe========================================= **/
+// =====================================================Robot Subscribe=========================================
 
 class SubscribeRobotAction extends ApiAction {
     isSingleParams = true;
@@ -219,7 +219,7 @@ export class SubscribeRobotSuccessAction extends SubscribeRobotAction implements
     constructor(public payload: SubscribeRobotResponse) { super() }
 }
 
-/** =====================================================Robot logs========================================= **/
+// =====================================================Robot logs=========================================
 
 export enum RobotLogsOrder {
     robotId,
@@ -276,7 +276,7 @@ export class GetRobotLogsSuccessAction extends GetRobotLogsAction implements Act
     constructor(public payload: GetRobotLogsResponse) { super() }
 }
 
-/** =====================================================Robot restart========================================= **/
+// =====================================================Robot restart=========================================
 
 class RestartRobotAction extends ApiAction {
     isSingleParams = true;
@@ -316,7 +316,7 @@ export class RestartRobotSuccessAction extends RestartRobotAction implements Act
     constructor(public payload: RestartRobotResponse) { super() }
 }
 
-/** =====================================================Robot stop========================================= **/
+// =====================================================Robot stop=========================================
 
 class StopRobotAction extends ApiAction {
     isSingleParams = true;
@@ -356,7 +356,7 @@ export class StopRobotSuccessAction extends StopRobotAction implements Action {
     constructor(public payload: StopRobotResponse) { super() }
 }
 
-/** ======================================================Modify robot========================================= **/
+// ======================================================Modify robot=========================================
 
 export enum ModifyRobotOrder {
     id,
@@ -407,7 +407,7 @@ export class ModifyRobotSuccessAction extends ModifyRobotAction implements Actio
     constructor(public payload: ModifyRobotResponse) { super() }
 }
 
-/** ======================================================Command robot========================================= **/
+// ======================================================Command robot=========================================
 
 export enum CommandRobotOrder {
     id,
@@ -453,7 +453,7 @@ export class CommandRobotSuccessAction extends CommandRobotAction implements Act
     constructor(public payload: CommandRobotResponse) { super() }
 }
 
-/** ======================================================Delete robot========================================= **/
+// ======================================================Delete robot=========================================
 
 export enum DeleteRobotOrder {
     id,
@@ -499,7 +499,7 @@ export class DeleteRobotSuccessAction extends DeleteRobotAction implements Actio
     constructor(public payload: DeleteRobotResponse) { super() }
 }
 
-/** ======================================================Create robot========================================= **/
+// ======================================================Create robot=========================================
 
 export enum SaveRobotOrder {
     name,
@@ -550,7 +550,7 @@ export class SaveRobotSuccessAction extends SaveRobotAction implements Action {
     constructor(public payload: SaveRobotResponse) { super() }
 }
 
-/** ======================================================Plugin run========================================= **/
+// ======================================================Plugin run=========================================
 
 export class PluginRunAction extends ApiAction {
     isSingleParams = true;
@@ -594,7 +594,7 @@ export class PluginRunSuccessAction extends PluginRunAction implements Action {
     constructor(public payload: PluginRunResponse) { super() }
 }
 
-/** ======================================================Local action========================================= **/
+// ======================================================Local action=========================================
 
 export const RESET_ROBOT_DETAIL = '[Robot] RESET_ROBOT_DETAIL';
 

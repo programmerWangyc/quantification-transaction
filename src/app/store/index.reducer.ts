@@ -277,8 +277,7 @@ export const selectGetTemplatesResponse = createSelector(getBacktest, backtest.g
 export const selectTemplatesResponses = createSelector(getBacktest, backtest.getTemplates);
 
 /**
- * @function selectBacktestTemplates
- *  把模板拿到后，检查是否获取过模板的源码，将获取过的源码添加到模板上以避免重复获取。
+ * 把模板拿到后，检查是否获取过模板的源码，将获取过的源码添加到模板上以避免重复获取。
  */
 export const selectBacktestTemplates = createSelector(selectTemplateSnapshots, selectTemplatesResponses, (snapshots, sources) => snapshots.map(snapshot => {
     const target = sources.find(item => item.id === snapshot.id);
@@ -301,3 +300,6 @@ export const selectBacktestServerMessages = createSelector(getBacktest, backtest
 
 // backtest results
 export const selectBacktestResults = createSelector(getBacktest, backtest.getBacktestResults);
+
+// webworker result
+export const selectWorkerResult = createSelector(getBacktest, backtest.getWorkerResult);

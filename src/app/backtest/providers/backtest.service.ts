@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { environment } from 'environments/environment';
 import { isEmpty, isNull, isNumber } from 'lodash';
-import { concat, merge, never, Observable, of, Subscription, zip } from 'rxjs';
+import { combineLatest, concat, never, Observable, of, Subscription, zip } from 'rxjs';
 import {
     distinct,
     distinctUntilChanged,
     filter,
     map,
     mapTo,
+    mergeMap,
     partition,
     skip,
     switchMap,
@@ -29,13 +30,13 @@ import * as Actions from '../../store/backtest/backtest.action';
 import { isStopBacktestFail } from '../../store/backtest/backtest.effect';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { Language } from '../../strategy/strategy.config';
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
 import { BacktestMilestone, ServerBacktestCode } from '../backtest.config';
 import { BacktestCode, BacktestSelectedPair, TimeRange } from '../backtest.interface';
 import { BacktestComputingService } from './backtest.computing.service';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { BacktestParamService } from './backtest.param.service';
-import { getTradeCount } from './backtest.result.service';
 
 @Injectable()
 export class BacktestService extends BacktestParamService {
@@ -47,49 +48,88 @@ export class BacktestService extends BacktestParamService {
         private publicService: PublicService,
         private computeService: BacktestComputingService,
         public tipService: TipService,
+        private router: Router,
     ) {
         super(store, constant);
     }
 
     //  =======================================================Serve Request=======================================================
 
+    /**
+     * 回测入口函数；
+     * @param start 用户发起的开始回测的信号
+     */
     launchBacktest(start: Observable<boolean>): Subscription {
-        // TODO: 本地回测时使用，用于发出本地回测的信号。
-        // const signal = language
-        //     .map(lan => lan === Language.JavaScript)
-        //     .withLatestFrom(
-        //         this.getStrategyDetail().map(strategy => strategy.is_owner),
-        //         (isJS, isOwner) => isJS && isOwner
-        //     )
+        const [atLocal, atServer] = partition((atLocal: boolean) => atLocal)(this.isLocalBacktest(start))
 
+        const server$$ = this.startServerBacktest(atServer);
+
+        const local$$ = this.startLocalBacktest(atLocal);
 
         /**
-         *  回测前的动作：根据参数配置项生成需要测试的任务；
+         * 回测前的动作：根据参数配置项生成需要测试的任务；
          */
         const generateToBeTestedValue$$ = start.subscribe(_ => this.store.dispatch(new Actions.GenerateToBeTestedValuesAction()));
 
-        return this.launchServerBacktest(this.guardBacktestStart(start))
-            .add(generateToBeTestedValue$$)
-            //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
-            .add(this.launchOperateBacktest(
-                this.store.pipe(
-                    select(fromRoot.selectBacktestServerSendMessage),
-                    this.filterTruth()
-                ),
-                BacktestIOType.getTaskResult
-            ))
-            // 删除回测任务，在获取taskResult成功之后，将任务删除。
-            .add(this.launchOperateBacktest(
-                this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result),
-                BacktestIOType.deleteTask
-            ))
+        return local$$
+            .add(server$$)
+            .add(generateToBeTestedValue$$);
     }
 
     /**
-     *  服务端回测；
+     * 发起服务端回测
+     */
+    private startServerBacktest(start: Observable<boolean>): Subscription {
+
+        //回测任务完成，也就是收到服务端的消息之外，拉取回测结果
+        return this.launchOperateBacktest(
+            this.store.pipe(
+                select(fromRoot.selectBacktestServerSendMessage),
+                this.filterTruth(),
+                takeUntil(this.router.events) // FIXME: 从路由的变化结束流，有点恶心。
+            ),
+            BacktestIOType.getTaskResult
+        )
+            // 删除回测任务，在获取taskResult成功之后，将任务删除。
+            .add(this.launchOperateBacktest(
+                this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result).pipe(
+                    map(res => !!this.error.getBacktestError(res.result)),
+                    filter(err => !err)
+                ),
+                BacktestIOType.deleteTask
+            ))
+            .add(this.launchServerBacktest(this.guardBacktestStart(start)))
+    }
+
+    /**
+     * 是否在客户端进行回测
+     * @param start 用户发起的回测信号
+     * @returns 执行回测的位置信号，true: 在客户端使用webworker进行回测；false：通知服务端进行回测
+     */
+    isLocalBacktest(start: Observable<boolean>): Observable<boolean> {
+        const result = zip(
+            this.store.pipe(
+                select(fromRoot.selectStrategyUIState),
+                map(state => state.selectedLanguage === Language.JavaScript),
+            ),
+            this.getStrategyDetail().pipe(
+                map(strategy => strategy.is_owner)
+            )
+        ).pipe(
+            map(([isJS, isOwner]) => isJS && isOwner),
+            take(1)
+        );
+
+        return start.pipe(
+            switchMapTo(result)
+        );
+    }
+
+    /**
+     * 服务端回测；
      * 1、第一个回测任务立即发起；
      * 2、之后的回测任务在当前回测的结果响应后发起，也就是上个回测任务的 result 接收完成后再发起。
-     * FIXME: 下一个回测任务应该在，收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
+     * FIXME: 下一个回测任务应该在收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
      * 结果与请求无法对应，因此暂时在当前的任务结果接收完成后再发起下一次任务。
      * 2、之后的回测任务需要在服务端推送消息，也就是上个回测任务结束之后再发起。
      */
@@ -125,70 +165,43 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * TODO:
-     * @method launchLocalBacktest
-     *  本地回测，在webworker中进行
+     * 本地回测，在webworker中进行
      */
-    private launchLocalBacktest(signal: Observable<boolean>): Subscription {
-
-        const [isPro, isDev] = partition((flag: boolean) => flag)(
-            signal.pipe(
-                filter(res => res),
-                mapTo(environment.production)
+    private startLocalBacktest(signal: Observable<boolean>): Subscription {
+        const params = combineLatest(
+            this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
+                tap(res => !res && this.publicService.launchGetSettings(of(SettingTypes.backtest_javascript))),
+                this.filterTruth()
+            ),
+            this.generatePutTaskParams(),
+            this.store.pipe(
+                select(fromRoot.selectWorkerResult),
+                map(res => !res ? {} : res.httpCache || {})
             )
+        ).pipe(
+            take(1),
+            mergeMap(([blob, task, cache]) => {
+                this.store.dispatch(new Actions.IncreaseBacktestingTaskIndex());
+
+                return this.computeService.run({ task, blob, cache })
+            })
         );
 
-        const jsSetting$$ = this.launchJSSetting(isPro);
-
-        const devEnvBacktest = isDev
-            .pipe(
-                switchMapTo(this.generatePutTaskParams()
-                    .pipe(
-                        map(task => ({ task, uri: '本地中的地址', blob: '' }))
-                    ) // 本地调试时 blob 为空。
-                )
-            );
-
-        const proEnvBacktest = isPro
-            .pipe(
-                switchMapTo(this.store.select(fromRoot.selectSettingsResponse)
-                    .pipe(
-                        filter(res => !res.error),
-                        switchMapTo(this.publicService.getSetting(SettingTypes.backtest_javascript) as Observable<string>),
-                        withLatestFrom(
-                            this.generatePutTaskParams(),
-                            (blob, task) => ({ task, blob, uri: '打包后放在服务器上的地址' })
-                        )
-                    )
-                )
-            );
-
-        return this.computeService.handleBacktestInWorker(
-            merge(devEnvBacktest, proEnvBacktest)
-        )
-            .add(jsSetting$$);
-    }
-
-    private launchJSSetting(signal: Observable<boolean>): Subscription {
-        return this.publicService.launchGetSettings(
-            signal.pipe(
-                tap(_ => fromRoot.selectSettingsResponse.release()),
-                mapTo(SettingTypes.backtest_javascript)
-            )
-        );
+        return this.process.processWorkBacktest(this.guardBacktestStart(signal).pipe(
+            switchMapTo(params)
+        ));
     }
 
     /**
-     * @method launchGetTemplates
-     *  获取模板的逻辑依赖于当前的选中的模板中是否有源码，如果没有源码，在用户选中模板后去获取源码，不会重复获取。
+     * 获取模板的逻辑依赖于当前的选中的模板中是否有源码，如果没有源码，在用户选中模板后去获取源码，不会重复获取。
      */
     launchGetTemplates(): Subscription {
         return this.process.processGetTemplates(this.getTemplatesParams());
     }
 
     /**
+     * 获取操作的参数，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测。
      * @param taskType 回测任务的类型，BacktestIOType 中除了 putTask 以外的类型。
-     *  获取操作的参数，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测。
      */
     private getBacktestTaskParams(taskType: string): Observable<BacktestIORequest> {
         const partialParam = withLatestFrom(
@@ -206,22 +219,23 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @method launchOperateBacktest
-     * @param { Observable } command: 操作指令，指定操作应该发生的时机。
-     * @param { string } taskType: 指令的类型
-     * @param { boolean } force: 是否强制发起，默认情况下只在回测开关开启时才发起任务。
-     *  发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
+     * 发起对当前回测任务的操作，包括轮询回测的状态，获取回测的结果，停止回测，杀掉回测等。
+     * @param command: 操作指令，指定操作应该发生的时机。
+     * @param taskType: 指令的类型
+     * @param force: 是否强制发起，默认情况下只在回测开关开启时才发起任务。
      */
-    launchOperateBacktest(command: Observable<any>, taskType: string, force = false): Subscription {
+    launchOperateBacktest(command: Observable<any>, taskType: string, force: boolean = false): Subscription {
         const params = this.getBacktestTaskParams(taskType).pipe(
             take(1)
         );
+
+        const serverMsgSubscribeState = this.publicService.getServerMsgSubscribeState(fromRes.ServerSendEventType.BACKTEST);
 
         return this.process.processBacktestIO(
             command.pipe(
                 switchMapTo(
                     force ? params : params.pipe(
-                        withLatestFrom(this.publicService.getServerMsgSubscribeState(fromRes.ServerSendEventType.BACKTEST)),
+                        withLatestFrom(serverMsgSubscribeState),
                         filter(([_, onOff]) => onOff),
                         map(([params, _]) => params)
                     )
@@ -231,8 +245,8 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     *  回测开始的守卫。用户发起的回测动作只有经过守卫难以后才可以发起。
-     *  注意：loading 的 false 状态逻辑只存在于 store 中。
+     * 回测开始的守卫。用户发起的回测动作只有经过守卫以后才可以发起。
+     * 注意：loading 的 false 状态逻辑只存在于 store 中。
      */
     private guardBacktestStart(wantStart: Observable<boolean>): Observable<boolean> {
         return wantStart.pipe(
@@ -244,37 +258,44 @@ export class BacktestService extends BacktestParamService {
         );
     }
 
+    /**
+     * 停止在webworker中的回测任务。
+     */
+    stopRunWorker(command: Observable<any>): Subscription {
+        return this.computeService.stopRun(command);
+    }
+
     //  =======================================================Data acquisition=======================================================
 
     getTemplatesParams(): Observable<GetTemplatesRequest> {
-        return this.getSelectedTemplates()
-            .pipe(
-                map(templates => templates.filter(item => !item.source).map(item => item.id)),
-                filter(ids => ids.length > 0),
-                distinct(),
-                map(ids => ({ ids }))
-            );
+        return this.getSelectedTemplates().pipe(
+            map(templates => templates.filter(item => !item.source).map(item => item.id)),
+            filter(ids => ids.length > 0),
+            distinct(),
+            map(ids => ({ ids }))
+        );
     }
 
     private getGetTemplatesResponse(): Observable<fromRes.GetTemplatesResponse> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectGetTemplatesResponse),
-                this.filterTruth()
-            );
+        return this.store.pipe(
+            select(fromRoot.selectGetTemplatesResponse),
+            this.filterTruth()
+        );
     }
 
     /**
-     *  获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
+     * 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
      */
     private getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
-        return this.store
-            .pipe(
-                select(fromRoot.selectBacktestIOResponse),
-                filter(res => !!res && (callbackId ? res.action === callbackId : true))
-            );
+        return this.store.pipe(
+            select(fromRoot.selectBacktestIOResponse),
+            filter(res => !!res && (callbackId ? res.action === callbackId : true))
+        );
     }
 
+    /**
+     * 获取 putTask 的成功后的响应，putTask 成功响应字段中的 Result 即为 uuid。获取此ID后才能对任务发起接下去的操作，如查询结果，停止回测等。
+     */
     private filterPutTaskSuccessfulResponse(): Observable<fromRes.ServerBacktestResult<string>> {
         return this.store.pipe(
             select(fromRoot.selectBacktestState),
@@ -290,7 +311,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     *  获取当前回测任务的uuid
+     * 获取当前回测任务的uuid
      */
     private getUUid(): Observable<string> {
         return this.filterPutTaskSuccessfulResponse().pipe(
@@ -300,15 +321,8 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     *  获取回测任务的结果。
+     * 停止回测是否执行成功
      */
-    getBacktestTaskResults(): Observable<fromRes.BacktestIOResponse[]> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestResults),
-            this.filterTruth()
-        );
-    }
-
     isStopSuccess(): Observable<boolean> {
         return this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.stop).pipe(
             map(res => !isStopBacktestFail(res))
@@ -318,28 +332,25 @@ export class BacktestService extends BacktestParamService {
     //  =======================================================UI state =======================================================
 
     getSelectedKlinePeriod(): Observable<number> {
-        return this.getUIState()
-            .pipe(
-                map(res => res.timeOptions.klinePeriodId)
-            );
+        return this.getUIState().pipe(
+            map(res => res.timeOptions.klinePeriodId)
+        );
     }
 
     getSelectedTimeRange(): Observable<TimeRange> {
-        return this.getUIState()
-            .pipe(
-                map(res => {
-                    const { start, end } = res.timeOptions;
+        return this.getUIState().pipe(
+            map(res => {
+                const { start, end } = res.timeOptions;
 
-                    return { start, end }; // may be null;
-                })
-            );
+                return { start, end }; // may be null;
+            })
+        );
     }
 
     getAdvancedOptions(): Observable<AdvancedOption> {
-        return this.getUIState()
-            .pipe(
-                map(res => res.advancedOptions)
-            );
+        return this.getUIState().pipe(
+            map(res => res.advancedOptions)
+        );
     }
 
     /**
@@ -350,46 +361,27 @@ export class BacktestService extends BacktestParamService {
      * 4、获取日志时显示 正在拉取回测日志
      */
     getBacktestBtnText(): Observable<string> {
-        return this.getUIState()
-            .pipe(
-                map(state => {
-                    const { backtestMilestone, isBacktesting } = state;
+        return this.getUIState().pipe(
+            map(state => {
+                const { backtestMilestone, isBacktesting } = state;
 
-                    if (!isNull(backtestMilestone)) {
-                        return BacktestMilestone[backtestMilestone];
-                    } else {
-                        return isBacktesting ? 'BACKTESTING' : 'START_BACKTEST';
-                    }
-                })
-            );
+                if (!isNull(backtestMilestone)) {
+                    return BacktestMilestone[backtestMilestone];
+                } else {
+                    return isBacktesting ? 'BACKTESTING' : 'START_BACKTEST';
+                }
+            })
+        );
     }
 
     getBacktestTaskFilters(): Observable<Filter[]> {
-        return this.getUIState()
-            .pipe(
-                map(res => res.backtestTaskFiler)
-            );
-    }
-
-    /**
-     *  回测进度 = 收到的服务器响应数 / 回测任务数
-     */
-    getBacktestProgress(): Observable<number> {
         return this.getUIState().pipe(
-            filter(state => !!state.backtestTasks),
-            map(state => state.backtestTasks.length || 1),
-            withLatestFrom(this.store.pipe(
-                select(fromRoot.selectBacktestServerMessages),
-                this.filterTruth(),
-                map(messages => messages.length)
-            ),
-                (total, completed) => (completed / total) * 100
-            )
+            map(res => res.backtestTaskFiler)
         );
     }
 
     /**
-     *  是否处于回测中状态。
+     * 是否处于回测中状态。
      */
     isBacktesting(): Observable<boolean> {
         return this.getUIState().pipe(
@@ -398,47 +390,7 @@ export class BacktestService extends BacktestParamService {
     }
 
     /**
-     * @param {string} statistic - 字段名称
-     *  获取回测的统计数据。
-     */
-    getBacktestStatistics(statistic: string): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestResults),
-            this.filterTruth(),
-            map(results => results.map(item => {
-                const { Result, Code } = <fromRes.ServerBacktestResult<string>>item.result;
-
-                if (Code === ServerBacktestCode.SUCCESS) {
-                    const messages = <fromRes.BacktestResult>JSON.parse(Result);
-
-                    return messages[statistic];
-                } else {
-                    return 0;
-                }
-            })
-                .reduce((acc, cur) => acc + cur, 0)
-            )
-        );
-    }
-
-    /**
-     *  获取交易次数总计；
-     */
-    getTradeCount(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestResults),
-            this.filterTruth(),
-            map(messages => messages.reduce((acc, cur) => {
-                const { Result, Code } = <fromRes.ServerBacktestResult<string>>cur.result;
-
-                return Code === ServerBacktestCode.SUCCESS ? getTradeCount(JSON.parse(Result)) + acc : acc;
-            }, 0)),
-            filter(count => !isNaN(count))
-        );
-    }
-
-    /**
-     *  回测的参数是否设置正确。
+     * 回测的参数是否设置正确。
      * 1、不是调优回测时，默认为 true；
      * 2、调优回测时，是否生成了可供回测的参数组合；
      */
@@ -447,7 +399,7 @@ export class BacktestService extends BacktestParamService {
             filter(({ backtestCode, backtestTasks }) => !!backtestCode && !!backtestTasks),
             map(({ backtestCode, backtestTasks }) => this.isOptimizing(backtestCode) ? !isEmpty(backtestTasks) : true),
             take(1)
-        )
+        );
     }
 
     //  =======================================================Local state change=======================================================

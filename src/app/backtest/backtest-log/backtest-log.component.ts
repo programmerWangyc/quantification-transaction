@@ -21,7 +21,7 @@ export class BacktestLogComponent implements OnInit {
 
     logs: Observable<BacktestLogResult[]>;
 
-    tasks: number[][];
+    tasks: number[][] = [];
 
     canSave: Observable<boolean>;
 

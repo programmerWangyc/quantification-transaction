@@ -6,7 +6,7 @@ import { BacktestIORequest, BacktestIOType, GetTemplatesRequest } from '../../in
 import { BacktestIOResponse, GetTemplatesResponse, ServerSendBacktestMessage } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
-/** =====================================================Server send event========================================= **/
+// =====================================================Server send event=========================================
 
 export const RECEIVE_SERVER_SEND_BACKTEST_EVENT = '[Backtest] RECEIVE_SERVER_SEND_BACKTEST_EVENT';
 
@@ -350,45 +350,68 @@ export class ResetBacktestRelatedStateAction implements Action {
     readonly type = RESET_BACKTEST_RELATED_STATE;
 }
 
+export const WORKER_BACKTEST_SUCCESS = '[Backtest] WORKER_BACKTEST_SUCCESS';
+
+export class WorkerBacktestSuccessAction implements Action {
+    readonly type = WORKER_BACKTEST_SUCCESS;
+
+    constructor(public payload: WorkerBacktest.WorkerResult) { }
+}
+
+export const WORKER_BACKTEST_STATUS_UPDATED = '[Backtest] WORKER_BACKTEST_STATUS_UPDATED';
+
+export class WorkerBacktestStatusUpdatedAction implements Action {
+    readonly type = WORKER_BACKTEST_STATUS_UPDATED;
+
+    constructor(public payload: WorkerBacktest.WorkerResult) { }
+}
+
+export const INCREASE_BACKTESTING_TASK_INDEX = '[Backtest] INCREASE_BACKTESTING_TASK_INDEX';
+
+export class IncreaseBacktestingTaskIndex implements Action {
+    readonly type = INCREASE_BACKTESTING_TASK_INDEX;
+}
+
 export type ApiActions = GetTemplatesRequestAction
+    | BacktestIOFailAction
+    | BacktestIORequestAction
+    | BacktestIOSuccessAction
+    | BacktestResultFailAction
+    | BacktestResultRequestAction
+    | BacktestResultSuccessAction
+    | BacktestStatusFailAction
+    | BacktestStatusRequestAction
+    | BacktestStatusSuccessAction
+    | DeleteBacktestFailAction
+    | DeleteBacktestRequestAction
+    | DeleteBacktestSuccessAction
     | GetTemplatesFailAction
     | GetTemplatesSuccessAction
-    | BacktestIORequestAction
-    | BacktestIOFailAction
-    | BacktestIOSuccessAction
-    | BacktestResultRequestAction
-    | BacktestResultFailAction
-    | BacktestResultSuccessAction
-    | BacktestStatusRequestAction
-    | BacktestStatusFailAction
-    | BacktestStatusSuccessAction
-    | DeleteBacktestRequestAction
-    | DeleteBacktestFailAction
-    | DeleteBacktestSuccessAction
-    | StopBacktestRequestAction
     | StopBacktestFailAction
+    | StopBacktestRequestAction
     | StopBacktestSuccessAction
 
 export type Actions = ApiActions
-    | UpdateSelectedKlinePeriodAction
-    | UpdateFloorKlinePeriodAction
+    | CheckBacktestTemplateCodeAction
+    | GenerateToBeTestedValuesAction
+    | IncreaseBacktestingTaskIndex
+    | OpenBacktestLoadingStateAction
+    | ReceiveServerSendBacktestEventAction
+    | ResetBacktestRelatedStateAction
+    | ToggleBacktestModeAction
     | UpdateBacktestAdvancedOption
-    | UpdateSelectedTimeRangeAction
+    | UpdateBacktestArgFilterAction
+    | UpdateBacktestCodeAction
+    | UpdateBacktestLevelAction
     | UpdateBacktestPlatformOptionAction
     | UpdateBacktestRunningNodeAction
-    | ToggleBacktestModeAction
-    | UpdateBacktestCodeAction
-    | CheckBacktestTemplateCodeAction
-    | UpdateBacktestArgFilterAction
-    | GenerateToBeTestedValuesAction
-    | UpdateBacktestLevelAction
-    | ReceiveServerSendBacktestEventAction
-    | OpenBacktestLoadingStateAction
-    | ResetBacktestRelatedStateAction
+    | UpdateFloorKlinePeriodAction
+    | UpdateSelectedKlinePeriodAction
+    | UpdateSelectedTimeRangeAction
+    | WorkerBacktestStatusUpdatedAction
+    | WorkerBacktestSuccessAction
 
 export const ResponseActions = {
-    GetTemplatesFailAction,
-    GetTemplatesSuccessAction,
     BacktestIOFailAction,
     BacktestIOSuccessAction,
     BacktestResultFailAction,
@@ -397,6 +420,8 @@ export const ResponseActions = {
     BacktestStatusSuccessAction,
     DeleteBacktestFailAction,
     DeleteBacktestSuccessAction,
+    GetTemplatesFailAction,
+    GetTemplatesSuccessAction,
     StopBacktestFailAction,
     StopBacktestSuccessAction,
 }

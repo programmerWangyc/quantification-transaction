@@ -48,32 +48,35 @@ export class PublicService extends BaseService {
     //  =======================================================Server Request=======================================================
 
     launchGetSettings(type: string | Observable<string>, single = true): Subscription {
-        return this.process.processSettings(isString(type) ? observableOf({ type }) : type.pipe(map(type => ({ type }))), single);
+        return this.process.processSettings(
+            isString(type) ? observableOf({ type })
+                : type.pipe(
+                    map(type => ({ type }))
+                ),
+            single
+        );
     }
 
     //  =======================================================Date acquisition=======================================================
 
     getSettingsResponse(): Observable<ResponseState> {
-        return this.store.select(selectSettingsResponse)
-            .pipe(
-                this.filterTruth()
-            );
+        return this.store.select(selectSettingsResponse).pipe(
+            this.filterTruth()
+        );
     }
 
     getSettingState(settingType: string): Observable<boolean> {
-        return this.store.select(selectSettings)
-            .pipe(
-                map(res => !!res[settingType])
-            );
+        return this.store.select(selectSettings).pipe(
+            map(res => !!res[settingType])
+        );
     }
 
     getSetting(settingType: string): Observable<any> {
-        return this.store.select(selectSettings)
-            .pipe(
-                tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType])),
-                filter(settings => !!settings[settingType]),
-                map(settings => settings[settingType])
-            );
+        return this.store.select(selectSettings).pipe(
+            tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType])),
+            filter(settings => !!settings[settingType]),
+            map(settings => settings[settingType])
+        );
     }
 
     // response body information
@@ -82,66 +85,57 @@ export class PublicService extends BaseService {
     }
 
     private getSecurityPublicResponse(): Observable<PublicResponse> {
-        return this.getPublicResponse()
-            .pipe(
-                this.filterTruth()
-            );
+        return this.getPublicResponse().pipe(
+            this.filterTruth()
+        );
     }
 
     getToken(): Observable<string> {
-        return this.getPublicResponse()
-            .pipe(
-                map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token))
-            );
+        return this.getPublicResponse().pipe(
+            map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token))
+        );
     }
 
     isSubAccount(): Observable<boolean> {
-        return this.getToken()
-            .pipe(
-                map(token => typeof token === 'string' && token.indexOf("1|") === 0)
-            );
+        return this.getToken().pipe(
+            map(token => typeof token === 'string' && token.indexOf("1|") === 0)
+        );
     }
 
     getCurrentUser(): Observable<string> {
-        return this.getPublicResponse()
-            .pipe(
-                map(res => res ? res.username : localStorage.getItem(LocalStorageKey.username))
-            );
+        return this.getPublicResponse().pipe(
+            map(res => res ? res.username : localStorage.getItem(LocalStorageKey.username))
+        );
     }
 
     isAdmin(): Observable<boolean> {
-        return this.getSecurityPublicResponse()
-            .pipe(
-                map(res => res.is_admin)
-            );
+        return this.getSecurityPublicResponse().pipe(
+            map(res => res.is_admin)
+        );
     }
 
     isLogin(): Observable<boolean> {
-        return this.getToken()
-            .pipe(
-                map(token => !!token && token.length > 0)
-            );
+        return this.getToken().pipe(
+            map(token => !!token && token.length > 0)
+        );
     }
 
     getError(): Observable<string> {
-        return this.getPublicResponse()
-            .pipe(
-                filter(this.isTruth), map(res => res.error)
-            );
+        return this.getPublicResponse().pipe(
+            filter(this.isTruth), map(res => res.error)
+        );
     }
 
     getBalance(): Observable<number> {
-        return this.getSecurityPublicResponse()
-            .pipe(
-                map(res => res.balance)
-            );
+        return this.getSecurityPublicResponse().pipe(
+            map(res => res.balance)
+        );
     }
 
     getConsumed(): Observable<number> {
-        return this.getSecurityPublicResponse()
-            .pipe(
-                map(res => res.consumed)
-            );
+        return this.getSecurityPublicResponse().pipe(
+            map(res => res.consumed)
+        );
     }
 
     // ui state
@@ -155,11 +149,10 @@ export class PublicService extends BaseService {
 
     // editor config
     getFavoriteEditorConfig(): Observable<EditorConfig> {
-        return this.store.select(selectEditorConfig)
-            .pipe(
-                map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
-                filter(this.isTruth)
-            );
+        return this.store.select(selectEditorConfig).pipe(
+            map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
+            filter(this.isTruth)
+        );
     }
 
     // server message subscribe state
@@ -179,15 +172,13 @@ export class PublicService extends BaseService {
     saveReferrer(): Subscription {
         return combineLatest(
             this.refUser$$,
-            this.checkReferrerUrl()
-                .pipe(
-                    filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0),
-                    startWith('')
-                )
-        )
-            .pipe(
-                map(([refUrl, refUser]) => ({ refUrl, refUser }))
+            this.checkReferrerUrl().pipe(
+                filter(url => url.length > 0 && url.indexOf(`${location.protocol}//${location.hostname}`) !== 0),
+                startWith('')
             )
+        ).pipe(
+            map(([refUrl, refUser]) => ({ refUrl, refUser }))
+        )
             .subscribe(referrer => this.store.dispatch(new SetReferrerAction(referrer)));
     }
 
@@ -222,8 +213,7 @@ export class PublicService extends BaseService {
 
         try {
             referrer = window.top.document.referrer;
-        }
-        catch (e) {
+        } catch (e) {
             if (window.parent) {
                 try {
                     referrer = window.parent.document.referrer;
@@ -250,18 +240,16 @@ export class PublicService extends BaseService {
     }
 
     private updateToken(): Subscription {
-        return this.getToken()
-            .pipe(
-                distinctUntilChanged()
-            )
+        return this.getToken().pipe(
+            distinctUntilChanged()
+        )
             .subscribe(token => localStorage.setItem(LocalStorageKey.token, token || ''));
     }
 
     private updateCurrentUser(): Subscription {
-        return this.getCurrentUser()
-            .pipe(
-                distinctUntilChanged()
-            )
+        return this.getCurrentUser().pipe(
+            distinctUntilChanged()
+        )
             .subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
     }
 

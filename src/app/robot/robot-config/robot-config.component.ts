@@ -134,7 +134,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
         this.subscription$$.unsubscribe();
     }
 
-    /** ====================================Component Shortcut methods======================================= **/
+    // ====================================Component Shortcut methods=======================================
 
     createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
         const { robotName, agent, kLinePeriod } = formValue;

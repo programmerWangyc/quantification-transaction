@@ -39,7 +39,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     disablePeriod = false;
 
-    selectedPeriodId = 3;
+    selectedPeriodId = 2;
 
     isHelpShow = true;
 
@@ -52,6 +52,9 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.modes = this.constant.BACKTEST_MODES;
 
@@ -60,51 +63,69 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         this.initialModel();
 
         this.subscription = this.backtestService.getUIState()
-            .pipe(
-                map(state => state.backtestLevel)
-            )
-            .subscribe(level => this.selectedMode = level);
+            .subscribe(state => {
+                const { floorKlinePeriod, backtestLevel } = state;
+
+                this.selectedMode = backtestLevel;
+
+                this.selectedPeriodId = floorKlinePeriod;
+            });
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
-        this.advancedOptions = this.backtestService.getAdvancedOptions()
-            .pipe(
-                map(options => {
-                    const keys = Object.keys(options);
+        this.advancedOptions = this.backtestService.getAdvancedOptions().pipe(
+            map(options => {
+                const keys = Object.keys(options);
 
-                    return this.constant.ADVANCED_OPTIONS_CONFIG.map(item => {
-                        const key = keys.find(key => item.storageKey === key);
+                return this.constant.ADVANCED_OPTIONS_CONFIG.map(item => {
+                    const key = keys.find(key => item.storageKey === key);
 
-                        item.value = options[key];
+                    item.value = options[key];
 
-                        return item;
-                    })
-                })
-            );
+                    return item;
+                });
+            })
+        );
 
-        this.isFaultTolerantMode = this.backtestService.getUIState()
-            .pipe(
-                map(state => state.isFaultTolerantMode)
-            );
-
+        this.isFaultTolerantMode = this.backtestService.getUIState().pipe(
+            map(state => state.isFaultTolerantMode)
+        );
     }
 
+    /**
+     * Update backtest mode level, simulation or real
+     */
     updateMode(mode: number): void {
         this.backtestService.updateBacktestLevel(mode);
     }
 
+    /**
+     * Update advance option.
+     */
     changeOption(target: AdvancedOptionConfig): void {
         this.backtestService.updateAdvancedOption(target);
     }
 
+    /**
+     * Switch backtest mode, run backtest at fault tolerant mode or not;
+     */
     toggleBacktestMode() {
         this.backtestService.toggleBacktestMode();
     }
 
+    /**
+     * Update floor kline period.
+     */
     updatePeriod(id: number): void {
         this.backtestService.updateFloorKlinePeriod(id);
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }

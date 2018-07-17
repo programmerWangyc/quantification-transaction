@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable ,  Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { isString } from 'lodash';
+import { Observable, of, Subject, Subscription } from 'rxjs';
+import { filter, map, mapTo } from 'rxjs/operators';
 
-import { ArgOptimizeSetting, WorkerBacktest, WorkerBacktestRequest } from '../backtest.interface';
+import { ErrorService } from '../../providers/error.service';
+import { AppState } from '../../store/index.reducer';
+import { ArgOptimizeSetting } from '../backtest.interface';
+
 
 export interface OptimizeArg {
     file: string; // 模板名称
@@ -25,23 +31,110 @@ export interface OptimizedArg {
     running: boolean;
     finished: boolean;
 }
+
 /**
  * TODO: 本地回测时的服务， 和webWorker进行交互的行为应该全部都在这个服务中。
  */
 @Injectable()
 export class BacktestComputingService {
+    worker: Worker;
 
-    constructor() { }
+    private message: Subject<WorkerBacktest.WorkerResult | string>;
 
-    handleBacktestInWorker(data: Observable<WorkerBacktest>): Subscription {
-        return data.subscribe(({ task, blob, uri }) => {
+    private error$$: Subscription;
 
-            // bootstrapWorkerUi('worker.bundle.js');
-            const worker = new Worker(uri);
+    private workerURI = '../../../assets/sandbox/worker_detours.js';
 
-            const params: WorkerBacktestRequest = [task, null, blob]; // TODO: httpCache
+    constructor(
+        private errorService: ErrorService,
+        private store: Store<AppState>,
+    ) {
+    }
 
-            console.log(params, uri);
+    initWorker(): void {
+        this.worker = new Worker(this.workerURI);
+
+        this.worker.addEventListener('message', (event) => {
+            const { ret } = <WorkerBacktest.WorkerBacktestResult>event.data;
+
+            this.message.next(ret);
+
+            const isFinished = (<WorkerBacktest.WorkerResult>ret).Finished;
+
+            isFinished && this.clearWorker();
+        });
+
+        this.worker.addEventListener('error', (event) => {
+            const errorFlags = ['TestEnd', 'OOH', 'history', 'Unexpected token'];
+
+            const { message } = event;
+
+            this.errorService.handleError(
+                of(errorFlags.some(flag => message.includes(flag)) ? 'BACKTEST_HISTORY_INFO_EMPTY' : message)
+            );
+
+            this.clearWorker();
         });
     }
+
+    /**
+     * 在webworker中运行回测。
+     */
+    run(data: WorkerBacktest.WorkerRequestData): Observable<WorkerBacktest.WorkerResult> {
+        if (!this.worker) {
+            this.initWorker();
+        }
+
+        if (this.error$$) {
+            this.error$$.unsubscribe();
+            this.message = null;
+        }
+
+        this.message = new Subject();
+
+        this.error$$ = this.handleWorkerError();
+
+        const { task, blob, cache } = data;
+
+        this.worker.postMessage([task, cache, blob]);
+
+        return this.message.asObservable().pipe(
+            filter(res => !isString(res))
+        ) as Observable<WorkerBacktest.WorkerResult>;
+    }
+
+    stopRun(command: Observable<any>): Subscription {
+        return command.subscribe(_ => this.clearWorker);
+    }
+
+    private clearWorker(): void {
+        if (this.worker) {
+            this.worker.terminate();
+            this.worker = null;
+        }
+
+        this.error$$ && this.error$$.unsubscribe();
+    }
+
+    /**
+     * 回测任务是否失败
+     */
+    private isBacktestFail(): Observable<boolean> {
+        return this.message.asObservable().pipe(
+            map(res => isString(res))
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    private handleWorkerError(): Subscription {
+        return this.errorService.handleError(
+            this.isBacktestFail().pipe(
+                filter(res => res),
+                mapTo('BACKTEST_HISTORY_INFO_EMPTY')
+            )
+        );
+    }
+
 }
