@@ -100,7 +100,7 @@ export class BacktestChartService extends BacktestResultService {
 
                     const seriesTail2 = this.get_BOLL_Alligator_MA_EMA_Series(Indicators, openHighLowClose, recordArr, klinePeriod);
 
-                    const seriesTail3 = this.get_RSI_KDJ_MACD_EMA_Series(Indicators, openHighLowClose, recordArr);
+                    const seriesTail3 = this.get_RSI_KDJ_MACD_Series(Indicators, openHighLowClose, recordArr);
 
                     const option = { ...this.getQuotaChartConfig(start, klinePeriod), yAxis, series: [...partialSeries, seriesTail1, ...seriesTail2, ...seriesTail3] } as Highstock.Options;
 
@@ -137,7 +137,7 @@ export class BacktestChartService extends BacktestResultService {
     private getBacktestOrderLog(data: fromRes.RuntimeLog): BacktestOrderLog {
         const [id, time, logType, eid, orderId, price, amount, extra, contractType, direction] = data;
 
-        const result = { x: time };
+        const result = { x: time, shape: 'flag' };
 
         if (eid === -1) return null;
 
@@ -146,17 +146,17 @@ export class BacktestChartService extends BacktestResultService {
         this.translate.get(['BUY', 'SALE', 'RETRACT', 'PRICE', 'SYMBOL', 'SYMBOL', 'MARKET_PRICE', 'ORDER_ID'])
             .subscribe(result => labels = result);
 
-        const textTail = `${amount}\n${labels.PRICE}:${price < 0 ? labels.MARKET : price}\n${labels.ORDER_ID}:${orderId}\n${labels.SYMBOL}: ${contractType}`;
+        const textTail = `${amount}<br/>${labels.PRICE}:${price < 0 ? labels.MARKET : price}<br/>${labels.ORDER_ID}:${orderId}<br/>${labels.SYMBOL}: ${contractType}`;
 
         switch (logType) {
             case BacktestRuntimeLogType.BUY:
                 return { ...result, title: 'Buy', color: 'red', text: `${labels.BUY}:${textTail}` };
 
             case BacktestRuntimeLogType.SELL:
-                return { ...result, title: 'Sell', color: 'green', text: `${labels.SALE}:${textTail}` };
+                return { ...result, title: 'Sell', color: 'green', text: `${labels.SALE}:${textTail}`, shape: 'circlepin' };
 
             case BacktestRuntimeLogType.CANCEL:
-                return { ...result, title: 'Cancel', text: `${labels.RETRACT}:${orderId}\n${labels.SYMBOL}:${contractType}` };
+                return { ...result, title: 'Cancel', text: `${labels.RETRACT}:${orderId}<br/>${labels.SYMBOL}:${contractType}` };
             default:
                 return null;
         }
@@ -192,9 +192,9 @@ export class BacktestChartService extends BacktestResultService {
     private generateYAxis(indicators: fromRes.BacktestResultIndicators): Highstock.YAxisOptions[] {
         const hasRIS = indicators.RIS;
 
-        let min = hasRIS ? 0 : null;
+        let min = hasRIS ? 0 : undefined;
 
-        let max = hasRIS ? 100 : null;
+        let max = hasRIS ? 100 : undefined;
 
         return [
             { opposite: false, height: '70%', lineWidth: 2, gridLineDashStyle: 'ShortDot', },
@@ -283,7 +283,7 @@ export class BacktestChartService extends BacktestResultService {
         const seriesColor = ['blue', 'red', 'green'];
 
         const getBaseSeries = (decimals = 2): Highcharts.SeriesOptions => {
-            return { lineWidth: 1, linkedTo: 'primary', yAxis: 0, showInLegend: true, type: 'line', tooltip: { valueDecimals: decimals } };
+            return { lineWidth: 1, linkedTo: 'primary', showInLegend: true, type: 'line', tooltip: { valueDecimals: decimals } };
         }
 
         const getName = (prefix: string, periods: number[], tail?: string): string => tail ? `${prefix}(${periods.join(',')}) - ${tail}` : `${prefix}(${periods.join(',')})`;
@@ -295,7 +295,7 @@ export class BacktestChartService extends BacktestResultService {
 
             const seriesNames = [getName('BOLL', periods, 'Upper'), 'Middle', 'Lower'];
 
-            return range(3).map(index => ({ ...getBaseSeries(), name: seriesNames[index], color: seriesColor[index], data: dataArr[index] }));
+            return range(3).map(index => ({ ...getBaseSeries(), yAxis: 0, name: seriesNames[index], color: seriesColor[index], data: dataArr[index] }));
         } else if (indicators.Alligator) {
             const periods = this.combine(indicators.Alligator[0], [13, 8, 5]);
 
@@ -303,7 +303,7 @@ export class BacktestChartService extends BacktestResultService {
 
             const seriesNames = [getName('Alligator', periods, 'Jaw'), 'Teeth', 'Lips'];
 
-            return range(3).map(index => ({ ...getBaseSeries(), name: seriesNames[index], color: seriesColor[index], data: dataArr[index] }));
+            return range(3).map(index => ({ ...getBaseSeries(), yAxis: 0, name: seriesNames[index], color: seriesColor[index], data: dataArr[index] }));
 
         } else {
             const periods = indicators.MA || indicators.EMA || [[7], [30]];
@@ -325,7 +325,7 @@ export class BacktestChartService extends BacktestResultService {
      * 根据indicators生成图表的系列值
      * 检查RSI，KDJ，MACD，EMA；
      */
-    private get_RSI_KDJ_MACD_EMA_Series(indicators: fromRes.BacktestResultIndicators, openHighLowClose: number[][], records: SymbolRecord[]): Highcharts.SeriesOptions[] {
+    private get_RSI_KDJ_MACD_Series(indicators: fromRes.BacktestResultIndicators, openHighLowClose: number[][], records: SymbolRecord[]): Highcharts.SeriesOptions[] {
 
         const getBaseSeries = (color: number): Highcharts.SeriesOptions => {
             const seriesColors = ['#f7a35c', '#7cb5ec', '#666'];

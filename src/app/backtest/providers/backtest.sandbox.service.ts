@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isUndefined } from 'lodash';
 
 export interface SymbolRecord {
     time: number;
@@ -22,9 +23,9 @@ export class BacktestSandboxService {
         if (Array.isArray(arr[0])) {
             for (let i = 0; i < arr.length; i++) {
                 data[i] = [];
-                for (var j = 0; j < (<number[]>arr[i]).length; j++) {
+                for (let j = 0; j <(<number[]>arr[i]).length; j++) {
                     if (!isNaN(arr[i][j])) {
-                        if (typeof openHighLowClose[j] === void 0) {
+                        if (isUndefined(openHighLowClose[j])) {
                             data[i].push([openHighLowClose[openHighLowClose.length - 1][0] + ((j - openHighLowClose.length + 1) * skipMS), arr[i][j]]);
                         } else {
                             data[i].push([openHighLowClose[j][0], arr[i][j]]);
@@ -33,7 +34,7 @@ export class BacktestSandboxService {
                 }
             }
         } else {
-            for (var i = 0; i < arr.length; i++) {
+            for (let i = 0; i < arr.length; i++) {
                 if (!isNaN(<number>arr[i])) {
                     data.push([openHighLowClose[i][0], arr[i]]);
                 }
@@ -185,8 +186,8 @@ export class BacktestSandboxService {
             return [];
         }
 
-        if (records[0].high) {
-            return records.map(record => record.high);
+        if (records[0].close) {
+            return records.map(record => record.close);
         } else {
             return records;
         }
@@ -346,7 +347,7 @@ export class BacktestSandboxService {
     OBV(records: SymbolRecord[]): number[] {
         if (records.length === 0) return [];
 
-        if (typeof (records[0].close) === void 0) throw "argument must KLine";
+        if (isUndefined(records[0].close)) throw "argument must KLine";
 
         const volumes = [];
 
@@ -379,7 +380,7 @@ export class BacktestSandboxService {
             if (i == 0) {
                 TR = records[i].high - records[i].low;
             } else {
-                TR = Math.max(records[i].high - records[i].low, Math.abs(records[i].high - records[i - 1].high), Math.abs(records[i - 1].high - records[i].low));
+                TR = Math.max(records[i].high - records[i].low, Math.abs(records[i].high - records[i - 1].close), Math.abs(records[i - 1].close - records[i].low));
             }
             sum += TR;
             if (i < period) {
