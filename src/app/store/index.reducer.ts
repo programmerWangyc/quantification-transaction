@@ -303,3 +303,6 @@ export const selectBacktestResults = createSelector(getBacktest, backtest.getBac
 
 // webworker result
 export const selectWorkerResult = createSelector(getBacktest, backtest.getWorkerResult);
+
+// whether backtest tasks all complete
+export const selectIsAllBacktestTasksCompleted = createSelector(getBacktest, backtest.isTasksAllCompleted);

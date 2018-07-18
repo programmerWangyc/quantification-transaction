@@ -52,7 +52,7 @@ export interface UIState {
     platformOptions: BacktestSelectedPair[];
     runningNode: number;
     timeOptions: BacktestTimeConfig;
-    backtestingTasIndex: number;
+    backtestingTaskIndex: number;
     isOptimizedBacktest: boolean;
 }
 
@@ -76,7 +76,7 @@ export const initialUIState: UIState = {
         end: null,
         klinePeriodId: K_LINE_PERIOD.find(item => item.minutes === 15).id,
     },
-    backtestingTasIndex: 0,
+    backtestingTaskIndex: 0,
     isOptimizedBacktest: false,
 }
 
@@ -115,6 +115,7 @@ export interface State {
     templates: TemplatesResponse[];
     templatesRes: GetTemplatesResponse;
     workerResult: WorkerBacktest.WorkerResult;
+    isAllTasksCompleted: boolean; // null: 未触发回测任务；true：all complete; false: unfinished;
 }
 
 const initialRequestParams = {
@@ -140,7 +141,8 @@ const initialState: State = {
     serverMessages: null,
     templates: [],
     templatesRes: null,
-    workerResult: null
+    workerResult: null,
+    isAllTasksCompleted: null
 }
 
 /**
@@ -168,7 +170,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 backtestState: { GetTaskResult: null, PutTask: null, GetTaskStatus: null, DelTask: null, StopTask: null },
                 serverMessage: null,
                 requestParams: { ...state.requestParams, backtestReq: action.payload },
-                UIState: { ...state.UIState, backtestingTasIndex: state.UIState.backtestingTasIndex + 1 },
+                UIState: { ...state.UIState, backtestingTaskIndex: state.UIState.backtestingTaskIndex + 1 },
             };
 
         case actions.GET_BACKTEST_RESULT:
@@ -240,7 +242,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
                     isBacktesting: !isResultsAllReceived,
                     isForbiddenBacktest: !isResultsAllReceived,
-                    backtestingTasIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTasIndex,
+                    backtestingTaskIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTaskIndex,
                 }
             };
         }
@@ -256,7 +258,21 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const serverMessages = state.serverMessages ? [...state.serverMessages, serverMessage] : [serverMessage];
 
-            return { ...state, serverMessage, serverMessages, UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE } };
+            const taskCount = state.UIState.backtestTasks.length;
+
+            const resultCount = state.backtestResults ? state.backtestResults.length : 0;
+
+            return {
+                ...state,
+                serverMessage,
+                serverMessages,
+                /**
+                 * 接收到服务器的消息时证明此回测已完成，但此时还未去获取回测结果，所以需要加1;
+                 * 回测任务的长度为0时是未调优回测；调优回测任务长度为0时无法发起任务。
+                 */
+                isAllTasksCompleted: taskCount ? taskCount === resultCount + 1 : true,
+                UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE }
+            };
         }
 
         // ==============================================Local action=====================================================
@@ -367,7 +383,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     isBacktesting: !isResultsAllReceived,
                     isForbiddenBacktest: !isResultsAllReceived,
                     backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
-                    backtestingTasIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTasIndex,
+                    backtestingTaskIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTaskIndex,
                 }
             };
         }
@@ -381,7 +397,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // backtesting index;
         case actions.INCREASE_BACKTESTING_TASK_INDEX: {
-            return { ...state, UIState: { ...state.UIState, backtestingTasIndex: state.UIState.backtestingTasIndex + 1 } };
+            return { ...state, UIState: { ...state.UIState, backtestingTaskIndex: state.UIState.backtestingTaskIndex + 1 } };
         }
 
         default:
@@ -553,6 +569,7 @@ function resetState(): any {
         serverMessages: null,
         backtestResults: null,
         backtestState: initialBacktestState,
+        isAllTasksCompleted: null
     }
 }
 
@@ -575,3 +592,5 @@ export const getBacktestServerMessages = (state: State) => state.serverMessages;
 export const getBacktestResults = (state: State) => state.backtestResults;
 
 export const getWorkerResult = (state: State) => state.workerResult;
+
+export const isTasksAllCompleted = (state: State) => state.isAllTasksCompleted;

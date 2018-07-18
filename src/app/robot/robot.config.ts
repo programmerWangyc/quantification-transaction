@@ -6,16 +6,6 @@ export enum CommandRobotTip {
     invalidCommandLength = 'COMMAND_ROBOT_LENGTH_ERROR_TIP'
 }
 
-export enum LogTypes {
-    BUY,
-    SALE,
-    RETRACT,
-    ERROR,
-    PROFIT,
-    MESSAGE,
-    RESTART
-}
-
 export enum ServerSendRobotEventType {
     UPDATE_STATUS = 1 << 0, // 状态栏
     UPDATE_PROFIT = 1 << 1, //

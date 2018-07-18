@@ -8,10 +8,8 @@ import { TextCenterDirective, TextDirectionDirective } from './directives/style.
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { BytesPipe } from './pipes/bytes.pipe';
-import { FromJSONPipe } from './pipes/from-json.pipe';
-import { OriginDataPipe } from './pipes/origin-data.pipe';
-import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { PIPES } from './pipes/index.pipe';
+import { RunningLogComponent } from './running-log/running-log.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
@@ -23,19 +21,17 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         RouterModule
     ],
     declarations: [
+        ConfirmComponent,
         CustomSnackBarComponent,
-        TextCenterDirective,
-        TextDirectionDirective,
+        FooterComponent,
         IndicatorComponent,
         NavbarComponent,
-        FooterComponent,
-        ConfirmComponent,
-        VerifyPasswordComponent,
-        FromJSONPipe,
-        SafeHtmlPipe,
-        OriginDataPipe,
-        BytesPipe,
+        PIPES,
+        RunningLogComponent,
         SimpleNzConfirmWrapComponent,
+        TextCenterDirective,
+        TextDirectionDirective,
+        VerifyPasswordComponent,
     ],
 
     entryComponents: [
@@ -45,16 +41,14 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         SimpleNzConfirmWrapComponent,
     ],
     exports: [
-        TextCenterDirective,
-        TextDirectionDirective,
+        FooterComponent,
         IndicatorComponent,
         NavbarComponent,
-        FooterComponent,
-        FromJSONPipe,
-        SafeHtmlPipe,
-        OriginDataPipe,
-        BytesPipe,
+        PIPES,
+        RunningLogComponent,
         SimpleNzConfirmWrapComponent,
+        TextCenterDirective,
+        TextDirectionDirective,
     ]
 })
 export class ToolModule { }

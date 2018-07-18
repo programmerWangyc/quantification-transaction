@@ -16,7 +16,6 @@ import {
     reduce,
     scan,
     startWith,
-    switchMap,
     switchMapTo,
     take as observableTake,
     withLatestFrom,
@@ -230,20 +229,6 @@ export class RobotLogService extends BaseService {
                 this.getRobotLogMonitorSoundState(),
                 (hasValidType, isMonitorOpen) => hasValidType && isMonitorOpen
             )
-        );
-    }
-
-    /**
-     *  Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
-     */
-    getRobotLogPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
-        return combineLatest(
-            total,
-            pageSize
-        ).pipe(
-            map(([total, page]) => ({ total, page: Math.ceil(total / page) })),
-            switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),
-            distinctUntilChanged()
         );
     }
 

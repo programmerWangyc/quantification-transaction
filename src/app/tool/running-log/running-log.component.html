@@ -1,12 +1,12 @@
-<nz-table #nzTable [nzData]="logs" [nzPageSize]="20" [nzShowPagination]="false">
+<nz-table #nzTable [nzData]="logs" [nzPageSize]="pageSize" [nzShowPagination]="false">
     <thead>
         <tr>
-            <th>{{'TIME' | translate}}</th>
-            <th>{{'PLATFORM' | translate}}</th>
-            <th nzShowFilter [nzFilters]="filterTypes" (nzFilterChange)="search.next($event)">{{'TYPE' | translate}}</th>
-            <th>{{'PRICE' | translate}}</th>
-            <th>{{'AMOUNT' | translate}}</th>
-            <th>{{'INFORMATION' | translate}}</th>
+            <th bt-text-center>{{'TIME' | translate}}</th>
+            <th bt-text-center>{{'PLATFORM' | translate}}</th>
+            <th bt-text-center nzShowFilter [nzFilters]="filterTypes" (nzFilterChange)="search.next($event)">{{'TYPE' | translate}}</th>
+            <th bt-text-center>{{'PRICE' | translate}}</th>
+            <th bt-text-center>{{'AMOUNT' | translate}}</th>
+            <th bt-text-center>{{'INFORMATION' | translate}}</th>
         </tr>
     </thead>
 

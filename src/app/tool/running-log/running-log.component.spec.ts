@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RobotLogTableComponent } from './robot-log-table.component';
+import { RunningLogComponent } from './running-log.component';
 
-describe('RobotLogTableComponent', () => {
-  let component: RobotLogTableComponent;
-  let fixture: ComponentFixture<RobotLogTableComponent>;
+describe('RunningLogComponent', () => {
+  let component: RunningLogComponent;
+  let fixture: ComponentFixture<RunningLogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RobotLogTableComponent ]
+      declarations: [ RunningLogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RobotLogTableComponent);
+    fixture = TestBed.createComponent(RunningLogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

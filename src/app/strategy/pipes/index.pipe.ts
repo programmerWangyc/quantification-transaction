@@ -4,6 +4,7 @@ import {
     LatestModifyDesPipe,
     RemoveMd5Pipe,
     StrategyNamePipe,
+    TemplateNamePipe,
     VariableToSelectListPipe,
     VariableTypeNamePipe,
     VariableTypePipe,
@@ -13,13 +14,15 @@ import {
 
 
 export const PIPES = [
-    StrategyNamePipe,
-    RemoveMd5Pipe,
     CommandButtonTextPipe,
-    VariableTypePipe,
-    VariableToSelectListPipe,
-    LatestModifyDesPipe,
     ExpireStatusPipe,
+    LatestModifyDesPipe,
+    RemoveMd5Pipe,
+    StrategyNamePipe,
+    TemplateNamePipe,
+    VariableToSelectListPipe,
+    VariableToSelectListPipe,
     VariableTypeNamePipe,
+    VariableTypePipe,
     VariableValuePipe,
 ];

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { includes } from 'lodash';
-import { concat, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
+import { combineLatest, concat, Observable, of, Subject, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
@@ -8,6 +8,7 @@ import { Breadcrumb } from '../../interfaces/app.interface';
 import { BtNode, Platform, RunningLog } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
+import { UtilService } from '../../providers/util.service';
 import { RobotLogService } from '../../robot/providers/robot.log.service';
 import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/robot.operate.service';
 
@@ -73,6 +74,7 @@ export class RobotDebugComponent implements BaseComponent {
         private platformService: PlatformService,
         private robotOperate: RobotOperateService,
         private robotLog: RobotLogService,
+        private utilService: UtilService,
     ) { }
 
     ngOnInit() {
@@ -104,7 +106,7 @@ export class RobotDebugComponent implements BaseComponent {
 
         this.logTotal = this.logs.pipe(map(logs => logs.length));
 
-        this.statistics = this.robotLog.getRobotLogPaginationStatistics(
+        this.statistics = this.utilService.getPaginationStatistics(
             this.logTotal,
             concat(
                 this.pageSize,

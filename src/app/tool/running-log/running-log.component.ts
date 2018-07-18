@@ -5,7 +5,8 @@ import { map, mergeMap, reduce } from 'rxjs/operators';
 
 import { RunningLog } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
-import { LogTypes } from '../robot.config';
+import { LogTypes } from '../tool.config';
+
 
 
 export interface FilterType {
@@ -23,12 +24,11 @@ export const filterTypes: FilterType[] = [
     { text: LogTypes[6], value: LogTypes.RESTART, },
 ];
 @Component({
-
-    selector: 'app-robot-log-table',
-    templateUrl: './robot-log-table.component.html',
-    styleUrls: ['./robot-log-table.component.scss']
+    selector: 'app-running-log',
+    templateUrl: './running-log.component.html',
+    styleUrls: ['./running-log.component.scss']
 })
-export class RobotLogTableComponent implements OnInit {
+export class RunningLogComponent implements OnInit {
     filterTypes = [];
 
     pageSizeSelectorValues = PAGE_SIZE_SELECT_VALUES;

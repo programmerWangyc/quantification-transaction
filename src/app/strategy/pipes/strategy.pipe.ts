@@ -1,11 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
 
+import { VariableType } from '../../app.config';
 import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
-import { StrategyConstantService } from '../providers/strategy.constant.service';
-import { VariableType } from '../../app.config';
 import { StrategyMetaArg } from '../add-arg/add-arg.component';
+import { StrategyConstantService } from '../providers/strategy.constant.service';
 
 
 @Pipe({
@@ -42,6 +42,17 @@ export class RemoveMd5Pipe implements PipeTransform {
         } else {
             return name;
         }
+    }
+}
+
+@Pipe({
+    name: 'templateName'
+})
+export class TemplateNamePipe implements PipeTransform {
+    transform(name: string): string {
+        const index = name.indexOf('|');
+
+        return index > 0 ? name.substring(0, index) : name;
     }
 }
 

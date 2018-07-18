@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { isArray, isString } from 'lodash';
 import * as moment from 'moment';
-import { from as observableFrom, Observable } from 'rxjs';
-import { groupBy, map, mergeMap, reduce } from 'rxjs/operators';
+import { combineLatest, from as observableFrom, Observable } from 'rxjs';
+import { distinctUntilChanged, groupBy, map, mergeMap, reduce, switchMap } from 'rxjs/operators';
 
 import { ChartSize } from '../interfaces/app.interface';
 import { RunningLog } from '../interfaces/response.interface';
@@ -45,7 +46,9 @@ export function getRunningLogs(source: (string | number)[][], isBacktest = false
 @Injectable()
 export class UtilService {
 
-    constructor() { }
+    constructor(
+        private translate: TranslateService,
+    ) { }
 
     /**
      * @ignore
@@ -99,4 +102,18 @@ export class UtilService {
      * @ignore
      */
     getRunningLogs = getRunningLogs
+
+    /**
+     *  Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
+     */
+    getPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
+        return combineLatest(
+            total,
+            pageSize
+        ).pipe(
+            map(([total, page]) => ({ total, page: Math.ceil(total / page) })),
+            switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),
+            distinctUntilChanged()
+        );
+    }
 }

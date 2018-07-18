@@ -1,4 +1,4 @@
-<h6 *ngIf="!!title" [ngClass]="titleClass">{{title | removeMD5}}</h6>
+<h6 *ngIf="!!title" [ngClass]="titleClass">{{title | removeMD5 | templateName}}</h6>
 
 <form nz-form [nzLayout]="'horizontal'" fxLayout="row wrap">
     <nz-form-item *ngFor="let item of args" style="width: 50%;">

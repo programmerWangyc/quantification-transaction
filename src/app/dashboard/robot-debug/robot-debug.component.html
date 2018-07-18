@@ -24,6 +24,6 @@
 
 <div class="debug-info">
     <h3>{{'LOG_INFORMATION' | translate}}</h3>
-    <app-robot-log-table [logs]="logs | async" [pageSize]="pageSize | async" [logTotal]="logTotal | async" [statistics]="statistics | async"
-        (pageSizeChange)="pageSize$.next($event)" (search)="filter$.next($event)"></app-robot-log-table>
+    <app-running-log [logs]="logs | async" [pageSize]="pageSize | async" [logTotal]="logTotal | async" [statistics]="statistics | async"
+        (pageSizeChange)="pageSize$.next($event)" (search)="filter$.next($event)"></app-running-log>
 </div>

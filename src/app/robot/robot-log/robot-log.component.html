@@ -19,5 +19,5 @@
     </div>
 </head>
 
-<app-robot-log-table [logs]="logs | async" (search)="search$.next($event)" [statistics]="statistics | async" (pageChange)="changePage($event)"
-    (pageSizeChange)="onPageSizeChange($event)" [logTotal]="logTotal | async" [pageSize]="pageSize | async"></app-robot-log-table>
+<app-running-log [logs]="logs | async" (search)="search$.next($event)" [statistics]="statistics | async" (pageChange)="changePage($event)"
+    (pageSizeChange)="onPageSizeChange($event)" [logTotal]="logTotal | async" [pageSize]="pageSize | async"></app-running-log>

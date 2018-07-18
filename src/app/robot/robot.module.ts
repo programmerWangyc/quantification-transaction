@@ -20,7 +20,6 @@ import { RobotConfigComponent } from './robot-config/robot-config.component';
 import { RobotDebuggerComponent } from './robot-debugger/robot-debugger.component';
 import { RobotDurationComponent } from './robot-duration/robot-duration.component';
 import { RobotListComponent } from './robot-list/robot-list.component';
-import { RobotLogTableComponent } from './robot-log-table/robot-log-table.component';
 import { RobotLogComponent } from './robot-log/robot-log.component';
 import { RobotOverviewComponent } from './robot-overview/robot-overview.component';
 import { RobotProfitChartComponent } from './robot-profit-chart/robot-profit-chart.component';
@@ -54,7 +53,6 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         RobotStrategyChartComponent,
         RobotDurationComponent,
         RobotDebuggerComponent,
-        RobotLogTableComponent,
     ],
 
     entryComponents: [
@@ -83,7 +81,6 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         RobotStrategyChartComponent,
         RobotDurationComponent,
         RobotDebuggerComponent,
-        RobotLogTableComponent,
     ],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA

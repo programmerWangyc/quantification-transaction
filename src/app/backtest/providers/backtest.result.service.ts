@@ -25,10 +25,10 @@ import {
 import { BaseService } from '../../base/base.service';
 import * as fromRes from '../../interfaces/response.interface';
 import { UtilService } from '../../providers/util.service';
-import { Eid2StringPipe, ExtraContentPipe, LogPricePipe, LogTypePipe } from '../../robot/pipes/robot.pipe';
 import { BacktestOperateCallbackId } from '../../store/backtest/backtest.action';
 import { UIState } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { Eid2StringPipe, ExtraContentPipe, LogPricePipe, LogTypePipe } from '../../tool/pipes/log.pipe';
 import { ServerBacktestCode } from '../backtest.config';
 import {
     BacktestAccount,
@@ -316,7 +316,7 @@ export class BacktestResultService extends BaseService {
     getIndexOfBacktestingTask(): Observable<number> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
-            map(state => state.backtestingTasIndex),
+            map(state => state.backtestingTaskIndex),
             filter(idx => !!idx),
             startWith(0)
         );
@@ -782,7 +782,7 @@ export class BacktestResultService extends BaseService {
             returns: 0,
             symbol: [BaseCurrency, QuoteCurrency, Id].join('_'),
         }
-    }
+}
 
     // ============================================================非调优状态下的日志信息==================================================================
 
