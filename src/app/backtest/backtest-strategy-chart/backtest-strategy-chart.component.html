@@ -3,7 +3,7 @@
     <nz-tabset>
         <nz-tab *ngFor="let item of data | async" [nzTitle]="item.title">
             <div class="chart">
-                <chart type="item.__isStock === false ? 'Chart' : 'StockChart'" [options]="item.option" (load)="chart$.next($event.context)"></chart>
+                <chart [type]="item.option.__isStock === false ? 'Chart' : 'StockChart'" [options]="item.option" (load)="chart$.next($event.context)"></chart>
             </div>
         </nz-tab>
     </nz-tabset>

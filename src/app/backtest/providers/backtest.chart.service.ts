@@ -359,14 +359,18 @@ export class BacktestChartService extends BacktestResultService {
             const result = this.sandbox.ArrToXY(openHighLowClose, this.sandbox.MACD(records, periods[0], periods[1], periods[2]));
 
             const data = result.map((item, index) => {
-                if (index !== 2) {
+                if (index !== 2) { // corresponding to seriesNames; condition: not 'Histogram';
                     return item;
                 } else {
                     return item.map(ele => ({ x: ele[0], y: ele[1], color: ele[1] < 0 ? '#ffa6a6' : '#a6d3a6' }))
                 }
             });
 
-            return range(3).map(index => ({ ...getBaseSeries(index), name: seriesNames[index], data: data[index], }));
+            return range(3).map(index => {
+                const result = { ...getBaseSeries(index), name: seriesNames[index], data: data[index], };
+
+                return index !== 2 ? result : { ...result, type: 'column' };
+            });
         }
     }
 
@@ -548,17 +552,17 @@ export class BacktestChartService extends BacktestResultService {
      * @param initialNetWorth total assets;
      * @param title Tab title
      */
-    private generateChartOptions(profit: BacktestProfitDescription[], initialNetWorth: number, showWinningRate?: number): Observable<Highstock.Options> {
+    private generateChartOptions(profit: BacktestProfitDescription[], initialNetWorth: number, winningRate?: number): Observable<Highstock.Options> {
         return this.getChartOptionSource(profit).pipe(
             take(1),
             map(source => {
                 const series = this.generateSeries(profit, source);
 
-                const subtitle = this.generateSubtitle(initialNetWorth, source, showWinningRate);
+                const subtitle = this.generateSubtitle(initialNetWorth, source, winningRate);
 
                 return this.getProfitChartConfig(series, subtitle);
             })
-        )
+        );
     }
 
     /**
@@ -573,7 +577,7 @@ export class BacktestChartService extends BacktestResultService {
             totalReturns: (totalReturns * 100).toFixed(3) + '%',
             yearDays,
             annualizedReturns: (annualizedReturns * 100).toFixed(3) + '%',
-            volatility: volatility === 0 ? '--' : volatility.toFixed(3),
+            volatility: volatility === 0 ? '--' : volatility.toFixed(3) + '%',
             sharpRatio: volatility === 0 ? '--' : sharpRatio.toFixed(3),
             maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%',
             totalAssets,
@@ -582,7 +586,7 @@ export class BacktestChartService extends BacktestResultService {
         if (winningRate === undefined) {
             return this.unwrap(this.translate.get('FLOATING_PROFIT_SUBTITLE', config));
         } else {
-            return this.unwrap(this.translate.get('PROFIT_SUBTITLE', { ...config, winningRate }));
+            return this.unwrap(this.translate.get('PROFIT_SUBTITLE', { ...config, winningRate: (winningRate * 100).toFixed(3) + '%' }));
         }
     }
 
@@ -591,7 +595,7 @@ export class BacktestChartService extends BacktestResultService {
      */
     private getChartOptionSource(profit: BacktestProfitDescription[]): Observable<BacktestChartSourceData> {
         return zip(
-            this.getMaxDrawdown(profit),
+            this.getMaxDrawdown(profit, true),
             this.getStandardDeviation(profit),
             this.getSharpRatio(profit),
             this.getAnnualizedReturns(profit),
@@ -632,16 +636,16 @@ export class BacktestChartService extends BacktestResultService {
     }
 
     /**
-     * 获取类型为 flags 的系列的源数据；
+     * 获取类型为 flag 的系列的源数据；
      */
     private generateFlagTypeSeriesData(profit: BacktestProfitDescription[], info: BacktestChartSourceData): any {
         const { maxAssetsTime, maxDrawdownTime, maxDrawdown } = info;
 
         return profit.map(({ time, profit }) => {
             if (maxAssetsTime === time) {
-                return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit })) }
+                return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit: profit.toFixed(8) })) }
             } else if (maxDrawdownTime === time) {
-                return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawdown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })) }
+                return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawDown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })), color: 'red' }
             } else {
                 return null;
             }
@@ -657,8 +661,8 @@ export class BacktestChartService extends BacktestResultService {
 
         const { profit } = last(source);
 
-        //TODO: 这里可能有BUG，总资产是从父类的方法上拿来的，可以需要实现子类自己的 getTotalAssets 方法。
-        return this.getTotalAssets().pipe(
+        //TODO: 这里可能有BUG，总资产是从父类的方法上拿来的，可能需要实现子类自己的 getTotalAssets 方法。
+        return this.getTotalAssets(true).pipe(
             map(assets => profit / assets)
         );
     }
@@ -721,13 +725,7 @@ export class BacktestChartService extends BacktestResultService {
             map(({ charts, data }) => {
                 const source = Object.entries(groupBy(data, ([idx]) => idx)).map(([key, value]) => ({
                     id: Number(key),
-                    value: value.map(item => {
-                        try {
-                            return JSON.parse(<string>last(item));
-                        } catch (e) {
-                            return null;
-                        }
-                    })
+                    value: value.map(item => last(item))
                 }));
 
                 const optimizedSeries = flatten(charts.map((chart, index) => {

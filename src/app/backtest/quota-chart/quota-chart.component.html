@@ -1,7 +1,7 @@
 <nz-card>
     <nz-tabset>
         <nz-tab *ngFor="let item of data | async" [nzTitle]="item.title">
-            <div class="chart">
+            <div class="chart" style="height: 536px;">
                 <chart type="StockChart" [options]="item.option" (load)="chart$.next($event.context)"></chart>
             </div>
         </nz-tab>

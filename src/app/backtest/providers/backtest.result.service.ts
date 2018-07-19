@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
-import { head, isEmpty, isNull, isNumber, isObject, last, range, zip as lodashZip } from 'lodash';
+import { head, isEmpty, isNull, isNumber, isObject, last, zip as lodashZip } from 'lodash';
 import * as moment from 'moment';
 import { concat, from, merge, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
@@ -371,12 +371,14 @@ export class BacktestResultService extends BaseService {
 
     /**
      * 获取最大回撤的信息集合；
+     * @param source 收益数据
+     * @param isBalancePrior 苑取总资产时是否优先使用余额
      */
-    protected getMaxDrawdown(source: BacktestProfitDescription[]): Observable<BacktestMaxDrawDownDescription> {
-        return this.getTotalAssets().pipe(
+    protected getMaxDrawdown(source: BacktestProfitDescription[], isBalancePrior = false): Observable<BacktestMaxDrawDownDescription> {
+        return this.getTotalAssets(isBalancePrior).pipe(
             take(1),
             map(totalAssets => {
-                const initial: BacktestMaxDrawDownDescription = { maxAssets: 0, startDrawdownTime: 0, maxDrawdown: 0, maxAssetsTime: 0, maxDrawdownTime: 0 };
+                const initial: BacktestMaxDrawDownDescription = { maxAssets: totalAssets, startDrawdownTime: 0, maxDrawdown: 0, maxAssetsTime: 0, maxDrawdownTime: 0 };
 
                 return source.reduce(({ startDrawdownTime, maxDrawdown, maxAssets, maxAssetsTime, maxDrawdownTime }, { time, profit }) => {
                     const currentAssets = profit + totalAssets;
@@ -390,10 +392,12 @@ export class BacktestResultService extends BaseService {
                     const drawDown = 1 - (profit + totalAssets) / maxAssets;
 
                     if (maxAssets > 0 && drawDown > maxDrawdown) {
-                        return { startDrawdownTime: maxAssetsTime, maxDrawdown: drawDown, maxAssets, maxAssetsTime, maxDrawdownTime: 0 };
-                    } else {
-                        return { startDrawdownTime, maxDrawdown, maxAssets, maxAssetsTime, maxDrawdownTime: 0 };
+                        maxDrawdown = drawDown;
+                        maxDrawdownTime = time;
+                        startDrawdownTime = maxAssetsTime;
                     }
+
+                    return { startDrawdownTime, maxDrawdown, maxAssets, maxAssetsTime, maxDrawdownTime };
                 }, initial);
             })
         );
@@ -460,20 +464,34 @@ export class BacktestResultService extends BaseService {
      */
     private getRatio(source: BacktestProfitDescription[]): Observable<number[]> {
         return this.getTimeRange().pipe(
-            mergeMap(({ start, end }) => from(range(start, end, this.PERIOD)).pipe(
-                mergeMap(day => zip(
-                    this.getDayProfit(source, day + this.PERIOD),
-                    this.getTotalAssets().pipe(
-                        take(1)
-                    ),
-                    this.getYearDays()
-                ).pipe(
-                    map(([profit, assets, yearDays]) => (profit / assets) * yearDays),
-                )),
-                reduce((acc: number[], cur: number) => [...acc, cur], [])
-            )),
-            take(1)
-        );
+            withLatestFrom(
+                this.getTotalAssets(true),
+                this.getYearDays(),
+                ({ start, end }, totalAssets, yearDays) => {
+                    let i = 0;
+                    let result = [];
+                    let preProfit = 0;
+                    let perRatio = 0;
+                    let finish = (end - start) % this.PERIOD > 0 ? Math.ceil(end / this.PERIOD) * this.PERIOD : end;
+
+                    for (let n = start; n < finish; n += this.PERIOD) {
+                        let dayProfit = 0;
+
+                        while (i < source.length && source[i].time < n + this.PERIOD) {
+                            dayProfit = dayProfit + source[i].profit - preProfit;
+                            preProfit = source[i].profit;
+                            i = i + 1;
+                        }
+
+                        perRatio = (dayProfit / totalAssets) * yearDays;
+
+                        result.push(perRatio);
+                    }
+
+                    return result;
+                }
+            )
+        )
     }
 
     /**
@@ -490,7 +508,7 @@ export class BacktestResultService extends BaseService {
 
                 const finish = moment(end).unix() * 1000;
 
-                return { start: begin, end: (finish - begin) % this.PERIOD > 0 ? (finish / this.PERIOD + 1) * this.PERIOD : finish };
+                return { start: begin, end: finish };
             })
         );
     }
@@ -563,7 +581,7 @@ export class BacktestResultService extends BaseService {
         return zip(
             this.getYearDays(),
             this.getTimeRange(),
-            this.getTotalAssets()
+            this.getTotalAssets(true)
         ).pipe(
             map(([yearDays, { start, end }, totalAssets]) => ({ yearDays, start, end, totalAssets }))
         );
@@ -782,7 +800,7 @@ export class BacktestResultService extends BaseService {
             returns: 0,
             symbol: [BaseCurrency, QuoteCurrency, Id].join('_'),
         }
-}
+    }
 
     // ============================================================非调优状态下的日志信息==================================================================
 
