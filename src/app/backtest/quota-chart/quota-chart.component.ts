@@ -10,6 +10,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
     styleUrls: ['./quota-chart.component.scss']
 })
 export class QuotaChartComponent extends BacktestChartComponent {
+
     constructor(
         public chartService: BacktestChartService,
         public utilService: UtilService,
@@ -19,8 +20,6 @@ export class QuotaChartComponent extends BacktestChartComponent {
 
     ngOnInit() {
         this.data = this.chartService.getQuotaChartOptions();
-
-        this.initialModel();
 
         this.launch();
     }

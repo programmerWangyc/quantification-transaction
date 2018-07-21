@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, switchMapTo } from 'rxjs/operators';
 
+import { ExchangeOptionsComponent } from '../../backtest/exchange-options/exchange-options.component';
 import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BaseComponent } from '../../base/base.component';
@@ -10,6 +11,7 @@ import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
+import { TipService } from '../../providers/tip.service';
 import { StrategyService } from '../../strategy/providers/strategy.service';
 
 @Component({
@@ -23,7 +25,11 @@ export class BacktestSimulationComponent extends BaseComponent {
 
         this._category = value;
 
-        value === CategoryType.STOCK_SECURITY && this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 24 * 60).id)
+        if (value === CategoryType.STOCK_SECURITY) {
+            this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 24 * 60).id);
+        } else {
+            this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 15).id, this.constant.K_LINE_PERIOD.find(item => item.minutes === 5).id);
+        }
     }
 
     get category(): number {
@@ -60,22 +66,39 @@ export class BacktestSimulationComponent extends BaseComponent {
 
     subscription$$: Subscription;
 
+    isPassedGuard: Observable<boolean>;
+
+    @ViewChild(ExchangeOptionsComponent) exchange: ExchangeOptionsComponent;
+
+    /**
+     * 强制锁定周期；
+     * 用户切换策略的category后，如果platform是 'Futures_CTP'；此时强制锁定k线周期
+     */
+    forceFreeze = false;
+
     constructor(
         private strategyService: StrategyService,
         private backtestService: BacktestService,
         private constant: BacktestConstantService,
         private route: ActivatedRoute,
         private publicService: PublicService,
+        private tip: TipService,
     ) {
         super();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.strategyId = this.route.paramMap
             .pipe(
@@ -99,8 +122,15 @@ export class BacktestSimulationComponent extends BaseComponent {
         this.disableBacktest = this.backtestService.getUIState().pipe(
             map(res => res.isForbiddenBacktest)
         );
+
+        this.isPassedGuard = this.startBacktest$.pipe(
+            switchMapTo(this.backtestService.isBacktestArgsValid())
+        );
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         this.subscription$$ = this.backtestService.handleGetTemplatesError()
             .add(this.backtestService.handleBacktestIOError())
@@ -112,12 +142,40 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$))
     }
 
-    private fixKlinePeriod(klinePeriodId: number): void {
-        this.fixedKlinePeriodId$.next(klinePeriodId);
+    /**
+     * 修正 k 线周期，底层 k 线周期。
+     * @param klinePeriodId k线周期 Id
+     * @param floorKLinePeriod 底层 k 线周期的 Id；未传时将使用 k 线周期；
+     */
+    private fixKlinePeriod(klinePeriodId: number, floorKLinePeriod?: number): void {
 
-        this.fixedFloorKlinePeriodId$.next(klinePeriodId);
+        if (this.exchange.selectedPlatform === 'Futures_CTP') {
+            this.forceFreeze = true;
+
+            this.fixedKlinePeriodId$.next(this.constant.K_LINE_PERIOD.find(item => item.minutes === 24 * 60).id);
+
+        } else {
+            this.forceFreeze = false;
+
+            this.fixedKlinePeriodId$.next(klinePeriodId);
+        }
+
+        if (floorKLinePeriod) {
+            this.fixedFloorKlinePeriodId$.next(floorKLinePeriod);
+        } else {
+            this.fixedFloorKlinePeriodId$.next(klinePeriodId);
+        }
     }
 
+    onExchange(id: number): void {
+        this.forceFreeze = false;
+
+        this.fixedKlinePeriodId$.next(id);
+    }
+
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, false);
 

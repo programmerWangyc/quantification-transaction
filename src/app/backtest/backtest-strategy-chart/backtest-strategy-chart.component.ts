@@ -20,8 +20,6 @@ export class BacktestStrategyChartComponent extends BacktestChartComponent {
     ngOnInit() {
         this.data = this.chartService.getStrategyChartOptions();
 
-        this.initialModel();
-
         this.launch();
     }
 }

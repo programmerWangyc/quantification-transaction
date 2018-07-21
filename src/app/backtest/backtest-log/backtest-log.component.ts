@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 
 import { BacktestLogResult } from '../backtest.interface';
-import { BacktestResultService } from '../providers/backtest.result.service';
+import { BacktestChartService } from '../providers/backtest.chart.service';
 
 export interface BacktestTaskLog {
     period: number;
@@ -26,22 +26,22 @@ export class BacktestLogComponent implements OnInit {
     canSave: Observable<boolean>;
 
     constructor(
-        private resultService: BacktestResultService,
+        private chartService: BacktestChartService,
     ) { }
 
     ngOnInit() {
-        this.cols = this.resultService.getBacktestLogCols();
+        this.cols = this.chartService.getBacktestLogCols();
 
         // 注意： 这条流上会有 null 抛出，代表这个回测结果失败。
-        this.logs = this.resultService.getBacktestLogResults();
+        this.logs = this.chartService.getBacktestLogResults();
 
-        this.resultService.getBacktestLogRows()
+        this.chartService.getBacktestLogRows()
             .subscribe(result => this.tasks = result)
 
-        this.canSave = this.resultService.canSaveResult();
+        this.canSave = this.chartService.canSaveResult();
     }
 
     onDownload() {
-        this.resultService.downloadLogs();
+        this.chartService.downloadLogs();
     }
 }

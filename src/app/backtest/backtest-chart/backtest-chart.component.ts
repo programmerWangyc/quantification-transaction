@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { bufferCount, delay, map, switchMap } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { UtilService } from '../../providers/util.service';
@@ -13,8 +13,6 @@ import { BacktestChart, BacktestChartService } from '../providers/backtest.chart
 })
 export class BacktestChartComponent extends BaseComponent {
     data: Observable<BacktestChart[] | Highstock.Options>;
-
-    charts: Observable<Highstock.ChartObject[]>;
 
     chart$: Subject<Highstock.ChartObject> = new Subject();
 
@@ -31,25 +29,13 @@ export class BacktestChartComponent extends BaseComponent {
     }
 
     initialModel() {
-        this.charts = this.data.pipe(
-            switchMap(options => this.chart$.pipe(
-                bufferCount((<BacktestChart[]>options).length)
-            ))
-        );
     }
 
     launch() {
-        this.subscription$$ = (this.charts || this.chart$).pipe(
-            delay(30),
+        this.subscription$$ = this.chart$.pipe(
+            delay(50),
             map(this.utilService.createChartSize)
-        )
-            .subscribe(({ charts, width, height }) => {
-                if (this.charts) {
-                    (<Highcharts.ChartObject[]>charts).forEach(chart => chart.setSize(width, height))
-                } else {
-                    (<Highcharts.ChartObject>charts).setSize(width, height);
-                }
-            });
+        ).subscribe(({ charts, width, height }) => (<Highcharts.ChartObject>charts).setSize(width, height));
     }
 
     ngOnDestroy() {

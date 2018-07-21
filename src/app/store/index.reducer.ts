@@ -301,8 +301,5 @@ export const selectBacktestServerMessages = createSelector(getBacktest, backtest
 // backtest results
 export const selectBacktestResults = createSelector(getBacktest, backtest.getBacktestResults);
 
-// webworker result
-export const selectWorkerResult = createSelector(getBacktest, backtest.getWorkerResult);
-
 // whether backtest tasks all complete
 export const selectIsAllBacktestTasksCompleted = createSelector(getBacktest, backtest.isTasksAllCompleted);

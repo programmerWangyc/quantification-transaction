@@ -6,7 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 
 import { RunningLog } from '../../interfaces/response.interface';
 import { UtilService } from '../../providers/util.service';
-import { BacktestResultService } from '../providers/backtest.result.service';
+import { BacktestChartService } from '../providers/backtest.chart.service';
 
 @Component({
     selector: 'app-backtest-log-info',
@@ -31,7 +31,7 @@ export class BacktestLogInfoComponent implements OnInit {
     pageIndex$: Subject<number> = new Subject();
 
     constructor(
-        private resultService: BacktestResultService,
+        private chartService: BacktestChartService,
         private utilService: UtilService,
     ) { }
 
@@ -62,17 +62,17 @@ export class BacktestLogInfoComponent implements OnInit {
 
         this.statistics = this.utilService.getPaginationStatistics(this.logTotal, concat(this.pageSize, this.pageSize$))
 
-        this.canSave = this.resultService.hasRunningLogs();
+        this.canSave = this.chartService.hasRunningLogs();
     }
 
     private orderLogs(): Observable<RunningLog[]> {
-        return this.resultService.getRunningLogs().pipe(
+        return this.chartService.getRunningLogs().pipe(
             map(logs => logs.reverse())
         );
     }
 
     onDownload() {
-        this.resultService.downloadRunningLog();
+        this.chartService.downloadRunningLog();
     }
 
 }

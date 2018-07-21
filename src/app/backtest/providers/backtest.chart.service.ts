@@ -22,6 +22,7 @@ import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestResultService } from './backtest.result.service';
 import { BacktestSandboxService, SymbolRecord } from './backtest.sandbox.service';
 
+
 export interface BacktestChart {
     title: string;
     option: Highcharts.Options;
@@ -107,6 +108,15 @@ export class BacktestChartService extends BacktestResultService {
                     return { title, option };
                 });
             })
+        );
+    }
+
+    /**
+     * 是否显示行情图表
+     */
+    hasQuotaChart(): Observable<boolean> {
+        return this.getBacktestResult().pipe(
+            map(res => !!res.Symbols && !!res.Symbols.length)
         );
     }
 
@@ -396,17 +406,13 @@ export class BacktestChartService extends BacktestResultService {
         return result;
     }
 
-    // ========================================Backtest chart section===============================================================================
+    // ================================================chart config section===============================================================================
 
     /**
      * Get backtest profit log options;
      */
     private getQuotaChartConfig(startTime: number, period: number): any {
         return {
-            // 此属性在官方配置中没有
-            lang: {
-                _fullscreen: this.fullscreenLabel,
-            },
             legend: {
                 enabled: true,
             },
@@ -442,17 +448,6 @@ export class BacktestChartService extends BacktestResultService {
                     value: moment(startTime).unix() * 1000,
                 }],
             },
-            // exporting: {
-            //     buttons: {
-            //         hideButton: {
-            //             _titleKey: "_fullscreen",
-            //             text: fullscreenLabel,
-            //             onclick: function() {
-            //                 util.toggleFullScreen(document.getElementById(eleId));
-            //             }
-            //         },
-            //     }
-            // }
         };
     }
 
@@ -477,7 +472,7 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 获取收益类图表的 highcharts 配置信息
      */
-    getProfitChartConfig(series: any[], subtitle: string): any {
+    private getProfitChartConfig(series: any[], subtitle: string): any {
         return {
             subtitle: {
                 text: subtitle
@@ -496,21 +491,6 @@ export class BacktestChartService extends BacktestResultService {
                 type: 'datetime'
             },
             series,
-            // 此属性在官方配置中没有
-            lang: {
-                _fullscreen: this.fullscreenLabel,
-            },
-            // exporting: {
-            //     buttons: {
-            //         hideButton: {
-            //             _titleKey: "_fullscreen",
-            //             text: $translate.instant("ui.g.fullscreen"),
-            //             onclick: function () {
-            //                 toggleFullScreen(this.renderTo);
-            //             }
-            //         },
-            //     }
-            // }
         }
     }
 
@@ -688,6 +668,15 @@ export class BacktestChartService extends BacktestResultService {
         );
     }
 
+    /**
+     * Whether to show profit chart;
+     */
+    hasProfitCurveChart(): Observable<boolean> {
+        return this.getBacktestResult().pipe(
+            map(({ ProfitLogs }) => !!ProfitLogs && !!ProfitLogs.length)
+        );
+    }
+
     // ============================================================策略图表的数据处理==================================================================
 
     /**
@@ -741,7 +730,6 @@ export class BacktestChartService extends BacktestResultService {
                 return charts.map((chart, index) => {
                     const option = {
                         ...chart,
-                        ...this.getStrategyChartConfig(),
                         series: optimizedSeries.filter(item => item.chartIndex === index).reduce((acc, cur) => [...acc, omit(cur, 'chartIndex')], [])
                     };
 
@@ -753,25 +741,5 @@ export class BacktestChartService extends BacktestResultService {
                 });
             })
         );
-    }
-
-    private getStrategyChartConfig(): Object {
-        return {
-            // 此属性在官方配置中没有
-            lang: {
-                _fullscreen: this.fullscreenLabel,
-            },
-            // exporting: {
-            //     buttons: {
-            //         hideButton: {
-            //             _titleKey: "_fullscreen",
-            //             text: fullscreenLabel,
-            //             onclick: function() {
-            //                 util.toggleFullScreen(document.getElementById(eleId));
-            //             }
-            //         },
-            //     }
-            // }
-        }
     }
 }

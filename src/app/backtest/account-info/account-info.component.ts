@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
 
 import { BacktestAccount } from '../backtest.interface';
-import { BacktestResultService } from '../providers/backtest.result.service';
+import { BacktestChartService } from '../providers/backtest.chart.service';
 
 @Component({
     selector: 'app-account-info',
@@ -16,11 +16,11 @@ export class AccountInfoComponent implements OnInit {
     hasFutures: Observable<boolean>;
 
     constructor(
-        private resultService: BacktestResultService,
+        private chartService: BacktestChartService,
     ) { }
 
     ngOnInit() {
-        this.data = this.resultService.getBacktestAccountInfo()
+        this.data = this.chartService.getBacktestAccountInfo();
 
         this.hasFutures = this.data.pipe(
             map(accounts => accounts.some(account => account.isFutures))

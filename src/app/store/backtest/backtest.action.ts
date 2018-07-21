@@ -338,10 +338,10 @@ export class UpdateBacktestLevelAction implements Action {
     constructor(public payload: number) { }
 }
 
-export const TOGGLE_BACKTEST_LOADING_STATE = '[Backtest] TOGGLE_BACKTEST_LOADING_STATE';
+export const OPEN_BACKTEST_LOADING_STATE = '[Backtest] OPEN_BACKTEST_LOADING_STATE';
 
 export class OpenBacktestLoadingStateAction implements Action {
-    readonly type = TOGGLE_BACKTEST_LOADING_STATE;
+    readonly type = OPEN_BACKTEST_LOADING_STATE;
 }
 
 export const RESET_BACKTEST_RELATED_STATE = '[Backtest] RESET_BACKTEST_RELATED_STATE';
@@ -368,8 +368,14 @@ export class WorkerBacktestStatusUpdatedAction implements Action {
 
 export const INCREASE_BACKTESTING_TASK_INDEX = '[Backtest] INCREASE_BACKTESTING_TASK_INDEX';
 
-export class IncreaseBacktestingTaskIndex implements Action {
+export class IncreaseBacktestingTaskIndexAction implements Action {
     readonly type = INCREASE_BACKTESTING_TASK_INDEX;
+}
+
+export const TERMINATE_WORKER_BACKTEST = '[Backtest] TERMINATE_WORKER_BACKTEST';
+
+export class TerminateWorkerBacktestAction implements Action {
+    readonly type = TERMINATE_WORKER_BACKTEST;
 }
 
 export type ApiActions = GetTemplatesRequestAction
@@ -394,7 +400,7 @@ export type ApiActions = GetTemplatesRequestAction
 export type Actions = ApiActions
     | CheckBacktestTemplateCodeAction
     | GenerateToBeTestedValuesAction
-    | IncreaseBacktestingTaskIndex
+    | IncreaseBacktestingTaskIndexAction
     | OpenBacktestLoadingStateAction
     | ReceiveServerSendBacktestEventAction
     | ResetBacktestRelatedStateAction
@@ -410,6 +416,7 @@ export type Actions = ApiActions
     | UpdateSelectedTimeRangeAction
     | WorkerBacktestStatusUpdatedAction
     | WorkerBacktestSuccessAction
+    | TerminateWorkerBacktestAction
 
 export const ResponseActions = {
     BacktestIOFailAction,

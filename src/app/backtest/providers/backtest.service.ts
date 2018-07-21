@@ -13,6 +13,7 @@ import {
     mergeMapTo,
     partition,
     skip,
+    startWith,
     switchMap,
     switchMapTo,
     take,
@@ -119,7 +120,6 @@ export class BacktestService extends BacktestParamService {
             filter(res => !this.error.getBacktestError(res.result)),
             mergeMapTo(interval(2000).pipe(
                 mapTo(true),
-                tap(v => console.log(v)),
                 takeUntil(merge(this.getServerSendBacktestMsg(), this.isBacktestTerminate()))
             ))
         );
@@ -150,9 +150,7 @@ export class BacktestService extends BacktestParamService {
     private launchServerBacktest(signal: Observable<boolean>): Subscription {
         const notify = concat(
             of(true),
-            this.store.pipe(
-                select(fromRoot.selectBacktestIOResponse),
-                filter(res => res && res.action === Actions.BacktestOperateCallbackId.result),
+            this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result).pipe(
                 withLatestFrom(this.publicService.getServerMsgSubscribeState(fromRes.ServerSendEventType.BACKTEST)),
                 filter(([_, onOff]) => onOff),
                 mapTo(true)
@@ -182,24 +180,33 @@ export class BacktestService extends BacktestParamService {
      * 本地回测，在webworker中进行
      */
     private startLocalBacktest(signal: Observable<boolean>): Subscription {
-        const params = combineLatest(
-            this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
-                tap(res => !res && this.publicService.launchGetSettings(of(SettingTypes.backtest_javascript))),
-                this.filterTruth()
-            ),
-            this.generatePutTaskParams(),
-            this.store.pipe(
-                select(fromRoot.selectWorkerResult),
-                map(res => !res ? {} : res.httpCache || {})
-            )
-        ).pipe(
-            take(1),
-            mergeMap(([blob, task, cache]) => {
-                this.store.dispatch(new Actions.IncreaseBacktestingTaskIndex());
-
-                return this.computeService.run({ task, blob, cache })
-            })
+        const notify = concat(
+            of(true),
+            this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result),
         );
+
+        const blob = this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
+            tap(res => !res && this.publicService.launchGetSettings(of(SettingTypes.backtest_javascript))),
+            this.filterTruth()
+        );
+
+        const cache = this.getBacktestResult().pipe(
+            map(res => res.httpCache || {}),
+            startWith({})
+        );
+
+        const task = zip(notify, this.generatePutTaskParams()).pipe(
+            map(([_, param]) => param)
+        );
+
+        const params = combineLatest(task, blob).pipe(
+            withLatestFrom(
+                cache,
+                (([task, blob], cache) => ({ task, blob, cache }))
+            ),
+            tap(_ => this.store.dispatch(new Actions.IncreaseBacktestingTaskIndexAction())),
+            mergeMap(param => this.computeService.run(param))
+        )
 
         return this.process.processWorkBacktest(this.guardBacktestStart(signal).pipe(
             switchMapTo(params)
@@ -236,7 +243,7 @@ export class BacktestService extends BacktestParamService {
         ) : this.getUUid().pipe(
             partialParam,
             distinctUntilChanged(this.compareAllValues())
-        )
+        );
     }
 
     /**
@@ -318,16 +325,6 @@ export class BacktestService extends BacktestParamService {
 
         return start.pipe(
             switchMapTo(result)
-        );
-    }
-
-    /**
-     * 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
-     */
-    private getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestIOResponse),
-            filter(res => !!res && (callbackId ? res.action === callbackId : true))
         );
     }
 
@@ -426,7 +423,8 @@ export class BacktestService extends BacktestParamService {
      */
     getAdvancedOptions(): Observable<AdvancedOption> {
         return this.getUIState().pipe(
-            map(res => res.advancedOptions)
+            map(res => res.advancedOptions),
+            distinctUntilChanged(this.compareAllValues())
         );
     }
 
@@ -468,7 +466,7 @@ export class BacktestService extends BacktestParamService {
     isBacktestArgsValid(): Observable<boolean> {
         return this.getUIState().pipe(
             filter(({ backtestCode, backtestTasks }) => !!backtestCode && !!backtestTasks),
-            map(({ backtestCode, backtestTasks }) => this.isOptimizing(backtestCode) ? !isEmpty(backtestTasks) : true),
+            map(({ backtestCode, backtestTasks, isOptimizedBacktest }) => isOptimizedBacktest ? !isEmpty(backtestTasks) : true),
             take(1)
         );
     }

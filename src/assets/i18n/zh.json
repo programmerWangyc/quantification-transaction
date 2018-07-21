@@ -629,5 +629,6 @@
     "EVENT": "事件",
     "FLOATING_PL_CHART_DASH": "虚线指最大回撤区间",
     "BACKTEST_PROFIT_CURVE_TIP": "LogProfit打印的数字",
-    "BACKTEST_HISTORY_INFO_EMPTY": "获取历史数据失败或为空，请稍后或更改时间段重试。"
+    "BACKTEST_HISTORY_INFO_EMPTY": "获取历史数据失败或为空，请稍后或更改时间段重试。",
+    "BACKTESTING_TERMINATED": "回测任务已被中止。"
 }

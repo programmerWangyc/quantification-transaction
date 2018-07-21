@@ -66,6 +66,6 @@
     <i class="anticon anticon-eye eye" [ngClass]="{'help-active': isHelpShow}" (click)="isHelpShow = !isHelpShow"></i>
 </div>
 <!--优化过滤器-->
-<div *ngIf="optimizeData.length > 1 && !isTemplate">
+<div [hidden]="optimizeData.length < 2 || isTemplate">
     <app-arg-optimizer [data]="optimizeData" (optimize)="updateFilters($event)"></app-arg-optimizer>
 </div>

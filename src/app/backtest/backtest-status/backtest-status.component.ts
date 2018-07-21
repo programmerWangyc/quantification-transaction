@@ -3,8 +3,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { BacktestStatistic } from '../backtest.config';
+import { BacktestChartService } from '../providers/backtest.chart.service';
 import { BacktestConstantService } from '../providers/backtest.constant.service';
-import { BacktestResultService } from '../providers/backtest.result.service';
 import { BacktestService } from '../providers/backtest.service';
 
 @Component({
@@ -35,22 +35,22 @@ export class BacktestStatusComponent implements OnInit {
     constructor(
         private backtestService: BacktestService,
         private constant: BacktestConstantService,
-        private resultService: BacktestResultService,
+        private chartService: BacktestChartService,
     ) { }
 
     ngOnInit() {
 
-        this.processingTaskIndex = this.resultService.getIndexOfBacktestingTask();
+        this.processingTaskIndex = this.chartService.getIndexOfBacktestingTask();
 
-        this.loadBytes = this.resultService.getBacktestStatistics(BacktestStatistic.LoadBytes);
+        this.loadBytes = this.chartService.getBacktestStatistics(BacktestStatistic.LoadBytes);
 
-        this.logTotal = this.resultService.getBacktestStatistics(BacktestStatistic.LogsCount);
+        this.logTotal = this.chartService.getBacktestStatistics(BacktestStatistic.LogsCount);
 
-        this.progress = this.resultService.getBacktestProgress().pipe(
+        this.progress = this.chartService.getBacktestProgress().pipe(
             startWith(0)
         );
 
-        this.profit = this.resultService.getBacktestStatistics(BacktestStatistic.Profit);
+        this.profit = this.chartService.getBacktestStatistics(BacktestStatistic.Profit);
 
         this.status = this.backtestService.isBacktesting().pipe(
             map(isLoading => isLoading ? 'RUNNING' : 'COMPLETE')
@@ -61,11 +61,11 @@ export class BacktestStatusComponent implements OnInit {
             map(state => state.backtestTasks.length || 1)
         );
 
-        this.timeConsuming = this.resultService.getBacktestStatistics(BacktestStatistic.Elapsed).pipe(
+        this.timeConsuming = this.chartService.getBacktestStatistics(BacktestStatistic.Elapsed).pipe(
             map(data => data / this.constant.BACKTEST_RESULT_ELAPSED_RATE)
         );
 
-        this.transactions = this.resultService.getTradeCount();
+        this.transactions = this.chartService.getTradeCount();
     }
 
 }

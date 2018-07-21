@@ -24,8 +24,6 @@ import { ProfitLoseComponent } from './profit-lose/profit-lose.component';
 import { BacktestChartService } from './providers/backtest.chart.service';
 import { BacktestComputingService } from './providers/backtest.computing.service';
 import { BacktestConstantService } from './providers/backtest.constant.service';
-import { BacktestParamService } from './providers/backtest.param.service';
-import { BacktestResultService } from './providers/backtest.result.service';
 import { BacktestSandboxService } from './providers/backtest.sandbox.service';
 import { BacktestService } from './providers/backtest.service';
 import { QuotaChartComponent } from './quota-chart/quota-chart.component';
@@ -39,37 +37,37 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         RobotModule,
         StrategyModule,
         ChartModule.forRoot(
-            require('highcharts/highstock')
+            require('highcharts/highstock'),
+            require('../plugins/exporting.js'),
+            require('../plugins/offline-exporting.js'),
         ),
     ],
     declarations: [
         AccountInfoComponent,
         AdvancedOptionsComponent,
         ArgOptimizerComponent,
+        BacktestChartComponent,
         BacktestLogComponent,
-        QuotaChartComponent,
+        BacktestLogInfoComponent,
+        BacktestResultComponent,
         BacktestStatusComponent,
         BacktestStrategyArgsComponent,
+        BacktestStrategyChartComponent,
         DispenseOptionsComponent,
         ExchangeOptionsComponent,
         PIPES,
-        TimeOptionsComponent,
-        ProfitLoseComponent,
         ProfitCurveComponent,
-        BacktestStrategyChartComponent,
-        BacktestChartComponent,
-        BacktestLogInfoComponent,
-        BacktestResultComponent,
+        ProfitLoseComponent,
+        QuotaChartComponent,
+        TimeOptionsComponent,
     ],
 
     providers: [
+        BacktestChartService,
         BacktestComputingService,
         BacktestConstantService,
-        BacktestParamService,
-        BacktestResultService,
-        BacktestService,
-        BacktestChartService,
         BacktestSandboxService,
+        BacktestService,
     ],
 
     exports: [

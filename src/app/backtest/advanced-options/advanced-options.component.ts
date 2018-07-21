@@ -21,9 +21,25 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
             this.updatePeriod(value);
         } else {
-            this.disablePeriod = false;
+            if (!this.freeze) {
+                this.disablePeriod = false;
+            }
         }
     }
+
+    @Input() set freeze(value: boolean) {
+        this.disablePeriod = value;
+
+        this._freeze = value;
+    }
+
+    private _freeze = false;
+
+    get freeze(): boolean {
+        return this._freeze;
+    }
+
+    disablePeriod = false;
 
     modes: BacktestMode[];
 
@@ -36,8 +52,6 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
     advancedOptions: Observable<AdvancedOptionConfig[]>;
 
     periods: KLinePeriod[];
-
-    disablePeriod = false;
 
     selectedPeriodId = 2;
 

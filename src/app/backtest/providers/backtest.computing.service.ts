@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { isString } from 'lodash';
+import { select, Store } from '@ngrx/store';
+import { isNull, isString } from 'lodash';
 import { Observable, of, Subject, Subscription } from 'rxjs';
-import { filter, map, mapTo } from 'rxjs/operators';
+import { filter, map, mapTo, take } from 'rxjs/operators';
 
 import { ErrorService } from '../../providers/error.service';
-import { AppState } from '../../store/index.reducer';
+import { TipService } from '../../providers/tip.service';
+import { TerminateWorkerBacktestAction } from '../../store/backtest/backtest.action';
+import { AppState, selectIsAllBacktestTasksCompleted } from '../../store/index.reducer';
 import { ArgOptimizeSetting } from '../backtest.interface';
 
 
@@ -33,7 +35,7 @@ export interface OptimizedArg {
 }
 
 /**
- * TODO: 本地回测时的服务， 和webWorker进行交互的行为应该全部都在这个服务中。
+ * 本地回测时的服务， 和webWorker进行交互的行为应该全部都在这个服务中。
  */
 @Injectable()
 export class BacktestComputingService {
@@ -48,9 +50,13 @@ export class BacktestComputingService {
     constructor(
         private errorService: ErrorService,
         private store: Store<AppState>,
+        private tip: TipService,
     ) {
     }
 
+    /**
+     * 开启webworker线程，同时监听webworker上的消息。
+     */
     initWorker(): void {
         this.worker = new Worker(this.workerURI);
 
@@ -59,9 +65,11 @@ export class BacktestComputingService {
 
             this.message.next(ret);
 
-            const isFinished = (<WorkerBacktest.WorkerResult>ret).Finished;
-
-            isFinished && this.clearWorker();
+            this.store.pipe(
+                select(selectIsAllBacktestTasksCompleted),
+                filter(res => !isNull(res)),
+                take(1)
+            ).subscribe(isComplete => isComplete && this.clearWorker());
         });
 
         this.worker.addEventListener('error', (event) => {
@@ -103,10 +111,22 @@ export class BacktestComputingService {
         ) as Observable<WorkerBacktest.WorkerResult>;
     }
 
+    /**
+     * Terminate worker backtesting;
+     */
     stopRun(command: Observable<any>): Subscription {
-        return command.subscribe(_ => this.clearWorker);
+        return command.subscribe(_ => {
+            this.clearWorker();
+
+            this.store.dispatch(new TerminateWorkerBacktestAction());
+
+            this.tip.messageInfo('BACKTESTING_TERMINATED');
+        });
     }
 
+    /**
+     * Terminate webworker thread while unsubscribe error message if subscribed;
+     */
     private clearWorker(): void {
         if (this.worker) {
             this.worker.terminate();

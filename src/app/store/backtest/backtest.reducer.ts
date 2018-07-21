@@ -86,15 +86,15 @@ export interface RequestParams {
 }
 
 /**
- *  文档工具不支持这种写法，要注意这个接口的字段应该和BacktestIOType的字段保持一致。
+ * 文档工具不支持这种写法，要注意这个接口的字段应该和BacktestIOType的字段保持一致。
+ * export interface BacktestStateMemory<T> {
+ *     [BacktestIOType.deleteTask]: T;
+ *     [BacktestIOType.getTaskResult]: T;
+ *     [BacktestIOType.getTaskStatus]: T;
+ *     [BacktestIOType.putTask]: T;
+ *     [BacktestIOType.stopTask]: T;
+ * }
  */
-// export interface BacktestStateMemory<T> {
-//     [BacktestIOType.deleteTask]: T;
-//     [BacktestIOType.getTaskResult]: T;
-//     [BacktestIOType.getTaskStatus]: T;
-//     [BacktestIOType.putTask]: T;
-//     [BacktestIOType.stopTask]: T;
-// }
 
 export interface BacktestStateMemory<T> {
     DelTask: T;
@@ -114,7 +114,6 @@ export interface State {
     serverMessages: ServerSendBacktestMessage<BacktestResult>[];
     templates: TemplatesResponse[];
     templatesRes: GetTemplatesResponse;
-    workerResult: WorkerBacktest.WorkerResult;
     isAllTasksCompleted: boolean; // null: 未触发回测任务；true：all complete; false: unfinished;
 }
 
@@ -141,7 +140,6 @@ const initialState: State = {
     serverMessages: null,
     templates: [],
     templatesRes: null,
-    workerResult: null,
     isAllTasksCompleted: null
 }
 
@@ -258,10 +256,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const serverMessages = state.serverMessages ? [...state.serverMessages, serverMessage] : [serverMessage];
 
-            const taskCount = state.UIState.backtestTasks.length;
-
-            const resultCount = state.backtestResults ? state.backtestResults.length : 0;
-
             return {
                 ...state,
                 serverMessage,
@@ -270,7 +264,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                  * 接收到服务器的消息时证明此回测已完成，但此时还未去获取回测结果，所以需要加1;
                  * 回测任务的长度为0时是未调优回测；调优回测任务长度为0时无法发起任务。
                  */
-                isAllTasksCompleted: taskCount ? taskCount === resultCount + 1 : true,
+                isAllTasksCompleted: isAllTasksCompleted(state.UIState.backtestTasks, state.backtestResults),
                 UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE }
             };
         }
@@ -344,13 +338,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, UIState: { ...state.UIState, backtestLevel: action.payload } };
 
         // loading
-        case actions.TOGGLE_BACKTEST_LOADING_STATE:
+        case actions.OPEN_BACKTEST_LOADING_STATE:
             return {
                 ...state,
                 backtestResults: [],
                 backtestState: initialBacktestState,
                 backtestRes: null,
-                workerResult: null,
                 UIState: {
                     ...state.UIState,
                     isBacktesting: true,
@@ -367,15 +360,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.WORKER_BACKTEST_SUCCESS: {
             const result = action.payload;
 
-            const isResultsAllReceived = result.Finished;
-
             const forgeResponse = { error: null, result: { Code: 0, Result: JSON.stringify(result) }, action: actions.BacktestOperateCallbackId.result };
 
             const backtestResults = state.backtestResults ? [...state.backtestResults, forgeResponse] : [forgeResponse];
 
+            const isResultsAllReceived = isAllTasksCompleted(state.UIState.backtestTasks, backtestResults, true);
+
             return {
                 ...state,
-                workerResult: action.payload,
                 backtestResults,
                 backtestRes: forgeResponse,
                 UIState: {
@@ -384,7 +376,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     isForbiddenBacktest: !isResultsAllReceived,
                     backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
                     backtestingTaskIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTaskIndex,
-                }
+                },
+                isAllTasksCompleted: isResultsAllReceived
             };
         }
 
@@ -399,6 +392,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.INCREASE_BACKTESTING_TASK_INDEX: {
             return { ...state, UIState: { ...state.UIState, backtestingTaskIndex: state.UIState.backtestingTaskIndex + 1 } };
         }
+
+        // webworker backtest terminate
+        case actions.TERMINATE_WORKER_BACKTEST:
+            return { ...state, UIState: { ...state.UIState, isBacktesting: false, isForbiddenBacktest: false, backtestMilestone: null, backtestingTaskIndex: 0 } };
 
         default:
             return state;
@@ -573,6 +570,24 @@ function resetState(): any {
     }
 }
 
+/**
+ * Predicate whether all backtest task completed;
+ * @param tasks All task need to be backtest;
+ * @param results Received results;
+ * @param alreadyReceivedResult Wether backtest result had been received when this function called;
+ * If backtesting at server side, this function run when server send complete message, then browser request backtest result. This function run before all result received;
+ * If backtesting at client side, this function run when webworker post backtest result, all result had been received at the moment that this function run;
+ */
+function isAllTasksCompleted(tasks: BacktestTaskDescription[][], results: BacktestIOResponse[], alreadyReceivedResult = false): boolean {
+    const taskAmount = tasks.length;
+
+    let resultCount = results ? results.length : 0;
+
+    resultCount = alreadyReceivedResult ? resultCount : resultCount + 1;
+
+    return taskAmount ? taskAmount === resultCount : true;
+}
+
 export const getUIState = (state: State) => state.UIState;
 
 export const getTemplatesRes = (state: State) => state.templatesRes;
@@ -590,7 +605,5 @@ export const getServerSendMessage = (state: State) => state.serverMessage;
 export const getBacktestServerMessages = (state: State) => state.serverMessages;
 
 export const getBacktestResults = (state: State) => state.backtestResults;
-
-export const getWorkerResult = (state: State) => state.workerResult;
 
 export const isTasksAllCompleted = (state: State) => state.isAllTasksCompleted;

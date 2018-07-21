@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { cloneDeep, omit } from 'lodash';
 import * as moment from 'moment';
@@ -6,7 +5,6 @@ import { combineLatest, from, Observable } from 'rxjs';
 import { delay, distinctUntilChanged, filter, map, mergeMap, take } from 'rxjs/operators';
 
 import { VariableType } from '../../app.config';
-import { BaseService } from '../../base/base.service';
 import { VariableOverview } from '../../interfaces/app.interface';
 import {
     BacktestAdvanceOptions,
@@ -21,19 +19,23 @@ import {
     PutTaskCodeArg,
 } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
-import { AdvancedOption, UIState } from '../../store/backtest/backtest.reducer';
+import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { Language } from '../../strategy/strategy.config';
 import { BacktestLevel } from '../backtest.config';
 import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
+import { BacktestBaseService } from './backtest.result.service';
 
-@Injectable()
-export class BacktestParamService extends BaseService {
+/**
+ * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestService；
+ */
+export class BacktestParamService extends BacktestBaseService {
     constructor(
         public store: Store<fromRoot.AppState>,
         public constant: BacktestConstantService,
     ) {
-        super();
+        super(store);
     }
 
     // =======================================================Data acquisition=======================================================
@@ -57,15 +59,6 @@ export class BacktestParamService extends BaseService {
             select(fromRoot.selectStrategyUIState),
             filter(res => !!res),
             map(state => state.selectedLanguage)
-        );
-    }
-
-    /**
-     * 获取回测的ui状态。
-     */
-    getUIState(): Observable<UIState> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState)
         );
     }
 
@@ -151,12 +144,11 @@ export class BacktestParamService extends BaseService {
     }
 
     /**
-     * 是否在参数调优情况下进行回测；检查回测代码的所有参数的 isOptimizing 字段。
+     * 是否在参数调优情况下进行回测；
      */
     isOptimizeBacktest(): Observable<boolean> {
         return this.getUIState().pipe(
-            filter(state => !!state.backtestCode),
-            map(state => this.isOptimizing(state.backtestCode))
+            map(state => state.isOptimizedBacktest)
         );
     }
 
@@ -241,9 +233,7 @@ export class BacktestParamService extends BaseService {
             this.getUIState(),
             this.getUpdatePeriod()
         ).pipe(
-            map(([{ advancedOptions, timeOptions, backtestLevel, backtestCode }, updatePeriod]) => {
-                const isOptimizeBacktest = this.isOptimizing(backtestCode);
-
+            map(([{ advancedOptions, timeOptions, backtestLevel, backtestCode, isOptimizedBacktest }, updatePeriod]) => {
                 const { log, profit, chart, delay } = advancedOptions;
 
                 const { start, end, klinePeriodId } = timeOptions;
@@ -253,10 +243,10 @@ export class BacktestParamService extends BaseService {
                 const finish = <number>moment(end).unix();
 
                 return {
-                    RetFlags: this.getRetFlags(isOptimizeBacktest, backtestLevel),
-                    MaxRuntimeLogs: isOptimizeBacktest ? 0 : log,
+                    RetFlags: this.getRetFlags(isOptimizedBacktest, backtestLevel),
+                    MaxRuntimeLogs: isOptimizedBacktest ? 0 : log,
                     MaxProfitLogs: profit,
-                    MaxChartLogs: isOptimizeBacktest ? 0 : chart,
+                    MaxChartLogs: isOptimizedBacktest ? 0 : chart,
                     DataServer: 'https://www.fmz.com',
                     // CPP
                     TimeBegin: begin,
@@ -294,7 +284,7 @@ export class BacktestParamService extends BaseService {
      */
     private getUpdatePeriod(): Observable<number> {
         return this.getSelectedLanguage().pipe(
-            map(language => language === 1 ? 5000 : 500)
+            map(language => language === Language.Python ? 5000 : 500)
         );
     }
 
@@ -418,9 +408,4 @@ export class BacktestParamService extends BaseService {
     private generateBasePeriod(backtestLevel: number, klinePeriodId: number): number {
         return backtestLevel === 1 ? 1000 : this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60000;
     }
-
-    protected isOptimizing(data: BacktestCode[]): boolean {
-        return data.some(code => code.args.some(arg => arg.isOptimizing));
-    }
-
 }

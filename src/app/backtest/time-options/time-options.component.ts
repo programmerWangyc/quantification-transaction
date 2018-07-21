@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { isNumber } from 'lodash';
+import { isNull, isNumber } from 'lodash';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 
@@ -42,10 +42,26 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
             this.disablePeriod = true;
         } else {
-            this.disablePeriod && this.tip.messageInfo('RESET_KLINE_PERIOD_OF_TIME_CONFIG');
+            if (!this.freeze) {
+                this.disablePeriod && this.tip.messageInfo('RESET_KLINE_PERIOD_OF_TIME_CONFIG');
 
-            this.disablePeriod = false;
+                this.disablePeriod = false;
+            } else {
+                isNull(id) && this.tip.messageInfo('RESET_KLINE_PERIOD_OF_TIME_CONFIG');
+            }
         }
+    }
+
+    @Input() set freeze(value: boolean) {
+        this.disablePeriod = value;
+
+        this._freeze = value;
+    }
+
+    private _freeze = false;
+
+    get freeze(): boolean {
+        return this._freeze;
     }
 
     @Output() timeRangeChange: EventEmitter<TimeRange> = new EventEmitter();

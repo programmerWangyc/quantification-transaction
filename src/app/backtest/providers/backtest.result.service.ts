@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as fileSaver from 'file-saver';
-import { head, isEmpty, isNull, isNumber, isObject, last, zip as lodashZip } from 'lodash';
+import { head, isEmpty, isNull, isNumber, isObject, last, range, zip as lodashZip } from 'lodash';
 import * as moment from 'moment';
 import { concat, from, merge, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
@@ -18,7 +17,6 @@ import {
     startWith,
     switchMap,
     take,
-    takeWhile,
     withLatestFrom,
 } from 'rxjs/operators';
 
@@ -69,20 +67,15 @@ export function getProfit(data: Object, initial: { Profit: number; Margin: numbe
     }, initial);
 }
 
-@Injectable()
-export class BacktestResultService extends BaseService {
-    PERIOD = 24 * 60 * 60 * 1000;
-
+/**
+ * 回测服务的基类；
+ */
+export class BacktestBaseService extends BaseService {
     constructor(
         public store: Store<fromRoot.AppState>,
-        public constant: BacktestConstantService,
-        public translate: TranslateService,
-        public utilService: UtilService,
     ) {
         super();
     }
-
-    // ==============================================Shortcut methods============================================
 
     /**
      * 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
@@ -90,6 +83,7 @@ export class BacktestResultService extends BaseService {
     protected getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store.pipe(
             select(fromRoot.selectBacktestIOResponse),
+            this.filterTruth(),
             filter(res => !!res && (callbackId ? res.action === callbackId : true))
         );
     }
@@ -98,33 +92,7 @@ export class BacktestResultService extends BaseService {
      * 获取回测结果，包括服务端的回测结果及webworker中的回测结果；
      */
     getBacktestResult(): Observable<WorkerBacktest.WorkerResult> {
-        const workerRes = this.store.pipe(
-            select(fromRoot.selectWorkerResult),
-            this.filterTruth()
-        );
-
-        const serverRes = this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
-            this.backtestResult()
-        );
-
-        return merge(serverRes, workerRes);
-    }
-
-    /**
-     * custom operator, used to get backtest tasks in store;
-     */
-    private tasksOperator = () => <T>(source: Observable<T>): Observable<UIState> => {
-        return source.pipe(
-            select(fromRoot.selectBacktestUIState),
-            filter(state => !!state.backtestTasks && !!state.backtestTasks.length)
-        );
-    }
-
-    /**
-     * custom operator, used to get backtest result in store
-     */
-    protected backtestResult = () => (source: Observable<fromRes.BacktestIOResponse>): Observable<fromRes.BacktestResult> => {
-        return source.pipe(
+        return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
             map(res => {
                 const { Result } = <fromRes.ServerBacktestResult<string>>res.result;
 
@@ -139,11 +107,51 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
+     * 获取回测的ui状态。
+     */
+    getUIState(): Observable<UIState> {
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState)
+        );
+    }
+
+    /**
+     * 取出 Observable 中的结果;
+     */
+    protected unwrap<T>(obs: Observable<T>): T {
+        let result = null;
+
+        obs.subscribe(res => result = res);
+
+        return result;
+    }
+}
+
+
+
+
+/**
+ * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestChartService；
+ */
+export class BacktestResultService extends BacktestBaseService {
+    PERIOD = 24 * 60 * 60 * 1000;
+
+    constructor(
+        public store: Store<fromRoot.AppState>,
+        public constant: BacktestConstantService,
+        public translate: TranslateService,
+        public utilService: UtilService,
+    ) {
+        super(store);
+    }
+
+    // ==============================================Shortcut methods============================================
+
+    /**
      * 是否允许用户下载回测结果。只有当回测完成并且有结果供下载时才可以下载。
      */
     canSaveResult(): Observable<boolean> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             map(state => state.backtestMilestone),
             withLatestFrom(
                 this.store.pipe(
@@ -175,17 +183,6 @@ export class BacktestResultService extends BaseService {
                 return result.error || ignore && ignore(response.Code) ? null : <fromRes.BacktestResult>JSON.parse(response.Result);
             }))
         );
-    }
-
-    /**
-     * 取出 Observable 中的结果;
-     */
-    protected unwrap<T>(obs: Observable<T>): T {
-        let result = null;
-
-        obs.subscribe(res => result = res);
-
-        return result;
     }
 
     /**
@@ -224,8 +221,7 @@ export class BacktestResultService extends BaseService {
      * 获取回测的进度。
      */
     getBacktestProgress(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             map(state => state.isOptimizedBacktest),
             switchMap(isOptimize => isOptimize ? this.getOptimizedBacktestProgress() : this.getNormalBacktestProgress())
         );
@@ -263,8 +259,7 @@ export class BacktestResultService extends BaseService {
      * 调优状态下回测，显示 已完成的任务 / 任务总数；
      */
     private getOptimizedBacktestProgress(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             filter(state => !!state.backtestTasks),
             map(state => state.backtestTasks.length || 1),
             withLatestFrom(this.store.pipe(
@@ -314,8 +309,7 @@ export class BacktestResultService extends BaseService {
      * 获取当前正在回测的任务的序号
      */
     getIndexOfBacktestingTask(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             map(state => state.backtestingTaskIndex),
             filter(idx => !!idx),
             startWith(0)
@@ -328,8 +322,8 @@ export class BacktestResultService extends BaseService {
      * 获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
      */
     getBacktestLogCols(): Observable<string[]> {
-        return this.store.pipe(
-            this.tasksOperator(),
+        return this.getUIState().pipe(
+            filter(state => state.backtestTasks && !!state.backtestTasks.length),
             map(state => head(state.backtestTasks).map(item => item.variableDes))
         );
     }
@@ -338,8 +332,8 @@ export class BacktestResultService extends BaseService {
      * 获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
      */
     getBacktestLogRows(): Observable<number[][]> {
-        return this.store.pipe(
-            this.tasksOperator(),
+        return this.getUIState().pipe(
+            filter(state => Array.isArray(state.backtestTasks)),
             map(state => state.backtestTasks.map(data => data.map(task => task.variableValue)))
         );
     }
@@ -407,8 +401,7 @@ export class BacktestResultService extends BaseService {
      * 获取总资产；默认优先使用余币的值。
      */
     protected getTotalAssets(isBalancePrior = false): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             filter(state => !!state.platformOptions && !!state.platformOptions.length),
             map(state => {
                 const { platformOptions } = state;
@@ -468,38 +461,40 @@ export class BacktestResultService extends BaseService {
                 this.getTotalAssets(true),
                 this.getYearDays(),
                 ({ start, end }, totalAssets, yearDays) => {
-                    let i = 0;
-                    let result = [];
-                    let preProfit = 0;
-                    let perRatio = 0;
-                    let finish = (end - start) % this.PERIOD > 0 ? Math.ceil(end / this.PERIOD) * this.PERIOD : end;
+                    const finish = (end - start) % this.PERIOD > 0 ? Math.ceil(end / this.PERIOD) * this.PERIOD : end;
 
-                    for (let n = start; n < finish; n += this.PERIOD) {
-                        let dayProfit = 0;
+                    const getDayProfit = this.getDayProfit(source);
 
-                        while (i < source.length && source[i].time < n + this.PERIOD) {
-                            dayProfit = dayProfit + source[i].profit - preProfit;
-                            preProfit = source[i].profit;
-                            i = i + 1;
-                        }
-
-                        perRatio = (dayProfit / totalAssets) * yearDays;
-
-                        result.push(perRatio);
-                    }
-
-                    return result;
+                    return range(start, finish, this.PERIOD).map(day => (getDayProfit(day + this.PERIOD) / totalAssets) * yearDays);
                 }
             )
-        )
+        );
+    }
+
+    /**
+     * 获取日收益
+     */
+    private getDayProfit(source: BacktestProfitDescription[]): (end: number) => number {
+        let i = 0;
+
+        const len = source.length;
+
+        return end => {
+            let dayProfit = 0;
+
+            for (; i < len && source[i].time < end; i++) {
+                dayProfit = dayProfit + source[i].profit - (i > 0 ? source[i - 1].profit : 0);
+            }
+
+            return dayProfit;
+        }
     }
 
     /**
      * 获取回测的时间周期
      */
     protected getTimeRange(): Observable<{ start: number; end: number }> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
+        return this.getUIState().pipe(
             filter(state => !!state.timeOptions),
             map(({ timeOptions }) => {
                 const { start, end } = timeOptions;
@@ -514,28 +509,10 @@ export class BacktestResultService extends BaseService {
     }
 
     /**
-     * 获取按天计算后的收益值
-     * @param source 回测结果
-     * @param endTime 结束时间
-     */
-    private getDayProfit(source: BacktestProfitDescription[], endTime: number): Observable<number> {
-        return from(source).pipe(
-            takeWhile(({ time }) => time < endTime),
-            map(({ profit }) => profit),
-            startWith(0),
-            bufferCount(2, 1),
-            reduce((acc: [number][], cur: [number, number]) => [...acc, cur], []),
-            map(data => data.slice(0, -1).reduce((acc, cur: [number, number]) => acc + (cur[1] - cur[0]), 0))
-        );
-    }
-
-    /**
      * 获取年化交易天数，使用回测交易平台中的最小值。
      */
     protected getYearDays(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectBacktestUIState),
-            filter(state => !!state.platformOptions && !!state.platformOptions.length),
+        return this.getUIState().pipe(
             mergeMap(state => {
                 const ids = state.platformOptions.map(item => item.eid);
 

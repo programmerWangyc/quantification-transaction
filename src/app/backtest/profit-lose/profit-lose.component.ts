@@ -20,8 +20,6 @@ export class ProfitLoseComponent extends BacktestChartComponent {
     ngOnInit() {
         this.data = this.chartService.getFloatPLChartOptions();
 
-        this.initialModel();
-
         this.launch();
     }
 }
