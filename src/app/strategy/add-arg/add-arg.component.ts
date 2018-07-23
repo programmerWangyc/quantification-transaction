@@ -23,16 +23,35 @@ export interface StrategyMetaArg {
     styleUrls: ['./add-arg.component.scss']
 })
 export class AddArgComponent implements OnInit, OnDestroy {
+
+    /**
+     * 是否交互参数
+     */
     @Input() isAlternation = false;
 
+    /**
+     * 添加参数
+     */
     @Output() add: EventEmitter<StrategyMetaArg> = new EventEmitter();
 
+    /**
+     * @ignore
+     */
     form: FormGroup;
 
+    /**
+     * 可用的变量类型
+     */
     types: VariableTypeDes[] = [];
 
+    /**
+     * 参数类型
+     */
     variableType: string;
 
+    /**
+     * @ignore
+     */
     subscription: Subscription;
 
     constructor(
@@ -43,6 +62,9 @@ export class AddArgComponent implements OnInit, OnDestroy {
         this.initForm();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.types = this.constant.VARIABLE_TYPES.filter(item => this.isAlternation ? item.id !== VariableType.ENCRYPT_STRING_TYPE : item.id !== VariableType.BUTTON_TYPE);
 
@@ -54,6 +76,9 @@ export class AddArgComponent implements OnInit, OnDestroy {
             });
     }
 
+    /**
+     * @ignore
+     */
     initForm(): void {
         this.form = this.fb.group({
             name: ['', [Validators.required, variableNameValidator]],
@@ -64,6 +89,10 @@ export class AddArgComponent implements OnInit, OnDestroy {
         });
     }
 
+    /**
+     * 重置变更的默认值；
+     * 当变量的类型发生变化时，需要重置它的值；
+     */
     private resetDefaultValue(): void {
         const selectedType = this.type.value;
 
@@ -91,9 +120,12 @@ export class AddArgComponent implements OnInit, OnDestroy {
         this.defaultValue.updateValueAndValidity();
     }
 
+    /**
+     * 输出需要添加的参数值；
+     */
     emit(param: StrategyMetaArg): void {
         /**
-         *  按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
+         * 按钮时，调用了defaultValue的 disable方法，表单里是没有default这一项的，所以要手动加上。
          */
         if (param.type === VariableType.BUTTON_TYPE) {
             this.add.next({ ...param, defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });
@@ -102,26 +134,44 @@ export class AddArgComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * @ignore
+     */
     get name(): AbstractControl {
         return this.form.get('name');
     }
 
+    /**
+     * @ignore
+     */
     get des(): AbstractControl {
         return this.form.get('des');
     }
 
+    /**
+     * @ignore
+     */
     get comment(): AbstractControl {
         return this.form.get('comment');
     }
 
+    /**
+     * @ignore
+     */
     get type(): AbstractControl {
         return this.form.get('type');
     }
 
+    /**
+     * @ignore
+     */
     get defaultValue(): AbstractControl {
         return this.form.get('defaultValue');
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }

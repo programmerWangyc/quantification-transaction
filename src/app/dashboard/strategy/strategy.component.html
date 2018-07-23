@@ -3,17 +3,17 @@
 <app-strate-overview></app-strate-overview>
 
 <div id="table-head">
-    <button nz-button [nzType]="'primary'" (click)="navigateTo('create_strategy')">
+    <button nz-button [nzType]="'primary'" (click)="navigateTo('add')">
         <i class="anticon anticon-plus"></i>
         {{'EDIT_NEW_STRATEGY' | translate}}
     </button>
-    <button nz-button [nzType]="'secondary'">
+    <button nz-button [nzType]="'secondary'" (click)="navigateTo('square', true)">
         <i class="anticon anticon-profile"></i>
         {{'GO_TO_STRATEGY_SQUARE' | translate}}
     </button>
 
     <nz-input-group nzSuffixIcon="anticon anticon-search">
-        <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate">
+        <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>
     </nz-input-group>
 </div>
 

@@ -44,6 +44,9 @@ export interface FileContent {
     extensionName: string;
 }
 
+/**
+ * TODO: 有时候代码会刷不出来，没定位到是哪的问题；
+ */
 @Component({
     selector: 'app-strategy-codemirror',
     templateUrl: './strategy-codemirror.component.html',
@@ -51,6 +54,10 @@ export interface FileContent {
     encapsulation: ViewEncapsulation.None
 })
 export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
+
+    /**
+     * Tabs for edit area;
+     */
     tabs: Tab[] = [
         { name: 'CODE', icon: 'anticon-code-o' },
         { name: 'NOTE', icon: 'anticon-file-text' },
@@ -58,6 +65,9 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         { name: 'MANUAL', icon: 'anticon-switcher' },
     ];
 
+    /**
+     * @ignore
+     */
     @Input() set strategy(data: StrategyDetail) {
         if (!data) return;
 
@@ -74,34 +84,62 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         this.desContent = description;
     }
 
-    @Input() mode: number;
+    /**
+     * @ignore
+     */
+    private _strategy: StrategyDetail;
 
+    /**
+     * 当前策略使用的编程语言
+     */
     @Input() set language(value: number) {
         this._language = value || Language.JavaScript;
 
         this.checkContent();
     }
 
-    private _language: number;
+    /**
+     * @ignore
+     */
+    private _language: number = 0;
 
+    /**
+     * 当前策略所属的种类
+     */
     @Input() set category(value: number) {
         this._category = value || CategoryType.COMMODITY_FUTURES;
 
         this.checkContent();
     }
 
+    /**
+     * @ignore
+     */
     private _category: number;
 
-    private _strategy: StrategyDetail;
+    /**
+     * 代码
+     */
+    codeContent: string = '';
 
-    codeContent: string;
+    /**
+     * 笔记
+     */
+    noteContent: string = '';
 
-    noteContent: string;
+    /**
+     * 手册
+     */
+    manualContent: string = '';
 
-    manualContent: string;
+    /**
+     * 描述
+     */
+    desContent: string = '';
 
-    desContent: string;
-
+    /**
+     * Code mirror的配置
+     */
     codeOptions = {
         lineNumbers: true,
         theme: 'eclipse',
@@ -121,28 +159,64 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         mode: "javascript",
     }
 
+    /**
+     * @ignore
+     */
     fontSize = 14;
 
+    /**
+     * @ignore
+     */
     editorThemes: string[];
 
+    /**
+     * 代码格式化的功能函数；
+     */
     formatter: (value: number) => string;
 
+    /**
+     * @ignore
+     */
     activateTabIndex = 0;
 
+    /**
+     * 保存代码
+     */
     @Output() save: EventEmitter<CodeContent> = new EventEmitter();
 
+    /**
+     * 下载代码
+     */
     @Output() download: EventEmitter<FileContent> = new EventEmitter();
 
+    /**
+     * @ignore
+     */
     @ViewChild(CodemirrorComponent) codeMirror: CodemirrorComponent;
 
+    /**
+     * @ignore
+     */
     vimBtnText = 'OPEN_VIM_MODE';
 
+    /**
+     * 是否全屏
+     */
     isFullScreen = false;
 
+    /**
+     * @ignore
+     */
     sub$$: Subscription;
 
+    /**
+     * 保存回测设置
+     */
     saveBacktest$: Subject<boolean> = new Subject();
 
+    /**
+     * 是否处于保存回测的状态；
+     */
     isSaveBacktestConfig = false;
 
     constructor(
@@ -152,8 +226,13 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         private renderer2: Renderer2,
         private eleRef: ElementRef,
         private publicService: PublicService,
-    ) { }
+    ) {
+        this.codeContent = this.constant.LANGUAGE_INITIAL_VALUE.get(this._language).codeValue;
+    }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.translate.get('FONT_SIZE').subscribe(label => this.formatter = this.formatterFactory(label));
 
@@ -162,6 +241,9 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         this.sub$$ = this.publicService.getFavoriteEditorConfig().subscribe(config => {
             const fontSize = <number>config.fontSize;
@@ -179,22 +261,36 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
             );
     }
 
+    /**
+     * 生成格式化代码函数的工厂函数；
+     */
     private formatterFactory(label: string): (v: number) => string {
         return (value: number) => label + value + 'px';
     }
 
+    /**
+     * 数字输入框的辅助解析函数
+     * @param value 输入框的内容
+     */
     parser(value: string): number {
         const res = +value.match(/\d+/g);
 
         return res ? res[0] : 0;
     }
 
+    /**
+     * 代码内容是否发生了改变
+     */
     isCodeChanged(): boolean {
-        return this.codeContent !== this._strategy.source;
+        if (this._strategy) {
+            return this.codeContent !== this._strategy.source;
+        } else {
+            return true;
+        }
     }
 
     /**
-     *  Used to check code content when language or category is changed.
+     * Used to check code content when language or category is changed.
      */
     private checkContent(): void {
         const target = this.constant.LANGUAGE_INITIAL_VALUE.get(this._language);
@@ -203,11 +299,16 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
         if (!this.codeContent || isInitialValue) {
             this.codeContent = this._category === CategoryType.TEMPLATE_LIBRARY ? target.templateValue : target.codeValue;
+        } else {
+            // nothing to do;
         }
 
         this.codeOptions.mode = target.mode;
     }
 
+    /**
+     * 导出代码的内容
+     */
     export(): void {
         const target = this.constant.LANGUAGE_INITIAL_VALUE.get(this._language);
 
@@ -219,7 +320,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     *  Set editor font size, and update user favorite editor config;
+     * Set editor font size, and update user favorite editor config;
      */
     setFontSize(): void {
         const ele = this.eleRef.nativeElement.querySelector('.CodeMirror');
@@ -230,7 +331,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     *  Set editor theme, and update user favorite editor config;
+     * Set editor theme, and update user favorite editor config;
      */
     setTheme(theme: string): void {
         this.codeOptions.theme = theme;
@@ -241,14 +342,14 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     *  Format code use js-beautify
+     * Format code use js-beautify
      */
     formatCode(): void {
         this.codeContent = beautify(this.codeContent);
     }
 
     /**
-     *  Toggle edit mode between 'default' and 'vim';
+     * Toggle edit mode between 'default' and 'vim';
      */
     toggleVimMode(): void {
         const editor = this.codeMirror.codeMirror;
@@ -265,7 +366,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
     }
 
     /**
-     *  Toggle edit area size. The method that code mirror applied has no effect, achieve the effect by dynamically toggle classes and attributes.
+     * Toggle edit area size. The method that code mirror applied has no effect, achieve the effect by dynamically toggle classes and attributes.
      */
     toggleFullScreen(): void {
         this.isFullScreen = !this.isFullScreen;
@@ -289,6 +390,10 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         this.codeMirror.codeMirror.focus();
     }
 
+    /**
+     * 生成注释
+     * @param comment 注释内容
+     */
     createComment(comment: string): string {
         if (this._language === Language.Python) {
             return `'''backtest\n${comment}\n'''`;
@@ -297,6 +402,10 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * 替换注释
+     * @param comment 注释内容
+     */
     replaceComment(comment: string): string {
         const reg = this._language === Language.Python ? this.constant.pyCommentReg : this.constant.jsCommentReg;
 
@@ -309,12 +418,18 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * 切换保存回测设置的状态
+     */
     toggleSaveBacktestConfig() {
         this.isSaveBacktestConfig = !this.isSaveBacktestConfig;
 
         this.saveBacktest$.next(this.isSaveBacktestConfig);
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.sub$$.unsubscribe();
     }

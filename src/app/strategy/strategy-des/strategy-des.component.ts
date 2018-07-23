@@ -13,6 +13,10 @@ import { StrategyService } from '../providers/strategy.service';
     styleUrls: ['./strategy-des.component.scss']
 })
 export class StrategyDesComponent implements OnInit {
+
+    /**
+     * @ignore
+     */
     @Input() set strategy(value: Strategy) {
         if (!value) return;
 
@@ -27,22 +31,49 @@ export class StrategyDesComponent implements OnInit {
         this.strategyService.updateSelectedLanguage(this.language);
     }
 
+    /**
+     * Update language;
+     */
     @Output() langChange: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * Update category;
+     */
     @Output() catChange: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * Update name;
+     */
     @Output() nameUpdate: EventEmitter<string> = new EventEmitter();
 
+    /**
+     * @ignore
+     */
     strategyName = '';
 
+    /**
+     * @ignore
+     */
     language = 0;
 
+    /**
+     * @ignore
+     */
     category = 0;
 
+    /**
+     * Supported languages;
+     */
     languages: SupportedLanguage[] = [];
 
+    /**
+     * Supported categories;
+     */
     categories: Category[] = [];
 
+    /**
+     * @ignore
+     */
     private _strategy: Strategy;
 
     constructor(
@@ -51,12 +82,19 @@ export class StrategyDesComponent implements OnInit {
         private strategyService: StrategyService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.categories = this.constant.STRATEGY_CATEGORIES.slice(0, -1);
 
         this.languages = this.constant.SUPPORTED_LANGUAGE;
     }
 
+    /**
+     * Show tip message when user selected template category;
+     * @param category Current category;
+     */
     showCategoryChangeTip(category: number): void {
         if (category === CategoryType.TEMPLATE_LIBRARY) {
             this.nzModal.warning({
@@ -70,6 +108,9 @@ export class StrategyDesComponent implements OnInit {
         }
     }
 
+    /**
+     * 监听策略编程语言的变化；
+     */
     onLanguageChange(language: number): void {
         this.langChange.next(language);
 

@@ -49,3 +49,11 @@ textarea {
     right: 5px;
     z-index: 1002;
 }
+
+.CodeMirror-gutter:last-child {
+    width: 26px !important;
+}
+
+.CodeMirror-sizer {
+    margin-left: 27px !important;
+}

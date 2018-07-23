@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { isString } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable, of, Subject, Subscription } from 'rxjs';
-import { partition } from 'rxjs/operators';
+import { Observable, of, Subject, Subscription, combineLatest } from 'rxjs';
+import { partition, startWith, map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -15,6 +15,7 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import { StrategyService } from '../../strategy/providers/strategy.service';
 import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-strategy',
@@ -22,19 +23,45 @@ import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
     styleUrls: ['./strategy.component.scss']
 })
 export class StrategyComponent implements BaseComponent {
+    /**
+     * @ignore
+     */
     paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY' }];
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * 策略列表
+     */
     strategyList: Observable<Strategy[]>;
 
+    /**
+     * 公开
+     */
     share$: Subject<ShareStrategyStateSnapshot> = new Subject();
 
+    /**
+     * 续费
+     */
     renewal$: Subject<Strategy> = new Subject();
 
+    /**
+     * 删除
+     */
     delete$: Subject<Strategy> = new Subject();
 
+    /**
+     * @ignore
+     */
     isLoading: Observable<boolean>;
+
+    /**
+     * 搜索名称中包含指定关键字的策略
+     */
+    search: FormControl = new FormControl();
 
     constructor(
         private strategyService: StrategyService,
@@ -44,20 +71,37 @@ export class StrategyComponent implements BaseComponent {
         private activatedRoute: ActivatedRoute,
         private strategyOperate: StrategyOperateService,
         private nzModal: NzModalService,
-    ) { }
+    ) {
+    }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
-        this.strategyList = this.strategyService.getStrategies();
+        this.strategyList = combineLatest(
+            this.strategyService.getStrategies(),
+            this.search.valueChanges.pipe(
+                startWith('')
+            )
+        ).pipe(
+            map(([list, keyword]) => list.filter(item => item.name.includes(keyword)))
+        );
 
         this.isLoading = this.strategyService.isLoading();
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.indexOf('/') !== -1)(this.renewal$);
 
@@ -82,10 +126,17 @@ export class StrategyComponent implements BaseComponent {
             .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })))
     }
 
-    navigateTo(path: string): void {
-        this.router.navigate([path], { relativeTo: this.activatedRoute });
+    /**
+     * Navigate to other pate;
+     * @param path target route;
+     */
+    navigateTo(path: string, isRelativeToParent = false): void {
+        this.router.navigate([path], { relativeTo: isRelativeToParent ? this.activatedRoute.parent : this.activatedRoute });
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }

@@ -147,6 +147,10 @@ export class ConstantService {
 
     constructor() { }
 
+    /**
+     * 将列表参数转换成 list 供组件使用；
+     * @param value 列表值；
+     */
     transformStringToList(value: string): string[] {
         let target = value;
 
@@ -157,6 +161,9 @@ export class ConstantService {
         return target.split('|');
     }
 
+    /**
+     * 去掉参数名称前的标识符
+     */
     withoutPrefix(value: string, prefix: string): string {
         return value.split(prefix)[1];
     }
@@ -178,13 +185,25 @@ export class ConstantService {
         return condition || [];
     }
 
+    /**
+     * 判定参数的生成函数；
+     * @param argPrefix 判定的参数前缀；
+     * @returns 返回的函数： 入参： 变量名称，返回：boolean；
+     * 传入的变量是否属于带有特定前缀的参数；
+     */
     isSpecialTypeArg = (argPrefix: string): (a: string) => boolean => {
         return (variableName: string) => variableName.indexOf(argPrefix) === 0;
     }
 
+    /**
+     * 传入的参数是否代表按钮
+     */
     isButton = (value: any): boolean => {
         return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
 
+    /**
+     * 去掉参数名称中的条件；
+     */
     removeConditionInName = removeConditionInName;
 }

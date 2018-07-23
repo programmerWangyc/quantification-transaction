@@ -16,6 +16,9 @@ interface StrategyMetaArgPreview extends StrategyMetaArg {
 })
 export class AlternationPreviewComponent implements OnInit {
 
+    /**
+     * 交互参数或参数集合
+     */
     @Input() set param(value: StrategyMetaArg | StrategyMetaArg[]) {
         if (!value) return;
 
@@ -26,6 +29,9 @@ export class AlternationPreviewComponent implements OnInit {
         }
     }
 
+    /**
+     * 已经从参数表中删除了的参数
+     */
     @Input() set removedArg(removed: StrategyMetaArg) {
         if (!removed) return;
 
@@ -34,8 +40,14 @@ export class AlternationPreviewComponent implements OnInit {
         this.data = this.data.filter(item => item.name !== removed.name);
     }
 
+    /**
+     * @ignore
+     */
     private _removed: StrategyMetaArg;
 
+    /**
+     * @ignore
+     */
     data: StrategyMetaArg[] = [];
 
     constructor(
@@ -43,9 +55,15 @@ export class AlternationPreviewComponent implements OnInit {
         private constant: StrategyConstantService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
     }
 
+    /**
+     * 预览交互动作；
+     */
     preview(target: StrategyMetaArgPreview): void {
         let command = '';
 
@@ -60,6 +78,9 @@ export class AlternationPreviewComponent implements OnInit {
         this.tip.messageInfo('SEND_COMMAND_TO_ROBOT', { command });
     }
 
+    /**
+     * 参数显示前的优化；
+     */
     patchValue(value: StrategyMetaArg): StrategyMetaArgPreview {
         if (value.type === VariableType.SELECT_TYPE) {
             return { ...value, selected: 0 };

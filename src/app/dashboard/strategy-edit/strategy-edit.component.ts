@@ -19,8 +19,14 @@ import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-cr
 })
 export class StrategyEditComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
+    /**
+     * 策略编辑密钥操作的类型；
+     */
     opToken$: Subject<number> = new Subject();
 
+    /**
+     * 策略操作的密钥
+     */
     secretKey: Observable<string>;
 
     templates: Observable<TemplateRefItem[]>;
@@ -38,6 +44,9 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         super(route, strategyService, nodeService, nzModal, constant, backtest);
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.addCurrentPath('EDIT');
 
@@ -50,18 +59,23 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.launchPrivate();
     }
 
+    /**
+     * @ignore
+     */
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
 
         this.templates = combineLatest(
             this.strategyService.getStrategyDependance(),
             this.language
-        )
-            .pipe(
-                map(([templates, language]) => templates.filter(item => item.language === language))
-            );
+        ).pipe(
+            map(([templates, language]) => templates.filter(item => item.language === language))
+        );
     }
 
+    /**
+     * @ignore
+     */
     launchPrivate() {
         this.privateSub$$ = this.strategyService.handleOpStrategyTokenError()
             /**
@@ -69,24 +83,28 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
              */
             .add(this.strategyService.launchOpStrategyToken(
                 merge(
-                    this.strategyService.hasToken(this.strategyId)
-                        .pipe(
-                            filter(has => has),
-                            mapTo(OpStrategyTokenType.GET)
-                        ),
+                    this.strategyService.hasToken(this.strategyId).pipe(
+                        filter(has => has),
+                        mapTo(OpStrategyTokenType.GET)
+                    ),
                     this.opToken$
-                )
-                    .pipe(
-                        map(opCode => ({ opCode, strategyId: this.strategyId }))
-                    ))
+                ).pipe(
+                    map(opCode => ({ opCode, strategyId: this.strategyId }))
+                ))
             )
             .add(this.strategyService.updateStrategySecretKeyState(this.strategyId));
     }
 
+    /**
+     * @ignore
+     */
     ngAfterViewInit() {
         this.privateSub$$.add(this.strategyService.launchSaveStrategy(this.getSaveParams()));
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.strategyService.resetState();
 

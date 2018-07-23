@@ -543,7 +543,7 @@
     "SEND_COMMAND_TO_ROBOT": "实盘时会向机器人发送命令：{{command}}",
 
     "TEMPLATE_ARGUMENTS": "模板参数",
-    "CATEGORY_CHANGED_TIP": "将策略转换为模板类库以后，不允许引用其它模板类库，保存后该操作不可逆 !",
+    "CATEGORY_CHANGED_TIP": "将策略转换为模板类库以后，不允许引用其它模板类库，保存后该操作不可逆!",
 
     "OUT_OF_TIMELINE": "底层基于1分钟K线生成的tick最多从2016-02-22号开始，如果需要更大范围测试请选择更高的低层K线周期，这可能会降低精度!",
     "BACKTEST_PERIOD": "回测周期",

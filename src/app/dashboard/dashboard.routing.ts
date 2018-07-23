@@ -12,6 +12,7 @@ import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
 import { SquareComponent } from './square/square.component';
+import { StrategyAddComponent } from './strategy-add/strategy-add.component';
 import { StrategyCopyComponent } from './strategy-copy/strategy-copy.component';
 import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
@@ -23,35 +24,18 @@ const routs: Routes = [
         path: '',
         component: DashboardComponent,
         children: [
-            // { path: Path.robot, component: RobotComponent },
-            // { path: Path.robot + '/' + Path.createRobot, component: RobotCreationComponent },
-            // { path: Path.robot + '/:id/:name', component: RobotDetailComponent },
-            // { path: Path.robot + '/' + Path.debug, component: RobotDebugComponent },
-            // { path: Path.strategy, component: StrategyComponent },
-            // { path: Path.strategy + '/' + Path.copy + '/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            // { path: Path.strategy + '/' + Path.edit + '/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            // { path: Path.strategy + '/' + Path.backtest + '/:id', component: DocComponent },
-            // // { path: Path.strategy + '/:id/:name', component: StrategyLibComponent },
-            // { path: Path.strategy + '/' + Path.verify + '/:id/:codeType', component: StrategyVerifyCodeComponent },
-            // { path: Path.strategy + '/' + Path.rent + '/:id', component: StrategyRentComponent },
-            // { path: Path.charge, component: RechargeComponent },
-            // // { path: Path.exchange, component: ExchangeComponent },
-            // // { path: Path.trustee, component: TrusteeComponent },
-            // { path: Path.square, component: SquareComponent },
-            // { path: Path.community, component: CommunityComponent },
-            // { path: Path.doc, component: DocComponent },
-            // { path: Path.fact, component: FactComponent },
             { path: 'robot', component: RobotComponent },
-            { path: 'robot' + '/' + Path.createRobot, component: RobotCreationComponent },
-            { path: 'robot' + '/:id/:name', component: RobotDetailComponent },
-            { path: 'robot' + '/' + Path.debug, component: RobotDebugComponent },
+            { path: 'robot/' + Path.createRobot, component: RobotCreationComponent },
+            { path: 'robot/:id/:name', component: RobotDetailComponent },
+            { path: 'robot/' + Path.debug, component: RobotDebugComponent },
             { path: 'strategy', component: StrategyComponent },
-            { path: 'strategy' + '/' + 'copy' + '/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            { path: 'strategy' + '/' + 'edit' + '/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            { path: 'strategy' + '/' + 'backtest' + '/:id', component: DocComponent },
+            { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
+            { path: 'strategy/copy/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
+            { path: 'strategy/edit/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
+            { path: 'strategy/backtest/:id', component: DocComponent },
             // { path: 'strategy' + '/:id/:name', component: StrategyLibComponent },
-            { path: 'strategy' + '/' + 'verify' + '/:id/:codeType', component: StrategyVerifyCodeComponent },
-            { path: 'strategy' + '/' + 'rent' + '/:id', component: StrategyRentComponent },
+            { path: 'strategy/verify/:id/:codeType', component: StrategyVerifyCodeComponent },
+            { path: 'strategy/rent/:id', component: StrategyRentComponent },
             { path: 'charge', component: RechargeComponent },
             // { path: Path.exchange, component: ExchangeComponent },
             // { path: Path.trustee, component: TrusteeComponent },

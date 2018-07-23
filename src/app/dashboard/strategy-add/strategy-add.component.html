@@ -1,0 +1,72 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
+    <nz-tabset>
+        <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
+            <ng-template #titleTemplate>
+                <i class="anticon" [ngClass]="tab.icon"></i>{{ tab.name | translate }}
+            </ng-template>
+            <div [ngSwitch]="idx">
+                <div *ngSwitchCase="0">
+                    <ng-content *ngTemplateOutlet="edit"></ng-content>
+                </div>
+                <div *ngSwitchCase="1">
+                    <ng-content *ngTemplateOutlet="backtest"></ng-content>
+                </div>
+                <div *ngSwitchDefault>template not found</div>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</nz-spin>
+
+<ng-template #edit>
+    <div class="section">
+        <app-strategy-des (catChange)="category$.next($event)" (langChange)="language$.next($event)" (nameUpdate)="name$.next($event)"></app-strategy-des>
+    </div>
+
+    <div class="section">
+        <app-strategy-codemirror [language]="language | async" [category]="category | async" (save)="save$.next($event)" (download)="export$.next($event)"></app-strategy-codemirror>
+    </div>
+
+    <div *ngIf="needShowTemplateDependance | async" class="section">
+        <h3>{{'TEMPLATE_REFERENCE' | translate}}</h3>
+
+        <app-strategy-dependance [data]="templates | async"></app-strategy-dependance>
+    </div>
+
+    <div class="section">
+        <h3 *ngIf="isTemplateCategorySelected | async; let isTpl; else strategyTitle">{{ 'TEMPLATE_ARGUMENTS' | translate}}</h3>
+
+        <ng-template #strategyTitle>
+            <h3>{{ 'STRATEGY_ARGUMENTS' | translate}}</h3>
+        </ng-template>
+
+        <app-add-arg [isAlternation]="false" (add)="args$.next($event)"></app-add-arg>
+
+        <div class="section">
+            <app-arg-list [isAlternation]="false" [param]="args | async" #strategyArgs></app-arg-list>
+        </div>
+    </div>
+
+    <div *ngIf="!(isTemplateCategorySelected | async);" class="section">
+        <h3>{{'STRATEGY_ALTERNATION' | translate}}</h3>
+
+        <app-add-arg [isAlternation]="true" (add)="commandArgs$.next($event)"></app-add-arg>
+
+        <div class="section">
+            <app-arg-list [isAlternation]="true" [param]="commandArgs | async" (removeArg)="removedCommandArg$.next($event)" #strategyCommandArgs></app-arg-list>
+        </div>
+    </div>
+
+    <div *ngIf="(hasCommandArgs | async) && !(isTemplateCategorySelected | async);" class="section">
+        <h3>{{'ALTERNATION_PREVIEW' | translate}}</h3>
+
+        <app-alternation-preview [param]="commandArgs | async" [removedArg]="removedCommandArg$ | async"></app-alternation-preview>
+    </div>
+
+    <button nz-button [nzType]="'primary'" (click)="save$.next(true)" [disabled]="forbiddenSubmit | async">{{'CREATE_STRATEGY' | translate}}</button>
+</ng-template>
+
+<ng-template #backtest>
+    <app-backtest-simulation [category]="category | async" [language]="language | async"></app-backtest-simulation>
+</ng-template>

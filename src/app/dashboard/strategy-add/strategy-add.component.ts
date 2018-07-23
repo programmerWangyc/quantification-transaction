@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map, mapTo, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable, Subscription, of } from 'rxjs';
+import { filter, map, mapTo, switchMap, delay } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -11,17 +11,19 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
-
+import { StrategyDetail } from '../../interfaces/response.interface';
+import { CategoryType, needArgsType } from '../../interfaces/request.interface';
+import { tap } from 'rxjs/internal/operators/tap';
 
 @Component({
-    selector: 'app-strategy-copy',
-    templateUrl: './strategy-copy.component.html',
-    styleUrls: ['./strategy-copy.component.scss']
+    selector: 'app-strategy-add',
+    templateUrl: './strategy-add.component.html',
+    styleUrls: ['./strategy-add.component.scss']
 })
-export class StrategyCopyComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
+export class StrategyAddComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /**
-     * 策略所依赖的模板
+     * 可使用的模板
      */
     templates: Observable<TemplateRefItem[]>;
 
@@ -34,6 +36,11 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
      * @ignore
      */
     save$$: Subscription;
+
+    /**
+     * 策略
+     */
+    strategyDetail: Observable<StrategyDetail>;
 
     constructor(
         public route: ActivatedRoute,
@@ -50,11 +57,9 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
      * @ignore
      */
     ngOnInit() {
-        this.initialModel();
+        this.initialModel(true);
 
-        this.launch(false);
-
-        this.addCurrentPath('COPY');
+        this.addCurrentPath('CREATE');
 
         this.initialPrivateModel();
 
@@ -66,21 +71,19 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
      */
     initialPrivateModel() {
         this.templates = combineLatest(
-            this.strategyService.getCurrentDependance(),
+            this.strategyService.getAvailableDependance(true),
             this.language
         ).pipe(
-            map(([templates, language]) => templates.filter(item => item.language === language)),
+            map(([templates, language]) => templates.filter(item => item.language === language))
         );
 
         this.needShowTemplateDependance = combineLatest(
             this.templates.pipe(
                 map(list => !!list.length)
             ),
-            this.isTemplateCategorySelected.pipe(
-                filter(sure => !sure)
-            )
+            this.isTemplateCategorySelected
         ).pipe(
-            map(([hasTemplates, isNotTemplateCategory]) => hasTemplates && isNotTemplateCategory)
+            map(([hasTemplates, isTemplateCategory]) => hasTemplates && !isTemplateCategory)
         );
     }
 
@@ -88,21 +91,28 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
      * @ignore
      */
     initialPrivateLaunch() {
+        this.subscription$$ = this.strategyService.handleStrategyListError()
+            .add(this.strategyService.handleSaveStrategyError())
+            // 响应用户导出文件的操作
+            .add(this.export$.subscribe(content => this.exportFile(content)))
+            // 只获取属于模板类库的策略
+            .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg })))
+            .add(this.nodeService.launchGetNodeList(of(true), true));
     }
 
     /**
      * @ignore
      */
     ngAfterViewInit() {
-        this.save$$ = this.strategyService.launchSaveStrategy(this.confirmBeforeRequest(-1 - this.strategyId));
+        this.save$$ = this.strategyService.launchSaveStrategy(this.confirmBeforeRequest(-1)); // 为啥是-1，我也不知道；
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
-
         this.save$$.unsubscribe();
+
+        this.subscription$$.unsubscribe();
     }
 }

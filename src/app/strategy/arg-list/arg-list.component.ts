@@ -26,8 +26,14 @@ export interface EditingArg {
 })
 export class ArgListComponent implements OnInit {
 
+    /**
+     * 是交互参数
+     */
     @Input() isAlternation = false;
 
+    /**
+     * 需要添加的参数，或参数集合
+     */
     @Input() set param(value: StrategyMetaArg | StrategyMetaArg[]) {
         if (!value) return;
 
@@ -38,12 +44,25 @@ export class ArgListComponent implements OnInit {
         }
     }
 
+    /**
+     * 输出从列表中删除掉的参数；
+     */
     @Output() removeArg: EventEmitter<StrategyMetaArg> = new EventEmitter();
 
+
+    /**
+     * 可编辑的参数
+     */
     data: EditableStrategyMetaArg[] = [];
 
+    /**
+     * 处于编辑状态的参数
+     */
     editingArgs: EditingArg[] = [];
 
+    /**
+     * 参数的可选类型
+     */
     types: VariableTypeDes[] = [];
 
     constructor(
@@ -51,10 +70,16 @@ export class ArgListComponent implements OnInit {
         private nzModal: NzModalService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.types = this.constant.VARIABLE_TYPES.filter(item => this.isAlternation ? item.id !== VariableType.ENCRYPT_STRING_TYPE : item.id !== VariableType.BUTTON_TYPE);
     }
 
+    /**
+     * 删除参数前的确认函数；
+     */
     delete(target: EditableStrategyMetaArg, index: number): void {
         this.nzModal.confirm({
             nzContent: SimpleNzConfirmWrapComponent,
@@ -63,6 +88,11 @@ export class ArgListComponent implements OnInit {
         });
     }
 
+    /**
+     * 进入参数编辑状态
+     * @param target 参数
+     * @param index 在列表中的位置
+     */
     startEdit(target: EditableStrategyMetaArg, index: number): void {
         target.editing = true;
 
@@ -71,6 +101,11 @@ export class ArgListComponent implements OnInit {
         this.editingArgs.push({ index, originValue: omit({ ...target }, 'editing') });
     }
 
+    /**
+     * 取消参数的编辑状态
+     * @param target 参数
+     * @param index 在列表中的位置
+     */
     cancelEdit(target: EditableStrategyMetaArg, index: number): void {
         target.editing = false;
 
@@ -83,6 +118,11 @@ export class ArgListComponent implements OnInit {
         this.editingArgs.splice(idx, 1);
     }
 
+    /**
+     * 保存编辑过的参数
+     * @param target 参数
+     * @param index 在列表中的位置
+     */
     saveEdit(target: EditableStrategyMetaArg, index: number): void {
         const positions: number[] = [];
 
@@ -109,12 +149,19 @@ export class ArgListComponent implements OnInit {
         }
     }
 
+    /**
+     * 删除参数；
+     * 柯里化前的函数；
+     */
     private deleteArg = index => () => {
         this.removeArg.emit(this.data[index]);
 
         this.data = this.data.filter((_, idx) => idx !== index);
     }
 
+    /**
+     * 将参数的值重置为默认值；
+     */
     resetDefaultValue(index: number): void {
         const target = this.data[index];
 
@@ -131,12 +178,16 @@ export class ArgListComponent implements OnInit {
 
 
     /**
-     *  FIXME: 模板变量没有引用到，所以加了这个方法，why?
+     * FIXME: 模板变量没有引用到，所以加了这个方法，why?
+     * Hack method;
      */
     isSelectValueValid(str: string): boolean {
         return selectTypeValueFormat.test(str);
     }
 
+    /**
+     * 在现在参数表格上添加新的参数；
+     */
     private addArg(value: StrategyMetaArg) {
         const index = this.data.findIndex(item => item.name === value.name || item.des === value.des);
 
@@ -159,6 +210,10 @@ export class ArgListComponent implements OnInit {
         }
     }
 
+    /**
+     * 参数显示前的优化函数，主要用来去掉一些标识符；
+     * @param arg 策略参数
+     */
     private optimizeArg(arg: StrategyMetaArg): StrategyMetaArg {
         if (arg.type === VariableType.SELECT_TYPE) {
             return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.LIST_PREFIX) };

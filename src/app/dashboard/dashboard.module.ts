@@ -30,6 +30,7 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
+import { StrategyAddComponent } from './strategy-add/strategy-add.component';
 
 @NgModule({
     imports: [
@@ -62,6 +63,7 @@ import { StrategyComponent } from './strategy/strategy.component';
         StrategyEditComponent,
         StrategyCreateMetaComponent,
         BacktestSimulationComponent,
+        StrategyAddComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

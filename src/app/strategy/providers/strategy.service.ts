@@ -52,6 +52,10 @@ export class StrategyService extends BaseService {
         return this.process.processStrategyList(source);
     }
 
+    /**
+     * 发起对策略token的操作请求；
+     * @param source 远程编辑的token的操作请求；
+     */
     launchOpStrategyToken(source: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
         return this.process.processOpStrategyToken(source.pipe(
             switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
@@ -59,8 +63,7 @@ export class StrategyService extends BaseService {
                     map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) }))
                 )
             )
-        )
-        );
+        ));
     }
 
     launchStrategyDetail(source: Observable<fromReq.GetStrategyDetailRequest>): Subscription {
@@ -69,6 +72,9 @@ export class StrategyService extends BaseService {
 
     //  =======================================================Date acquisition=======================================================
 
+    /**
+     * 获取策略列表接口的响应数据；
+     */
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.select(fromRoot.selectStrategyListResponse).pipe(
             this.filterTruth()
@@ -81,6 +87,9 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * 获取策略列表;
+     */
     getStrategies(): Observable<fromRes.Strategy[]> {
         return this.getStrategyListResponse().pipe(
             map(res => res.result.strategies)
@@ -140,18 +149,27 @@ export class StrategyService extends BaseService {
             .subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
     }
 
+    /**
+     * 获取策略详情的响应；
+     */
     private getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
         return this.store.select(fromRoot.selectStrategyDetailResponse).pipe(
             this.filterTruth()
         );
     }
 
+    /**
+     * 获取策略的详情信息；
+     */
     getStrategyDetail(): Observable<fromRes.StrategyDetail> {
         return this.getStrategyDetailResponse().pipe(
             map(res => res.result.strategy)
         );
     }
 
+    /**
+     * 获取策略的模板依赖；来源于2部分：1、当前的依赖；2、可用的依赖；
+     */
     getStrategyDependance(): Observable<TemplateRefItem[]> {
         return combineLatest(
             this.getAvailableDependance(),
@@ -167,17 +185,26 @@ export class StrategyService extends BaseService {
         );
     }
 
-    getAvailableDependance(): Observable<TemplateRefItem[]> {
+    /**
+     * 获取策略可用的模板依赖；
+     * @param isAddStrategy 调用是否来自于创建新策略；
+     */
+    getAvailableDependance(isAddStrategy = false): Observable<TemplateRefItem[]> {
         return this.getStrategies().pipe(
             withLatestFrom(
-                this.getStrategyDetail().pipe(
+                !isAddStrategy ? this.getStrategyDetail().pipe(
                     map(item => item.id)
-                ),
-                (strategies, id) => strategies.map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language })).filter(item => item.id !== id)
+                ) : of(null),
+                (strategies, id) => strategies
+                    .map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language }))
+                    .filter(item => item.id !== id)
             )
         );
     }
 
+    /**
+     * 获取策略当前的模板依赖；
+     */
     getCurrentDependance(): Observable<TemplateRefItem[]> {
         return this.getStrategyDetail().pipe(
             map(detail => detail.templates ? detail.templates.map(tpl => {
@@ -192,12 +219,19 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * 是否正在加载数据；
+     */
     isLoading(): Observable<boolean> {
         return this.store.select(fromRoot.selectStrategyUIState).pipe(
             map(state => state.loading)
         );
     }
 
+    /**
+     * 获取已经存在的策略参数；
+     * @param predicate 判定函数，用来判定参数是否所需要的参数；
+     */
     getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
         return this.getStrategyDetail().pipe(
             map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
@@ -260,6 +294,10 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * 确认用户是否需要对token进行操作；
+     * 除了获取不需要确认外，其它操作都需要用户确认；
+     */
     private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {
         const modal: NzModalRef = this.nzModal.confirm({
             nzContent: SimpleNzConfirmWrapComponent,
@@ -272,6 +310,9 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * 查找当前编辑的策略是否已经生成过远程编辑的token;
+     */
     hasToken(id: number): Observable<boolean> {
         return this.getStrategies().pipe(
             mergeMap(list => from(list)),
@@ -281,6 +322,9 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * 判定参数是否交互参数；
+     */
     isCommandArg = this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX)
 
     //  =======================================================Error handler=======================================================
