@@ -17,6 +17,9 @@ export class BacktestStrategyChartComponent extends BacktestChartComponent {
         super(chartService, utilService);
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.data = this.chartService.getStrategyChartOptions();
 

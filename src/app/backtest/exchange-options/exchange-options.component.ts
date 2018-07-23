@@ -13,20 +13,44 @@ import { BacktestService } from '../providers/backtest.service';
     styleUrls: ['./exchange-options.component.scss']
 })
 export class ExchangeOptionsComponent implements OnInit {
+    /**
+     * Emit the k line period id which want to use;
+     */
     @Output() fixKlinePeriod: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * Selected stock;
+     */
     selectedStock = 0;
 
+    /**
+     * Source data of platforms;
+     */
     platforms: GroupedList<BacktestPlatform>[];
 
+    /**
+     * Selected trade pair;
+     */
     selectedPairs: SelectedPair[] = [];
 
-    platformOptions: BacktestSelectedPair[] = [];
+    /**
+     * Platform options
+     */
+    private platformOptions: BacktestSelectedPair[] = [];
 
+    /**
+     * Whether draw chart;
+     */
     isDrawChart = true;
 
+    /**
+     * Min fee.
+     */
     minFee = 5;
 
+    /**
+     * Whether show help message if has;
+     */
     isHelpShow = true;
 
     constructor(
@@ -35,14 +59,25 @@ export class ExchangeOptionsComponent implements OnInit {
         private backtestService: BacktestService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.util.getGroupedList(of(this.constant.BACKTEST_PLATFORMS), 'group').subscribe(result => this.platforms = result);
     }
 
+    /**
+     * 重置选中的 stock;
+     */
     resetSelectedStock() {
         this.selectedStock = 0;
     }
 
+    /**
+     * Add exchange pair;
+     * @param eid platform eid;
+     * @param stock stock of exchange pairs;
+     */
     addPair(eid: string, stock: string) {
         if (!eid || !stock) return;
 
@@ -61,7 +96,10 @@ export class ExchangeOptionsComponent implements OnInit {
         this.updateSnapshot(eid, stock, name, index);
     }
 
-    updateSnapshot(eid: string, stock: string, name: string, index: number): void {
+    /**
+     * 更新 store 中的交易平台选项。
+     */
+    private updateSnapshot(eid: string, stock: string, name: string, index: number): void {
         let platformSnapshot: BacktestSelectedPair = { eid, name, stock, makerFee: this.makerFee, takerFee: this.takerFee, };
 
         if (this.selectedPlatform === 'Futures_CTP') {
@@ -81,6 +119,9 @@ export class ExchangeOptionsComponent implements OnInit {
         this.backtestService.updatePlatformOptions(this.platformOptions);
     }
 
+    /**
+     * 移除交易对，同时更新 store 中的交易平台选项。
+     */
     removePair(index: number) {
         this.selectedPairs.splice(index, 1);
 
@@ -89,12 +130,21 @@ export class ExchangeOptionsComponent implements OnInit {
         this.backtestService.updatePlatformOptions(this.platformOptions);
     }
 
+    /**
+     * @ignore
+     */
     private _selectedPlatform = 'OKCoin_EN';
 
+    /**
+     * Get selected platform
+     */
     get selectedPlatform() {
         return this._selectedPlatform;
     }
 
+    /**
+     * 设置选中的平台，同时通知是否锁定k线周期。
+     */
     set selectedPlatform(value: string) {
         this._selectedPlatform = value;
 
@@ -105,50 +155,83 @@ export class ExchangeOptionsComponent implements OnInit {
         }
     }
 
+    /**
+     * @ignore
+     */
     get platform(): BacktestPlatform {
         return this.constant.BACKTEST_PLATFORMS.find(item => item.eid === this.selectedPlatform);
     }
 
+    /**
+     * @ignore
+     */
     get stocks() {
         return this.platform.stocks;
     }
 
+    /**
+     * @ignore
+     */
     private _balance: number;
 
+    /**
+     * @ignore
+     */
     get balance() {
         return this._balance || this.platform.balance;
     }
 
+    /**
+     * @ignore
+     */
     set balance(value: number) {
         this._balance = value;
     }
 
     private _currency: number;
 
+    /**
+     * @ignore
+     */
     get currency() {
         return this._currency || this.platform.remainingCurrency;
     }
 
+    /**
+     * @ignore
+     */
     set currency(value: number) {
         this._currency = value;
     }
 
     private _makerFee: number;
 
+    /**
+     * @ignore
+     */
     get makerFee() {
         return this._makerFee || this.platform.makerFee;
     }
 
+    /**
+     * @ignore
+     */
     set makerFee(value: number) {
         this._makerFee = value;
     }
 
     private _takerFee: number;
 
+    /**
+     * @ignore
+     */
     get takerFee() {
         return this._takerFee || this.platform.takerFee;
     }
 
+    /**
+     * @ignore
+     */
     set takerFee(value: number) {
         this._takerFee = value;
     }

@@ -134,6 +134,9 @@ export class BacktestConstantService extends ConstantService {
         super();
     }
 
+    /**
+     * 参数调优时各选项的配置
+     */
     getOptimizeSetting(value: number): ArgOptimizeSetting {
         return value < 1 ? {
             begin: 0.1,
@@ -146,7 +149,10 @@ export class BacktestConstantService extends ConstantService {
             };
     }
 
-    getBackTestPeriodTimeConfig(category: number): BacktestPeriodConfig {
+    /**
+     * 回测时间选项中可选日期的配置；
+     */
+    getBacktestPeriodTimeConfig(category: number): BacktestPeriodConfig {
 
         /**
          *  The 'subtract' method would be modify the origin data, it is not a pure function.
@@ -168,6 +174,9 @@ export class BacktestConstantService extends ConstantService {
         }
     }
 
+    /**
+     * Ret flag; 反正就叫这个。
+     */
     getRetFlags(): number {
         return this.BT_STATUS | this.BT_CHART | this.BT_PROFIT_LOGS | this.BT_RUNTIME_LOGS | this.BT_CLOSE_PROFIT_LOGS | this.BT_ACCOUNTS | this.BT_ACCOUNTS_PNL;
     }

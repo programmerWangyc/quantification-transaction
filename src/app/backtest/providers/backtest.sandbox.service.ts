@@ -10,6 +10,9 @@ export interface SymbolRecord {
     volume: number;
 }
 
+/**
+ * @ignore
+ */
 @Injectable()
 export class BacktestSandboxService {
 

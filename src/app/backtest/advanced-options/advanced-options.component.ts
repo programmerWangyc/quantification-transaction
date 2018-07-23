@@ -13,6 +13,9 @@ import { BacktestService } from '../providers/backtest.service';
     styleUrls: ['./advanced-options.component.scss']
 })
 export class AdvancedOptionsComponent implements OnInit, OnDestroy {
+    /**
+     * 将k线周期设置为固定值
+     */
     @Input() set fixedKlinePeriod(value: number) {
         if (isNumber(value)) {
             this.selectedPeriodId = value;
@@ -27,36 +30,75 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * 冻结 k 线周期的设置
+     */
     @Input() set freeze(value: boolean) {
         this.disablePeriod = value;
 
         this._freeze = value;
     }
 
+    /**
+     * @ignore
+     */
     private _freeze = false;
 
+    /**
+     * Whether the k line period is freezed;
+     */
     get freeze(): boolean {
         return this._freeze;
     }
 
+    /**
+     * Disabled k line period setting;
+     */
     disablePeriod = false;
 
+    /**
+     * Backtest mode. Real or simulate;
+     */
     modes: BacktestMode[];
 
+    /**
+     * Selected backtest mode;
+     */
     selectedMode = 0;
 
+    /**
+     * Whether backtest will run in fault mode;
+     */
     isFaultTolerantMode: Observable<boolean>;
 
+    /**
+     * Toggle hide and show advance options;
+     */
     isAdvancedOptionsOpen = false;
 
+    /**
+     * All config of advance options.
+     */
     advancedOptions: Observable<AdvancedOptionConfig[]>;
 
+    /**
+     * Floor k line period;
+     */
     periods: KLinePeriod[];
 
+    /**
+     * Selected floor k line period id;
+     */
     selectedPeriodId = 2;
 
+    /**
+     * Whether show tip for config option if has.
+     */
     isHelpShow = true;
 
+    /**
+     * @ignore
+     */
     subscription: Subscription;
 
     constructor(

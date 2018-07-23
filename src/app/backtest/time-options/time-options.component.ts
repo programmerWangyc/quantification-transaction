@@ -20,12 +20,15 @@ export interface DisabledDateFn {
 })
 export class TimeOptionsComponent implements OnInit, OnDestroy {
 
+    /**
+     * Category of current strategy;
+     */
     @Input() set category(value: number) {
         if (!isNumber(value)) return;
 
         this._category = value;
 
-        this.timeConfig = this.constant.getBackTestPeriodTimeConfig(value);
+        this.timeConfig = this.constant.getBacktestPeriodTimeConfig(value);
 
         this.disabledDate = this.disabledDateFactory();
 
@@ -34,6 +37,9 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         this.updateTimeRange();
     }
 
+    /**
+     * 将k线周期设置为固定值
+     */
     @Input() set fixedKlinePeriod(id: number) {
         if (isNumber(id)) {
             this.selectedPeriodId = id;
@@ -52,38 +58,80 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * 冻结 k 线周期的设置
+     */
     @Input() set freeze(value: boolean) {
         this.disablePeriod = value;
 
         this._freeze = value;
     }
 
+    /**
+     * @ignore
+     */
     private _freeze = false;
 
+    /**
+     * Whether the k line period is freezed;
+     */
     get freeze(): boolean {
         return this._freeze;
     }
 
+    /**
+     * Output time range;
+     */
     @Output() timeRangeChange: EventEmitter<TimeRange> = new EventEmitter();
 
+    /**
+     * Output k line period if changed;
+     */
     @Output() klineChange: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * Disable k line period;
+     */
     disablePeriod = false;
 
+    /**
+     * @ignore
+     */
     selectedPeriodId: number;
 
+    /**
+     * Time range;
+     */
     range: Date[] = [];
 
+    /**
+     * @ignore
+     */
     rangeExtraMsg = 'OUT_OF_TIMELINE';
 
+    /**
+     * K line period list;
+     */
     periods: KLinePeriod[];
 
+    /**
+     * @ignore
+     */
     private _category: number;
 
+    /**
+     * Function used for time range component used to forbidden selected some days;
+     */
     disabledDate: DisabledDateFn;
 
+    /**
+     * Backtest period config;
+     */
     timeConfig: BacktestPeriodConfig;
 
+    /**
+     * @ignore
+     */
     sub$$: Subscription;
 
     constructor(
@@ -92,6 +140,9 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         private tip: TipService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.periods = this.constant.K_LINE_PERIOD;
 
@@ -100,14 +151,23 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         this.sub$$ = this.backtestService.getSelectedKlinePeriod().subscribe(id => this.selectedPeriodId = id);
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
 
     }
 
+    /**
+     * Emit time range;
+     */
     emit() {
         const [start, end] = this.range;
 
@@ -116,18 +176,28 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         this.updateTimeRange();
     }
 
+    /**
+     * Update time range value in store;
+     */
     updateTimeRange(): void {
         const [start, end] = this.range;
 
         this.backtestService.updateSelectedTimeRange({ start, end });
     }
 
+    /**
+     * Update k line period in store;
+     * @param id k line period id;
+     */
     updatePeriod(id: number): void {
         this.klineChange.next(id);
 
         this.backtestService.updateSelectedKlinePeriod(id);
     }
 
+    /**
+     * Factory function for generate disableDate function;
+     */
     disabledDateFactory(): DisabledDateFn {
         const { min, max } = this.timeConfig;
 
@@ -136,6 +206,9 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.sub$$.unsubscribe();
     }

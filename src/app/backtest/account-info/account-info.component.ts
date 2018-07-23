@@ -11,14 +11,23 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
     styleUrls: ['./account-info.component.scss']
 })
 export class AccountInfoComponent implements OnInit {
+    /**
+     * Account info.
+     */
     data: Observable<BacktestAccount[]>;
 
+    /**
+     * 是否包含股票证券
+     */
     hasFutures: Observable<boolean>;
 
     constructor(
         private chartService: BacktestChartService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.data = this.chartService.getBacktestAccountInfo();
 

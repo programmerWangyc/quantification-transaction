@@ -13,7 +13,7 @@
         <nz-form-label>{{'LOGIC' | translate}}</nz-form-label>
         <nz-form-control>
             <nz-select [(ngModel)]="selectedOperator" [ngModelOptions]="{standalone: true}">
-                <nz-option *ngFor="let operator of conditions" [nzLabel]="operator.name | translate" [nzValue]="operator"></nz-option>
+                <nz-option *ngFor="let operator of operators" [nzLabel]="operator.name | translate" [nzValue]="operator"></nz-option>
             </nz-select>
         </nz-form-control>
     </nz-form-item>

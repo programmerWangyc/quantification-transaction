@@ -17,18 +17,34 @@ export interface BacktestTaskLog {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BacktestLogComponent implements OnInit {
+
+    /**
+     * Col names;
+     */
     cols: Observable<string[]>;
 
+    /**
+     * Backtest log
+     */
     logs: Observable<BacktestLogResult[]>;
 
+    /**
+     * Backtest task
+     */
     tasks: number[][] = [];
 
+    /**
+     * Whether logs could be downloaded;
+     */
     canSave: Observable<boolean>;
 
     constructor(
         private chartService: BacktestChartService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.cols = this.chartService.getBacktestLogCols();
 
@@ -41,6 +57,9 @@ export class BacktestLogComponent implements OnInit {
         this.canSave = this.chartService.canSaveResult();
     }
 
+    /**
+     * @ignore
+     */
     onDownload() {
         this.chartService.downloadLogs();
     }

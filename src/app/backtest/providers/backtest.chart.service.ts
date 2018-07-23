@@ -62,6 +62,9 @@ export class BacktestChartService extends BacktestResultService {
         this.init();
     }
 
+    /**
+     * @ignore
+     */
     init() {
         this.translate.get(['FULL_SCREEN', 'FLOATING_PROFIT_LOSE', 'ACCUMULATE_PROFIT', 'CHART']).subscribe(res => {
             this.fullscreenLabel = res.FULL_SCREEN;

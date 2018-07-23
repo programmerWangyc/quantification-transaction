@@ -19,6 +19,10 @@ export interface Filter {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArgOptimizerComponent implements OnInit {
+
+    /**
+     * Source data to generate filters;
+     */
     @Input() set data(value: OptimizedVariableOverview[]) {
         // Filter need two variables at least;
         if (value.length < 2) {
@@ -37,22 +41,49 @@ export class ArgOptimizerComponent implements OnInit {
         this.checkSelectedVariable(value);
     }
 
+    /**
+     * Output all filters user set.
+     */
     @Output() optimize: EventEmitter<Filter[]> = new EventEmitter();
 
+    /**
+     * Left variable list for selected;
+     */
     leftList: OptimizedVariableOverview[] = [];
 
+    /**
+     * Selected left variable.
+     */
     selectedLeftVariable: OptimizedVariableOverview;
 
+    /**
+     * Right variable list for selected;
+     */
     rightList: OptimizedVariableOverview[] = [];
 
+    /**
+     * Selected right variable.
+     */
     selectedRightVariable: OptimizedVariableOverview;
 
-    conditions: CompareOperator[];
+    /**
+     * Variable compare operators;
+     */
+    operators: CompareOperator[];
 
+    /**
+     * Selected compare operator;
+     */
     selectedOperator: CompareOperator;
 
+    /**
+     * Compare base value;
+     */
     selectedValue: number = 1;
 
+    /**
+     * Generated Filters;
+     */
     filters: Filter[] = [];
 
     constructor(
@@ -64,9 +95,9 @@ export class ArgOptimizerComponent implements OnInit {
      * @ignore
      */
     ngOnInit() {
-        this.conditions = this.constant.COMPARE_OPERATORS;
+        this.operators = this.constant.COMPARE_OPERATORS;
 
-        this.selectedOperator = this.conditions[0];
+        this.selectedOperator = this.operators[0];
     }
 
     /**

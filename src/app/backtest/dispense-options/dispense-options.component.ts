@@ -12,20 +12,35 @@ import { BtNodeService } from '../../providers/bt-node.service';
 })
 export class DispenseOptionsComponent implements OnInit {
 
+    /**
+     * Id of node;
+     */
     @Input() selectedNode = 0;
 
+    /**
+     * Output the node id if changed;
+     */
     @Output() nodeChange: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * Source data of node;
+     */
     nodes: Observable<BtNode[]>;
 
     constructor(
         private nodeService: BtNodeService,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.nodes = this.nodeService.getNodeList()
             .pipe(
