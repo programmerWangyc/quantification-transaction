@@ -729,7 +729,7 @@ export class RobotOperateService extends BaseService {
         this.store.dispatch(new ResetRobotOperateAction());
     }
 
-    updateRobotWDState(target: Observable<fromReq.SetRobotWDRequest>): Subscription {
+    updateRobotWDState(target: Observable<fromReq.SetWDRequest>): Subscription {
         return target.subscribe(request => this.store.dispatch(new UpdateRobotWatchDogStateAction(request)));
     }
 

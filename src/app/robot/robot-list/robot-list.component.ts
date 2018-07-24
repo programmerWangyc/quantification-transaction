@@ -82,8 +82,8 @@ export class RobotListComponent extends BaseComponent {
             .add(this.robotOperate.launchStopRobot(this.stopRobot$))
             .add(this.robotOperate.launchDeleteRobot(this.deleteRobot$))
             .add(this.robotOperate.monitorDeleteRobotResult())
-            .add(this.watchDogService.launchSetRobotWatchDog(this.setRobotWD$))
-            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestRobotWatchDogState()))
+            .add(this.watchDogService.launchSetWatchDog(this.setRobotWD$))
+            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()))
     }
 
     ngOnDestroy() {

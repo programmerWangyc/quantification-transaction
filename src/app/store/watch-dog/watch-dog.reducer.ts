@@ -1,10 +1,10 @@
-import { SetRobotWDRequest } from '../../interfaces/request.interface';
-import { SetRobotWDResponse } from '../../interfaces/response.interface';
+import { SetWDRequest } from '../../interfaces/request.interface';
+import { SetWDResponse } from '../../interfaces/response.interface';
 import * as actions from './watch-dog.action';
 
 export interface State {
-    request: SetRobotWDRequest;
-    response: SetRobotWDResponse;
+    request: SetWDRequest;
+    response: SetWDResponse;
 }
 
 const initialState: State = {

@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { GetNodeListResponse } from '../interfaces/response.interface';
+import { GetNodeListResponse, DeleteNodeResponse } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
 import { BtNode } from '../interfaces/response.interface';
 import { AppState } from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { GroupedList, UtilService } from './util.service';
+import { BaseService } from '../base/base.service';
+import { UIState } from '../store/bt-node/bt-node.reducer';
 
 
 export interface GroupedNode extends GroupedList<BtNode> {
@@ -21,14 +23,16 @@ export interface NodeFilterFn {
 }
 
 @Injectable()
-export class BtNodeService {
+export class BtNodeService extends BaseService {
 
     constructor(
         private store: Store<AppState>,
         private error: ErrorService,
         private process: ProcessService,
         private utilService: UtilService,
-    ) { }
+    ) {
+        super();
+    }
 
     // =======================================================Serve Request=======================================================
 
@@ -39,26 +43,33 @@ export class BtNodeService {
         return this.process.processGetNodeList(data, allowSeparateRequest);
     }
 
+    /**
+     * Delete node
+     */
+    launchDeleteNode(node: Observable<BtNode>): Subscription {
+        return this.process.processDeleteNode(node.pipe(
+            map(({ id }) => ({ id }))
+        ));
+    }
+
     // =======================================================Date Acquisition=======================================================
 
     /**
      * Get node list response.
      */
     private getNodeListResponse(): Observable<GetNodeListResponse> {
-        return this.store.select(fromRoot.selectBtNodeListResponse)
-            .pipe(
-                filter(res => !!res)
-            );
+        return this.store.select(fromRoot.selectBtNodeListResponse).pipe(
+            this.filterTruth()
+        );
     }
 
     /**
      * Select nodes from node list response;
      */
     getNodeList(): Observable<BtNode[]> {
-        return this.getNodeListResponse()
-            .pipe(
-                map(res => res.result.nodes)
-            );
+        return this.getNodeListResponse().pipe(
+            map(res => res.result.nodes)
+        );
     }
 
     /**
@@ -90,14 +101,13 @@ export class BtNodeService {
      * Predicate whether the node is public node.
      */
     isPublicNode(nodeId: number): Observable<boolean> {
-        return this.getNodeList()
-            .pipe(
-                map(list => {
-                    const target = list.find(item => item.id === nodeId);
+        return this.getNodeList().pipe(
+            map(list => {
+                const target = list.find(item => item.id === nodeId);
 
-                    return !!target.public;
-                })
-            );
+                return !!target.public;
+            })
+        );
     }
 
     /**
@@ -105,10 +115,37 @@ export class BtNodeService {
      * @param conditions Collection of predicate functions;
      */
     getSpecificNodeList(...conditions: NodeFilterFn[]): Observable<BtNode[]> {
-        return this.getNodeList()
-            .pipe(
-                map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true)))
-            );
+        return this.getNodeList().pipe(
+            map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true)))
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    private getDeleteNodeResponse(): Observable<DeleteNodeResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectDeleteNodeResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    private getNodeUIState(): Observable<UIState> {
+        return this.store.pipe(
+            select(fromRoot.selectBtNodeUIState),
+        );
+    }
+
+    /**
+     * 是否正在加载托管者列表
+     */
+    isLoading(): Observable<boolean> {
+        return this.getNodeUIState().pipe(
+            map(state => state.isLoading)
+        );
     }
 
     // =======================================================Shortcut methods=======================================================
@@ -135,4 +172,12 @@ export class BtNodeService {
     handleNodeListError(): Subscription {
         return this.error.handleResponseError(this.getNodeListResponse());
     }
+
+    /**
+     * @ignore
+     */
+    handleDeleteNodeError(): Subscription {
+        return this.error.handleResponseError(this.getDeleteNodeResponse());
+    }
 }
+

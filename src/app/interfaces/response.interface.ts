@@ -91,14 +91,26 @@ export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 export interface VerifyPasswordResponse extends ResponseUnit<boolean> { }
 
 
-//  =======================================================Auth response=========================================================
+//  =======================================================Setting response=========================================================
 
 // get settings
 export interface IndexSetting {
     showLogo: string;
 }
 
-export interface SettingsResponse extends ResponseUnit<string | IndexSetting> { }
+/**
+ * 获取 docker 时的响应
+ */
+export interface DockerSetting {
+    version: string;
+    update: string;
+    base: string;
+    rpcBase: string;
+}
+
+export type SettingResResult = string & DockerSetting & IndexSetting;
+
+export interface SettingsResponse extends ResponseUnit<SettingResResult> { }
 
 //  =======================================================Exchange response=========================================================
 
@@ -403,6 +415,9 @@ export interface NodeListResponse {
 
 export interface GetNodeListResponse extends ResponseUnit<NodeListResponse> { }
 
+// delete node
+export interface DeleteNodeResponse extends ResponseUnit<number> { }
+
 // ===================================================Platform list=========================================
 
 // platform list
@@ -424,8 +439,8 @@ export interface GetPlatformListResponse extends ResponseUnit<PlatformListRespon
 
 // ===================================================Watch dog=========================================
 
-// robot watch dog
-export interface SetRobotWDResponse extends ResponseUnit<boolean> { }
+// watch dog
+export interface SetWDResponse extends ResponseUnit<boolean> { }
 
 // ===================================================Strategy==============================================
 

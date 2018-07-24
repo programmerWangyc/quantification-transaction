@@ -169,9 +169,11 @@ export interface PluginRunRequest {
 
 // ===================================================Node list=========================================
 
-export const getNodeList = 'GetNodeList';
-
 export interface GetNodeListRequest { }
+
+export interface DeleteNodeRequest {
+    id: number;
+}
 
 // ===================================================Platform list=========================================
 
@@ -179,9 +181,9 @@ export interface GetPlatformListRequest { }
 
 // ===================================================Watch dog=========================================
 
-// robot watch dog
-export interface SetRobotWDRequest {
-    robotId: number;
+// watch dog
+export interface SetWDRequest {
+    id: number;
     watchDogStatus: number;
 }
 
@@ -403,7 +405,7 @@ export interface BacktestPutTask extends BacktestIO<BacktestPutTaskDescription> 
 export interface BacktestIORequest {
     nodeId: number;
     language: number;
-    io: string; // [] JSON.stringfiy array [ string, uuid ];
+    io: string; // [] JSON.stringify array [ string, uuid ];
 }
 
 // ===================================================Charge==============================================
@@ -417,6 +419,6 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 32
+ * 接口总数： 83， 已完成： 33
  */
 

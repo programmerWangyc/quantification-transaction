@@ -178,7 +178,14 @@ export const selectRobotLogRequestParameters = createSelector(selectRobotRequest
 
 const getBtNodeState = (state: AppState) => state.btNode;
 
+// node list
 export const selectBtNodeListResponse = createSelector(getBtNodeState, btNode.getNodeListResponse);
+
+// delete node
+export const selectDeleteNodeResponse = createSelector(getBtNodeState, btNode.getNodeDeleteResponse);
+
+// node ui state
+export const selectBtNodeUIState = createSelector(getBtNodeState, btNode.getUIState);
 
 //  ===================================================Platform===================================================
 

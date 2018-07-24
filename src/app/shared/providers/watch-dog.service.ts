@@ -3,8 +3,9 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { filter, mapTo, mergeMap, switchMapTo } from 'rxjs/operators';
 
-import { SetRobotWDRequest } from '../../interfaces/request.interface';
-import { Robot, RobotDetail, SetRobotWDResponse } from '../../interfaces/response.interface';
+import { BaseService } from '../../base/base.service';
+import { SetWDRequest } from '../../interfaces/request.interface';
+import { BtNode, Robot, RobotDetail, SetWDResponse } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
@@ -18,55 +19,69 @@ export enum SetWatchDogTip {
 }
 
 @Injectable()
-export class WatchDogService {
+export class WatchDogService extends BaseService {
 
     constructor(
         private store: Store<AppState>,
         private process: ProcessService,
         private error: ErrorService,
         private tip: TipService,
-    ) { }
+    ) {
+        super();
+    }
 
     //  =======================================================Api request=======================================================
 
-    launchSetRobotWatchDog(robot: Observable<RobotDetail | Robot>): Subscription {
-        return this.process.processSetRobotWatchDog(
-            robot
-                .pipe(
-                    mergeMap(robot => {
-                        const watchDogStatus = robot.wd > 0 ? 0 : 1;
+    /**
+     * Set or cancel watch dog on target;
+     * @param target Robot or agent;
+     */
+    launchSetWatchDog(target: Observable<RobotDetail | Robot | BtNode>): Subscription {
+        return this.process.processSetWatchDog(
+            target.pipe(
+                mergeMap(target => {
+                    const watchDogStatus = target.wd > 0 ? 0 : 1;
 
-                        return this.tip.confirmOperateTip(ConfirmComponent, { message: SetWatchDogTip[watchDogStatus], needTranslate: true })
-                            .pipe(
-                                filter(sure => sure),
-                                mapTo({ robotId: robot.id, watchDogStatus })
-                            );
-                    })
-                )
+                    return this.tip.confirmOperateTip(
+                        ConfirmComponent,
+                        { message: SetWatchDogTip[watchDogStatus], needTranslate: true }
+                    ).pipe(
+                        this.filterTruth(),
+                        mapTo({ id: target.id, watchDogStatus })
+                    );
+                })
+            )
         );
     }
 
     //  =======================================================Date Acquisition=======================================================
 
-    private getSetWatchDogResponse(): Observable<SetRobotWDResponse> {
-        return this.store.select(selectSetWatchDogResponse)
-            .pipe(
-                filter(v => !!v)
-            );
+    /**
+     * @ignore
+     */
+    private getSetWatchDogResponse(): Observable<SetWDResponse> {
+        return this.store.select(selectSetWatchDogResponse).pipe(
+            this.filterTruth()
+        );
     }
 
-    getLatestRobotWatchDogState(): Observable<SetRobotWDRequest> {
-        return this.getSetWatchDogResponse()
-            .pipe(
-                filter(res => res.result),
-                switchMapTo(this.store.select(selectSetWatchDogRequest))
-            );
+    /**
+     * 获取机器狗的最新状态, 也就是设置响应成功后发出的请求状态；
+     */
+    getLatestWatchDogState(): Observable<SetWDRequest> {
+        return this.getSetWatchDogResponse().pipe(
+            filter(res => res.result),
+            switchMapTo(this.store.select(selectSetWatchDogRequest))
+        );
     }
 
     //  =======================================================Local state change=======================================================
 
     //  =======================================================Error handle=======================================================
 
+    /**
+     * @ignore
+     */
     handleSetWatchDogError(): Subscription {
         return this.error.handleResponseError(this.getSetWatchDogResponse());
     }

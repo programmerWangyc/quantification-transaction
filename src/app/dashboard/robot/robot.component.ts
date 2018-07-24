@@ -10,8 +10,14 @@ import { Breadcrumb } from '../../interfaces/app.interface';
 })
 export class RobotComponent implements OnInit {
 
+    /**
+     * @ignore
+     */
     paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT' }];
 
+    /**
+     * @ignore
+     */
     buttonType = 'primary';
 
     constructor(
@@ -19,9 +25,15 @@ export class RobotComponent implements OnInit {
         private activatedRoute: ActivatedRoute
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
     }
 
+    /**
+     * @ignore
+     */
     navigateTo(path: string): void {
         this.router.navigate([path], { relativeTo: this.activatedRoute });
     }

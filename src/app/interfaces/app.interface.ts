@@ -2,6 +2,9 @@ import { NavigationExtras } from '@angular/router';
 
 // ==========================================================Global========================================
 
+/**
+ * 各业务页面的面包屑
+ */
 export interface Breadcrumb {
     name: string;
     path?: string;

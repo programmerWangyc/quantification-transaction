@@ -62,7 +62,7 @@ const controlCenter: SideNav = {
     subNav: [
         { path: Path.robot, label: 'ROBOT', icon: 'android' },
         { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
-        { path: Path.trustee, label: 'TRUSTEE', icon: 'apple' },
+        { path: Path.agent, label: 'AGENT', icon: 'apple' },
         { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
     ]
 }
@@ -79,14 +79,25 @@ const simulation: SideNav = {
     styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+
+    /**
+     * 侧边栏是否处于折叠状态
+     */
     isCollapsed = false;
 
-    searchValue: string;
-
+    /**
+     * 侧边栏列表
+     */
     list: SideNav[] = [controlCenter, simulation, square, factFinder, community, documentation, market, analyzing];
 
+    /**
+     * 当前展示的模块
+     */
     currentModule: string;
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
     constructor(
@@ -96,6 +107,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ) {
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.subscription$$ = this.routing.getCurrentUrl()
             .subscribe(url => {
@@ -105,16 +119,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
             });
     }
 
+    /**
+     * @ignore
+     */
     navigateTo(target: SideNav): void {
         this.router.navigate([target.path], { relativeTo: this.activatedRoute });
     }
 
+    /**
+     * 模块是否处于激活状态
+     */
     isActive(source: SideNav): boolean {
         const paths = source.subNav.map(item => item.path);
 
         return paths.indexOf(this.currentModule) !== -1;
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }

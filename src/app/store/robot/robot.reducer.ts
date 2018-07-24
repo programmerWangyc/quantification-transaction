@@ -456,9 +456,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // update robot watch dog state
         case actions.UPDATE_ROBOT_WATCH_DOG_STATE: {
-            const { robotId, watchDogStatus } = action.payload;
+            const { id, watchDogStatus } = action.payload;
 
-            const latestInfo: LatestRobotInfo = { flags: NaN, id: robotId, wd: watchDogStatus };
+            const latestInfo: LatestRobotInfo = { flags: NaN, id, wd: watchDogStatus };
 
             const keys = ['wd'];
 

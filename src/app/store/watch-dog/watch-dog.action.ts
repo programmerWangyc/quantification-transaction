@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 
-import { SetRobotWDRequest } from '../../interfaces/request.interface';
-import { SetRobotWDResponse } from '../../interfaces/response.interface';
+import { SetWDRequest } from '../../interfaces/request.interface';
+import { SetWDResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
@@ -27,41 +27,41 @@ export class SetRobotWDAction extends ApiAction {
 
 export const SET_ROBOT_WATCH_DOG = '[WatchDog] SET_ROBOT_WATCH_DOG';
 
-export class SetRobotWDRequestAction extends SetRobotWDAction implements Action {
+export class SetWDRequestAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG;
 
     allowSeparateRequest = true;
 
-    constructor(public payload: SetRobotWDRequest) { super() }
+    constructor(public payload: SetWDRequest) { super() }
 }
 
 export const SET_ROBOT_WATCH_DOG_FAIL = '[WatchDog] SET_ROBOT_WATCH_DOG_FAIL';
 
-export class SetRobotWDFailAction extends SetRobotWDAction implements Action {
+export class SetWDFailAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_FAIL;
 
-    constructor(public payload: SetRobotWDResponse) { super() }
+    constructor(public payload: SetWDResponse) { super() }
 }
 
 export const SET_ROBOT_WATCH_DOG_SUCCESS = '[WatchDog] SET_ROBOT_WATCH_DOG_SUCCESS';
 
-export class SetRobotWDSuccessAction extends SetRobotWDAction implements Action {
+export class SetWDSuccessAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_SUCCESS;
 
-    constructor(public payload: SetRobotWDResponse) { super() }
+    constructor(public payload: SetWDResponse) { super() }
 }
 
 //  ===========================================Local action===================================
 
-//  none local action 
+//  none local action
 
-export type ApiActions = SetRobotWDRequestAction
-    | SetRobotWDFailAction
-    | SetRobotWDSuccessAction
+export type ApiActions = SetWDRequestAction
+    | SetWDFailAction
+    | SetWDSuccessAction
 
 export type Actions = ApiActions
 
 export const ResponseActions = {
-    SetRobotWDFailAction,
-    SetRobotWDSuccessAction
+    SetWDFailAction,
+    SetWDSuccessAction
 }

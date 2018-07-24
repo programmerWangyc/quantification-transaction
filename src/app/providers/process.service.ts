@@ -10,16 +10,17 @@ import { GetExchangeListRequestAction } from '../store/exchange/exchange.action'
 import { AppState } from '../store/index.reducer';
 import { GetPlatformListRequestAction } from '../store/platform/platform.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
-import { SetRobotWDRequestAction } from '../store/watch-dog/watch-dog.action';
+import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import * as BacktestActions from '../store/backtest/backtest.action';
 import { SetPasswordRequestAction } from '../store/auth/password.action';
 import { ResetPasswordRequestAction } from '../store/auth/reset.action';
 import { SignupRequestAction } from '../store/auth/signup.action';
-import { GetNodeListRequestAction } from '../store/bt-node/bt-node.action';
+import * as BtNode from '../store/bt-node/bt-node.action';
 import { GetSettingsRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import { TipService } from './tip.service';
 import { BacktestIOType } from '../interfaces/request.interface';
+
 
 /**
  * @ignore
@@ -117,7 +118,11 @@ export class ProcessService {
     //  ===================================================Node list===================================================
 
     processGetNodeList(params: Observable<Request.GetNodeListRequest>, allowSeparateRequest = false): Subscription {
-        return params.subscribe(_ => this.store.dispatch(new GetNodeListRequestAction(null, allowSeparateRequest)));
+        return params.subscribe(_ => this.store.dispatch(new BtNode.GetNodeListRequestAction(null, allowSeparateRequest)));
+    }
+
+    processDeleteNode(params: Observable<Request.DeleteNodeRequest>): Subscription {
+        return params.subscribe(param => this.store.dispatch(new BtNode.DeleteNodeRequestAction(param)))
     }
 
     //  ===================================================Platform list===================================================
@@ -128,8 +133,8 @@ export class ProcessService {
 
     //  ===================================================Watch dog===================================================
 
-    processSetRobotWatchDog(params: Observable<Request.SetRobotWDRequest>): Subscription {
-        return params.subscribe(params => this.store.dispatch(new SetRobotWDRequestAction(params)));
+    processSetWatchDog(params: Observable<Request.SetWDRequest>): Subscription {
+        return params.subscribe(params => this.store.dispatch(new SetWDRequestAction(params)));
     }
 
     //  ===================================================Strategy======================================================

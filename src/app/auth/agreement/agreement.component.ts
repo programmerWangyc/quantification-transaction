@@ -24,6 +24,6 @@ export class AgreementComponent implements OnInit {
     ngOnInit() {
         this.content = this.publicService.getSetting(SettingTypes.agreement);
 
-        this.pending = this.publicService.getSettingState(SettingTypes.agreement);
+        this.pending = this.publicService.hasSetting(SettingTypes.agreement);
     }
 }

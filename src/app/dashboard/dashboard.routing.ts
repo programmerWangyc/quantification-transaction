@@ -1,6 +1,6 @@
 import { RouterModule, Routes } from '@angular/router';
 
-import { Path } from '../app.config';
+import { AgentComponent } from './agent/agent.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
@@ -24,21 +24,27 @@ const routs: Routes = [
         path: '',
         component: DashboardComponent,
         children: [
+            // robot
             { path: 'robot', component: RobotComponent },
-            { path: 'robot/' + Path.createRobot, component: RobotCreationComponent },
+            { path: 'robot/add', component: RobotCreationComponent },
             { path: 'robot/:id/:name', component: RobotDetailComponent },
-            { path: 'robot/' + Path.debug, component: RobotDebugComponent },
+            { path: 'robot/debug', component: RobotDebugComponent },
+            // strategy
             { path: 'strategy', component: StrategyComponent },
             { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
             { path: 'strategy/copy/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
             { path: 'strategy/edit/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
             { path: 'strategy/backtest/:id', component: DocComponent },
-            // { path: 'strategy' + '/:id/:name', component: StrategyLibComponent },
             { path: 'strategy/verify/:id/:codeType', component: StrategyVerifyCodeComponent },
             { path: 'strategy/rent/:id', component: StrategyRentComponent },
+
+            // charge
             { path: 'charge', component: RechargeComponent },
+
+            // agent
+            { path: 'agent', component: AgentComponent},
+
             // { path: Path.exchange, component: ExchangeComponent },
-            // { path: Path.trustee, component: TrusteeComponent },
             { path: 'square', component: SquareComponent },
             { path: 'community', component: CommunityComponent },
             { path: 'doc', component: DocComponent },

@@ -1,4 +1,5 @@
 export enum Path {
+    agent = 'agent',
     home = 'home',
     square = 'square',
     fact = 'fact',
@@ -8,11 +9,10 @@ export enum Path {
     analyze = 'analyze',
     robot = 'robot',
     strategy = 'strategy',
-    trustee = 'trustee',
     exchange = 'exchange',
     simulate = 'simulate',
     dashboard = 'dashboard',
-    createRobot = 'create_robot',
+    add = 'add',
     charge = 'charge',
     debug = 'debug',
     edit = 'edit',

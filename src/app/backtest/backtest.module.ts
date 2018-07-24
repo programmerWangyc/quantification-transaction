@@ -13,6 +13,7 @@ import { BacktestChartComponent } from './backtest-chart/backtest-chart.componen
 import { BacktestLogInfoComponent } from './backtest-log-info/backtest-log-info.component';
 import { BacktestLogComponent } from './backtest-log/backtest-log.component';
 import { BacktestResultComponent } from './backtest-result/backtest-result.component';
+import { BacktestSimulationComponent } from './backtest-simulation/backtest-simulation.component';
 import { BacktestStatusComponent } from './backtest-status/backtest-status.component';
 import { BacktestStrategyArgsComponent } from './backtest-strategy-args/backtest-strategy-args.component';
 import { BacktestStrategyChartComponent } from './backtest-strategy-chart/backtest-strategy-chart.component';
@@ -53,6 +54,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         BacktestStatusComponent,
         BacktestStrategyArgsComponent,
         BacktestStrategyChartComponent,
+        BacktestSimulationComponent,
         DispenseOptionsComponent,
         ExchangeOptionsComponent,
         PIPES,
@@ -71,12 +73,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
     ],
 
     exports: [
-        AdvancedOptionsComponent,
-        BacktestStrategyArgsComponent,
-        DispenseOptionsComponent,
-        ExchangeOptionsComponent,
-        TimeOptionsComponent,
-        BacktestResultComponent,
+        BacktestSimulationComponent,
     ],
 })
 export class BacktestModule { }

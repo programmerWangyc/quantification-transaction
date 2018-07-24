@@ -1,0 +1,12 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div class="btn-group">
+    <button nz-button nzType="primary" (click)="navigateTo('add')">
+        <i class="anticon anticon-plus"></i>
+        {{'CREATE_AGENT' | translate}}
+    </button>
+
+    <i class="anticon anticon-question-circle" [nz-tooltip]="'AGENT_DEFINITION' | translate" style="color: #1890ff"></i>
+</div>
+
+<app-agent-list></app-agent-list>

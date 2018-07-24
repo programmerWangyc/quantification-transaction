@@ -71,7 +71,7 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
     launch() {
         this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
             .add(this.robotOperate.launchStopRobot(this.stop$))
-            .add(this.watchDogService.launchSetRobotWatchDog(this.watchDog$))
+            .add(this.watchDogService.launchSetWatchDog(this.watchDog$))
             // .add(this.robotOperate.handleRobotRestartError()
             .add(this.robotOperate.handleRobotStopError())
             .add(this.watchDogService.handleSetWatchDogError());

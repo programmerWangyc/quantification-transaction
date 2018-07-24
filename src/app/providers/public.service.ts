@@ -65,13 +65,21 @@ export class PublicService extends BaseService {
         );
     }
 
-    getSettingState(settingType: string): Observable<boolean> {
+    /**
+     * 是否有指定的指定的设置
+     */
+    hasSetting(settingType: string): Observable<boolean> {
         return this.store.select(selectSettings).pipe(
             map(res => !!res[settingType])
         );
     }
 
-    getSetting(settingType: string): Observable<any> {
+    /**
+     * Get specific setting. If specific setting is not exist, request from server.
+     * @param settingType Setting type;
+     * @return Setting; JSON type string, maybe need to pares then use;
+     */
+    getSetting(settingType: string): Observable<string> {
         return this.store.select(selectSettings).pipe(
             tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType])),
             filter(settings => !!settings[settingType]),

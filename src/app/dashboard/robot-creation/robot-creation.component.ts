@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Breadcrumb } from '../../interfaces/app.interface';
 
+/**
+ * @ignore
+ */
 @Component({
     selector: 'app-robot-creation',
     templateUrl: './robot-creation.component.html',

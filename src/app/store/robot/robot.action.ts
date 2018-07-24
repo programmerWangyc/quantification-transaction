@@ -12,7 +12,7 @@ import {
     PublicRobotRequest,
     RestartRobotRequest,
     SaveRobotRequest,
-    SetRobotWDRequest,
+    SetWDRequest,
     StopRobotRequest,
     SubscribeRobotRequest,
     WsRequest,
@@ -674,7 +674,7 @@ export const UPDATE_ROBOT_WATCH_DOG_STATE = '[Robot] UPDATE_ROBOT_WATCH_DOG_STAT
 export class UpdateRobotWatchDogStateAction implements Action {
     readonly type = UPDATE_ROBOT_WATCH_DOG_STATE;
 
-    constructor(public payload: SetRobotWDRequest) { }
+    constructor(public payload: SetWDRequest) { }
 }
 
 export const RESET_ROBOT_STATE = '[Robot] RESET_ROBOT_STATE';

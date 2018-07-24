@@ -186,7 +186,6 @@ export class BacktestService extends BacktestParamService {
         );
 
         const blob = this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
-            tap(res => !res && this.publicService.launchGetSettings(of(SettingTypes.backtest_javascript))),
             this.filterTruth()
         );
 
