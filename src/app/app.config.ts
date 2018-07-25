@@ -37,15 +37,15 @@ export enum VariableType {
     STRING_TYPE,
     SELECT_TYPE,
     ENCRYPT_STRING_TYPE,
-    BUTTON_TYPE
+    BUTTON_TYPE,
 }
 
 /**
- * FIXME: unused
+ * !FIXME: unused
  */
 export enum NotificationType {
     SUCCESS = 'success',
     ERROR = 'error',
     WARNING = 'warning',
-    INFO = 'INFO'
+    INFO = 'INFO',
 }

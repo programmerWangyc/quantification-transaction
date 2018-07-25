@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
+
 import { isNumber } from 'lodash';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { BacktestResult, ResponseState, RestartRobotResult, ServerBacktestResult } from '../interfaces/response.interface';
+import {
+    BacktestResult, ResponseState, RestartRobotResult, ServerBacktestResult
+} from '../interfaces/response.interface';
 import { getBacktestErrorMessage } from '../store/backtest/backtest.effect';
 import { TipService } from './tip.service';
-
 
 @Injectable()
 export class ErrorService {
@@ -21,15 +23,15 @@ export class ErrorService {
                 filter(data => !!data.error),
                 map(data => data.error)
             )
-            .subscribe(data => this.tipService.messageError(data, params))
+            .subscribe(data => this.tipService.messageError(data, params));
     }
 
-    handleError(source: Observable<string>, params = of({})): Subscription {
+    handleError(source: Observable<string>, paramsObs = of({})): Subscription {
         return combineLatest(
             source.pipe(
                 filter(str => !!str)
             ),
-            params
+            paramsObs
         )
             .subscribe(([data, params]) => this.tipService.messageError(data, params));
     }

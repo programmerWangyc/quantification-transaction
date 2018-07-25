@@ -1,11 +1,7 @@
 import { BtNodeNamePipe } from './bt-node.pipe';
 import { KLinePeriodPipe } from './k-line-period.pipe';
 import {
-    PlatformStockPipe,
-    RobotOperateBtnTextPipe,
-    RobotPublicStatusPipe,
-    RobotStatusPipe,
-    StrategyChartTitlePipe,
+    PlatformStockPipe, RobotOperateBtnTextPipe, RobotPublicStatusPipe, RobotStatusPipe, StrategyChartTitlePipe
 } from './robot.pipe';
 
 export const PIPES = [
@@ -16,4 +12,4 @@ export const PIPES = [
     BtNodeNamePipe,
     StrategyChartTitlePipe,
     RobotOperateBtnTextPipe,
-]
+];

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { isString } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable, of, Subject, Subscription, combineLatest } from 'rxjs';
-import { partition, startWith, map } from 'rxjs/operators';
+import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
+import { map, partition, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -15,12 +17,11 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import { StrategyService } from '../../strategy/providers/strategy.service';
 import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
-import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-strategy',
     templateUrl: './strategy.component.html',
-    styleUrls: ['./strategy.component.scss']
+    styleUrls: ['./strategy.component.scss'],
 })
 export class StrategyComponent implements BaseComponent {
     /**
@@ -123,7 +124,7 @@ export class StrategyComponent implements BaseComponent {
             .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate(['rent', strategy.id], { relativeTo: this.activatedRoute })))
             .add(this.btNodeService.launchGetNodeList(of(true)))
             .add(this.platformService.launchGetPlatformList(of(true)))
-            .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })))
+            .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })));
     }
 
     /**

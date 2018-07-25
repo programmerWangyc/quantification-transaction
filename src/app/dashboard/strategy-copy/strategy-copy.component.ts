@@ -1,22 +1,21 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+
+import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map, mapTo, switchMap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
-import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
-
 
 @Component({
     selector: 'app-strategy-copy',
     templateUrl: './strategy-copy.component.html',
-    styleUrls: ['./strategy-copy.component.scss']
+    styleUrls: ['./strategy-copy.component.scss'],
 })
 export class StrategyCopyComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 

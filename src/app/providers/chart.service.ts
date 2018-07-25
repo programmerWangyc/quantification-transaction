@@ -33,11 +33,9 @@ export class ChartService {
 
         concat(
             observableFrom(this.TYPE_BUTTON_RANGE).pipe(
-                mergeMap(count => this.translate.get('SOME_HOURS', { count })
-                    .pipe(
-                        map(text => ({ type: 'hour', count, text }))
-                    )
-                )
+                mergeMap(count => this.translate.get('SOME_HOURS', { count }).pipe(
+                    map(text => ({ type: 'hour', count, text }))
+                ))
             ),
             this.translate.get('ALL').pipe(
                 map(text => ({ type: 'all', text })),
@@ -53,22 +51,20 @@ export class ChartService {
      */
     private setDefaultOptions() {
 
-        const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
+        const monthsArr = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
-        const weeks = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        const weeksArr = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
-        const other = ["CONTEXT_BUTTON_TITLE", "DOWNLOAD_JPEG", "DOWNLOAD_PDF", "DOWNLOAD_PNG", "DOWNLOAD_SVG", "DRILL_UP_TEXT", "LOADING", "NO_DATA", "PRINT_CHART", "RESET_ZOOM", "RESET_ZOOM_TITLE", "RANGE"];
+        const otherArr = ['CONTEXT_BUTTON_TITLE', 'DOWNLOAD_JPEG', 'DOWNLOAD_PDF', 'DOWNLOAD_PNG', 'DOWNLOAD_SVG', 'DRILL_UP_TEXT', 'LOADING', 'NO_DATA', 'PRINT_CHART', 'RESET_ZOOM', 'RESET_ZOOM_TITLE', 'RANGE'];
 
         zip(
-            this.translate.get(months)
-                .pipe(
-                    map(result => months.map(key => result[key]))
-                ),
-            this.translate.get(weeks)
-                .pipe(
-                    map(result => weeks.map(key => result[key]))
-                ),
-            this.translate.get(other)
+            this.translate.get(monthsArr).pipe(
+                map(result => monthsArr.map(key => result[key]))
+            ),
+            this.translate.get(weeksArr).pipe(
+                map(result => weeksArr.map(key => result[key]))
+            ),
+            this.translate.get(otherArr)
         ).pipe(
             map(([months, weeks, other]) => ({
                 contextButtonTitle: other.CONTEXT_BUTTON_TITLE,
@@ -85,7 +81,7 @@ export class ChartService {
                 shortMonths: months,
                 months: months,
                 weekdays: weeks,
-                rangeSelectorZoom: other.RANGE
+                rangeSelectorZoom: other.RANGE,
             }))
         )
             .subscribe(lang => Highstock.setOptions({ lang, credits: { enabled: false }, global: { useUTC: false } }));
@@ -97,23 +93,23 @@ export class ChartService {
      * Get robot profit log options;
      */
     getRobotProfitLogsOptions(data: [number, number][]): Highstock.Options {
-        let seriesName = ''
+        let seriesName = '';
 
         this.translate.get('ACCUMULATE_PROFIT').subscribe(result => seriesName = result);
 
         return {
             plotOptions: {
                 series: {
-                    turboThreshold: 0 // 禁用涡轮增压
-                }
+                    turboThreshold: 0, // 禁用涡轮增压
+                },
             },
             rangeSelector: {
                 buttons: this.typeButtons,
                 selected: this.typeButtons.length - 1,
-                inputDateFormat: "%Y-%m-%d",
+                inputDateFormat: '%Y-%m-%d',
             },
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
             },
             series: [{
                 name: seriesName,
@@ -146,9 +142,9 @@ export class ChartService {
             } else {
                 // nothing to do ;
             }
-        })
+        });
 
-        options.forEach(option => option.plotOptions = { series: { turboThreshold: 0 } })
+        options.forEach(option => option.plotOptions = { series: { turboThreshold: 0 } });
 
         return options;
     }
@@ -156,7 +152,7 @@ export class ChartService {
     restoreStrategyChartData(log: StrategyLog): StrategyChartPoint {
         const data = log.data;
 
-        let result = { id: String(log.id), seriesIdx: log.seriesIdx };
+        const result = { id: String(log.id), seriesIdx: log.seriesIdx };
 
         if (isObject(data) && !isArray(data)) return { ...result, ...data };
 
@@ -164,8 +160,8 @@ export class ChartService {
 
         const info = { x: data[0] };
 
-        if (data.length < 5) { // FIXME: magic number 5; why 5?
-            return { ...result, ...info, y: data[1] }
+        if (data.length < 5) { // !FIXME: magic number 5; why 5?
+            return { ...result, ...info, y: data[1] };
         } else {
             return {
                 ...result,
@@ -173,12 +169,12 @@ export class ChartService {
                 open: data[StrategyChartSeriesData.OPEN],
                 close: data[StrategyChartSeriesData.CLOSE],
                 high: data[StrategyChartSeriesData.HIGH],
-                low: data[StrategyChartSeriesData.LOW]
+                low: data[StrategyChartSeriesData.LOW],
             };
         }
     }
 
-    updateRobotStrategyChartLabel(charts: Highcharts.ChartObject[], automatic: RobotLogs, manual: RobotLogs): ChartUpdateIndicator[] {
+    updateRobotStrategyChartLabel(charts: Highcharts.ChartObject[], automatic: RobotLogs, _manual: RobotLogs): ChartUpdateIndicator[] {
         const needUpdate = automatic.chart !== '';
 
         let updateIndicator: ChartUpdateIndicator[] = null;
@@ -207,7 +203,7 @@ export class ChartService {
         return updateIndicator;
     }
 
-    private updateTitle(chart: Highcharts.ChartObject, option: Highcharts.Options, index: number): boolean {
+    private updateTitle(chart: Highcharts.ChartObject, option: Highcharts.Options, _index: number): boolean {
         const { title, subtitle } = option;
 
         const params = compact([title, subtitle]);
@@ -219,8 +215,8 @@ export class ChartService {
         return needUpdate;
     }
 
-    private updatePlotLine(chart: Highcharts.ChartObject, option: Highcharts.Options, index: number): boolean {
-        const xAxis = option.xAxis && this.utilService.toArray(option.xAxis)
+    private updatePlotLine(chart: Highcharts.ChartObject, option: Highcharts.Options, _index: number): boolean {
+        const xAxis = option.xAxis && this.utilService.toArray(option.xAxis);
 
         const yAxis = option.yAxis && this.utilService.toArray(option.yAxis);
 
@@ -231,7 +227,7 @@ export class ChartService {
             const old = chart.options[key][index];
 
             newPlotLines && old && !isEqual(newPlotLines, old.plotLines) && chart[key][index].update({ plotLines: newPlotLines });
-        }
+        };
 
         const needUpdateXAxis = xAxis && chart.xAxis;
 
@@ -271,7 +267,7 @@ export class ChartService {
 
         const logs = cloneDeep(data).reverse();
 
-        const slots = charts.map((chart, chartIdx) => chart.series.filter(this.isValidSeries).map((item, seriesIdx) => ({ seriesIdx, chart, chartIdx })))
+        const slots = charts.map((chart, chartIdx) => chart.series.filter(this.isValidSeries).map((_, seriesIdx) => ({ seriesIdx, chart, chartIdx })))
             .reduce((acc, cur) => [...acc, ...cur], []);
 
         const updateIndicator: ChartUpdateIndicator[] = logs.map(log => {
@@ -283,12 +279,12 @@ export class ChartService {
 
             const chart = target.chart;
 
-            const data = this.restoreStrategyChartData(log);
+            const source = this.restoreStrategyChartData(log);
 
             const point = <Highcharts.PointObject>chart.get(String(log.id));
 
             if (point) {
-                point.update(data, false, false);
+                point.update(source, false, false);
 
                 return { updated: true, feedback: 'update point', chartIndex: target.chartIdx };
             } else {
@@ -296,7 +292,7 @@ export class ChartService {
 
                 const needAdd = !this.hasCategories(chart) || chart.options.xAxis[0].categories.length > series.data.length;
 
-                needAdd && series.addPoint(omit(data, 'seriesIdx'), false, series.data.length > maxViewPoint);
+                needAdd && series.addPoint(omit(source, 'seriesIdx'), false, series.data.length > maxViewPoint);
 
                 return { updated: needAdd, feedback: 'add point', chartIndex: target.chartIdx };
             }

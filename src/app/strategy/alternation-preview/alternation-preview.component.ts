@@ -12,7 +12,7 @@ interface StrategyMetaArgPreview extends StrategyMetaArg {
 @Component({
     selector: 'app-alternation-preview',
     templateUrl: './alternation-preview.component.html',
-    styleUrls: ['./alternation-preview.component.scss']
+    styleUrls: ['./alternation-preview.component.scss'],
 })
 export class AlternationPreviewComponent implements OnInit {
 
@@ -35,15 +35,8 @@ export class AlternationPreviewComponent implements OnInit {
     @Input() set removedArg(removed: StrategyMetaArg) {
         if (!removed) return;
 
-        this._removed = removed;
-
         this.data = this.data.filter(item => item.name !== removed.name);
     }
-
-    /**
-     * @ignore
-     */
-    private _removed: StrategyMetaArg;
 
     /**
      * @ignore

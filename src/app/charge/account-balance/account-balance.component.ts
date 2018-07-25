@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Observable } from 'rxjs';
 
 import { PublicService } from '../../providers/public.service';
@@ -6,7 +7,7 @@ import { PublicService } from '../../providers/public.service';
 @Component({
     selector: 'app-account-balance',
     templateUrl: './account-balance.component.html',
-    styleUrls: ['./account-balance.component.scss']
+    styleUrls: ['./account-balance.component.scss'],
 })
 export class AccountBalanceComponent implements OnInit {
 

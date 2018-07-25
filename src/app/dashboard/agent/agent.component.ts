@@ -1,15 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
-import { map, tap, takeUntil } from 'rxjs/operators';
 
 import { Breadcrumb } from '../../interfaces/app.interface';
-import { BtNodeService } from '../../providers/bt-node.service';
 
 @Component({
     selector: 'app-agent',
     templateUrl: './agent.component.html',
-    styleUrls: ['./agent.component.scss']
+    styleUrls: ['./agent.component.scss'],
 })
 export class AgentComponent implements OnInit {
     /**

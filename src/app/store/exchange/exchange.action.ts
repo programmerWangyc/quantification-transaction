@@ -15,7 +15,7 @@ export class GetExchangeListAction extends ApiAction {
 
     noneParams = true;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const GET_EXCHANGE_LIST = '[Exchange] GET_EXCHANGE_LIST';
@@ -23,7 +23,7 @@ export const GET_EXCHANGE_LIST = '[Exchange] GET_EXCHANGE_LIST';
 export class GetExchangeListRequestAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST;
 
-    constructor(public payload = {}) { super() }
+    constructor(public payload = {}) { super(); }
 }
 
 export const GET_EXCHANGE_LIST_FAIL = '[Exchange] GET_EXCHANGE_LIST_FAIL';
@@ -31,7 +31,7 @@ export const GET_EXCHANGE_LIST_FAIL = '[Exchange] GET_EXCHANGE_LIST_FAIL';
 export class GetExchangeListFailAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST_FAIL;
 
-    constructor(public payload: GetExchangeListResponse) { super() }
+    constructor(public payload: GetExchangeListResponse) { super(); }
 }
 
 export const GET_EXCHANGE_LIST_SUCCESS = '[Exchange] GET_EXCHANGE_LIST_SUCCESS';
@@ -39,20 +39,20 @@ export const GET_EXCHANGE_LIST_SUCCESS = '[Exchange] GET_EXCHANGE_LIST_SUCCESS';
 export class GetExchangeListSuccessAction extends GetExchangeListAction implements Action {
     readonly type = GET_EXCHANGE_LIST_SUCCESS;
 
-    constructor(public payload: GetExchangeListResponse) { super() }
+    constructor(public payload: GetExchangeListResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
 
-//  none local action 
+//  none local action
 
 export type ApiActions = GetExchangeListRequestAction
     | GetExchangeListFailAction
-    | GetExchangeListSuccessAction
+    | GetExchangeListSuccessAction;
 
-export type Actions = ApiActions
+export type Actions = ApiActions;
 
 export const ResponseActions = {
     GetExchangeListFailAction,
     GetExchangeListSuccessAction,
-}
+};

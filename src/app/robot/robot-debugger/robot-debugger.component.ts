@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -7,11 +8,10 @@ import { BtNode, Platform } from '../../interfaces/response.interface';
 import { PlatformService } from '../../providers/platform.service';
 import { RobotDebugFormModal } from '../providers/robot.operate.service';
 
-
 @Component({
     selector: 'app-robot-debugger',
     templateUrl: './robot-debugger.component.html',
-    styleUrls: ['./robot-debugger.component.scss']
+    styleUrls: ['./robot-debugger.component.scss'],
 })
 export class RobotDebuggerComponent implements OnInit {
     form: FormGroup;
@@ -45,7 +45,7 @@ export class RobotDebuggerComponent implements OnInit {
         this.form = this.fb.group({
             agent: ['', Validators.required],
             platform: ['', Validators.required],
-            stock: ['', Validators.required]
+            stock: ['', Validators.required],
         });
     }
 

@@ -17,13 +17,13 @@ export const initialState: State = {
     refUser: null,
     response: null,
     isAgree: true,
-}
+};
 
 export enum SingupErrorMsg {
     SIGNUP_LIMITED_PER_HOUR_ERROR = 1,
     EMAIL_NOT_EXIST_ERROR,
     EMAIL_REPEAT_ERROR,
-    REFERRER_INFO_ERROR
+    REFERRER_INFO_ERROR,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -32,7 +32,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.SIGNUP: {
             const { username, email, refUrl, refUser } = action.payload;
 
-            return { ...state, username, email, refUser, refUrl }
+            return { ...state, username, email, refUser, refUrl };
         }
 
         case actions.SIGNUP_FAIL: {
@@ -52,7 +52,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.RESET_SIGNUP_RESPONSE_ACTION:
             return { ...state, response: null };
-            
+
         default:
             return state;
     }

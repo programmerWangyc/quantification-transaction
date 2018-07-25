@@ -9,7 +9,7 @@ export interface State {
 export const initialState: State = {
     email: null,
     response: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -25,7 +25,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // ui state
         case actions.RESET_RESET_PASSWORD:
             return { ...state, response: null };
-            
+
         default:
             return state;
     }

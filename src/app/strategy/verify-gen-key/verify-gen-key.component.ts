@@ -10,7 +10,7 @@ interface VerifyGenKeyText {
 @Component({
     selector: 'app-verify-gen-key',
     templateUrl: './verify-gen-key.component.html',
-    styleUrls: ['./verify-gen-key.component.scss']
+    styleUrls: ['./verify-gen-key.component.scss'],
 })
 export class VerifyGenKeyComponent implements OnInit {
     @Input() set type(value) {

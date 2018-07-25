@@ -6,7 +6,7 @@ import { Breadcrumb } from '../../interfaces/app.interface';
 @Component({
     selector: 'app-robot',
     templateUrl: './robot.component.html',
-    styleUrls: ['./robot.component.scss']
+    styleUrls: ['./robot.component.scss'],
 })
 export class RobotComponent implements OnInit {
 

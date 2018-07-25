@@ -167,13 +167,15 @@ export interface PluginRunRequest {
     exchanges: ExchangePair[];
 }
 
-// ===================================================Node list=========================================
+// ===================================================Agent==============================================
 
 export interface GetNodeListRequest { }
 
 export interface DeleteNodeRequest {
     id: number;
 }
+
+export interface GetNodeHashRequest { }
 
 // ===================================================Platform list=========================================
 
@@ -202,7 +204,7 @@ export enum CategoryType {
 export enum needArgsType {
     none,  // need not args
     onlyStrategyArg, // only need current strategy args
-    all // need all args ,include template info args
+    all, // need all args ,include template info args
 }
 
 export interface GetStrategyListRequest {
@@ -217,7 +219,7 @@ export interface GetStrategyListRequest {
 export enum StrategyShareType {
     CANCEL_PUBLISH,
     PUBLISH,
-    SELL
+    SELL,
 }
 
 export interface ShareStrategyRequest {
@@ -228,7 +230,7 @@ export interface ShareStrategyRequest {
 // gen key
 export enum GenKeyType {
     PUBLISH,
-    SELL
+    SELL,
 }
 
 export interface GenKeyRequest {
@@ -253,7 +255,7 @@ export interface DeleteStrategyRequest {
 export enum OpStrategyTokenType {
     GET,
     UPDATE,
-    DELETE
+    DELETE,
 }
 
 export interface OpStrategyTokenRequest {
@@ -292,7 +294,7 @@ export enum BacktestIOType {
     getTaskStatus = 'GetTaskStatus',
     getTaskResult = 'GetTaskResult',
     putTask = 'PutTask', // [node , python|python2.7|python3|py, g++]  script
-    stopTask = 'StopTask'
+    stopTask = 'StopTask',
 }
 
 export type BacktestPutTaskDescription = [string, string, BacktestPutTaskParams];
@@ -314,7 +316,7 @@ export interface BacktestPutTaskOptions {
     // CPP
     TimeBegin: number; // 日期的数字表示
     TimeEnd: number; // 日期的数字表示
-    SnapshortPeriod: number
+    SnapshortPeriod: number;
     Period: number;
     NetDelay: number;
     UpdatePeriod: number;
@@ -419,6 +421,6 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 33
+ * 接口总数： 83， 已完成： 34
  */
 

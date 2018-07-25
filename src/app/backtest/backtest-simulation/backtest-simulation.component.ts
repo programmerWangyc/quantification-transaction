@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, startWith, switchMapTo } from 'rxjs/operators';
 
@@ -11,13 +12,12 @@ import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
-import { TipService } from '../../providers/tip.service';
 import { StrategyService } from '../../strategy/providers/strategy.service';
 
 @Component({
     selector: 'app-backtest-simulation',
     templateUrl: './backtest-simulation.component.html',
-    styleUrls: ['./backtest-simulation.component.scss']
+    styleUrls: ['./backtest-simulation.component.scss'],
 })
 export class BacktestSimulationComponent extends BaseComponent {
     /**
@@ -73,7 +73,7 @@ export class BacktestSimulationComponent extends BaseComponent {
     stopBacktest$: Subject<boolean> = new Subject();
 
     /**
-     * FIXME: Command to stop backtest;
+     * !FIXME: Command to stop backtest;
      */
     runningNode: Observable<number>;
 
@@ -139,7 +139,6 @@ export class BacktestSimulationComponent extends BaseComponent {
         private constant: BacktestConstantService,
         private route: ActivatedRoute,
         private publicService: PublicService,
-        private tip: TipService,
     ) {
         super();
     }
@@ -157,16 +156,14 @@ export class BacktestSimulationComponent extends BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.strategyId = this.route.paramMap
-            .pipe(
-                map(param => +param.get('id'))
-            );
+        this.strategyId = this.route.paramMap.pipe(
+            map(param => +param.get('id'))
+        );
 
-        this.strategyArgs = this.strategyService.getExistedStrategyArgs(() => true)
-            .pipe(
-                startWith([]),
-                map(args => args.filter(arg => !this.strategyService.isCommandArg(arg.variableName)))
-            );
+        this.strategyArgs = this.strategyService.getExistedStrategyArgs(() => true).pipe(
+            startWith([]),
+            map(args => args.filter(arg => !this.strategyService.isCommandArg()(arg.variableName)))
+        );
 
         this.templates = this.backtestService.getSelectedTemplates();
 
@@ -196,7 +193,7 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.launchBacktest(this.startBacktest$))
             .add(this.backtestService.launchOperateBacktest(this.stopBacktest$, BacktestIOType.stopTask, true))
             .add(this.backtestService.stopRunWorker(this.stopBacktest$))
-            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$))
+            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$));
     }
 
     /**

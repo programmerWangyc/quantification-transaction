@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import * as fileSaver from 'file-saver';
-import { isBoolean, negate, isEmpty } from 'lodash';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd';
+import { isBoolean, isEmpty, negate } from 'lodash';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { from, merge, Observable, of, Subject, Subscription } from 'rxjs';
-import { find, map, mergeMap, take, switchMap, filter, mapTo, startWith, tap } from 'rxjs/operators';
+import { filter, find, map, mapTo, mergeMap, startWith, switchMap, take } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
@@ -16,15 +17,13 @@ import { ArgListComponent } from '../../strategy/arg-list/arg-list.component';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import {
-    CodeContent,
-    FileContent,
-    StrategyCodemirrorComponent,
+    CodeContent, FileContent, StrategyCodemirrorComponent
 } from '../../strategy/strategy-codemirror/strategy-codemirror.component';
 import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
+import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyDetailDeactivateGuard } from '../dashboard.interface';
 import { CanDeactivateComponent } from '../providers/guard.service';
-import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 
 export interface Tab {
     name: string;
@@ -35,7 +34,7 @@ export interface Tab {
 @Component({
     selector: 'app-strategy-create-meta',
     templateUrl: './strategy-create-meta.component.html',
-    styleUrls: ['./strategy-create-meta.component.scss']
+    styleUrls: ['./strategy-create-meta.component.scss'],
 })
 export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
@@ -56,7 +55,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
      */
     tabs: Tab[] = [
         { name: 'STRATEGY_EDIT', icon: 'anticon-edit', active: true },
-        { name: 'SIMULATE_BACKTEST', icon: 'anticon-rocket', active: false }
+        { name: 'SIMULATE_BACKTEST', icon: 'anticon-rocket', active: false },
     ];
 
     /**
@@ -263,11 +262,11 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
         /**
          * 主要是提供给参数列表组件使用，它的数据来源于响应中已有的参数及AddArgComponent输出的数据。
-         * FIXME: 直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
+         * !FIXME: 直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
          * 类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
          */
         this.args = merge(
-            this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg)).pipe(
+            this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg())).pipe(
                 map(args => args.map(this.transformToMetaArg))
             ),
             this.args$.pipe(
@@ -276,7 +275,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         );
 
         this.commandArgs = merge(
-            this.strategyService.getExistedStrategyArgs(this.strategyService.isCommandArg).pipe(
+            this.strategyService.getExistedStrategyArgs(this.strategyService.isCommandArg()).pipe(
                 map(args => args.map(arg => this.transformToMetaArg({ ...arg, variableName: this.constant.withoutPrefix(arg.variableName, this.constant.COMMAND_PREFIX) })))
             ),
             this.commandArgs$.pipe(
@@ -330,7 +329,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
         if (isBacktest) {
             this.subscription$$ = this.strategyService.handleStrategyDetailError()
-                .add(this.strategyService.launchStrategyDetail(id))
+                .add(this.strategyService.launchStrategyDetail(id));
         } else {
             this.subscription$$ = this.strategyService.handleStrategyDetailError()
                 .add(this.strategyService.handleStrategyListError())
@@ -358,7 +357,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
                         code: this.codeMirror.codeContent,
                         note: this.codeMirror.noteContent,
                         des: this.codeMirror.desContent,
-                        manual: this.codeMirror.manualContent
+                        manual: this.codeMirror.manualContent,
                     } : content;
 
                 return {
@@ -368,8 +367,8 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
                     categoryId: this.StrategyDes.category,
                     languageId: this.StrategyDes.language,
                     args: this.getArgs(),
-                    dependance: this.getDependance()
-                }
+                    dependance: this.getDependance(),
+                };
             })
         );
     }
@@ -386,7 +385,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
                 const modal: NzModalRef = this.nzModal.confirm({
                     nzContent: SimpleNzConfirmWrapComponent,
                     nzComponentParams: { content: 'STRATEGY_COPY_SAVE_CONFIRM' },
-                    nzOnOk: () => modal.close(true)
+                    nzOnOk: () => modal.close(true),
                 });
 
                 return modal.afterClose.pipe(
@@ -412,7 +411,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
                 take(1)
             ),
             message: 'CONFIRM_LEAVE_REGARDLESS_BACKTESTING',
-        }
+        };
 
         return [codeMirrorGuard, backtestGuard];
     }
@@ -444,15 +443,15 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             des: arg.variableDes,
             type: arg.variableTypeId,
             comment: arg.variableComment,
-            defaultValue: arg.originValue
-        }
+            defaultValue: arg.originValue,
+        };
     }
 
     /**
      * Get strategy args;
      */
     private getArgs(): string {
-        const args = this.strategyArgs.data.map(item => [item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)])
+        const args = this.strategyArgs.data.map(item => [item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
 
         const commandArgs = this.strategyCommandArgs.data.map(item => [this.constant.COMMAND_PREFIX + item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
 

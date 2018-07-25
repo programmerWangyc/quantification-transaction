@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
@@ -9,7 +10,9 @@ import { BaseComponent } from '../../base/base.component';
 import { EncryptService } from '../../providers/encrypt.service';
 import { PublicService } from '../../providers/public.service';
 import { AuthService } from '../../shared/providers/auth.service';
-import { emailValidator, passwordMatchValidator, passwordValidator, usernameValidator } from '../../validators/validators';
+import {
+    emailValidator, passwordMatchValidator, passwordValidator, usernameValidator
+} from '../../validators/validators';
 import { AgreementComponent } from '../agreement/agreement.component';
 
 export interface SignupFormModel {
@@ -18,13 +21,13 @@ export interface SignupFormModel {
     passwordInfo: {
         password: string;
         confirmPassword: string;
-    }
+    };
 }
 
 @Component({
     selector: 'app-signup',
     templateUrl: './signup.component.html',
-    styleUrls: ['./signup.component.scss']
+    styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent extends BaseComponent {
 
@@ -100,8 +103,8 @@ export class SignupComponent extends BaseComponent {
             email: ['', emailValidator],
             passwordInfo: this.fb.group({
                 password: ['', passwordValidator],
-                confirmPassword: ['', passwordValidator]
-            }, { validator: passwordMatchValidator })
+                confirmPassword: ['', passwordValidator],
+            }, { validator: passwordMatchValidator }),
         });
     }
 

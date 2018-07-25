@@ -1,32 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
-import { GetNodeListResponse, DeleteNodeResponse } from '../interfaces/response.interface';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { BaseService } from '../base/base.service';
+import { BtNode, DeleteNodeResponse, GetNodeListResponse } from '../interfaces/response.interface';
+import { UIState } from '../store/bt-node/bt-node.reducer';
 import * as fromRoot from '../store/index.reducer';
-import { BtNode } from '../interfaces/response.interface';
-import { AppState } from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { GroupedList, UtilService } from './util.service';
-import { BaseService } from '../base/base.service';
-import { UIState } from '../store/bt-node/bt-node.reducer';
-
 
 export interface GroupedNode extends GroupedList<BtNode> {
     groupNameValue?: any;
 }
 
-export interface NodeFilterFn {
-    (node: BtNode): boolean;
-}
+export type NodeFilterFn = (node: BtNode) => boolean;
 
 @Injectable()
 export class BtNodeService extends BaseService {
 
     constructor(
-        private store: Store<AppState>,
+        private store: Store<fromRoot.AppState>,
         private error: ErrorService,
         private process: ProcessService,
         private utilService: UtilService,
@@ -50,6 +46,13 @@ export class BtNodeService extends BaseService {
         return this.process.processDeleteNode(node.pipe(
             map(({ id }) => ({ id }))
         ));
+    }
+
+    /**
+     * get node hash
+     */
+    launchNodeHash(start: Observable<any>): Subscription {
+        return this.process.processGetNodeHash(start);
     }
 
     // =======================================================Date Acquisition=======================================================
@@ -145,6 +148,17 @@ export class BtNodeService extends BaseService {
     isLoading(): Observable<boolean> {
         return this.getNodeUIState().pipe(
             map(state => state.isLoading)
+        );
+    }
+
+    /**
+     * node hash
+     */
+    getNodeHash(): Observable<string> {
+        return this.store.pipe(
+            select(fromRoot.selectNodeHashResponse),
+            this.filterTruth(),
+            map(res => res.result)
         );
     }
 

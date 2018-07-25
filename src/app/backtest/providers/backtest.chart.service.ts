@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
 import { flatten, groupBy, isArray, isEmpty, last, omit, range } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of, zip } from 'rxjs';
@@ -12,16 +13,12 @@ import { UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
 import { BacktestRuntimeLogType } from '../backtest.config';
 import {
-    BacktestOrderLog,
-    BacktestOrderLogs,
-    BacktestProfitChartSubtitleConfig,
-    BacktestProfitDescription,
-    BacktestStrategyCharts,
+    BacktestOrderLog, BacktestOrderLogs, BacktestProfitChartSubtitleConfig, BacktestProfitDescription,
+    BacktestStrategyCharts
 } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestResultService } from './backtest.result.service';
 import { BacktestSandboxService, SymbolRecord } from './backtest.sandbox.service';
-
 
 export interface BacktestChart {
     title: string;
@@ -87,8 +84,8 @@ export class BacktestChartService extends BacktestResultService {
 
                 const orderLogs = this.getOrderLogs(RuntimeLogs);
 
-                return Symbols.map((item, index) => {
-                    const [eid, stock, symbol, klinePeriod, records] = item;
+                return Symbols.map(item => {
+                    const [, , , klinePeriod, records] = item;
 
                     const title = this.getProfitChartName(item);
 
@@ -148,7 +145,7 @@ export class BacktestChartService extends BacktestResultService {
      * 生成订单日志
      */
     private getBacktestOrderLog(data: fromRes.RuntimeLog): BacktestOrderLog {
-        const [id, time, logType, eid, orderId, price, amount, extra, contractType, direction] = data;
+        const [, time, logType, eid, orderId, price, amount, , contractType] = data;
 
         const result = { x: time, shape: 'flag' };
 
@@ -157,7 +154,7 @@ export class BacktestChartService extends BacktestResultService {
         let labels = null;
 
         this.translate.get(['BUY', 'SALE', 'RETRACT', 'PRICE', 'SYMBOL', 'SYMBOL', 'MARKET_PRICE', 'ORDER_ID'])
-            .subscribe(result => labels = result);
+            .subscribe(res => labels = res);
 
         const textTail = `${amount}<br/>${labels.PRICE}:${price < 0 ? labels.MARKET : price}<br/>${labels.ORDER_ID}:${orderId}<br/>${labels.SYMBOL}: ${contractType}`;
 
@@ -179,7 +176,7 @@ export class BacktestChartService extends BacktestResultService {
      * 生成行情图表tab页的名称;
      */
     private getProfitChartName(data: fromRes.BacktestSymbol): string {
-        const [eid, stock, symbol, klinePeriod, records] = data;
+        const [eid, , symbol] = data;
 
         return `${eid}_${symbol}`.replace(`_${eid}`, '').replace('OKCoin_EN', 'OKCoin');
     }
@@ -189,11 +186,11 @@ export class BacktestChartService extends BacktestResultService {
      */
     private generateOrderLogKey(data: fromRes.BacktestSymbol | fromRes.RuntimeLog): string {
         if (data.length === 10) {
-            const [id, time, logType, eid, orderId, price, amount, extra, contractType, direction] = data;
+            const [, , , eid, , , , , contractType] = data;
 
             return eid + '/' + contractType;
         } else {
-            const [eid, stock, symbol, klinePeriod, records] = data;
+            const [eid, , symbol] = data;
 
             return eid + '/' + symbol;
         }
@@ -205,15 +202,15 @@ export class BacktestChartService extends BacktestResultService {
     private generateYAxis(indicators: fromRes.BacktestResultIndicators): Highstock.YAxisOptions[] {
         const hasRIS = indicators.RIS;
 
-        let min = hasRIS ? 0 : undefined;
+        const min = hasRIS ? 0 : undefined;
 
-        let max = hasRIS ? 100 : undefined;
+        const max = hasRIS ? 100 : undefined;
 
         return [
-            { opposite: false, height: '70%', lineWidth: 2, gridLineDashStyle: 'ShortDot', },
+            { opposite: false, height: '70%', lineWidth: 2, gridLineDashStyle: 'ShortDot' },
             { opposite: false, height: '10%', offset: 0, lineWidth: 2, top: '72%' },
             { opposite: false, title: { text: '' }, labels: { enabled: false }, top: '72%', height: '10%', offset: 0, lineWidth: 2, min, max },
-            { opposite: false, title: { text: '', }, top: '84%', height: '16%', offset: 0, lineWidth: 2 }
+            { opposite: false, title: { text: '' }, top: '84%', height: '16%', offset: 0, lineWidth: 2 },
         ];
     }
 
@@ -221,16 +218,16 @@ export class BacktestChartService extends BacktestResultService {
      * 生成volume值
      */
     private generateVolume(data: fromRes.BacktestSymbolRecords): { x: number; y: number; color: string } {
-        const [time, open, high, low, close, volume] = data;
+        const [time, open, , , close, volume] = data;
 
-        return { x: time * 1000, y: volume, color: open > close ? '#ffa6a6' : '#a6d3a6' }
+        return { x: time * 1000, y: volume, color: open > close ? '#ffa6a6' : '#a6d3a6' };
     }
 
     /**
      * 生成 open , high, low, close 的值
      */
     private generateOpenHighLowClose(data: fromRes.BacktestSymbolRecords): number[] {
-        const [time, open, high, low, close, volume] = data;
+        const [time, open, high, low, close] = data;
 
         return [time * 1000, open, high, low, close];
     }
@@ -249,9 +246,9 @@ export class BacktestChartService extends BacktestResultService {
      * 均在 Highstock 下的series 中有定义 ，但是接口文档中没有找到对应的字段，所以这里用了any;
      */
     private generateQuotaChartSeries(data: fromRes.BacktestSymbol, orderLogs: BacktestOrderLogs): any[] {
-        const [eid, stock, symbol, klinePeriod, records] = data;
+        const [, , , , records] = data;
 
-        const openHighLowCloseArr = records.map(this.generateOpenHighLowClose)
+        const openHighLowCloseArr = records.map(this.generateOpenHighLowClose);
 
         const volumeArr = records.map(this.generateVolume);
 
@@ -262,7 +259,7 @@ export class BacktestChartService extends BacktestResultService {
         return [
             { type: 'candlestick', id: 'primary', name: chartName, data: openHighLowCloseArr, showInLegend: false, yAxis: 0 },
             { type: 'flags', name: 'Order', shape: 'circlepin', onSeries: 'primary', showInLegend: !!(orderLogs[key] && orderLogs[key].length > 0), data: orderLogs[key] || [] },
-            { type: 'column', name: 'Volume', id: 'volume', color: '#a6d3a6', data: volumeArr, tooltip: { valueDecimals: 2 }, showInLegend: false, yAxis: 1 }
+            { type: 'column', name: 'Volume', id: 'volume', color: '#a6d3a6', data: volumeArr, tooltip: { valueDecimals: 2 }, showInLegend: false, yAxis: 1 },
         ];
     }
 
@@ -273,18 +270,18 @@ export class BacktestChartService extends BacktestResultService {
     private get_OBV_CMF_ATR_Series(indicators: fromRes.BacktestResultIndicators, openHighLowClose: number[][], records: SymbolRecord[]): Highcharts.SeriesOptions {
         const getBaseSeries = (decimals = 2) => ({ type: 'line', lineWidth: 1, linkedTo: 'volume', color: '#0000ff', showInLegend: true, tooltip: { valueDecimals: decimals }, yAxis: 2 });
 
-        const getName = (prefix: string, period?: number) => period ? `${prefix}(${period})` : prefix
+        const getName = (prefix: string, period?: number) => period ? `${prefix}(${period})` : prefix;
 
         if (indicators.OBV) {
-            return { ...getBaseSeries(), name: getName('OBV'), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.OBV(records)), };
+            return { ...getBaseSeries(), name: getName('OBV'), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.OBV(records)) };
         } else if (indicators.CMF) {
             const cmfPeriod = <number>indicators.CMF[0][0] || 20;
 
-            return { ...getBaseSeries(4), name: getName('CMF', cmfPeriod), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.CMF(records, cmfPeriod)), };
+            return { ...getBaseSeries(4), name: getName('CMF', cmfPeriod), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.CMF(records, cmfPeriod)) };
         } else {
             const atrPeriod = indicators.ATR && indicators.ATR[0][0] ? indicators.ATR[0][0] : 14;
 
-            return { ...getBaseSeries(), color: '#008000', name: getName('ATR', atrPeriod), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.ATR(records, atrPeriod)), };
+            return { ...getBaseSeries(), color: '#008000', name: getName('ATR', atrPeriod), data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox.ATR(records, atrPeriod)) };
         }
     }
 
@@ -297,7 +294,7 @@ export class BacktestChartService extends BacktestResultService {
 
         const getBaseSeries = (decimals = 2): Highcharts.SeriesOptions => {
             return { lineWidth: 1, linkedTo: 'primary', showInLegend: true, type: 'line', tooltip: { valueDecimals: decimals } };
-        }
+        };
 
         const getName = (prefix: string, periods: number[], tail?: string): string => tail ? `${prefix}(${periods.join(',')}) - ${tail}` : `${prefix}(${periods.join(',')})`;
 
@@ -330,7 +327,7 @@ export class BacktestChartService extends BacktestResultService {
                 name: getName(maMethod, [period[0]]),
                 data: this.sandbox.ArrToXY(openHighLowClose, this.sandbox[maMethod](records, period[0])),
                 color: lineColors[index] || '',
-            }))
+            }));
         }
     }
 
@@ -344,7 +341,7 @@ export class BacktestChartService extends BacktestResultService {
             const seriesColors = ['#f7a35c', '#7cb5ec', '#666'];
 
             return { lineWidth: 1, linkedTo: 'primary', yAxis: 3, showInLegend: false, type: 'line', tooltip: { valueDecimals: 2 }, color: seriesColors[color] };
-        }
+        };
 
         const getName = (prefix: string, periods: number[], tail?: string): string => tail ? `${prefix}(${periods.join(',')}) - ${tail}` : `${prefix}(${periods.join(',')})`;
 
@@ -355,7 +352,7 @@ export class BacktestChartService extends BacktestResultService {
 
             const data = this.sandbox.ArrToXY(openHighLowClose, this.sandbox.RSI(records, periods[0]));
 
-            return [{ ...getBaseSeries(0), data, name, }];
+            return [{ ...getBaseSeries(0), data, name }];
         } else if (indicators.KDJ) {
             const periods = this.combine(indicators.KDJ[0], [9, 3, 3]);
 
@@ -363,7 +360,7 @@ export class BacktestChartService extends BacktestResultService {
 
             const data = this.sandbox.ArrToXY(openHighLowClose, this.sandbox.KDJ(records, periods[0], periods[1], periods[2]));
 
-            return range(3).map(index => ({ ...getBaseSeries(index), name: seriesNames[index], data: data[index], }));
+            return range(3).map(index => ({ ...getBaseSeries(index), name: seriesNames[index], data: data[index] }));
         } else {
             const periods = this.combine(indicators.MACD ? indicators.MACD[0] : [], [12, 26, 9]);
 
@@ -375,14 +372,14 @@ export class BacktestChartService extends BacktestResultService {
                 if (index !== 2) { // corresponding to seriesNames; condition: not 'Histogram';
                     return item;
                 } else {
-                    return item.map(ele => ({ x: ele[0], y: ele[1], color: ele[1] < 0 ? '#ffa6a6' : '#a6d3a6' }))
+                    return item.map(ele => ({ x: ele[0], y: ele[1], color: ele[1] < 0 ? '#ffa6a6' : '#a6d3a6' }));
                 }
             });
 
             return range(3).map(index => {
-                const result = { ...getBaseSeries(index), name: seriesNames[index], data: data[index], };
+                const res = { ...getBaseSeries(index), name: seriesNames[index], data: data[index] };
 
-                return index !== 2 ? result : { ...result, type: 'column' };
+                return index !== 2 ? res : { ...res, type: 'column' };
             });
         }
     }
@@ -421,12 +418,12 @@ export class BacktestChartService extends BacktestResultService {
             },
             plotOptions: {
                 series: {
-                    turboThreshold: 0
+                    turboThreshold: 0,
                 },
                 candlestick: {
                     color: '#d75442',
-                    upColor: '#6ba583'
-                }
+                    upColor: '#6ba583',
+                },
             },
             tooltip: {
                 // 日期时间格式化
@@ -441,10 +438,10 @@ export class BacktestChartService extends BacktestResultService {
             rangeSelector: {
                 buttons: this.chartService.typeButtons,
                 selected: this.getBacktestRangeSelected(period),
-                inputEnabled: false
+                inputEnabled: false,
             },
             xAxis: {
-                plotLines: [{ //一条竖线
+                plotLines: [{ // 一条竖线
                     color: '#FF0000',
                     width: 2,
                     dashStyle: 'Dot',
@@ -464,7 +461,7 @@ export class BacktestChartService extends BacktestResultService {
         } else if (period > 0 && period < 3) {
             return 1; // 3 小时
         } else if (period === 3) {
-            return 2  // 8小时
+            return 2;  // 8小时
         } else if (period > 3) {
             return 3; // all
         }
@@ -478,23 +475,23 @@ export class BacktestChartService extends BacktestResultService {
     private getProfitChartConfig(series: any[], subtitle: string): any {
         return {
             subtitle: {
-                text: subtitle
+                text: subtitle,
             },
             plotOptions: {
                 series: {
-                    turboThreshold: 0
-                }
+                    turboThreshold: 0,
+                },
             },
             rangeSelector: {
                 buttons: this.chartService.typeButtons,
                 selected: 3,
-                inputEnabled: false
+                inputEnabled: false,
             },
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
             },
             series,
-        }
+        };
     }
 
     /**
@@ -599,13 +596,13 @@ export class BacktestChartService extends BacktestResultService {
     private generateSeries(profitAndLose: BacktestProfitDescription[], info: BacktestChartSourceData): any {
         const { startDrawdownTime, maxDrawdownTime } = info;
 
-        let obj1 = {
+        const obj1 = {
             name: this.floatingProfitLoseLabel,
             data: profitAndLose.map(({ time, profit }) => [time, profit]),
             id: 'primary',
             tooltip: { valueDecimals: 8, xDateFormat: '%Y-%m-%d %H:%M:%S' },
             yAxis: 0,
-        }
+        };
 
         const obj2 = { zoneAxis: 'x', zones: [{ value: startDrawdownTime, dashStyle: 'solid' }, { value: maxDrawdownTime, dashStyle: 'shortdash' }] };
 
@@ -621,14 +618,14 @@ export class BacktestChartService extends BacktestResultService {
     /**
      * 获取类型为 flag 的系列的源数据；
      */
-    private generateFlagTypeSeriesData(profit: BacktestProfitDescription[], info: BacktestChartSourceData): any {
+    private generateFlagTypeSeriesData(profitSource: BacktestProfitDescription[], info: BacktestChartSourceData): any {
         const { maxAssetsTime, maxDrawdownTime, maxDrawdown } = info;
 
-        return profit.map(({ time, profit }) => {
+        return profitSource.map(({ time, profit }) => {
             if (maxAssetsTime === time) {
-                return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit: profit.toFixed(8) })) }
+                return { x: time, y: profit, title: 'High', shape: 'flag', text: this.unwrap(this.translate.get('MAX_PROFIT', { profit: profit.toFixed(8) })) };
             } else if (maxDrawdownTime === time) {
-                return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawDown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })), color: 'red' }
+                return { x: time, y: profit, title: 'Low', shape: 'squarepin', text: this.unwrap(this.translate.get('MAX_DRAWDOWN_PROFIT', { maxDrawDown: (maxDrawdown * 100).toFixed(3) + '%', profit: profit.toFixed(8) })), color: 'red' };
             } else {
                 return null;
             }
@@ -644,7 +641,7 @@ export class BacktestChartService extends BacktestResultService {
 
         const { profit } = last(source);
 
-        //TODO: 这里可能有BUG，总资产是从父类的方法上拿来的，可能需要实现子类自己的 getTotalAssets 方法。
+        // TODO: 这里可能有BUG，总资产是从父类的方法上拿来的，可能需要实现子类自己的 getTotalAssets 方法。
         return this.getTotalAssets(true).pipe(
             map(assets => profit / assets)
         );
@@ -661,10 +658,10 @@ export class BacktestChartService extends BacktestResultService {
             filter(logs => !!logs),
             withLatestFrom(this.getTotalAssets(true)),
             mergeMap(([profitLogs, totalAssets]) => {
-                const profit = profitLogs.map(([time, profit]) => ({ time, profit }));
+                const profitLog = profitLogs.map(([time, profit]) => ({ time, profit }));
 
-                return this.getWinningRate(profit).pipe(
-                    mergeMap(winningRate => this.generateChartOptions(profit, totalAssets, winningRate))
+                return this.getWinningRate(profitLog).pipe(
+                    mergeMap(winningRate => this.generateChartOptions(profitLog, totalAssets, winningRate))
                 );
             }),
             take(1)
@@ -717,23 +714,23 @@ export class BacktestChartService extends BacktestResultService {
             map(({ charts, data }) => {
                 const source = Object.entries(groupBy(data, ([idx]) => idx)).map(([key, value]) => ({
                     id: Number(key),
-                    value: value.map(item => last(item))
+                    value: value.map(item => last(item)),
                 }));
 
                 const optimizedSeries = flatten(charts.map((chart, index) => {
                     const { series } = chart;
 
-                    return series && !!series.length ? series.map(series => ({ ...series, chartIndex: index })) : [];
+                    return series && !!series.length ? series.map(item => ({ ...item, chartIndex: index })) : [];
                 })).map((series, index) => {
-                    const data = source.find(item => item.id === index);
+                    const res = source.find(item => item.id === index);
 
-                    return data ? { ...series, data: [...series.data, ...data.value.filter(item => !!item)] } : series;
+                    return res ? { ...series, data: [...series.data, ...res.value.filter(item => !!item)] } : series;
                 });
 
                 return charts.map((chart, index) => {
                     const option = {
                         ...chart,
-                        series: optimizedSeries.filter(item => item.chartIndex === index).reduce((acc, cur) => [...acc, omit(cur, 'chartIndex')], [])
+                        series: optimizedSeries.filter(item => item.chartIndex === index).reduce((acc, cur) => [...acc, omit(cur, 'chartIndex')], []),
                     };
 
                     try {

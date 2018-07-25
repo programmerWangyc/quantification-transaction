@@ -15,7 +15,7 @@ export function usernameValidator(input: AbstractControl): ValidatorResult {
 export const passwordFormat = /^\w{6,16}$/;
 
 export function passwordValidator(input: AbstractControl): ValidatorResult {
-    return passwordFormat.test(input.value) ? null : { passwordFormat: 'PASSWORD_FORMAT_ERROR' }
+    return passwordFormat.test(input.value) ? null : { passwordFormat: 'PASSWORD_FORMAT_ERROR' };
 }
 
 export const emailFormat = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+\.){1,63}[a-z0-9]+$/;

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
@@ -9,7 +10,7 @@ import { BacktestChart, BacktestChartService } from '../providers/backtest.chart
 @Component({
     selector: 'app-backtest-chart',
     templateUrl: './backtest-chart.component.html',
-    styleUrls: ['./backtest-chart.component.scss']
+    styleUrls: ['./backtest-chart.component.scss'],
 })
 export class BacktestChartComponent extends BaseComponent {
     /**

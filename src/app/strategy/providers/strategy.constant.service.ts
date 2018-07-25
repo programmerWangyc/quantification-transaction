@@ -8,7 +8,7 @@ import { Language, OpStrategyTokenTypeAdapter } from '../strategy.config';
 
 export interface Category {
     name: string;
-    id: number
+    id: number;
 }
 
 export interface SupportedLanguage {
@@ -29,7 +29,7 @@ const STRATEGY_CATEGORIES: Category[] = [
 const SUPPORTED_LANGUAGE: SupportedLanguage[] = [
     { name: Language[0], id: Language.JavaScript, icon: 'anticon-facebook' },
     { name: Language[1], id: Language.Python, icon: 'anticon-codepen' },
-    { name: Language[2], id: Language['C++'], icon: 'anticon-amazon' }
+    { name: Language[2], id: Language['C++'], icon: 'anticon-amazon' },
 ];
 
 const EDITOR_THEMES: string[] = [
@@ -100,7 +100,7 @@ export interface LanguageInitialValue {
 export const LANGUAGE_INITIAL_VALUE = new Map([
     [Language.JavaScript, { codeValue: 'function main() {\n    Log(exchange.GetAccount());\n}', templateValue: '/*\n -- 策略引用该模板以后直接用 $.Test() 调用此方法\n-- main 函数在策略中不会触发, 只做为模板调试的入口 \n*/\n$.Test = function() {\n    Log("Test");\n};\n\nfunction main() {\n    $.Test();\n}', mode: 'javascript', extensionName: '.js' }],
     [Language.Python, { codeValue: 'def main():\n    Log(exchange.GetAccount())\n', templateValue: 'def Test():\n    Log("template call")\n\next.Test = Test # 导出Test函数, 主策略可以通过ext.Test()调用', mode: 'python', extensionName: '.' }],
-    [Language["C++"], { codeValue: 'void main() {\n    Log(exchange.GetAccount());\n}', templateValue: '// 策略引用该模板以后直接用 ext::Test() 调用此方法\nvoid Test() {\n    Log("template call");\n}', mode: 'text/x-c++src', extensionName: '.cpp' }]
+    [Language['C++'], { codeValue: 'void main() {\n    Log(exchange.GetAccount());\n}', templateValue: '// 策略引用该模板以后直接用 ext::Test() 调用此方法\nvoid Test() {\n    Log("template call");\n}', mode: 'text/x-c++src', extensionName: '.cpp' }],
 ]);
 
 @Injectable()
@@ -134,7 +134,7 @@ export class StrategyConstantService extends ConstantService {
             return OpStrategyTokenTypeAdapter.UPDATE;
         } else {
             return type;
-        };
+        }
     }
 
     isInitialValue(content: string): boolean {
@@ -151,7 +151,7 @@ export class StrategyConstantService extends ConstantService {
 
             if (item.value.codeValue === content || item.value.templateValue === content) {
                 result = true;
-                break
+                break;
             }
         }
 
@@ -163,9 +163,9 @@ export class StrategyConstantService extends ConstantService {
             return this.LIST_PREFIX + value;
         } else if (type === VariableType.ENCRYPT_STRING_TYPE) {
             return this.ENCRYPT_PREFIX + value;
-        } else if( type === VariableType.BOOLEAN_TYPE){
+        } else if (type === VariableType.BOOLEAN_TYPE) {
             return Boolean(value);
-        }else {
+        } else {
             return value;
         }
     }

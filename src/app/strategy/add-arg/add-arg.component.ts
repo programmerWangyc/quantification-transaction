@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+
 import { Subscription } from 'rxjs';
 
 import { VariableType } from '../../app.config';
@@ -20,7 +21,7 @@ export interface StrategyMetaArg {
 @Component({
     selector: 'app-add-arg',
     templateUrl: './add-arg.component.html',
-    styleUrls: ['./add-arg.component.scss']
+    styleUrls: ['./add-arg.component.scss'],
 })
 export class AddArgComponent implements OnInit, OnDestroy {
 
@@ -100,8 +101,7 @@ export class AddArgComponent implements OnInit, OnDestroy {
             this.form.patchValue({ defaultValue: 0 });
         } else if (selectedType === VariableType.BUTTON_TYPE) {
             this.form.patchValue({ defaultValue: this.constant.VALUE_OF_BUTTON_TYPE_ARG });
-        }
-        else {
+        } else {
             this.form.patchValue({ defaultValue: '' });
         }
 

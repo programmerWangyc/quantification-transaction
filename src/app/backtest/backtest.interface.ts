@@ -37,7 +37,7 @@ export interface ArgOptimizeSetting {
     begin: number;
     end: number;
     step: number;
-};
+}
 
 // args related interfaces
 export interface OptimizedVariableOverview extends VariableOverview {

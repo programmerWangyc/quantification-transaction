@@ -12,7 +12,7 @@ export interface Settings {
     docker: Object;
     brokers: Object;
     index: Object;
-    backtest_javascript: string; // FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
+    backtest_javascript: string; // !FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
 }
 
 export interface State {

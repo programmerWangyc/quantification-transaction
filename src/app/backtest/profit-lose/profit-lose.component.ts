@@ -7,7 +7,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 @Component({
     selector: 'app-profit-lose',
     templateUrl: './profit-lose.component.html',
-    styleUrls: ['./profit-lose.component.scss']
+    styleUrls: ['./profit-lose.component.scss'],
 })
 export class ProfitLoseComponent extends BacktestChartComponent {
     constructor(

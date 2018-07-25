@@ -6,8 +6,8 @@ export interface State {
 }
 
 export const initialState: State = {
-    response: null
-}
+    response: null,
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -20,7 +20,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // ui state
         case actions.RESET_SET_PASSWORD:
             return { response: null };
-            
+
         case actions.SET_PASSWORD:
         default:
             return state;

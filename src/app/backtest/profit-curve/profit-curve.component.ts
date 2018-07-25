@@ -7,7 +7,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 @Component({
     selector: 'app-profit-curve',
     templateUrl: './profit-curve.component.html',
-    styleUrls: ['./profit-curve.component.scss']
+    styleUrls: ['./profit-curve.component.scss'],
 })
 export class ProfitCurveComponent extends BacktestChartComponent {
 
@@ -22,7 +22,7 @@ export class ProfitCurveComponent extends BacktestChartComponent {
      * @ignore
      */
     ngOnInit() {
-        this.data = this.chartService.getProfitCurveOptions()
+        this.data = this.chartService.getProfitCurveOptions();
 
         this.launch();
     }

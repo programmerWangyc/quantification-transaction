@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { Observable, Subscription } from 'rxjs';
 import { filter, mapTo, mergeMap, switchMapTo } from 'rxjs/operators';
 
@@ -12,10 +13,9 @@ import { TipService } from '../../providers/tip.service';
 import { AppState, selectSetWatchDogRequest, selectSetWatchDogResponse } from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 
-
 export enum SetWatchDogTip {
     CLOSE_ROBOT_MONITOR_CONFIRM,
-    OPEN_ROBOT_MONITOR_CONFIRM
+    OPEN_ROBOT_MONITOR_CONFIRM,
 }
 
 @Injectable()
@@ -34,11 +34,11 @@ export class WatchDogService extends BaseService {
 
     /**
      * Set or cancel watch dog on target;
-     * @param target Robot or agent;
+     * @param targetObs Robot or agent;
      */
-    launchSetWatchDog(target: Observable<RobotDetail | Robot | BtNode>): Subscription {
+    launchSetWatchDog(targetObs: Observable<RobotDetail | Robot | BtNode>): Subscription {
         return this.process.processSetWatchDog(
-            target.pipe(
+            targetObs.pipe(
                 mergeMap(target => {
                     const watchDogStatus = target.wd > 0 ? 0 : 1;
 

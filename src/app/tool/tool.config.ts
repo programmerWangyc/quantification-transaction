@@ -5,5 +5,5 @@ export enum LogTypes {
     ERROR,
     PROFIT,
     MESSAGE,
-    RESTART
+    RESTART,
 }

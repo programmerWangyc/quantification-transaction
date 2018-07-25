@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+
 import { NzMessageDataOptions, NzMessageService, NzNotificationService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,15 +9,14 @@ import { map } from 'rxjs/operators';
 import { ConfirmOperateTipData } from '../interfaces/app.interface';
 import { CustomSnackBarComponent } from '../tool/tool.components';
 
-
 @Injectable()
 export class TipService {
 
     private confirmConfig = {
         panelClass: ['radius'],
         minWidth: 520,
-        position: { top: '50px' }
-    }
+        position: { top: '50px' },
+    };
 
     private NZ_NOTIFICATION_CONFIG = {
         nzTop: '48px',
@@ -25,7 +25,7 @@ export class TipService {
         nzMaxStack: 3,
         nzPauseOnHover: true,
         nzAnimate: true,
-    }
+    };
 
     constructor(
         private snackBar: MatSnackBar,
@@ -43,7 +43,7 @@ export class TipService {
         return this.snackBar.openFromComponent(CustomSnackBarComponent, {
             data,
             duration,
-            verticalPosition: 'top'
+            verticalPosition: 'top',
         });
     }
 
@@ -56,10 +56,10 @@ export class TipService {
     /**
      *  NzNotificationService secondary wrap.
      */
-    success(content: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
-        this.translate.get(content)
+    success(msg: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
+        this.translate.get(msg)
             .subscribe(content => {
-                this.notification.success(title, content, option)
+                this.notification.success(title, content, option);
             },
                 error => console.log(error),
                 () => console.log('translate complete')
@@ -69,31 +69,30 @@ export class TipService {
     /**
      *  NzMessageService secondary wrap.
      */
-    messageSuccess(content: string, options?: NzMessageDataOptions): void {
-        this.translate.get(content).subscribe(content => this.message.success(content, options));
+    messageSuccess(msg: string, options?: NzMessageDataOptions): void {
+        this.translate.get(msg).subscribe(content => this.message.success(content, options));
     }
 
-    messageError(content: string, params = {}, options?: NzMessageDataOptions): void {
-        this.translate.get(content, params).subscribe(content => this.message.error(content, options));
+    messageError(msg: string, params = {}, options?: NzMessageDataOptions): void {
+        this.translate.get(msg, params).subscribe(content => this.message.error(content, options));
     }
 
-    messageInfo(content: string, params?: Object, option?: NzMessageDataOptions): void {
-        this.translate.get(content, params).subscribe(content => this.message.info(content, option));
+    messageInfo(msg: string, params?: Object, option?: NzMessageDataOptions): void {
+        this.translate.get(msg, params).subscribe(content => this.message.info(content, option));
     }
 
     /**
      *  NzModalService secondary wrap.
      */
     getNzConfirmOperateConfig(): Observable<object> {
-        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL'])
-            .pipe(
-                map(res => ({
-                    nzTitle: res.OPERATE_CONFIRM,
-                    nzOkText: res.CONFIRM,
-                    nzCancelText: res.CANCEL,
-                    nzOkType: 'primary',
-                }))
-            );
+        return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(
+            map(res => ({
+                nzTitle: res.OPERATE_CONFIRM,
+                nzOkText: res.CONFIRM,
+                nzCancelText: res.CANCEL,
+                nzOkType: 'primary',
+            }))
+        );
     }
 
     /**
@@ -102,7 +101,7 @@ export class TipService {
     playAudio(src: string): void {
         const audio = new Audio();
 
-        audio.src = src
+        audio.src = src;
 
         audio.load();
 

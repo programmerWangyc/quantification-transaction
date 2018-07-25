@@ -21,4 +21,4 @@ export const DASHBOARD_EFFECTS = [
     StrategyEffect,
     ChargeEffect,
     BacktestEffect,
-]
+];

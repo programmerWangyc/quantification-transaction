@@ -1,24 +1,13 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
 import { assignWith, compact, includes, isArray, last, omit, take, uniqBy } from 'lodash';
 import * as moment from 'moment';
 import { combineLatest, from as observableFrom, merge, Observable, of as observableOf, Subscription, zip } from 'rxjs';
 import {
-    bufferCount,
-    distinct,
-    distinctUntilChanged,
-    filter,
-    groupBy,
-    map,
-    mapTo,
-    mergeMap,
-    reduce,
-    scan,
-    startWith,
-    switchMapTo,
-    take as observableTake,
-    withLatestFrom,
+    bufferCount, distinct, distinctUntilChanged, filter, groupBy, map, mapTo, mergeMap, reduce, scan, startWith,
+    switchMapTo, take as observableTake, withLatestFrom
 } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
@@ -30,16 +19,11 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
 import {
-    ChangeLogPageAction,
-    ChangeProfitChartPageAction,
-    ChangeStrategyChartPageAction,
-    ModifyDefaultParamsAction,
-    MonitorSoundTypeAction,
-    ToggleMonitorSoundAction,
+    ChangeLogPageAction, ChangeProfitChartPageAction, ChangeStrategyChartPageAction, ModifyDefaultParamsAction,
+    MonitorSoundTypeAction, ToggleMonitorSoundAction
 } from '../../store/robot/robot.action';
 import { ServerSendRobotEventType } from '../robot.config';
 import { RobotService } from './robot.service';
-
 
 @Injectable()
 export class RobotLogService extends BaseService {
@@ -301,12 +285,12 @@ export class RobotLogService extends BaseService {
         return this.store.select(fromRoot.selectRobotProfitMaxPoint);
     }
 
-    //TODO: start line
-    addStartPlotLine(chart: Observable<Highstock.ChartObject>): Subscription {
+    // TODO: start line
+    addStartPlotLine(chartObs: Observable<Highstock.ChartObject>): Subscription {
         return this.robotService.getRobotDetail().pipe(
             map(robot => robot.start_time),
             distinctUntilChanged(),
-            withLatestFrom(chart)
+            withLatestFrom(chartObs)
         )
             .subscribe(([startTime, chart]) => {
 
@@ -321,23 +305,24 @@ export class RobotLogService extends BaseService {
                     width: 2,
                     dashStyle: 'hot',
                     value: moment(startTime).unix() * 1000,
-                    id
+                    id,
                 });
             });
     }
 
-    addProfitPoints(chart: Observable<Highstock.ChartObject>): Subscription {
+    addProfitPoints(chartObs: Observable<Highstock.ChartObject>): Subscription {
         return this.getSyncRobotLogsResponse().pipe(
             filter(res => !!res && !!res.result.profitLog.Arr.length),
             map(res => res.result.profitLog.Arr),
             withLatestFrom(
                 this.getProfitMaxPoint(),
-                chart, this.canAddProfitPoint()
+                chartObs,
+                this.canAddProfitPoint()
             ),
-            filter(([points, maxPoints, chart, can]) => can)
+            filter(([, , , can]) => can)
         )
             .subscribe(([points, maxPoints, chart]) => {
-                const needShift = points.length + chart.series[0].data.length > maxPoints
+                const needShift = points.length + chart.series[0].data.length > maxPoints;
 
                 points.forEach(item => chart.series[0].addPoint([item.time, item.profit], false, needShift));
 
@@ -381,14 +366,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    //  =======================================================Strategy log ======================================================
-
-    //FIXME: unused
-    private getSemanticsRobotStrategyLogs(): Observable<fromRes.StrategyLog[]> {
-        return this.getStrategyChartOptionSourceData().pipe(
-            map(res => res.strategyLog.Arr)
-        );
-    }
 
     private getStrategyChartOptionSourceData(): Observable<fromRes.RobotLogs> {
         return combineLatest(
@@ -404,9 +381,9 @@ export class RobotLogService extends BaseService {
     getStrategyChartOptions(): Observable<Highcharts.Options[]> {
         return this.getStrategyChartOptionSourceData().pipe(
             mergeMap(res => {
-                const data = JSON.parse(res.chart.replace(/useHTML/gi, '__disableHTML'));
+                const source = JSON.parse(res.chart.replace(/useHTML/gi, '__disableHTML'));
 
-                const options = observableOf(isArray(data) ? data : [data] as Highcharts.Options[]);
+                const options = observableOf(isArray(source) ? source : [source] as Highcharts.Options[]);
 
                 const logs = observableFrom(res.strategyLog.Arr).pipe(
                     groupBy(item => item.seriesIdx),
@@ -474,13 +451,13 @@ export class RobotLogService extends BaseService {
             const lastPoint = last(strategy.Arr);
 
             return { chartMinId: strategy.Max, chartUpdateBaseId: lastPoint ? lastPoint.id : 0, chartUpdateTime: source.chartTime };
-        }
+        };
 
         return combineLatest(
             this.getRobotLogs(),
             this.getSyncRobotLogsResponse()
         ).pipe(
-            map(([manual, automatic]) => automatic ? assignWith(getParam(manual), getParam(automatic.result), (manual, auto) => Math.max(manual, auto))
+            map(([manual, automatic]) => automatic ? assignWith(getParam(manual), getParam(automatic.result), (man, auto) => Math.max(man, auto))
                 : getParam(manual)),
             distinct(),
             withLatestFrom(
@@ -513,9 +490,9 @@ export class RobotLogService extends BaseService {
                 charts,
                 this.canUpdateStrategyChart()
             ),
-            filter(([result, charts, can]) => can)
+            filter(([, , can]) => can)
         )
-            .subscribe(([result, charts]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => charts[idx].redraw()));
+            .subscribe(([result, chartArr]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => chartArr[idx].redraw()));
     }
 
     private updateStrategyChartLabel(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
@@ -524,14 +501,14 @@ export class RobotLogService extends BaseService {
                 this.getRobotLogs(),
                 charts
             ),
-            map(([automatic, manual, charts]) => this.chartService.updateRobotStrategyChartLabel(charts, automatic, manual))
+            map(([automatic, manual, chartArr]) => this.chartService.updateRobotStrategyChartLabel(chartArr, automatic, manual))
         );
     }
 
     private updateStrategyChartPoints(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
         return this.getDbMinId().pipe(
             withLatestFrom(charts),
-            map(([ids, charts]) => this.chartService.updateRobotStrategyChartPoints(charts, ids))
+            map(([ids, chartArr]) => this.chartService.updateRobotStrategyChartPoints(chartArr, ids))
         );
     }
 
@@ -539,7 +516,7 @@ export class RobotLogService extends BaseService {
         return this.getSyncRobotLogs().pipe(
             map(res => res.strategyLog.Arr),
             withLatestFrom(this.getStrategyMaxPoint(), charts),
-            map(([logs, maxPoint, charts]) => this.chartService.updateRobotStrategyChartSeries(charts, logs, maxPoint))
+            map(([logs, maxPoint, chartArr]) => this.chartService.updateRobotStrategyChartSeries(chartArr, logs, maxPoint))
         );
     }
 
@@ -571,7 +548,7 @@ export class RobotLogService extends BaseService {
     }
     //  =======================================================Short cart method==================================================
 
-    //FIXME: unused
+    // !FIXME: unused
     isAlreadyRefreshed(): Observable<boolean> {
         return this.getRobotLogs().pipe(
             map(log => log.updateTime > 0)
@@ -660,7 +637,7 @@ export class RobotLogService extends BaseService {
             date: moment(Time).format(this.timeFormat),
             contractType: Instrument,
             direction: Direction,
-        }
+        };
     }
 
     //  =======================================================Local state modify==================================================

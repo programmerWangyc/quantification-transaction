@@ -32,8 +32,5 @@ import { ChargeService } from './providers/charge.service';
         AccountBalanceComponent,
         PIPES,
     ],
-    entryComponents: [
-
-    ]
 })
 export class ChargeModule { }

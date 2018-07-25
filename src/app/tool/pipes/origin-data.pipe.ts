@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { isBoolean, isNumber, isObject, isString } from 'lodash';
 
 @Pipe({
-    name: 'originData'
+    name: 'originData',
 })
 export class OriginDataPipe implements PipeTransform {
     transform(source: any): string | number {

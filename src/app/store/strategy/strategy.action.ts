@@ -1,24 +1,12 @@
 import { Action } from '@ngrx/store';
 
 import {
-    DeleteStrategyRequest,
-    GenKeyRequest,
-    GetStrategyDetailRequest,
-    GetStrategyListRequest,
-    OpStrategyTokenRequest,
-    SaveStrategyRequest,
-    ShareStrategyRequest,
-    VerifyKeyRequest,
+    DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest, OpStrategyTokenRequest,
+    SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest
 } from '../../interfaces/request.interface';
 import {
-    DeleteStrategyResponse,
-    GenKeyResponse,
-    GetStrategyDetailResponse,
-    GetStrategyListResponse,
-    OpStrategyTokenResponse,
-    SaveStrategyResponse,
-    ShareStrategyResponse,
-    VerifyKeyResponse,
+    DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
+    SaveStrategyResponse, ShareStrategyResponse, VerifyKeyResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -30,7 +18,7 @@ export enum GetStrategyListOrder {
     strategyType,
     categoryType,
     needArgsType,
-    length
+    length,
 }
 
 // Get strategy list
@@ -43,7 +31,7 @@ class GetStrategyList extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const GET_STRATEGY_LIST = '[Strategy] GET_STRATEGY_LIST';
@@ -53,7 +41,7 @@ export class GetStrategyListRequestAction extends GetStrategyList implements Act
 
     allowSeparateRequest = true;
 
-    constructor(public payload: GetStrategyListRequest) { super() }
+    constructor(public payload: GetStrategyListRequest) { super(); }
 }
 
 export const GET_STRATEGY_LIST_FAIL = '[Strategy] GET_STRATEGY_LIST_FAIL';
@@ -61,7 +49,7 @@ export const GET_STRATEGY_LIST_FAIL = '[Strategy] GET_STRATEGY_LIST_FAIL';
 export class GetStrategyListFailAction extends GetStrategyList implements Action {
     readonly type = GET_STRATEGY_LIST_FAIL;
 
-    constructor(public payload: GetStrategyListResponse) { super() }
+    constructor(public payload: GetStrategyListResponse) { super(); }
 }
 
 export const GET_STRATEGY_LIST_SUCCESS = '[Strategy] GET_STRATEGY_LIST_SUCCESS';
@@ -69,14 +57,14 @@ export const GET_STRATEGY_LIST_SUCCESS = '[Strategy] GET_STRATEGY_LIST_SUCCESS';
 export class GetStrategyListSuccessAction extends GetStrategyList implements Action {
     readonly type = GET_STRATEGY_LIST_SUCCESS;
 
-    constructor(public payload: GetStrategyListResponse) { super() }
+    constructor(public payload: GetStrategyListResponse) { super(); }
 }
 
 // Share strategy
 export enum ShareStrategyOrder {
     id,
     type,
-    length
+    length,
 }
 
 class ShareStrategyAction extends ApiAction {
@@ -90,7 +78,7 @@ class ShareStrategyAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const SHARE_STRATEGY = '[Strategy] SHARE_STRATEGY';
@@ -98,7 +86,7 @@ export const SHARE_STRATEGY = '[Strategy] SHARE_STRATEGY';
 export class ShareStrategyRequestAction extends ShareStrategyAction implements Action {
     readonly type = SHARE_STRATEGY;
 
-    constructor(public payload: ShareStrategyRequest) { super() }
+    constructor(public payload: ShareStrategyRequest) { super(); }
 }
 
 export const SHARE_STRATEGY_FAIL = '[Strategy] SHARE_STRATEGY_FAIL';
@@ -106,7 +94,7 @@ export const SHARE_STRATEGY_FAIL = '[Strategy] SHARE_STRATEGY_FAIL';
 export class ShareStrategyFailAction extends ShareStrategyAction implements Action {
     readonly type = SHARE_STRATEGY_FAIL;
 
-    constructor(public payload: ShareStrategyResponse) { super() }
+    constructor(public payload: ShareStrategyResponse) { super(); }
 }
 
 export const SHARE_STRATEGY_SUCCESS = '[Strategy] SHARE_STRATEGY_SUCCESS';
@@ -114,7 +102,7 @@ export const SHARE_STRATEGY_SUCCESS = '[Strategy] SHARE_STRATEGY_SUCCESS';
 export class ShareStrategySuccessAction extends ShareStrategyAction implements Action {
     readonly type = SHARE_STRATEGY_SUCCESS;
 
-    constructor(public payload: ShareStrategyResponse) { super() }
+    constructor(public payload: ShareStrategyResponse) { super(); }
 }
 
 // gen key
@@ -123,7 +111,7 @@ export enum GenKeyOrder {
     strategyId,
     days,
     concurrent,
-    length
+    length,
 }
 
 class GenKeyAction extends ApiAction {
@@ -137,7 +125,7 @@ class GenKeyAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const GEN_KEY = '[Strategy] GEN_KEY';
@@ -145,7 +133,7 @@ export const GEN_KEY = '[Strategy] GEN_KEY';
 export class GenKeyRequestAction extends GenKeyAction implements Action {
     readonly type = GEN_KEY;
 
-    constructor(public payload: GenKeyRequest) { super() }
+    constructor(public payload: GenKeyRequest) { super(); }
 }
 
 export const GEN_KEY_FAIL = '[Strategy] GEN_KEY_FAIL';
@@ -153,7 +141,7 @@ export const GEN_KEY_FAIL = '[Strategy] GEN_KEY_FAIL';
 export class GenKeyFailAction extends GenKeyAction implements Action {
     readonly type = GEN_KEY_FAIL;
 
-    constructor(public payload: GenKeyResponse) { super() };
+    constructor(public payload: GenKeyResponse) { super(); }
 }
 
 export const GEN_KEY_SUCCESS = '[Strategy] GEN_KEY_SUCCESS';
@@ -161,14 +149,14 @@ export const GEN_KEY_SUCCESS = '[Strategy] GEN_KEY_SUCCESS';
 export class GenKeySuccessAction extends GenKeyAction implements Action {
     readonly type = GEN_KEY_SUCCESS;
 
-    constructor(public payload: GenKeyResponse) { super() };
+    constructor(public payload: GenKeyResponse) { super(); }
 }
 
 // verify gen key
 export enum VerifyKeyOrder {
     strategyId,
     verifyCode,
-    length
+    length,
 }
 
 class VerifyKeyAction extends ApiAction {
@@ -182,7 +170,7 @@ class VerifyKeyAction extends ApiAction {
 
     order = VerifyKeyOrder;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const VERIFY_KEY = '[Strategy] VERIFY_KEY';
@@ -190,7 +178,7 @@ export const VERIFY_KEY = '[Strategy] VERIFY_KEY';
 export class VerifyKeyRequestAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY;
 
-    constructor(public payload: VerifyKeyRequest) { super() };
+    constructor(public payload: VerifyKeyRequest) { super(); }
 }
 
 export const VERIFY_KEY_FAIL = '[Strategy] VERIFY_KEY_FAIL';
@@ -198,7 +186,7 @@ export const VERIFY_KEY_FAIL = '[Strategy] VERIFY_KEY_FAIL';
 export class VerifyKeyFailAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY_FAIL;
 
-    constructor(public payload: VerifyKeyResponse) { super() };
+    constructor(public payload: VerifyKeyResponse) { super(); }
 }
 
 export const VERIFY_KEY_SUCCESS = '[Strategy] VERIFY_KEY_SUCCESS';
@@ -206,7 +194,7 @@ export const VERIFY_KEY_SUCCESS = '[Strategy] VERIFY_KEY_SUCCESS';
 export class VerifyKeySuccessAction extends VerifyKeyAction implements Action {
     readonly type = VERIFY_KEY_SUCCESS;
 
-    constructor(public payload: VerifyKeyResponse) { super() };
+    constructor(public payload: VerifyKeyResponse) { super(); }
 }
 
 // delete strategy
@@ -221,15 +209,15 @@ class DeleteStrategyAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
-export const DELETE_STRATEGY = '[Strategy] DELETE_STRATEGY '
+export const DELETE_STRATEGY = '[Strategy] DELETE_STRATEGY ';
 
 export class DeleteStrategyRequestAction extends DeleteStrategyAction implements Action {
     readonly type = DELETE_STRATEGY;
 
-    constructor(public payload: DeleteStrategyRequest) { super() }
+    constructor(public payload: DeleteStrategyRequest) { super(); }
 }
 
 export const DELETE_STRATEGY_FAIL = '[Strategy] DELETE_STRATEGY_FAIL';
@@ -237,7 +225,7 @@ export const DELETE_STRATEGY_FAIL = '[Strategy] DELETE_STRATEGY_FAIL';
 export class DeleteStrategyFailAction extends DeleteStrategyAction implements Action {
     readonly type = DELETE_STRATEGY_FAIL;
 
-    constructor(public payload: DeleteStrategyResponse) { super() }
+    constructor(public payload: DeleteStrategyResponse) { super(); }
 }
 
 export const DELETE_STRATEGY_SUCCESS = '[Strategy] DELETE_STRATEGY_SUCCESS';
@@ -245,14 +233,14 @@ export const DELETE_STRATEGY_SUCCESS = '[Strategy] DELETE_STRATEGY_SUCCESS';
 export class DeleteStrategySuccessAction extends DeleteStrategyAction implements Action {
     readonly type = DELETE_STRATEGY_SUCCESS;
 
-    constructor(public payload: DeleteStrategyResponse) { super() }
+    constructor(public payload: DeleteStrategyResponse) { super(); }
 }
 
 // op strategy token
 export enum OpStrategyTokenOrder {
     strategyId,
     opCode,
-    length
+    length,
 }
 
 class OpStrategyTokenAction extends ApiAction {
@@ -266,7 +254,7 @@ class OpStrategyTokenAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const GET_STRATEGY_TOKEN = '[Strategy] GET_STRATEGY_TOKEN';
@@ -274,7 +262,7 @@ export const GET_STRATEGY_TOKEN = '[Strategy] GET_STRATEGY_TOKEN';
 export class OpStrategyTokenRequestAction extends OpStrategyTokenAction implements Action {
     readonly type = GET_STRATEGY_TOKEN;
 
-    constructor(public payload: OpStrategyTokenRequest) { super() }
+    constructor(public payload: OpStrategyTokenRequest) { super(); }
 }
 
 export const GET_STRATEGY_TOKEN_FAIL = '[Strategy] GET_STRATEGY_TOKEN_FAIL';
@@ -282,7 +270,7 @@ export const GET_STRATEGY_TOKEN_FAIL = '[Strategy] GET_STRATEGY_TOKEN_FAIL';
 export class OpStrategyTokenFailAction extends OpStrategyTokenAction implements Action {
     readonly type = GET_STRATEGY_TOKEN_FAIL;
 
-    constructor(public payload: OpStrategyTokenResponse) { super() }
+    constructor(public payload: OpStrategyTokenResponse) { super(); }
 }
 
 export const GET_STRATEGY_TOKEN_SUCCESS = '[Strategy] GET_STRATEGY_TOKEN_SUCCESS';
@@ -290,7 +278,7 @@ export const GET_STRATEGY_TOKEN_SUCCESS = '[Strategy] GET_STRATEGY_TOKEN_SUCCESS
 export class OpStrategyTokenSuccessAction extends OpStrategyTokenAction implements Action {
     readonly type = GET_STRATEGY_TOKEN_SUCCESS;
 
-    constructor(public payload: OpStrategyTokenResponse) { super() }
+    constructor(public payload: OpStrategyTokenResponse) { super(); }
 }
 
 // strategy detail
@@ -303,7 +291,7 @@ class GetStrategyDetailAction extends ApiAction {
 
     order = null;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const GET_STRATEGY_DETAIL = '[Strategy] GET_STRATEGY_DETAIL';
@@ -313,7 +301,7 @@ export class GetStrategyDetailRequestAction extends GetStrategyDetailAction impl
 
     allowSeparateRequest = true;
 
-    constructor(public payload: GetStrategyDetailRequest) { super() };
+    constructor(public payload: GetStrategyDetailRequest) { super(); }
 }
 
 export const GET_STRATEGY_DETAIL_FAIL = '[Strategy] GET_STRATEGY_DETAIL_FAIL';
@@ -321,7 +309,7 @@ export const GET_STRATEGY_DETAIL_FAIL = '[Strategy] GET_STRATEGY_DETAIL_FAIL';
 export class GetStrategyDetailFailAction extends GetStrategyDetailAction implements Action {
     readonly type = GET_STRATEGY_DETAIL_FAIL;
 
-    constructor(public payload: GetStrategyDetailResponse) { super() };
+    constructor(public payload: GetStrategyDetailResponse) { super(); }
 }
 
 export const GET_STRATEGY_DETAIL_SUCCESS = '[Strategy] GET_STRATEGY_DETAIL_SUCCESS';
@@ -329,7 +317,7 @@ export const GET_STRATEGY_DETAIL_SUCCESS = '[Strategy] GET_STRATEGY_DETAIL_SUCCE
 export class GetStrategyDetailSuccessAction extends GetStrategyDetailAction implements Action {
     readonly type = GET_STRATEGY_DETAIL_SUCCESS;
 
-    constructor(public payload: GetStrategyDetailResponse) { super() };
+    constructor(public payload: GetStrategyDetailResponse) { super(); }
 }
 
 // save strategy
@@ -344,7 +332,7 @@ export enum SaveStrategyOrder {
     note,
     manual,
     dependance,
-    length
+    length,
 }
 
 class SaveStrategyAction extends ApiAction {
@@ -358,7 +346,7 @@ class SaveStrategyAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const SAVE_STRATEGY = '[Strategy] SAVE_STRATEGY';
@@ -366,7 +354,7 @@ export const SAVE_STRATEGY = '[Strategy] SAVE_STRATEGY';
 export class SaveStrategyRequestAction extends SaveStrategyAction implements Action {
     readonly type = SAVE_STRATEGY;
 
-    constructor(public payload: SaveStrategyRequest) { super() }
+    constructor(public payload: SaveStrategyRequest) { super(); }
 }
 
 export const SAVE_STRATEGY_FAIL = '[Strategy] SAVE_STRATEGY_FAIL';
@@ -374,7 +362,7 @@ export const SAVE_STRATEGY_FAIL = '[Strategy] SAVE_STRATEGY_FAIL';
 export class SaveStrategyFailAction extends SaveStrategyAction implements Action {
     readonly type = SAVE_STRATEGY_FAIL;
 
-    constructor(public payload: SaveStrategyResponse) { super() }
+    constructor(public payload: SaveStrategyResponse) { super(); }
 }
 
 export const SAVE_STRATEGY_SUCCESS = '[Strategy] SAVE_STRATEGY_SUCCESS';
@@ -382,7 +370,7 @@ export const SAVE_STRATEGY_SUCCESS = '[Strategy] SAVE_STRATEGY_SUCCESS';
 export class SaveStrategySuccessAction extends SaveStrategyAction implements Action {
     readonly type = SAVE_STRATEGY_SUCCESS;
 
-    constructor(public payload: SaveStrategyResponse) { super() }
+    constructor(public payload: SaveStrategyResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -409,7 +397,7 @@ export const UPDATE_STRATEGY_DEPENDANCE_TEMPLATES = '[Strategy] UPDATE_STRATEGY_
 export class UpdateStrategyDependanceTemplatesAction implements Action {
     readonly type = UPDATE_STRATEGY_DEPENDANCE_TEMPLATES;
 
-    constructor(public payload: number[]) { };
+    constructor(public payload: number[]) { }
 }
 
 // update selected language
@@ -444,13 +432,13 @@ export type ApiActions = GetStrategyListRequestAction
     | GetStrategyDetailSuccessAction
     | SaveStrategyRequestAction
     | SaveStrategyFailAction
-    | SaveStrategySuccessAction
+    | SaveStrategySuccessAction;
 
 export type Actions = ApiActions
     | UpdateStrategySecretKeyStateAction
     | ResetStateAction
     | UpdateStrategyDependanceTemplatesAction
-    | UpdateStrategyLanguageAction
+    | UpdateStrategyLanguageAction;
 
 export const ResponseActions = {
     GetStrategyListFailAction,
@@ -469,4 +457,4 @@ export const ResponseActions = {
     GetStrategyDetailSuccessAction,
     SaveStrategyFailAction,
     SaveStrategySuccessAction,
-}
+};

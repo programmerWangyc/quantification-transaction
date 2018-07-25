@@ -1,4 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
+
 import { flatten, isString } from 'lodash';
 import { merge, Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -8,11 +9,10 @@ import { RobotLogService } from '../providers/robot.log.service';
 import { RobotService } from '../providers/robot.service';
 import { RobotStatusTable } from '../robot.interface';
 
-
 @Component({
     selector: 'app-robot-status',
     templateUrl: './robot-status.component.html',
-    styleUrls: ['./robot-status.component.scss']
+    styleUrls: ['./robot-status.component.scss'],
 })
 export class RobotStatusComponent extends FoldableBusinessComponent implements BaseComponent {
     isFold = false;

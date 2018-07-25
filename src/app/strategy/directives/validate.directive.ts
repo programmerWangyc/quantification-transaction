@@ -5,7 +5,7 @@ import { selectTypeValueValidator, variableNameValidator } from '../../validator
 
 @Directive({
     selector: '[variableNameValidate]',
-    providers: [{ provide: NG_VALIDATORS, useExisting: VariableNameValidateDirective, multi: true }]
+    providers: [{ provide: NG_VALIDATORS, useExisting: VariableNameValidateDirective, multi: true }],
 })
 export class VariableNameValidateDirective implements Validator {
 
@@ -18,7 +18,7 @@ export class VariableNameValidateDirective implements Validator {
 
 @Directive({
     selector: '[selectTypeValueValidate]',
-    providers: [{ provide: NG_VALIDATORS, useExisting: SelectTypeValueValidateDirective, multi: true }]
+    providers: [{ provide: NG_VALIDATORS, useExisting: SelectTypeValueValidateDirective, multi: true }],
 })
 export class SelectTypeValueValidateDirective implements Validator {
     constructor() { }

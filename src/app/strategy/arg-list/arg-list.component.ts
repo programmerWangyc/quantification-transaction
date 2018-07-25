@@ -22,7 +22,7 @@ export interface EditingArg {
 @Component({
     selector: 'app-arg-list',
     templateUrl: './arg-list.component.html',
-    styleUrls: ['./arg-list.component.scss']
+    styleUrls: ['./arg-list.component.scss'],
 })
 export class ArgListComponent implements OnInit {
 
@@ -123,7 +123,7 @@ export class ArgListComponent implements OnInit {
      * @param target 参数
      * @param index 在列表中的位置
      */
-    saveEdit(target: EditableStrategyMetaArg, index: number): void {
+    saveEdit(target: EditableStrategyMetaArg): void {
         const positions: number[] = [];
 
         this.data.forEach((item, idx) => item.flag !== target.flag && (item.name === target.name || item.des === target.des) && positions.push(idx));
@@ -140,7 +140,7 @@ export class ArgListComponent implements OnInit {
                     target.editing = false;
 
                     cleanEditingList(target.flag);
-                }
+                },
             });
         } else {
             target.editing = false;
@@ -178,7 +178,7 @@ export class ArgListComponent implements OnInit {
 
 
     /**
-     * FIXME: 模板变量没有引用到，所以加了这个方法，why?
+     * !FIXME: 模板变量没有引用到，所以加了这个方法，why?
      * Hack method;
      */
     isSelectValueValid(str: string): boolean {
@@ -195,7 +195,7 @@ export class ArgListComponent implements OnInit {
             this.data = [...this.data, value];
         } else {
             /**
-             * FIXME: Hack, because of the ExpressionChangedAfterIsHasBeenCheckedError.
+             * !FIXME: Hack, because of the ExpressionChangedAfterIsHasBeenCheckedError.
              */
             setTimeout(() => {
                 this.nzModal.confirm({
@@ -204,7 +204,7 @@ export class ArgListComponent implements OnInit {
                     nzOnOk: () => {
                         this.data[index] = value;
                         this.data = [...this.data];
-                    }
+                    },
                 });
             }, 0);
         }
@@ -220,7 +220,7 @@ export class ArgListComponent implements OnInit {
         } else if (arg.type === VariableType.ENCRYPT_STRING_TYPE) {
             return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.ENCRYPT_PREFIX) };
         } else if (arg.type === VariableType.BOOLEAN_TYPE) {
-            return { ...arg, set defaultValue(value: any) { this._defaultValue = !!value }, get defaultValue() { return Number(this._defaultValue) }, _defaultValue: arg.defaultValue };
+            return { ...arg, set defaultValue(value: any) { this._defaultValue = !!value; }, get defaultValue() { return Number(this._defaultValue); }, _defaultValue: arg.defaultValue };
         } else {
             return arg;
         }

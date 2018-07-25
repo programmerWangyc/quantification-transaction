@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+
 import { of } from 'rxjs';
 
 import { SelectedPair } from '../../interfaces/app.interface';
@@ -10,7 +11,7 @@ import { BacktestService } from '../providers/backtest.service';
 @Component({
     selector: 'app-exchange-options',
     templateUrl: './exchange-options.component.html',
-    styleUrls: ['./exchange-options.component.scss']
+    styleUrls: ['./exchange-options.component.scss'],
 })
 export class ExchangeOptionsComponent implements OnInit {
     /**
@@ -52,6 +53,31 @@ export class ExchangeOptionsComponent implements OnInit {
      * Whether show help message if has;
      */
     isHelpShow = true;
+
+    /**
+     * @ignore
+     */
+    private _selectedPlatform = 'OKCoin_EN';
+
+    /**
+     * @ignore
+     */
+    private _balance: number;
+
+    /**
+     * @ignore
+     */
+    private _currency: number;
+
+    /**
+     * @ignore
+     */
+    private _makerFee: number;
+
+    /**
+     * @ignore
+     */
+    private _takerFee: number;
 
     constructor(
         private constant: BacktestConstantService,
@@ -100,14 +126,14 @@ export class ExchangeOptionsComponent implements OnInit {
      * 更新 store 中的交易平台选项。
      */
     private updateSnapshot(eid: string, stock: string, name: string, index: number): void {
-        let platformSnapshot: BacktestSelectedPair = { eid, name, stock, makerFee: this.makerFee, takerFee: this.takerFee, };
+        let platformSnapshot: BacktestSelectedPair = { eid, name, stock, makerFee: this.makerFee, takerFee: this.takerFee };
 
         if (this.selectedPlatform === 'Futures_CTP') {
             platformSnapshot = { ...platformSnapshot, minFee: this.minFee, balance: this.balance };
         } else if (this.selectedPlatform === 'Futures_OKCoin') {
             platformSnapshot = { ...platformSnapshot, remainingCurrency: this.currency };
         } else {
-            platformSnapshot = { ...platformSnapshot, balance: this.balance, remainingCurrency: this.currency }
+            platformSnapshot = { ...platformSnapshot, balance: this.balance, remainingCurrency: this.currency };
         }
 
         if (index < 0) {
@@ -129,11 +155,6 @@ export class ExchangeOptionsComponent implements OnInit {
 
         this.backtestService.updatePlatformOptions(this.platformOptions);
     }
-
-    /**
-     * @ignore
-     */
-    private _selectedPlatform = 'OKCoin_EN';
 
     /**
      * Get selected platform
@@ -172,11 +193,6 @@ export class ExchangeOptionsComponent implements OnInit {
     /**
      * @ignore
      */
-    private _balance: number;
-
-    /**
-     * @ignore
-     */
     get balance() {
         return this._balance || this.platform.balance;
     }
@@ -187,8 +203,6 @@ export class ExchangeOptionsComponent implements OnInit {
     set balance(value: number) {
         this._balance = value;
     }
-
-    private _currency: number;
 
     /**
      * @ignore
@@ -204,8 +218,6 @@ export class ExchangeOptionsComponent implements OnInit {
         this._currency = value;
     }
 
-    private _makerFee: number;
-
     /**
      * @ignore
      */
@@ -219,8 +231,6 @@ export class ExchangeOptionsComponent implements OnInit {
     set makerFee(value: number) {
         this._makerFee = value;
     }
-
-    private _takerFee: number;
 
     /**
      * @ignore

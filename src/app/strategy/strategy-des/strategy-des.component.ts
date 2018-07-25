@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { NzModalService } from 'ng-zorro-antd';
 
 import { CategoryType } from '../../interfaces/request.interface';
@@ -10,7 +11,7 @@ import { StrategyService } from '../providers/strategy.service';
 @Component({
     selector: 'app-strategy-des',
     templateUrl: './strategy-des.component.html',
-    styleUrls: ['./strategy-des.component.scss']
+    styleUrls: ['./strategy-des.component.scss'],
 })
 export class StrategyDesComponent implements OnInit {
 
@@ -19,8 +20,6 @@ export class StrategyDesComponent implements OnInit {
      */
     @Input() set strategy(value: Strategy) {
         if (!value) return;
-
-        this._strategy = value;
 
         this.strategyName = value.name + '(copy)';
 
@@ -70,11 +69,6 @@ export class StrategyDesComponent implements OnInit {
      * Supported categories;
      */
     categories: Category[] = [];
-
-    /**
-     * @ignore
-     */
-    private _strategy: Strategy;
 
     constructor(
         private constant: StrategyConstantService,

@@ -9,7 +9,7 @@ import { ApiAction } from '../base.action';
 export enum SetRobotWDOrder {
     robotId,
     watchDogStatus,
-    length
+    length,
 }
 
 // set watch dog
@@ -22,7 +22,7 @@ export class SetRobotWDAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const SET_ROBOT_WATCH_DOG = '[WatchDog] SET_ROBOT_WATCH_DOG';
@@ -32,7 +32,7 @@ export class SetWDRequestAction extends SetRobotWDAction implements Action {
 
     allowSeparateRequest = true;
 
-    constructor(public payload: SetWDRequest) { super() }
+    constructor(public payload: SetWDRequest) { super(); }
 }
 
 export const SET_ROBOT_WATCH_DOG_FAIL = '[WatchDog] SET_ROBOT_WATCH_DOG_FAIL';
@@ -40,7 +40,7 @@ export const SET_ROBOT_WATCH_DOG_FAIL = '[WatchDog] SET_ROBOT_WATCH_DOG_FAIL';
 export class SetWDFailAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_FAIL;
 
-    constructor(public payload: SetWDResponse) { super() }
+    constructor(public payload: SetWDResponse) { super(); }
 }
 
 export const SET_ROBOT_WATCH_DOG_SUCCESS = '[WatchDog] SET_ROBOT_WATCH_DOG_SUCCESS';
@@ -48,7 +48,7 @@ export const SET_ROBOT_WATCH_DOG_SUCCESS = '[WatchDog] SET_ROBOT_WATCH_DOG_SUCCE
 export class SetWDSuccessAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG_SUCCESS;
 
-    constructor(public payload: SetWDResponse) { super() }
+    constructor(public payload: SetWDResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -57,11 +57,11 @@ export class SetWDSuccessAction extends SetRobotWDAction implements Action {
 
 export type ApiActions = SetWDRequestAction
     | SetWDFailAction
-    | SetWDSuccessAction
+    | SetWDSuccessAction;
 
-export type Actions = ApiActions
+export type Actions = ApiActions;
 
 export const ResponseActions = {
     SetWDFailAction,
-    SetWDSuccessAction
-}
+    SetWDSuccessAction,
+};

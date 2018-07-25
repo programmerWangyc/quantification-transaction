@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { from as observableFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 
@@ -7,26 +8,24 @@ import { RunningLog } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { LogTypes } from '../tool.config';
 
-
-
 export interface FilterType {
     text: string;
     value: number;
 }
 
 export const filterTypes: FilterType[] = [
-    { text: LogTypes[0], value: LogTypes.BUY, },
-    { text: LogTypes[1], value: LogTypes.SALE, },
-    { text: LogTypes[2], value: LogTypes.RETRACT, },
-    { text: LogTypes[3], value: LogTypes.ERROR, },
-    { text: LogTypes[4], value: LogTypes.PROFIT, },
-    { text: LogTypes[5], value: LogTypes.MESSAGE, },
-    { text: LogTypes[6], value: LogTypes.RESTART, },
+    { text: LogTypes[0], value: LogTypes.BUY },
+    { text: LogTypes[1], value: LogTypes.SALE },
+    { text: LogTypes[2], value: LogTypes.RETRACT },
+    { text: LogTypes[3], value: LogTypes.ERROR },
+    { text: LogTypes[4], value: LogTypes.PROFIT },
+    { text: LogTypes[5], value: LogTypes.MESSAGE },
+    { text: LogTypes[6], value: LogTypes.RESTART },
 ];
 @Component({
     selector: 'app-running-log',
     templateUrl: './running-log.component.html',
-    styleUrls: ['./running-log.component.scss']
+    styleUrls: ['./running-log.component.scss'],
 })
 export class RunningLogComponent implements OnInit {
     filterTypes = [];

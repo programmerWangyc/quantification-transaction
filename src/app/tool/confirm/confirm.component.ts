@@ -6,7 +6,7 @@ import { ConfirmOperateTipData } from '../../interfaces/app.interface';
 @Component({
     selector: 'app-confirm',
     templateUrl: './confirm.component.html',
-    styleUrls: ['./confirm.component.scss']
+    styleUrls: ['./confirm.component.scss'],
 })
 export class ConfirmComponent {
     constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmOperateTipData) { }

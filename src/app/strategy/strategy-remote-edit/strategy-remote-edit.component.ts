@@ -8,7 +8,7 @@ export interface Panel {
 @Component({
     selector: 'app-strategy-remote-edit',
     templateUrl: './strategy-remote-edit.component.html',
-    styleUrls: ['./strategy-remote-edit.component.scss']
+    styleUrls: ['./strategy-remote-edit.component.scss'],
 })
 export class StrategyRemoteEditComponent implements OnInit {
 

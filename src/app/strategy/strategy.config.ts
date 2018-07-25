@@ -1,7 +1,7 @@
 export enum Language {
     JavaScript,
     Python,
-    'C++'
+    'C++',
 }
 
 /**
@@ -11,5 +11,5 @@ export enum OpStrategyTokenTypeAdapter {
    GET,
    UPDATE,
    DELETE,
-   ADD
+   ADD,
 }

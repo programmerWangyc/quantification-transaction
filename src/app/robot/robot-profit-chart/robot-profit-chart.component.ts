@@ -1,5 +1,6 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, skip, withLatestFrom } from 'rxjs/operators';
 
@@ -7,11 +8,10 @@ import { BaseComponent, FoldableBusinessComponent } from '../../base/base.compon
 import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from '../robot.config';
 
-
 @Component({
     selector: 'app-robot-profit-chart',
     templateUrl: './robot-profit-chart.component.html',
-    styleUrls: ['./robot-profit-chart.component.scss']
+    styleUrls: ['./robot-profit-chart.component.scss'],
 })
 export class RobotProfitChartComponent extends FoldableBusinessComponent implements BaseComponent {
 

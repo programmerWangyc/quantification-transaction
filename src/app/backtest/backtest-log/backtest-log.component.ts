@@ -52,7 +52,7 @@ export class BacktestLogComponent implements OnInit {
         this.logs = this.chartService.getBacktestLogResults();
 
         this.chartService.getBacktestLogRows()
-            .subscribe(result => this.tasks = result)
+            .subscribe(result => this.tasks = result);
 
         this.canSave = this.chartService.canSaveResult();
     }

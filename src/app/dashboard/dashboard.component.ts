@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { Subscription } from 'rxjs';
 
 import { Path } from '../app.config';
@@ -19,31 +20,31 @@ const square: SideNav = {
     path: Path.square,
     label: 'STRATEGY_SQUARE',
     icon: 'shopping-cart',
-}
+};
 
 const factFinder: SideNav = {
     path: Path.fact,
     label: 'FACT_FINDER',
-    icon: 'line-chart'
-}
+    icon: 'line-chart',
+};
 
 const community: SideNav = {
     path: Path.community,
     label: 'COMMUNITY',
-    icon: 'eye'
-}
+    icon: 'eye',
+};
 
 const documentation: SideNav = {
     path: Path.doc,
     label: 'API_DOCUMENTATION',
     icon: 'folder-open',
-}
+};
 
 const market: SideNav = {
     path: Path.market,
     label: 'QUOTE_TOOL',
     icon: 'bars',
-}
+};
 
 const analyzing: SideNav = {
     path: Path.analyze,
@@ -52,8 +53,8 @@ const analyzing: SideNav = {
     subNav: [
         { path: '', label: 'QUOTE_TOOL', icon: 'area-chart' },
         { path: '', label: 'ANALYZING_TOOL', icon: 'edit' },
-    ]
-}
+    ],
+};
 
 const controlCenter: SideNav = {
     path: '',
@@ -64,19 +65,19 @@ const controlCenter: SideNav = {
         { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
         { path: Path.agent, label: 'AGENT', icon: 'apple' },
         { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
-    ]
-}
+    ],
+};
 
 const simulation: SideNav = {
     label: 'FIRMWARE_SIMULATION',
     path: Path.simulate,
     icon: 'meh-o',
-}
+};
 
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss']
+    styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 

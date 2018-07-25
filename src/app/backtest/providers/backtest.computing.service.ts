@@ -60,7 +60,7 @@ export class BacktestComputingService {
     initWorker(): void {
         this.worker = new Worker(this.workerURI);
 
-        this.worker.addEventListener('message', (event) => {
+        this.worker.addEventListener('message', event => {
             const { ret } = <WorkerBacktest.WorkerBacktestResult>event.data;
 
             this.message.next(ret);
@@ -72,7 +72,7 @@ export class BacktestComputingService {
             ).subscribe(isComplete => isComplete && this.clearWorker());
         });
 
-        this.worker.addEventListener('error', (event) => {
+        this.worker.addEventListener('error', event => {
             const errorFlags = ['TestEnd', 'OOH', 'history', 'Unexpected token'];
 
             const { message } = event;

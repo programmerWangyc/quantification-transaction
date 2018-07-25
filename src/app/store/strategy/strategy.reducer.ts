@@ -1,24 +1,10 @@
 import {
-    CategoryType,
-    DeleteStrategyRequest,
-    GenKeyRequest,
-    GetStrategyDetailRequest,
-    GetStrategyListRequest,
-    OpStrategyTokenRequest,
-    SaveStrategyRequest,
-    ShareStrategyRequest,
-    VerifyKeyRequest,
+    CategoryType, DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest,
+    OpStrategyTokenRequest, SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest
 } from '../../interfaces/request.interface';
 import {
-    DeleteStrategyResponse,
-    GenKeyResponse,
-    GetStrategyDetailResponse,
-    GetStrategyListResponse,
-    OpStrategyTokenResponse,
-    SaveStrategyResponse,
-    ShareStrategyResponse,
-    Strategy,
-    VerifyKeyResponse,
+    DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
+    SaveStrategyResponse, ShareStrategyResponse, Strategy, VerifyKeyResponse
 } from '../../interfaces/response.interface';
 import { createScriptArgs } from '../robot/robot.reducer';
 import * as actions from './strategy.action';
@@ -64,7 +50,7 @@ const initialState: State = {
     strategyDetailRes: null,
     saveStrategyRes: null,
     UIState: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -91,13 +77,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, shareStrategyRes: action.payload };
 
         case actions.SHARE_STRATEGY_SUCCESS: {
-            const { result } = state.strategyListRes
+            const { result } = state.strategyListRes;
 
-            let { all, strategies } = result;
+            const { all } = result;
 
-            const { shareStrategy } = state.requestParams
+            const { shareStrategy } = state.requestParams;
 
-            strategies = strategies.map(strategy => strategy.id === shareStrategy.id ? { ...strategy, public: shareStrategy.type } : strategy);
+            const strategies = result.strategies.map(strategy => strategy.id === shareStrategy.id ? { ...strategy, public: shareStrategy.type } : strategy);
 
             return { ...state, shareStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
@@ -130,9 +116,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const { result } = state.strategyListRes;
 
-            let { strategies, all } = result;
+            const { all } = result;
 
-            strategies = strategies.filter(strategy => strategy.id !== id);
+            const strategies = result.strategies.filter(strategy => strategy.id !== id);
 
             return { ...state, deleteStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
@@ -153,7 +139,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, strategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
         case actions.GET_STRATEGY_DETAIL_SUCCESS: {
-            let { args, templates } = action.payload.result.strategy;
+            const { args, templates } = action.payload.result.strategy;
 
             if (templates) {
                 action.payload.result.strategy.templates = templates.map(tpl => ({ ...tpl, semanticArgs: createScriptArgs(JSON.parse(tpl.args)) }));
@@ -178,9 +164,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.UPDATE_STRATEGY_SECRET_KEY_STATE: {
             const { result } = state.strategyListRes;
 
-            let { strategies, all } = result;
+            const { all } = result;
 
-            strategies = strategies.map(strategy => strategy.id === action.payload.id ? { ...strategy, hasToken: action.payload.hasToken } : strategy);
+            const strategies = result.strategies.map(strategy => strategy.id === action.payload.id ? { ...strategy, hasToken: action.payload.hasToken } : strategy);
 
             return { ...state, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
@@ -212,7 +198,7 @@ function addCustomFields(data: Strategy[]): Strategy[] {
             const template = templateSnapshots.find(snapshot => snapshot.id === tplId);
 
             return template && ({ id: template.id, name: template.name, category: template.category, variables: createScriptArgs(JSON.parse(template.args)) });
-        }).filter(item => !!item) : null
+        }).filter(item => !!item) : null,
     });
 }
 

@@ -6,11 +6,10 @@ import { ErrorService } from './error.service';
 import { PlatformService } from './platform.service';
 import { ProcessService } from './process.service';
 import { PublicService } from './public.service';
+import { RoutingService } from './routing.service';
 import { TipService } from './tip.service';
 import { UtilService } from './util.service';
 import { WebsocketService } from './websocket.service';
-import { RoutingService } from './routing.service';
-
 
 export const GLOBAL_SERVICES = [
     ErrorService,

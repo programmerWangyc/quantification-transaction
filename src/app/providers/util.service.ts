@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { isArray, isString } from 'lodash';
 import * as moment from 'moment';
 import { combineLatest, from as observableFrom, Observable } from 'rxjs';
@@ -7,7 +8,6 @@ import { distinctUntilChanged, groupBy, map, mergeMap, reduce, switchMap } from 
 
 import { ChartSize } from '../interfaces/app.interface';
 import { RunningLog } from '../interfaces/response.interface';
-
 
 export interface GroupedList<T> {
     groupName: string;
@@ -21,30 +21,39 @@ export interface GroupedList<T> {
  * @returns 字典形式的运行日志；
  */
 export function getRunningLogs(source: (string | number)[][], isBacktest = false): RunningLog[] {
+    const getResult = (id, date, logType, eid, orderId, price, amount, extra, contractType, direction) => ({
+        id: <number>id,
+        logType: <number>logType,
+        eid: <string>eid,
+        orderId: <string>orderId,
+        extra: <string>extra,
+        contractType: <string>contractType, // !FIXME: contractType === direction ?
+        direction: <string>direction,
+        price: parseFloat((<number>price).toFixed(12)),
+        amount: parseFloat((<number>amount).toFixed(6)),
+        date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+    });
+
     return source.map(ary => {
         if (isBacktest) {
-            var [id, date, logType, eid, orderId, price, amount, extra, contractType, direction] = ary;
-        } else {
-            var [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
-        }
+            const [id, date, logType, eid, orderId, price, amount, extra, contractType, direction] = ary;
 
-        return {
-            id: <number>id,
-            logType: <number>logType,
-            eid: <string>eid,
-            orderId: <string>orderId,
-            extra: <string>extra,
-            contractType: <string>contractType, // FIXME: contractType === direction ?
-            direction: <string>direction,
-            price: parseFloat((<number>price).toFixed(12)),
-            amount: parseFloat((<number>amount).toFixed(6)),
-            date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
-        };
+            return getResult(id, date, logType, eid, orderId, price, amount, extra, contractType, direction);
+        } else {
+            const [id, logType, eid, orderId, price, amount, extra, date, contractType = '', direction = ''] = ary;
+
+            return getResult(id, date, logType, eid, orderId, price, amount, extra, contractType, direction);
+        }
     });
 }
 
 @Injectable()
 export class UtilService {
+
+    /**
+     * @ignore
+     */
+    getRunningLogs = getRunningLogs;
 
     constructor(
         private translate: TranslateService,
@@ -91,25 +100,20 @@ export class UtilService {
 
         const target = window.getComputedStyle(chart[0]);
 
-        const width = parseInt(target.width);
+        const width = parseInt(target.width, 10);
 
-        const height = parseInt(target.height);
+        const height = parseInt(target.height, 10);
 
         return { charts, width, height };
     }
 
     /**
-     * @ignore
-     */
-    getRunningLogs = getRunningLogs
-
-    /**
      *  Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
      */
-    getPaginationStatistics(total: Observable<number>, pageSize: Observable<number>): Observable<string> {
+    getPaginationStatistics(totalObs: Observable<number>, pageSizeObs: Observable<number>): Observable<string> {
         return combineLatest(
-            total,
-            pageSize
+            totalObs,
+            pageSizeObs
         ).pipe(
             map(([total, page]) => ({ total, page: Math.ceil(total / page) })),
             switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),

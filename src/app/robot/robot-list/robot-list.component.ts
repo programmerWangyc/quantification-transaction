@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 import { startWith } from 'rxjs/internal/operators/startWith';
 
@@ -13,7 +14,7 @@ import { RobotService } from '../providers/robot.service';
 @Component({
     selector: 'app-robot-list',
     templateUrl: './robot-list.component.html',
-    styleUrls: ['./robot-list.component.scss']
+    styleUrls: ['./robot-list.component.scss'],
 })
 export class RobotListComponent extends BaseComponent {
     subscription$$: Subscription;
@@ -83,7 +84,7 @@ export class RobotListComponent extends BaseComponent {
             .add(this.robotOperate.launchDeleteRobot(this.deleteRobot$))
             .add(this.robotOperate.monitorDeleteRobotResult())
             .add(this.watchDogService.launchSetWatchDog(this.setRobotWD$))
-            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()))
+            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()));
     }
 
     ngOnDestroy() {

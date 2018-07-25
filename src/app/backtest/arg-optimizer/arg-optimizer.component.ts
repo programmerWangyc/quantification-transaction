@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { isNumber } from 'lodash';
 
 import { TipService } from '../../providers/tip.service';
@@ -35,7 +36,7 @@ export class ArgOptimizerComponent implements OnInit {
             this.rightList = value.map(item => ({ ...item }));
         }
 
-        //检查当前所有的参数过滤器，删除被移除调优的参数；
+        // 检查当前所有的参数过滤器，删除被移除调优的参数；
         !!this.filters.length && this.checkFilters(value);
 
         this.checkSelectedVariable(value);

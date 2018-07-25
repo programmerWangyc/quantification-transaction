@@ -1,19 +1,11 @@
-import '../../../../node_modules/codemirror/keymap/vim';
-
 import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    Renderer2,
-    ViewChild,
-    ViewEncapsulation,
+    Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild, ViewEncapsulation
 } from '@angular/core';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { TranslateService } from '@ngx-translate/core';
+
+import '../../../../node_modules/codemirror/keymap/vim';
+
 import { of, Subject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -23,7 +15,6 @@ import { PublicService } from '../../providers/public.service';
 import { StrategyConstantService } from '../providers/strategy.constant.service';
 import { StrategyService } from '../providers/strategy.service';
 import { Language } from '../strategy.config';
-
 
 const beautify = require('js-beautify').js;
 
@@ -51,7 +42,7 @@ export interface FileContent {
     selector: 'app-strategy-codemirror',
     templateUrl: './strategy-codemirror.component.html',
     styleUrls: ['./strategy-codemirror.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
@@ -146,9 +137,9 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         insertSoftTab: true,
         indentUnit: 4,
         styleActiveLine: true,
-        gutters: ["CodeMirror-lint-markers"],
+        gutters: ['CodeMirror-lint-markers'],
         lint: {
-            "-W041": false,
+            '-W041': false,
             latedef: true,
             lastsemic: true,
             loopfunc: true,
@@ -156,8 +147,8 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
         },
         showHint: true,
         matchBrackets: true,
-        mode: "javascript",
-    }
+        mode: 'javascript',
+    };
 
     /**
      * @ignore
@@ -338,7 +329,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
         this.codeMirror.codeMirror.setOption('theme', theme);
 
-        this.publicService.updateEditorConfig({ theme })
+        this.publicService.updateEditorConfig({ theme });
     }
 
     /**

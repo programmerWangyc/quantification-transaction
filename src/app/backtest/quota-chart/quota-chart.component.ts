@@ -7,7 +7,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 @Component({
     selector: 'app-quota-chart',
     templateUrl: './quota-chart.component.html',
-    styleUrls: ['./quota-chart.component.scss']
+    styleUrls: ['./quota-chart.component.scss'],
 })
 export class QuotaChartComponent extends BacktestChartComponent {
 

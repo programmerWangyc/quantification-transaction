@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { includes } from 'lodash';
 import { combineLatest, concat, Observable, of, Subject, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -15,7 +16,7 @@ import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/
 @Component({
     selector: 'app-robot-debug',
     templateUrl: './robot-debug.component.html',
-    styleUrls: ['./robot-debug.component.scss']
+    styleUrls: ['./robot-debug.component.scss'],
 })
 export class RobotDebugComponent implements BaseComponent {
     subscription$$: Subscription;
@@ -32,13 +33,13 @@ export class RobotDebugComponent implements BaseComponent {
 
     editorOptions = {
         lineNumbers: true,
-        theme: "eclipse",
+        theme: 'eclipse',
         insertSoftTab: true,
         indentUnit: 4,
         styleActiveLine: true,
-        gutters: ["CodeMirror-lint-markers"],
+        gutters: ['CodeMirror-lint-markers'],
         lint: {
-            "-W041": false,
+            '-W041': false,
             latedef: true,
             lastsemic: true,
             loopfunc: true,
@@ -46,8 +47,8 @@ export class RobotDebugComponent implements BaseComponent {
         },
         showHint: true,
         matchBrackets: true,
-        mode: "javascript",
-    }
+        mode: 'javascript',
+    };
 
     debug$: Subject<RobotDebugFormModal> = new Subject();
 
@@ -128,7 +129,7 @@ export class RobotDebugComponent implements BaseComponent {
             .add(this.platformService.handlePlatformListError())
             .add(this.nodeService.handleNodeListError())
             .add(this.nodeService.launchGetNodeList(of(null)))
-            .add(this.platformService.launchGetPlatformList(of(null)))
+            .add(this.platformService.launchGetPlatformList(of(null)));
     }
 
     ngOnDestroy() {

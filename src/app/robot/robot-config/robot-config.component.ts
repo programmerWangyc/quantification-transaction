@@ -1,6 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 import { FileUploader } from 'ng2-file-upload';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -15,8 +16,6 @@ import { PlatformService } from '../../providers/platform.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
 
-
-
 export interface RobotConfigForm {
     robotName: string;
     kLinePeriod: number;
@@ -28,7 +27,7 @@ export interface RobotConfigForm {
 @Component({
     selector: 'app-robot-config',
     templateUrl: './robot-config.component.html',
-    styleUrls: ['./robot-config.component.scss']
+    styleUrls: ['./robot-config.component.scss'],
 })
 export class RobotConfigComponent extends ExchangePairBusinessComponent {
     subscription$$: Subscription;
@@ -59,7 +58,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
 
     warningMessage: Observable<SafeHtml>;
 
-    hasStrategyArg: Observable<boolean>
+    hasStrategyArg: Observable<boolean>;
 
     constructor(
         private fb: FormBuilder,
@@ -139,11 +138,11 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
     createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
         const { robotName, agent, kLinePeriod } = formValue;
 
-        return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotOperate.getPairsParams(this.selectedPairs) }
+        return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotOperate.getPairsParams(this.selectedPairs) };
     }
 
     exportArgs(): void {
-        this.robotOperate.exportArgs(this.kLinePeriod.value); // FIXME: 未处理取消订阅
+        this.robotOperate.exportArgs(this.kLinePeriod.value); // !FIXME: 未处理取消订阅
     }
 
     importArgs(files: FileList): void {

@@ -6,22 +6,14 @@ import { LocalStorageKey } from '../../app.config';
 import { Filter } from '../../backtest/arg-optimizer/arg-optimizer.component';
 import { BacktestMilestone } from '../../backtest/backtest.config';
 import {
-    ArgOptimizeSetting,
-    BacktestCode,
-    BacktestSelectedPair,
-    BacktestTaskDescription,
-    BacktestTimeConfig,
-    OptimizedVariableOverview,
+    ArgOptimizeSetting, BacktestCode, BacktestSelectedPair, BacktestTaskDescription, BacktestTimeConfig,
+    OptimizedVariableOverview
 } from '../../backtest/backtest.interface';
 import { CompareLogic, MAIN_CODE_FLAG } from '../../backtest/providers/backtest.constant.service';
 import { BacktestIORequest, BacktestIOType, GetTemplatesRequest } from '../../interfaces/request.interface';
 import {
-    BacktestIOResponse,
-    BacktestResult,
-    GetTemplatesResponse,
-    ServerBacktestResult,
-    ServerSendBacktestMessage,
-    TemplatesResponse,
+    BacktestIOResponse, BacktestResult, GetTemplatesResponse, ServerBacktestResult, ServerSendBacktestMessage,
+    TemplatesResponse
 } from '../../interfaces/response.interface';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import * as actions from './backtest.action';
@@ -78,7 +70,7 @@ export const initialUIState: UIState = {
     },
     backtestingTaskIndex: 0,
     isOptimizedBacktest: false,
-}
+};
 
 export interface RequestParams {
     backtestReq: BacktestIORequest;
@@ -140,8 +132,8 @@ const initialState: State = {
     serverMessages: null,
     templates: [],
     templatesRes: null,
-    isAllTasksCompleted: null
-}
+    isAllTasksCompleted: null,
+};
 
 /**
  * @ignore
@@ -241,7 +233,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     isBacktesting: !isResultsAllReceived,
                     isForbiddenBacktest: !isResultsAllReceived,
                     backtestingTaskIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTaskIndex,
-                }
+                },
             };
         }
 
@@ -265,7 +257,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                  * 回测任务的长度为0时是未调优回测；调优回测任务长度为0时无法发起任务。
                  */
                 isAllTasksCompleted: isAllTasksCompleted(state.UIState.backtestTasks, state.backtestResults),
-                UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE }
+                UIState: { ...state.UIState, backtestMilestone: BacktestMilestone.START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE },
             };
         }
 
@@ -349,7 +341,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     isBacktesting: true,
                     isForbiddenBacktest: true,
                     backtestMilestone: BacktestMilestone.BACKTEST_SYSTEM_LOADING,
-                }
+                },
             };
 
         // reset backtest related state
@@ -377,7 +369,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     backtestMilestone: isResultsAllReceived ? null : state.UIState.backtestMilestone,
                     backtestingTaskIndex: isResultsAllReceived ? 0 : state.UIState.backtestingTaskIndex,
                 },
-                isAllTasksCompleted: isResultsAllReceived
+                isAllTasksCompleted: isResultsAllReceived,
             };
         }
 
@@ -385,8 +377,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.WORKER_BACKTEST_STATUS_UPDATED:
             return {
                 ...state,
-                backtestState: { ...state.backtestState, GetTaskStatus: { Code: 0, Result: JSON.stringify(action.payload) } }
-            }
+                backtestState: { ...state.backtestState, GetTaskStatus: { Code: 0, Result: JSON.stringify(action.payload) } },
+            };
 
         // backtesting index;
         case actions.INCREASE_BACKTESTING_TASK_INDEX: {
@@ -438,23 +430,28 @@ function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
  */
 function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
     return data.map(code => {
-        let { name, id, args } = code;
+        const { name, id } = code;
+
+        let { args } = code;
 
         args = args.map(arg => arg.isOptimizing ? { ...arg, toBeTestedValues: getToBeTestedValues(arg.optimize) } : arg);
 
         return { name, id, args };
-    })
+    });
 }
 
 /**
  * 根据参数的调优设置生成需要测试的值。
  */
 function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
-    let { step, begin, end } = data;
+
+    const { step, end } = data;
 
     const testedValues = [];
 
     const multiple = 10 ** 6;
+
+    let { begin } = data;
 
     while (true) {
         testedValues.push(begin);
@@ -466,7 +463,7 @@ function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
         } else if (next > end && begin < end) {
             begin = end;
         } else {
-            break
+            break;
         }
     }
 
@@ -476,10 +473,10 @@ function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
 /**
  * 根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
  */
-function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][] {
+function generateBacktestTasks(source: BacktestCode[]): BacktestTaskDescription[][] {
     let tasks: BacktestTaskDescription[][] = null;
 
-    from(data).pipe(
+    from(source).pipe(
         map(({ id, name, args }) => ({ id, name, args: <OptimizedVariableOverview[]>args.filter(arg => arg.toBeTestedValues) })),
         filter(data => !!data.args.length),
         concatMap(({ args, name }) => from(args).pipe(
@@ -487,7 +484,7 @@ function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][
                 file: name,
                 variableName: arg.variableName,
                 variableDes: arg.variableDes,
-                variableValue: value
+                variableValue: value,
             })))
         )),
         reduce((acc: BacktestTaskDescription[][], cur: BacktestTaskDescription[]) => acc.length === 0 ?
@@ -499,9 +496,7 @@ function generateBacktestTasks(data: BacktestCode[]): BacktestTaskDescription[][
     return tasks;
 }
 
-interface FilterPredicateFun {
-    (data: BacktestTaskDescription[]): boolean;
-}
+type FilterPredicateFun = (data: BacktestTaskDescription[]) => boolean;
 
 /**
  * 过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
@@ -509,19 +504,19 @@ interface FilterPredicateFun {
 function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[]): BacktestTaskDescription[][] {
     if (!filters || !filters.length) return data;
 
-    const predicateFns: FilterPredicateFun[] = filters.map(filter => filterPredicateFunFactory(filter));
+    const predicateFns: FilterPredicateFun[] = filters.map(filterer => filterPredicateFunFactory(filterer));
 
     return data.filter(task => predicateFns.every(fn => fn(task)));
 }
 
 /**
  * 生成过滤器判定函数的工厂函数。
- * @param filter - 参数过滤器
+ * @param filterer - 参数过滤器
  * @returns 返回的函数用来判定回测任务的参数设置是否符合过滤器的描述。当参数设置符合过滤器的描述时，判定函数返回true，反之返回false。
  */
-function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
+function filterPredicateFunFactory(filterer: Filter): FilterPredicateFun {
     return (data: BacktestTaskDescription[]): boolean => {
-        const { comparedVariable, compareVariable, logic, baseValue } = filter;
+        const { comparedVariable, compareVariable, logic, baseValue } = filterer;
 
         const findValue = (variable: OptimizedVariableOverview) => data.find(item => item.file === MAIN_CODE_FLAG && item.variableDes === variable.variableDes && item.variableName === variable.variableName);
 
@@ -535,8 +530,10 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
         const result = left.variableValue - right.variableValue;
 
         if (logic.id === CompareLogic.MORE_THAN) {
+            // tslint:disable-next-line:no-eval
             return result > 0 && eval(result + operator + baseValue);
         } else if (logic.id === CompareLogic.LESS_THAN) {
+            // tslint:disable-next-line:no-eval
             return result < 0 && !eval(Math.abs(result) + operator + baseValue);
         } else if (logic.id === CompareLogic.EQUAL) {
             return result === 0;
@@ -544,14 +541,14 @@ function filterPredicateFunFactory(filter: Filter): FilterPredicateFun {
             // 但愿永远不要进来
             throw Error('Compare logic error: supported operators: "more than: >=", "less than: <=" and "equal: ===".');
         }
-    }
+    };
 }
 
 /**
  * 获取回测的结果，将结果解析出来。
  */
 function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestResult> {
-    let { result } = payload
+    const { result } = payload;
 
     return isNumber(result) ? result : <ServerBacktestResult<string>>JSON.parse(<string>result);
 }
@@ -566,8 +563,8 @@ function resetState(): any {
         serverMessages: null,
         backtestResults: null,
         backtestState: initialBacktestState,
-        isAllTasksCompleted: null
-    }
+        isAllTasksCompleted: null,
+    };
 }
 
 /**

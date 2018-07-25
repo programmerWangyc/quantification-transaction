@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
+
 import { isString } from 'lodash';
 import { Observable, zip } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import {
-    CommandRobotResponse,
-    DeleteRobotResponse,
-    RestartRobotResponse,
-    ServerSendEventType,
-    ServerSendRobotMessage,
+    CommandRobotResponse, DeleteRobotResponse, RestartRobotResponse, ServerSendEventType, ServerSendRobotMessage
 } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { WebsocketService } from '../../providers/websocket.service';
@@ -21,8 +18,6 @@ import * as btNodeActions from '../bt-node/bt-node.action';
 import { AppState, selectRobotRequestParameters } from '../index.reducer';
 import * as platformActions from '../platform/platform.action';
 import * as robotActions from './robot.action';
-
-
 
 @Injectable()
 export class RobotEffect extends BaseEffect {
@@ -71,7 +66,7 @@ export class RobotEffect extends BaseEffect {
         );
 
     @Effect()
-    deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail)
+    deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail);
 
     @Effect()
     saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions)
@@ -91,7 +86,7 @@ export class RobotEffect extends BaseEffect {
                     filter(msg => {
                         const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
 
-                        return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS)
+                        return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS);
                     }),
                     map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)),
             ))
@@ -129,7 +124,7 @@ export class RobotEffect extends BaseEffect {
                     filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest)
                 ),
             this.actions$.ofType(btNodeActions.GET_NODE_LIST),
-            this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
+            this.actions$.ofType(platformActions.GET_PLATFORM_LIST),
         ];
     }
 

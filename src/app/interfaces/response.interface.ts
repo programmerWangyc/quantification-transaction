@@ -51,7 +51,7 @@ export enum ServerSendEventType {
     RSYNC = 'rsync', // remote sync
     PAYMENT = 'payment',
     CHARGE = 'charge',
-    BACKTEST = 'backtest'
+    BACKTEST = 'backtest',
 }
 
 export interface ServerSendRobotMessage {
@@ -162,7 +162,7 @@ export interface Robot {
     strategy_isowner: boolean;
     strategy_name: string;
     wd: number;
-    summary?: string; // FIXME: 这个字段从接口上看目前还没有发现， 但从代码上看貌似有, 待确定。
+    summary?: string; // !FIXME: 这个字段从接口上看目前还没有发现， 但从代码上看貌似有, 待确定。
 }
 
 export enum RobotStatus {
@@ -176,7 +176,7 @@ export enum RobotStatus {
 
 export enum RobotPublicStatus {
     UNDISCLOSED, // 未公开
-    DISCLOSED // 公开
+    DISCLOSED, // 公开
 }
 
 export interface RobotListResponse {
@@ -237,7 +237,7 @@ export interface RobotDetail {
     start_time: string;
     status: number;
     strategy_args: string; // string | number[][] 0: variable name 1: variable description 2:variable value
-    strategy_exchange_pairs: string; //"[4,[-1],["BTC_USD"]]" 0： k 线周期的ID。1: 交易所ID; 2: 股票；
+    strategy_exchange_pairs: string; // "[4,[-1],["BTC_USD"]]" 0： k 线周期的ID。1: 交易所ID; 2: 股票；
     strategy_id: number;
     strategy_last_modified: string;
     strategy_name: string;
@@ -253,7 +253,7 @@ export interface RobotDetailResponse {
 
 export interface GetRobotDetailResponse extends ResponseUnit<RobotDetailResponse> { }
 
-export type RuntimeLog = [string, number, number, string | number, string, number, number, string, string, string]
+export type RuntimeLog = [string, number, number, string | number, string, number, number, string, string, string];
 
 export type CommonLog = Array<string | number>;
 
@@ -330,8 +330,8 @@ export interface RobotLogs {
     updateTime: number;
     wd: number;
     // 以下3个字段根据logs字段的值扁平化的结果
-    runningLog?: RunningLogOverview// logs[0];
-    profitLog?: ProfitLogOverview;// logs[1];
+    runningLog?: RunningLogOverview; // logs[0];
+    profitLog?: ProfitLogOverview; // logs[1];
     strategyLog?: StrategyLogOverview; // logs[2];
 }
 
@@ -355,7 +355,7 @@ export enum RestartRobotResult {
 export interface RestartRobotResponse extends ResponseUnit<number | string> { }
 
 // stop robot
-export interface StopRobotResponse extends ResponseUnit<number> { } //FIXME: 这个响应类型是要根据原代码猜的，不知道对不对。
+export interface StopRobotResponse extends ResponseUnit<number> { } // !FIXME: 这个响应类型是要根据原代码猜的，不知道对不对。
 
 // update robot config
 export interface ModifyRobotResponse extends ResponseUnit<boolean> { }
@@ -389,7 +389,7 @@ export interface PluginRunResult {
 
 export interface PluginRunResponse extends ResponseUnit<string> { }
 
-// ===================================================Node list=========================================
+// ===================================================Agent=============================================
 
 // node list
 export interface BtNode {
@@ -417,6 +417,9 @@ export interface GetNodeListResponse extends ResponseUnit<NodeListResponse> { }
 
 // delete node
 export interface DeleteNodeResponse extends ResponseUnit<number> { }
+
+// get node hash
+export interface GetNodeHashResponse extends ResponseUnit<string> { }
 
 // ===================================================Platform list=========================================
 
@@ -449,7 +452,7 @@ export enum StrategyPublicState {
     UNDISCLOSED, // 未公开
     DISCLOSED,
     VERIFY,
-    PREMIUM
+    PREMIUM,
 }
 
 export interface Strategy {
@@ -469,7 +472,7 @@ export interface Strategy {
     name: string;
     pricing?: string; // 斜线分割的自定义格式，天数/价格
     public: number;
-    templates?: number[]; //模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
+    templates?: number[]; // 模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
     username: string;
     // 以下两个字段是自定义字段
     semanticArgs?: VariableOverview[]; // from args field
@@ -583,7 +586,7 @@ export interface BacktestResultSnapshot {
     Id: string;
     QuoteCurrency: string;
     Stocks: number;
-    Symbols: Object
+    Symbols: Object;
     TradeStatus: BacktestResultTradeStatus;
     time?: number; // BacktestSnapshots 第一个元素。
 }
@@ -677,7 +680,7 @@ export enum BacktestSymbolRecordIndex {
     high,
     low,
     close,
-    volume
+    volume,
 }
 
 export type BacktestSymbolRecords = [number, number, number, number, number, number];
@@ -688,7 +691,7 @@ export enum BacktestSymbolIndex {
     stock,
     symbol,
     klinePeriod,
-    records
+    records,
 }
 
 export type BacktestSymbol = [string, string, string, number, BacktestSymbolRecords[]];
@@ -703,7 +706,7 @@ export enum BacktestRuntimeLogIndex {
     amount,
     extra, // 样式的信息
     contractType,
-    direction
+    direction,
 }
 
 export type BacktestProfitLog = [number, number]; // time, profit
@@ -722,8 +725,8 @@ export interface BacktestResult {
     Profit: number;
     ProfitLogs: BacktestProfitLog[];
     Progress: number;
-    RuntimeLogs: RuntimeLog[] // 每一个元素都是一个长度为10的数组
-    Snapshort?: BacktestResultSnapshot[]
+    RuntimeLogs: RuntimeLog[]; // 每一个元素都是一个长度为10的数组
+    Snapshort?: BacktestResultSnapshot[];
     Snapshorts: Array<BacktestSnapShots>;
     Stderr: string;
     Task: BacktestTask;

@@ -15,15 +15,15 @@ export interface KLinePeriod {
 export const K_LINE_PERIOD: KLinePeriod[] = [{
     period: 'ONE_MINUTE',
     id: 0,
-    minutes: 1
+    minutes: 1,
 }, {
     period: 'THREE_MINUTES',
     id: 1,
-    minutes: 3
+    minutes: 3,
 }, {
     period: 'FIVE_MINUTES',
     id: 2,
-    minutes: 5
+    minutes: 5,
 }, {
     period: 'FIFTEEN_MINUTES',
     id: 3,
@@ -31,41 +31,41 @@ export const K_LINE_PERIOD: KLinePeriod[] = [{
 }, {
     period: 'THIRTY_MINUTES',
     id: 4,
-    minutes: 30
+    minutes: 30,
 }, {
     period: 'ONE_HOUR',
     id: 5,
-    minutes: 60
+    minutes: 60,
 }, {
     period: 'ONE_DAY',
     id: 10,
-    minutes: 60 * 24
-}]
+    minutes: 60 * 24,
+}];
 
 export const VARIABLE_TYPES: VariableTypeDes[] = [{
     id: VariableType.NUMBER_TYPE,
     name: 'NUMBER_TYPE',
-    inputType: 'number' // number
+    inputType: 'number', // number
 }, {
     id: VariableType.BOOLEAN_TYPE,
     name: 'BOOLEAN_TYPE',
-    inputType: 'checkbox' // boolean
+    inputType: 'checkbox', // boolean
 }, {
     id: VariableType.STRING_TYPE,
     name: 'STRING_TYPE',
-    inputType: 'text' // string
+    inputType: 'text', // string
 }, {
     id: VariableType.SELECT_TYPE,
     name: 'SELECT_TYPE',
-    inputType: 'selected' // string split with '|'
+    inputType: 'selected', // string split with '|'
 }, {
     id: VariableType.ENCRYPT_STRING_TYPE,
     name: 'ENCRYPT_STRING_TYPE',
-    inputType: 'password' // string
+    inputType: 'password', // string
 }, {
     id: VariableType.BUTTON_TYPE,
     name: 'BUTTON_TYPE',
-    inputType: 'button' // constant __button__
+    inputType: 'button', // constant __button__
 }];
 
 export const LIST_PREFIX = '$$$__list__$$$';
@@ -113,7 +113,7 @@ export const COINS = {
     '35': 'OKEX',
     '36': 'Bittrex',
     '100': 'CTP',
-    '101': 'LTS'
+    '101': 'LTS',
 };
 
 export const PAGE_SIZE_SELECT_VALUES = [20, 50, 100, 500];
@@ -145,6 +145,11 @@ export class ConstantService {
 
     VALUE_OF_BUTTON_TYPE_ARG = VALUE_OF_BUTTON_TYPE_ARG;
 
+    /**
+     * 去掉参数名称中的条件；
+     */
+    removeConditionInName = removeConditionInName;
+
     constructor() { }
 
     /**
@@ -168,7 +173,7 @@ export class ConstantService {
         return value.split(prefix)[1];
     }
 
-    // FIXME: unused;
+    // !FIXME: unused;
     getArgCondition(value: string): any[] {
         const condition = this.VARIABLE_NAME_REGEXPS
             .map((reg, index) => {
@@ -201,9 +206,4 @@ export class ConstantService {
     isButton = (value: any): boolean => {
         return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
-
-    /**
-     * 去掉参数名称中的条件；
-     */
-    removeConditionInName = removeConditionInName;
 }

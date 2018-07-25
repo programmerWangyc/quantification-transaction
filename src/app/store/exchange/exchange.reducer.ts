@@ -9,7 +9,7 @@ export interface State {
 const initialState: State = {
     response: null,
     list: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -25,13 +25,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
     }
 }
 
-function updateState(source: GetExchangeListResponse, data: Exchange[]): State {
+function updateState(source: GetExchangeListResponse, list: Exchange[]): State {
     return {
         response: {
             error: source.error,
             action: source.action,
         },
-        list: data
+        list,
     };
 }
 

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
 import { ChartModule } from 'angular2-highcharts';
 
 import { ChargeModule } from '../charge/charge.module';
@@ -83,7 +84,7 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         RobotDebuggerComponent,
     ],
     schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-    ]
+        CUSTOM_ELEMENTS_SCHEMA,
+    ],
 })
 export class RobotModule { }

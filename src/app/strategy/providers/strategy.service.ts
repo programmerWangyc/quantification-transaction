@@ -1,11 +1,12 @@
-
-import { withLatestFrom, switchMap, find, map, mergeMap, take } from 'rxjs/operators';
-import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { isNumber, sortBy, intersectionWith, uniqBy } from 'lodash';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd';
-import { Observable, from, of, Subscription, combineLatest } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+
+import { intersectionWith, isNumber, sortBy, uniqBy } from 'lodash';
+import * as moment from 'moment';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
+import { find, map, mergeMap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
@@ -15,14 +16,16 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { GroupedList, UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
-import { ResetStateAction, UpdateStrategySecretKeyStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction } from '../../store/strategy/strategy.action';
+import {
+    ResetStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
+    UpdateStrategySecretKeyStateAction
+} from '../../store/strategy/strategy.action';
 import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
+import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
-import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
-import { CategoryType } from '../../interfaces/request.interface';
-import { TranslateService } from '@ngx-translate/core';
+
 
 export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
     groupNameValue?: any;
@@ -44,7 +47,9 @@ export class StrategyService extends BaseService {
         public nzModal: NzModalService,
         public constant: StrategyConstantService,
         public translate: TranslateService,
-    ) { super() }
+    ) {
+        super();
+    }
 
     //  =======================================================Serve Request=======================================================
 
@@ -56,8 +61,8 @@ export class StrategyService extends BaseService {
      * 发起对策略token的操作请求；
      * @param source 远程编辑的token的操作请求；
      */
-    launchOpStrategyToken(source: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
-        return this.process.processOpStrategyToken(source.pipe(
+    launchOpStrategyToken(sourceObs: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
+        return this.process.processOpStrategyToken(sourceObs.pipe(
             switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
                 : this.confirmLaunchOpStrategyToken(source).pipe(
                     map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) }))
@@ -195,9 +200,9 @@ export class StrategyService extends BaseService {
                 !isAddStrategy ? this.getStrategyDetail().pipe(
                     map(item => item.id)
                 ) : of(null),
-                (strategies, id) => strategies
-                    .map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === CategoryType.TEMPLATE_SNAPSHOT, language }))
-                    .filter(item => item.id !== id)
+                (strategies, targetId) => strategies
+                    .map(({ name, id, category, language }) => ({ name, id, checked: false, isSnapshot: category === fromReq.CategoryType.TEMPLATE_SNAPSHOT, language }))
+                    .filter(item => item.id !== targetId)
             )
         );
     }
@@ -208,9 +213,9 @@ export class StrategyService extends BaseService {
     getCurrentDependance(): Observable<TemplateRefItem[]> {
         return this.getStrategyDetail().pipe(
             map(detail => detail.templates ? detail.templates.map(tpl => {
-                let { name, id, category, language } = tpl;
+                const { name, id, category, language } = tpl;
 
-                if (category == CategoryType.TEMPLATE_SNAPSHOT) {
+                if (category === fromReq.CategoryType.TEMPLATE_SNAPSHOT) {
                     return { name: name.split('-')[1], id, checked: true, isSnapshot: true, language };
                 } else {
                     return { name, id, checked: true, isSnapshot: false, language };
@@ -243,7 +248,7 @@ export class StrategyService extends BaseService {
             map(state => {
                 const { timeOptions, platformOptions } = state;
 
-                let { start, end, klinePeriodId } = timeOptions;
+                const { start, end, klinePeriodId } = timeOptions;
 
                 const begin = moment(start).format('YYYY-MM-DD HH:mm:ss');
 
@@ -268,8 +273,8 @@ export class StrategyService extends BaseService {
         this.store.dispatch(new ResetStateAction());
     }
 
-    updateSelectedTemplates(ids: Observable<number[]>): Subscription {
-        return ids.subscribe(ids => this.store.dispatch(new UpdateStrategyDependanceTemplatesAction(ids)));
+    updateSelectedTemplates(idObs: Observable<number[]>): Subscription {
+        return idObs.subscribe(ids => this.store.dispatch(new UpdateStrategyDependanceTemplatesAction(ids)));
     }
 
     updateSelectedLanguage(language: number): void {
@@ -301,8 +306,8 @@ export class StrategyService extends BaseService {
     private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {
         const modal: NzModalRef = this.nzModal.confirm({
             nzContent: SimpleNzConfirmWrapComponent,
-            nzComponentParams: { content: source.opCode === OpStrategyTokenTypeAdapter.ADD ? 'GEN_SECRET_KEY_CONFIRM' : 'UPDATE_SECRET_KEY_CONFIRM', },
-            nzOnOk: () => modal.close(true)
+            nzComponentParams: { content: source.opCode === OpStrategyTokenTypeAdapter.ADD ? 'GEN_SECRET_KEY_CONFIRM' : 'UPDATE_SECRET_KEY_CONFIRM' },
+            nzOnOk: () => modal.close(true),
         });
 
         return modal.afterClose.pipe(
@@ -325,7 +330,9 @@ export class StrategyService extends BaseService {
     /**
      * 判定参数是否交互参数；
      */
-    isCommandArg = this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX)
+    isCommandArg() {
+        return this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX);
+    }
 
     //  =======================================================Error handler=======================================================
 

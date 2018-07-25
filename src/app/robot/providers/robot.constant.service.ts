@@ -18,7 +18,9 @@ export class RobotConstantService extends ConstantService {
 
     ROBOT_OPERATE_MAP = ROBOT_OPERATE_MAP;
 
-    constructor() { super() }
+    constructor() {
+        super();
+    }
 
     getRobotOperateMap(status: number): RobotOperateMap {
         if (status > 2) {

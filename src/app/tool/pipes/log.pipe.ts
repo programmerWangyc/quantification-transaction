@@ -1,13 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { isString, last } from 'lodash';
 
 import { ConstantService } from '../../providers/constant.service';
 import { LogTypes } from '../../tool/tool.config';
 
-@Pipe({
-    name: 'eid2String'
-})
+@Pipe({ name: 'eid2String' })
 export class Eid2StringPipe implements PipeTransform {
     constructor(private constantService: ConstantService) { }
 
@@ -18,9 +17,7 @@ export class Eid2StringPipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'logType'
-})
+@Pipe({ name: 'logType' })
 export class LogTypePipe implements PipeTransform {
     constructor() { }
 
@@ -29,24 +26,22 @@ export class LogTypePipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'directionType'
-})
+@Pipe({ name: 'directionType' })
 export class DirectionTypePipe implements PipeTransform {
     transform(type: string): string {
         switch (type) {
-            case "buy":
+            case 'buy':
                 return 'BUY_LONG';
 
-            case "closebuy":
-            case "closebuy_today":
-                return 'SELL_CLOSE'
+            case 'closebuy':
+            case 'closebuy_today':
+                return 'SELL_CLOSE';
 
-            case "sell":
+            case 'sell':
                 return 'SELL_SHORT';
 
-            case "closesell":
-            case "closesell_today":
+            case 'closesell':
+            case 'closesell_today':
                 return 'BUY_COVER';
 
             default:
@@ -56,7 +51,7 @@ export class DirectionTypePipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'logPrice'
+    name: 'logPrice',
 })
 export class LogPricePipe implements PipeTransform {
     constructor(
@@ -85,7 +80,7 @@ export class LogPricePipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'extraContent'
+    name: 'extraContent',
 })
 export class ExtraContentPipe implements PipeTransform {
     colorInfoRegExp = /#[0-9A-Za-z]{6,12}$/gi;
@@ -108,7 +103,7 @@ export class ExtraContentPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'showExtraIcon'
+    name: 'showExtraIcon',
 })
 export class ShowExtraIconPipe implements PipeTransform {
     transform(source: string): boolean {
@@ -133,7 +128,7 @@ function getColorInfo(source: string): string {
 }
 
 @Pipe({
-    name: 'extraColorPicker'
+    name: 'extraColorPicker',
 })
 export class ExtraColorPickerPipe implements PipeTransform {
     transform(source: string): string {
@@ -144,12 +139,12 @@ export class ExtraColorPickerPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'extraBcgColorPicker'
+    name: 'extraBcgColorPicker',
 })
 export class ExtraBcgColorPickerPipe implements PipeTransform {
     transform(source: string): string {
         const info = getColorInfo(source);
 
-        return info.length > 7 ? `#${info.slice(7)}` : 'inherit'
+        return info.length > 7 ? `#${info.slice(7)}` : 'inherit';
     }
 }

@@ -1,16 +1,15 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+
 import { NzModalRef } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription, timer as observableTimer } from 'rxjs';
 import { map, switchMapTo, take, tap } from 'rxjs/operators';
 
 import { StrategyOperateService } from '../providers/strategy.operate.service';
 
-
-
 @Component({
     selector: 'app-strategy-renewal',
     templateUrl: './strategy-renewal.component.html',
-    styleUrls: ['./strategy-renewal.component.scss']
+    styleUrls: ['./strategy-renewal.component.scss'],
 })
 export class StrategyRenewalComponent implements OnInit, OnDestroy {
     @Input() name: string;
@@ -55,7 +54,7 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     }
 
     close() {
-        this.modalRef.close()
+        this.modalRef.close();
     }
 
     tryAgain(seconds: number): Observable<number> {

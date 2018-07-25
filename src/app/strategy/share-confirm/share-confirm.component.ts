@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { isEqual } from 'lodash';
 import { NzModalRef } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { mergeMap } from 'rxjs/operators';
 export enum ConfirmType {
     NORMAL = 1,
     INNER,
-    PUBLIC
+    PUBLIC,
 }
 
 /**
@@ -21,7 +22,7 @@ export enum ConfirmType {
 @Component({
     selector: 'app-share-confirm',
     templateUrl: './share-confirm.component.html',
-    styleUrls: ['./share-confirm.component.scss']
+    styleUrls: ['./share-confirm.component.scss'],
 })
 export class ShareConfirmComponent implements OnInit {
     @Input() targetType: number;
@@ -32,7 +33,7 @@ export class ShareConfirmComponent implements OnInit {
         this.getMsg();
 
         this.isCancel = value !== 0;
-    };
+    }
 
     get currentType() {
         return this._currentType;
@@ -78,10 +79,10 @@ export class ShareConfirmComponent implements OnInit {
             if (item.done) break;
         }
 
-        const [tip, operate] = ary;
+        const [tip, opt] = ary;
 
 
-        this.msg = this.translate.get(operate)
+        this.msg = this.translate.get(opt)
             .pipe(
                 mergeMap(operate => this.translate.get(tip, { operate }))
             );

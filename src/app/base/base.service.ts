@@ -1,9 +1,7 @@
 import { MonoTypeOperatorFunction } from 'rxjs/internal/types';
 import { filter, tap } from 'rxjs/operators';
 
-export interface CompareFn<T> {
-    (pre: T, cur: T): boolean;
-}
+export type CompareFn<T> = (pre: T, cur: T) => boolean;
 
 export class BaseService {
     isTruth(predicate: any): boolean {
@@ -33,19 +31,19 @@ export class BaseService {
     compareAllValues<T>(): CompareFn<T> {
         return (previous: T, current: T) => {
             return Object.keys(current).every(key => previous[key] === current[key]);
-        }
+        };
     }
 
     curryRight(fn) {
-        return (param1) => fn(param1)
+        return param1 => fn(param1);
     }
 
     curry2Right<T, R>(fn: (f: T, s: R) => any) {
         return (param2: R) => {
             return (param1: T) => {
                 return fn(param1, param2);
-            }
-        }
+            };
+        };
     }
 }
 

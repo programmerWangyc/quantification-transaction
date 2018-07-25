@@ -2,40 +2,18 @@ import { cloneDeep, partition } from 'lodash';
 
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
 import {
-    CommandRobotRequest,
-    DeleteRobotRequest,
-    GetRobotDetailRequest,
-    GetRobotLogsRequest,
-    ModifyRobotRequest,
-    PluginRunRequest,
-    PublicRobotRequest,
-    RestartRobotRequest,
-    SaveRobotRequest,
-    StopRobotRequest,
-    SubscribeRobotRequest,
+    CommandRobotRequest, DeleteRobotRequest, GetRobotDetailRequest, GetRobotLogsRequest, ModifyRobotRequest,
+    PluginRunRequest, PublicRobotRequest, RestartRobotRequest, SaveRobotRequest, StopRobotRequest, SubscribeRobotRequest
 } from '../../interfaces/request.interface';
 import {
-    CommandRobotResponse,
-    DeleteRobotResponse,
-    GetRobotDetailResponse,
-    GetRobotLogsResponse,
-    LogOverview,
-    ModifyRobotResponse,
-    PluginRunResponse,
-    ProfitLog,
-    PublicRobotResponse,
-    ResponseState,
-    RestartRobotResponse,
-    RobotListResponse,
-    RunningLog,
-    SaveRobotResponse,
-    SemanticsLogsOverview,
-    ServerSendRobotMessage,
-    StopRobotResponse,
-    StrategyLog,
-    SubscribeRobotResponse,
+    CommandRobotResponse, DeleteRobotResponse, GetRobotDetailResponse, GetRobotLogsResponse, LogOverview,
+    ModifyRobotResponse, PluginRunResponse, ProfitLog, PublicRobotResponse, ResponseState, RestartRobotResponse,
+    RobotListResponse, RunningLog, SaveRobotResponse, SemanticsLogsOverview, ServerSendRobotMessage, StopRobotResponse,
+    StrategyLog, SubscribeRobotResponse
 } from '../../interfaces/response.interface';
-import { COMMAND_PREFIX, ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG } from '../../providers/constant.service';
+import {
+    COMMAND_PREFIX, ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG
+} from '../../providers/constant.service';
 import { getRunningLogs } from '../../providers/util.service';
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ImportedArg } from '../../robot/robot.interface';
@@ -114,7 +92,7 @@ export interface State {
     monitoringSound: {
         isMonitorOpen: boolean;
         logTypes: number[];
-    }
+    };
     uiState: UIState;
     serverMessage: ServerSendRobotMessage;
     syncRobotLogsRes: GetRobotLogsResponse;
@@ -141,13 +119,13 @@ const robotLogsDefaultParams = {
     chartLimit: 1000,
     chartUpdateBaseId: 0,
     chartUpdateTime: 0,
-}
+};
 
 const initialDefaultParams: DefaultParams = {
     robotLogs: { ...robotLogsDefaultParams },
     PROFIT_MAX_POINTS: 1000,
     STRATEGY_MAX_POINTS: 1000,
-}
+};
 
 const initialState: State = {
     robotListResState: null,
@@ -166,7 +144,7 @@ const initialState: State = {
     defaultParams: initialDefaultParams,
     monitoringSound: {
         isMonitorOpen: false,
-        logTypes: []
+        logTypes: [],
     },
     uiState: {
         currentRunningLogPage: 0,
@@ -183,7 +161,7 @@ const initialState: State = {
     syncRobotLogsRes: null,
     saveRobotRes: null,
     pluginRunRes: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -200,10 +178,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 ...state,
                 requestParams: {
                     ...state.requestParams,
-                    publicRobot: action.payload
+                    publicRobot: action.payload,
                 },
-                uiState: { ...state.uiState, publicRobotLoading: true }
-            }
+                uiState: { ...state.uiState, publicRobotLoading: true },
+            };
 
         case actions.PUBLIC_ROBOT_FAIL:
             return { ...state, publicRobotRes: action.payload, uiState: { ...state.uiState, publicRobotLoading: false } };
@@ -228,7 +206,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.GET_ROBOT_DETAIL_FAIL:
-            return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null, }, uiState: { ...state.uiState, loading: false }, };
+            return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null }, uiState: { ...state.uiState, loading: false } };
 
         case actions.GET_ROBOT_DETAIL_SUCCESS: {
             const { strategy_args, templates } = action.payload.result.robot;
@@ -245,15 +223,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     templateArgs: templates.map(template => {
                         const { id, name, category } = template;
 
-                        const variables = createScriptArgs(JSON.parse(template.args))
+                        const variables = createScriptArgs(JSON.parse(template.args));
 
                         return { id, name, category, variables };
-                    })
+                    }),
                 },
                 uiState: {
                     ...state.uiState,
                     loading: false,
-                }
+                },
             };
         }
 
@@ -283,7 +261,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.GET_ROBOT_LOGS_FAIL: {
             if (state.requestParams.isSyncLogs) {
-                return { ...state, syncRobotLogsRes: action.payload }
+                return { ...state, syncRobotLogsRes: action.payload };
             } else {
                 return { ...state, uiState: { ...state.uiState, logsLoading: false }, robotLogsRes: action.payload };
             }
@@ -430,7 +408,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         case actions.RESET_ROBOT_OPERATE: {
-            return { ...state, restartRobotRes: null, stopRobotRes: null, deleteRobotRes: null, };
+            return { ...state, restartRobotRes: null, stopRobotRes: null, deleteRobotRes: null };
         }
 
         // default params;
@@ -474,7 +452,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return {
                 ...state,
                 restartRobotRes: null,
-            }
+            };
 
         // ==============================================Server send message=====================================================
 
@@ -561,7 +539,7 @@ export function completionParams(arg: (string | number)[]): VariableOverview {
             variableTypeId: undefined,
             originValue: variableValue,
         };
-    };
+    }
 }
 
 /**
@@ -591,21 +569,17 @@ function getArgId(value: string | boolean | number): number {
 // }
 
 /**
- *  Delete characters that has a special meaning in the name of the variable name;
+ * Delete characters that has a special meaning in the name of the variable name;
+ * @deprecated
+ *  function updateVariableName(arg: VariableOverview): VariableOverview {
+ *      let { variableName } = arg;
+ *      if (variableName.indexOf(COMMAND_PREFIX) === 0) {
+ *          variableName = variableName.split(COMMAND_PREFIX)[1];
+ *      } else {
+ *      }
+ *      return { ...arg, variableName };
+ *  }
  */
-function updateVariableName(arg: VariableOverview): VariableOverview {
-    let { variableName } = arg;
-
-    if (variableName.indexOf(COMMAND_PREFIX) === 0) {
-        variableName = variableName.split(COMMAND_PREFIX)[1];
-    } else {
-        /**
-         * no thing to do;
-         */
-    }
-
-    return { ...arg, variableName };
-}
 
 /**
  *  Extract log information from source data and store them in some custom field.
@@ -615,14 +589,14 @@ function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
 
     const runningLog: RunningLog[] = getRunningLogs(run.Arr);
 
-    const profitLog: ProfitLog[] = profit.Arr.map(([id, profit, time]) => ({ id, profit, time } as ProfitLog));
+    const profitLog: ProfitLog[] = profit.Arr.map(([id, pro, time]) => ({ id, profit: pro, time } as ProfitLog));
 
     const strategyLog: StrategyLog[] = strategy.Arr.map(([id, seriesIdx, data]) => ({ id, seriesIdx, data: JSON.parse(<string>data) } as StrategyLog));
 
     return {
         runningLog: { ...run, Arr: runningLog },
         profitLog: { ...profit, Arr: profitLog },
-        strategyLog: { ...strategy, Arr: strategyLog }
+        strategyLog: { ...strategy, Arr: strategyLog },
     };
 }
 
@@ -642,7 +616,7 @@ function modifyDefaultParams(data: DefaultParams, payload: Map<string[], any>): 
             }
             return acc[cur];
         }, result);
-    })
+    });
 
     return result;
 }
@@ -655,7 +629,7 @@ function getKeyNameNeedUpdate(flag: number): string[] {
         { value: ServerSendRobotEventType.UPDATE_STATUS, key: 'status' },
         { value: ServerSendRobotEventType.UPDATE_PROFIT, key: 'profit' },
         { value: ServerSendRobotEventType.UPDATE_SUMMARY, key: 'summary' },
-        // { value: ServerSendRobotEventType.UPDATE_PUSH, key: '' }, // FIXME: push的事件没有对应的字段
+        // { value: ServerSendRobotEventType.UPDATE_PUSH, key: '' }, // !FIXME: push的事件没有对应的字段
         { value: ServerSendRobotEventType.UPDATE_REFRESH, key: 'refresh' },
         { value: ServerSendRobotEventType.UPDATE_DEBUG, key: 'debug' },
     ];
@@ -688,7 +662,7 @@ function updateRobotListRes(data: RobotListResponse, keys: string[], source: Lat
 
     const { all, concurrent, robots } = data;
 
-    let index = robots.findIndex(robot => robot.id === source.id);
+    const index = robots.findIndex(robot => robot.id === source.id);
 
     if (index < 0) return data;
 

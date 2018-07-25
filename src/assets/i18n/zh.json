@@ -1,5 +1,4 @@
 {
-
     "OPERATE": "操作",
     "CREATE": "创建",
     "DELETE": "删除",
@@ -182,6 +181,8 @@
     "DEPOSIT": "保证金",
     "POSITION_PROFIT": "持仓盈亏",
     "FULL_SCREEN": "全屏",
+    "ONLINE": "在线",
+    "OFFLINE": "离线",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
@@ -200,6 +201,7 @@
     "NETWORK_DISCONNECTED": "与服务器的连接已断开",
     "RECONNECTING": "正在发起重连",
     "NETWORK_CONNECTED": "与服务器连接正常",
+    "SKIP": "跳过",
 
     "HOME": "首页",
     "STRATEGY_SQUARE": "策略广场",
@@ -212,6 +214,7 @@
     "SIGNUP": "注册",
     "LOGIN": "登录",
     "CONTROL_PANEL": "控制台",
+    "ADDRESS": "地址",
 
     "USER_LOGIN": "用户登录",
     "USER_SIGNUP": "用户注册",
@@ -309,7 +312,6 @@
     "FIRMWARE_SIMULATION": "实盘仿真",
     "EXCHANGE": "交易所",
     "STRATEGY_LIBRARY": "策略库",
-    "TRUSTEE": "托管者",
     "ROBOT": "机器人",
 
     "CREATE_ROBOT": "创建机器人",
@@ -630,5 +632,27 @@
     "FLOATING_PL_CHART_DASH": "虚线指最大回撤区间",
     "BACKTEST_PROFIT_CURVE_TIP": "LogProfit打印的数字",
     "BACKTEST_HISTORY_INFO_EMPTY": "获取历史数据失败或为空，请稍后或更改时间段重试。",
-    "BACKTESTING_TERMINATED": "回测任务已被中止。"
+    "BACKTESTING_TERMINATED": "回测任务已被中止。",
+
+    "CREATE_AGENT": "创建托管者",
+    "IP_ADDRESS": "IP地址",
+    "OPERATE_SYSTEM": "操作系统",
+    "VERSION": "版本",
+    "ID": "ID",
+    "OLD_VERSION": "旧版本",
+    "LATEST_COMMUNICATE": "最近通信",
+    "SOME_ROBOT_IS_RUNNING_AT_AGENT": "请先停止所有使用该托管者的机器人！",
+    "NO_PRIVATE_AGENT": "尚未部署私有托管者",
+    "AGENT_DEFINITION": "托管者指部署到服务器上的一个程序，用来运行和管理机器人。",
+    "DOWNLOAD_COMMAND_VERSION": "命令版",
+    "DOWNLOAD_UI_VERSION": "界面版",
+    "RUN_COMMAND": "运行命令",
+    "SETTING_COMPLETE": "完成部署",
+    "SYSTEM_BIT": "{{bit}}位",
+    "COMMAND_HAD_BEEN_RUN": "已运行",
+    "AGENT_CREATE_GUIDE": "请根据以下步骤完成创建",
+    "PRIVATE_AGENT_INTRO": "布署的私有托管者不受 FMZ 服务器性能的影响，托管者直接与交易所进行通信，只在本地保存日志信息。",
+    "YOUR_PASSWORD": "你的 FMZ 密码",
+    "SUBSCRIBE_WECHART_TIP": "关注下方微信号(或搜索公众号botvs) 绑定后可查看机器人状态与接收策略推送消息！",
+    "AGENT_LATEST_VERSION": "最新版本：{{version}}, 更新时间：{{time}}"
 }

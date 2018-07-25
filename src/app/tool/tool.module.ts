@@ -18,7 +18,7 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
     imports: [
         CommonModule,
         SharedModule,
-        RouterModule
+        RouterModule,
     ],
     declarations: [
         ConfirmComponent,
@@ -49,6 +49,6 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         SimpleNzConfirmWrapComponent,
         TextCenterDirective,
         TextDirectionDirective,
-    ]
+    ],
 })
 export class ToolModule { }

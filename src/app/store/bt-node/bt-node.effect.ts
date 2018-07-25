@@ -19,8 +19,11 @@ export class BtNodeEffect extends BaseEffect {
     @Effect()
     delete$: Observable<ResponseAction> = this.getResponseAction(btNode.DELETE_NODE, btNode.ResponseActions, isDeleteNodeFail)
         .pipe(
-            tap((action: btNode.DeleteNodeSuccessAction | btNode.DeleteNodeFailAction) => action.payload.result === -1 && this.tip.messageError('SOME_ROBOT_IS_RUNNING_AT_AGENT') )
+            tap((action: btNode.DeleteNodeSuccessAction | btNode.DeleteNodeFailAction) => action.payload.result === -1 && this.tip.messageError('SOME_ROBOT_IS_RUNNING_AT_AGENT'))
         );
+
+    @Effect()
+    nodeHash$: Observable<ResponseAction> = this.getResponseAction(btNode.GET_NODE_HASH, btNode.ResponseActions);
 
     constructor(
         public actions$: Actions,

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { includes } from 'lodash';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, skip, startWith } from 'rxjs/operators';
@@ -22,12 +23,12 @@ const soundTypes: string[] = [
     LogTypes[4],
     LogTypes[5],
     LogTypes[6],
-]
+];
 
 @Component({
     selector: 'app-robot-log',
     templateUrl: './robot-log.component.html',
-    styleUrls: ['./robot-log.component.scss']
+    styleUrls: ['./robot-log.component.scss'],
 })
 export class RobotLogComponent extends BaseComponent {
 
@@ -39,7 +40,7 @@ export class RobotLogComponent extends BaseComponent {
 
     logTotal: Observable<number>;
 
-    pageSize: Observable<number>
+    pageSize: Observable<number>;
 
     pageSizeSelectorValues = PAGE_SIZE_SELECT_VALUES;
 
@@ -55,7 +56,7 @@ export class RobotLogComponent extends BaseComponent {
 
     isSoundOpen = false;
 
-    // FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功;
+    // !FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功;
     monitoringSoundTypes: string[] = [...soundTypes];
 
     currentPage = 1;
@@ -129,9 +130,9 @@ export class RobotLogComponent extends BaseComponent {
                 )
                 .subscribe(_ => this.playAudio())
             )
-            .add(this.robotLog.handleRobotLogsError())
+            .add(this.robotLog.handleRobotLogsError());
 
-        // FIXME: 这行加到上面时在组件销毁时没有取消掉, 然后每次进入时就会多出一条同步信息的流。why?
+        // !FIXME: 这行加到上面时在组件销毁时没有取消掉, 然后每次进入时就会多出一条同步信息的流。why?
         this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
     }
 

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,7 +9,7 @@ import { BtNodeService } from '../../providers/bt-node.service';
 @Component({
     selector: 'app-dispense-options',
     templateUrl: './dispense-options.component.html',
-    styleUrls: ['./dispense-options.component.scss']
+    styleUrls: ['./dispense-options.component.scss'],
 })
 export class DispenseOptionsComponent implements OnInit {
 
@@ -61,7 +62,7 @@ export class DispenseOptionsComponent implements OnInit {
                         version: '',
                         wd: NaN,
                     },
-                    ...nodes.filter(node => node.is_owner && node.online)
+                    ...nodes.filter(node => node.is_owner && node.online),
                 ])
             );
     }

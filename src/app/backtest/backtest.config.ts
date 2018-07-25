@@ -10,13 +10,13 @@ export enum ServerBacktestCode {
 export enum ServerBacktestTaskStatus {
     TESTING,
     COMPLETE,
-    BREAK_OFF
+    BREAK_OFF,
 }
 
 export enum BacktestMilestone {
     BACKTEST_SYSTEM_LOADING,
     BACKTESTING,
-    START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE
+    START_RECEIVE_LOG_AFTER_BACKTEST_COMPLETE,
 }
 
 export enum BacktestStatistic {
@@ -32,7 +32,7 @@ export enum BacktestStatistic {
 
 export enum BacktestLevel {
     simulation,
-    real
+    real,
 }
 
 export enum BacktestRuntimeLogType {

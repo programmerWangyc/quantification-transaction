@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
+
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -7,7 +8,9 @@ import { TipService } from '../../providers/tip.service';
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
-import { ResponseActions as watchDog, SET_ROBOT_WATCH_DOG, SetWDFailAction, SetWDSuccessAction } from './watch-dog.action';
+import {
+    ResponseActions as watchDog, SET_ROBOT_WATCH_DOG, SetWDFailAction, SetWDSuccessAction
+} from './watch-dog.action';
 
 @Injectable()
 export class WatchDogEffect extends BaseEffect {

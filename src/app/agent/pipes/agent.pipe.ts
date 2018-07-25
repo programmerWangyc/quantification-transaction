@@ -39,10 +39,10 @@ export class AgentRegionPipe implements PipeTransform {
     }
 }
 
-@Pipe({name: 'isOldVersion'})
+@Pipe({ name: 'isOldVersion' })
 export class IsOldVersionPipe implements PipeTransform {
     transform(version: string, latestVersion: string): boolean {
-        if(!version || !latestVersion) return false;
+        if (!version || !latestVersion) return false;
 
         const curVersion = version.split('.');
 
@@ -52,8 +52,8 @@ export class IsOldVersionPipe implements PipeTransform {
 
         let result = false;
 
-        for(let i = 0; i < length; i += 1) {
-            if(curVersion[i] < newVersion[i]) {
+        for (let i = 0; i < length; i += 1) {
+            if (curVersion[i] < newVersion[i]) {
                 result = true;
                 break;
             }

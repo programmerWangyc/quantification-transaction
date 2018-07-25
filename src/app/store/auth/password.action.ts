@@ -10,7 +10,7 @@ import { ApiAction } from '../base.action';
 export enum SetPasswordOrder {
     token,
     password,
-    length
+    length,
 }
 
 export class SetPasswordAction extends ApiAction {
@@ -22,7 +22,7 @@ export class SetPasswordAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const SET_PASSWORD = '[Auth] SET_PASSWORD';
@@ -32,7 +32,7 @@ export class SetPasswordRequestAction extends SetPasswordAction implements Actio
 
     public allowSeparateRequest = true;
 
-    constructor(public payload: SetPasswordRequest) { super() }
+    constructor(public payload: SetPasswordRequest) { super(); }
 }
 
 export const SET_PASSWORD_FAIL = '[Auth] SET_PASSWORD_FAIL';
@@ -40,7 +40,7 @@ export const SET_PASSWORD_FAIL = '[Auth] SET_PASSWORD_FAIL';
 export class SetPasswordFailAction extends SetPasswordAction implements Action {
     readonly type = SET_PASSWORD_FAIL;
 
-    constructor(public payload: SetPasswordResponse) { super() }
+    constructor(public payload: SetPasswordResponse) { super(); }
 }
 
 export const SET_PASSWORD_SUCCESS = '[Auth] SET_PASSWORD_SUCCESS';
@@ -48,7 +48,7 @@ export const SET_PASSWORD_SUCCESS = '[Auth] SET_PASSWORD_SUCCESS';
 export class SetPasswordSuccessAction extends SetPasswordAction implements Action {
     readonly type = SET_PASSWORD_SUCCESS;
 
-    constructor(public payload: SetPasswordResponse) { super() }
+    constructor(public payload: SetPasswordResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -63,12 +63,12 @@ export class ResetSetPasswordResponseAction implements Action {
 
 export type ApiActions = SetPasswordRequestAction
     | SetPasswordFailAction
-    | SetPasswordSuccessAction
+    | SetPasswordSuccessAction;
 
 export type Actions = ApiActions
-    | ResetSetPasswordResponseAction
+    | ResetSetPasswordResponseAction;
 
 export const ResponseActions = {
     SetPasswordFailAction,
     SetPasswordSuccessAction,
-}
+};

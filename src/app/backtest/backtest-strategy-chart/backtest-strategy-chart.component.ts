@@ -7,7 +7,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 @Component({
     selector: 'app-backtest-strategy-chart',
     templateUrl: './backtest-strategy-chart.component.html',
-    styleUrls: ['./backtest-strategy-chart.component.scss']
+    styleUrls: ['./backtest-strategy-chart.component.scss'],
 })
 export class BacktestStrategyChartComponent extends BacktestChartComponent {
     constructor(

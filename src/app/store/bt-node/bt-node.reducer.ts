@@ -1,4 +1,4 @@
-import { GetNodeListResponse, DeleteNodeResponse } from '../../interfaces/response.interface';
+import { GetNodeListResponse, DeleteNodeResponse, GetNodeHashResponse } from '../../interfaces/response.interface';
 import * as actions from './bt-node.action';
 import { DeleteNodeRequest } from '../../interfaces/request.interface';
 
@@ -15,6 +15,7 @@ export interface State {
     nodeDeleteRes: DeleteNodeResponse;
     request: RequestState;
     UIState: UIState;
+    nodeHashRes: GetNodeHashResponse;
 }
 
 const initialState: State = {
@@ -24,9 +25,10 @@ const initialState: State = {
         delete: null,
     },
     UIState: {
-        isLoading: false
-    }
-}
+        isLoading: false,
+    },
+    nodeHashRes: null,
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -44,6 +46,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.DELETE_NODE_SUCCESS_ACTION:
             return { ...state, nodeDeleteRes: action.payload };
 
+        case actions.GET_NODE_HASH_FAIL:
+        case actions.GET_NODE_HASH_SUCCESS:
+            return { ...state, nodeHashRes: action.payload };
+
+        case actions.GET_NODE_HASH:
         default:
             return state;
     }
@@ -54,3 +61,5 @@ export const getNodeListResponse = (state: State) => state.nodeListRes;
 export const getNodeDeleteResponse = (state: State) => state.nodeDeleteRes;
 
 export const getUIState = (state: State) => state.UIState;
+
+export const getNodeHashResponse = (state: State) => state.nodeHashRes;

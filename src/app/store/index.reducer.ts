@@ -18,21 +18,21 @@ import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
 
 export interface AppState {
-    backtest: backtest.State,
-    btNode: btNode.State,
-    charge: charge.State,
-    exchange: exchange.State,
-    login: login.State,
-    platform: platform.State,
-    pub: pub.State,
-    pwd: pwd.State,
-    reset: reset.State,
-    robot: robot.State,
-    route: RouterReducerState<RouterStateUrl>,
-    signup: signup.State,
-    strategy: strategy.State,
-    verifyPwd: verifyPwd.State,
-    watchDog: watchDog.State,
+    backtest: backtest.State;
+    btNode: btNode.State;
+    charge: charge.State;
+    exchange: exchange.State;
+    login: login.State;
+    platform: platform.State;
+    pub: pub.State;
+    pwd: pwd.State;
+    reset: reset.State;
+    robot: robot.State;
+    route: RouterReducerState<RouterStateUrl>;
+    signup: signup.State;
+    strategy: strategy.State;
+    verifyPwd: verifyPwd.State;
+    watchDog: watchDog.State;
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -51,10 +51,10 @@ export const reducers: ActionReducerMap<AppState> = {
     strategy: strategy.reducer,
     verifyPwd: verifyPwd.reducer,
     watchDog: watchDog.reducer,
-}
+};
 
 
-//public information
+// public information
 export const getPubState = (state: AppState) => state.pub;
 
 export const selectPublicResponse = createSelector(getPubState, pub.getPublicResponse);
@@ -68,7 +68,7 @@ export const selectServerMsgSubscribeState = createSelector(getPubState, pub.get
 
 // router
 const getRouteState = (state: AppState) => state.route;
-export const selectRouteState = createSelector(getRouteState, (state) => state.state);
+export const selectRouteState = createSelector(getRouteState, state => state.state);
 
 //  ===================================================Auth===================================================
 
@@ -174,7 +174,7 @@ export const selectServerSendRobotMessage = createSelector(getRobotState, robot.
 export const selectRobotRequestParameters = createSelector(getRobotState, robot.getRequestParameter);
 export const selectRobotLogRequestParameters = createSelector(selectRobotRequestParameters, state => state.robotLogs);
 
-//  ===================================================Node===================================================
+//  ===================================================Agent===================================================
 
 const getBtNodeState = (state: AppState) => state.btNode;
 
@@ -186,6 +186,9 @@ export const selectDeleteNodeResponse = createSelector(getBtNodeState, btNode.ge
 
 // node ui state
 export const selectBtNodeUIState = createSelector(getBtNodeState, btNode.getUIState);
+
+// node hash
+export const selectNodeHashResponse = createSelector(getBtNodeState, btNode.getNodeHashResponse);
 
 //  ===================================================Platform===================================================
 
@@ -246,14 +249,14 @@ export const selectTemplateSnapshots = createSelector(selectStrategyListResponse
 
     const currentIds = currentTemplates.map(item => item.id);
 
-    const availableTemplates = list.result.strategies.map(strategy => {
-        const { id, name, category, args, language, semanticArgs } = strategy;
+    const availableTemplates = list.result.strategies.map(data => {
+        const { id, name, category, args, language, semanticArgs } = data;
 
         return { id, name, category, args, language, semanticArgs, source: '' };
-    }).filter(strategy => currentIds.indexOf(strategy.id) === -1);
+    }).filter(item => currentIds.indexOf(item.id) === -1);
 
     return [...availableTemplates, ...currentTemplates];
-})
+});
 
 //  ===================================================Charge======================================================
 

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+
 import { MarkdownModule } from 'ngx-markdown';
 
 import { SharedModule } from '../shared/shared.module';
@@ -18,7 +19,7 @@ import { SignupComponent } from './signup/signup.component';
         SharedModule,
         MarkdownModule.forRoot(),
         ToolModule,
-        routing
+        routing,
     ],
     declarations: [
         SignupComponent,

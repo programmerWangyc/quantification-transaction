@@ -10,14 +10,14 @@ export interface State {
 export const initialState: State = {
     username: null,
     response: null,
-    needGoogleSecondaryVerificationCode: false
-}
+    needGoogleSecondaryVerificationCode: false,
+};
 
 export enum LoginErrorMsg {
     AUTHENTICATION_FAILED_ERROR = 1,
     NEED_GOOGLE_SECONDARY_VERIFICATION,
     GOOGLE_SECONDARY_VERIFICATION_CODE_ERROR,
-    ACCOUNT_LOCKED_ERROR
+    ACCOUNT_LOCKED_ERROR,
 }
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -29,7 +29,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.LOGIN_FAIL: {
             const response = { ...action.payload };
 
-            const errorCode = Math.abs(action.payload.result)
+            const errorCode = Math.abs(action.payload.result);
 
             response.error = LoginErrorMsg[errorCode];
 

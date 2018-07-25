@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StrategyLibComponent } from './strategy-lib.component';
+import { AgentAddComponent } from './agent-add.component';
 
-describe('StrategyLibComponent', () => {
-  let component: StrategyLibComponent;
-  let fixture: ComponentFixture<StrategyLibComponent>;
+describe('AgentAddComponent', () => {
+  let component: AgentAddComponent;
+  let fixture: ComponentFixture<AgentAddComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StrategyLibComponent ]
+      declarations: [ AgentAddComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StrategyLibComponent);
+    fixture = TestBed.createComponent(AgentAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

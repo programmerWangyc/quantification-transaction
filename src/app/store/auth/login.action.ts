@@ -16,7 +16,7 @@ export enum LoginOrder {
     username,
     password,
     verificationCode,
-    length
+    length,
 }
 
 /**
@@ -33,7 +33,7 @@ export class LoginAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const LOGIN = '[Login] LOGIN';
@@ -43,7 +43,7 @@ export class LoginRequestAction extends LoginAction implements Action {
 
     public allowSeparateRequest = true;
 
-    constructor(public payload: LoginRequest) { super() }
+    constructor(public payload: LoginRequest) { super(); }
 }
 
 export const LOGIN_FAIL = '[Login] LOGIN_FAIL';
@@ -51,7 +51,7 @@ export const LOGIN_FAIL = '[Login] LOGIN_FAIL';
 export class LoginFailAction extends LoginAction implements Action {
     readonly type = LOGIN_FAIL;
 
-    constructor(public payload: LoginResponse) { super() }
+    constructor(public payload: LoginResponse) { super(); }
 }
 
 export const LOGIN_SUCCESS = '[Login] LOGIN_SUCCESS';
@@ -59,7 +59,7 @@ export const LOGIN_SUCCESS = '[Login] LOGIN_SUCCESS';
 export class LoginSuccessAction extends LoginAction implements Action {
     readonly type = LOGIN_SUCCESS;
 
-    constructor(public payload: LoginResponse) { super() }
+    constructor(public payload: LoginResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -78,13 +78,13 @@ export class CloseSecondaryVerifyAction implements Action {
 
 export type ApiActions = LoginRequestAction
     | LoginFailAction
-    | LoginSuccessAction
+    | LoginSuccessAction;
 
 export type Actions = ApiActions
     | ResetLoginErrorAction
-    | CloseSecondaryVerifyAction
+    | CloseSecondaryVerifyAction;
 
 export const ResponseActions = {
     LoginFailAction,
     LoginSuccessAction,
-}
+};

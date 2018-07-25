@@ -12,11 +12,11 @@ function getLength<T>(data: T[]): number {
 }
 
 @Component({
-    selector: 'app-strate-overview',
-    templateUrl: './strate-overview.component.html',
-    styleUrls: ['./strate-overview.component.scss']
+    selector: 'app-strategy-overview',
+    templateUrl: './strategy-overview.component.html',
+    styleUrls: ['./strategy-overview.component.scss'],
 })
-export class StrateOverviewComponent implements OnInit {
+export class StrategyOverviewComponent implements OnInit {
     total: Observable<number>;
 
     publishCount: Observable<number>;

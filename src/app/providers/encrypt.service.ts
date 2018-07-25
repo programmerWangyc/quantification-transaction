@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import * as CryptoJS from 'crypto-js';
 import { from as observableFrom, Observable, of as observableOf } from 'rxjs';
 import { map, mergeMap, reduce, take } from 'rxjs/operators';
@@ -7,7 +8,6 @@ import { VariableType } from '../app.config';
 import { TemplateVariableOverview, VariableOverview } from '../interfaces/app.interface';
 import { AuthService } from '../shared/providers/auth.service';
 import { ConstantService } from './constant.service';
-
 
 @Injectable()
 export class EncryptService {
@@ -24,7 +24,7 @@ export class EncryptService {
     encryptText(data: string, password: string): string {
         let key: string = this.encryptPassword(password);
 
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             key = CryptoJS.MD5(key).toString();
         }
 
@@ -36,7 +36,7 @@ export class EncryptService {
     decryptText(data: string, password: string): string {
         let key = this.encryptPassword(password);
 
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             key = CryptoJS.MD5(key).toString();
         }
 

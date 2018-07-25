@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { includes } from 'lodash';
 import { combineLatest, concat, of, Subject } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
@@ -11,7 +12,7 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 @Component({
     selector: 'app-backtest-log-info',
     templateUrl: './backtest-log-info.component.html',
-    styleUrls: ['./backtest-log-info.component.scss']
+    styleUrls: ['./backtest-log-info.component.scss'],
 })
 export class BacktestLogInfoComponent implements OnInit {
 
@@ -88,7 +89,7 @@ export class BacktestLogInfoComponent implements OnInit {
             map(logs => logs.length)
         );
 
-        this.statistics = this.utilService.getPaginationStatistics(this.logTotal, concat(this.pageSize, this.pageSize$))
+        this.statistics = this.utilService.getPaginationStatistics(this.logTotal, concat(this.pageSize, this.pageSize$));
 
         this.canSave = this.chartService.hasRunningLogs();
     }

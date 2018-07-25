@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material';
 
 @Component({
+    // tslint:disable-next-line:component-selector
     selector: 'custom-snack-bar',
     template: `
         <span>{{message | translate}}<i (click)="close()" class="close anticon anticon-close"></i></span>`,
@@ -9,7 +10,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material';
         .close {
             float: right;
             cursor: pointer;
-        }`]
+        }`],
 })
 export class CustomSnackBarComponent {
     constructor(

@@ -12,6 +12,7 @@ import { DASHBOARD_EFFECTS } from '../store/index.effect';
 import { CustomSerializer } from '../store/router/router.reducer';
 import { StrategyModule } from '../strategy/strategy.module';
 import { ToolModule } from '../tool/tool.module';
+import { AgentAddComponent } from './agent-add/agent-add.component';
 import { AgentComponent } from './agent/agent.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
@@ -66,6 +67,7 @@ import { StrategyComponent } from './strategy/strategy.component';
         StrategyCreateMetaComponent,
         StrategyAddComponent,
         AgentComponent,
+        AgentAddComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

@@ -13,7 +13,7 @@ export enum SignupOrder {
     password,
     refUser,
     refUrl,
-    length
+    length,
 }
 
 export class SignupAction extends ApiAction {
@@ -25,7 +25,7 @@ export class SignupAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const SIGNUP = '[Signup] SIGNUP';
@@ -35,7 +35,7 @@ export class SignupRequestAction extends SignupAction implements Action {
 
     public allowSeparateRequest = true;
 
-    constructor(public payload: SignupRequest) { super() }
+    constructor(public payload: SignupRequest) { super(); }
 }
 
 export const SIGNUP_FAIL = '[Signup] SIGNUP_FAIL';
@@ -43,7 +43,7 @@ export const SIGNUP_FAIL = '[Signup] SIGNUP_FAIL';
 export class SignupFailAction extends SignupAction implements Action {
     readonly type = SIGNUP_FAIL;
 
-    constructor(public payload: SignupResponse) { super() }
+    constructor(public payload: SignupResponse) { super(); }
 }
 
 export const SIGNUP_SUCCESS = '[Signup] SIGNUP_SUCCESS';
@@ -51,7 +51,7 @@ export const SIGNUP_SUCCESS = '[Signup] SIGNUP_SUCCESS';
 export class SignupSuccessAction extends SignupAction implements Action {
     readonly type = SIGNUP_SUCCESS;
 
-    constructor(public payload: SignupResponse) { super() }
+    constructor(public payload: SignupResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -74,13 +74,13 @@ export class ResetSignupResponseAction implements Action {
 
 export type ApiActions = SignupRequestAction
     | SignupFailAction
-    | SignupSuccessAction
+    | SignupSuccessAction;
 
 export type Actions = ApiActions
     | ToggleAgreeStateAction
-    | ResetSignupResponseAction
+    | ResetSignupResponseAction;
 
 export const ResponseActions = {
     SignupFailAction,
     SignupSuccessAction,
-}
+};

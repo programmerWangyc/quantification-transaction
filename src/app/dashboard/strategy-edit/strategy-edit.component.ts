@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, mapTo } from 'rxjs/operators';
@@ -15,7 +16,7 @@ import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-cr
 @Component({
     selector: 'app-strategy-edit',
     templateUrl: './strategy-edit.component.html',
-    styleUrls: ['./strategy-edit.component.scss']
+    styleUrls: ['./strategy-edit.component.scss'],
 })
 export class StrategyEditComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 

@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { isEmpty } from 'lodash';
 import { concat, Observable, of as observableOf, Subject, Subscription } from 'rxjs';
 import { map, reduce } from 'rxjs/operators';
@@ -17,8 +18,6 @@ import { SemanticArg, StrategyService } from '../../strategy/providers/strategy.
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
 
-
-
 export interface RobotCreationForm {
     robotName: string;
     agent: number;
@@ -30,7 +29,7 @@ export interface RobotCreationForm {
 @Component({
     selector: 'app-create-robot',
     templateUrl: './create-robot.component.html',
-    styleUrls: ['./create-robot.component.scss']
+    styleUrls: ['./create-robot.component.scss'],
 })
 export class CreateRobotComponent extends ExchangePairBusinessComponent {
     isFold = false;
@@ -63,7 +62,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     strategies: Observable<any>;
 
     /**
-     * FIXME: selectAgent, selectedStrategy, selectedKLine, selectedExchange 实际是没有用的，
+     * !FIXME: selectAgent, selectedStrategy, selectedKLine, selectedExchange 实际是没有用的，
      * 但是去掉后 nzPlaceholder 无法正确显示，貌似是 ng-zorro 的一个BUG.
      * angular6中ngModel和响应式表单同时暂时警告，7中将无法同时使用，所以以下4个属性待修复
      **/
@@ -109,8 +108,8 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
                 map(list => list.map(({ groupName, values, groupNameValue }) => ({
                     groupName,
                     groupNameValue,
-                    values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY)
-                })).filter(list => !isEmpty(list.values)))
+                    values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY),
+                })).filter(collection => !isEmpty(collection.values)))
             );
     }
 
@@ -128,7 +127,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             .add(this.platformService.launchGetPlatformList(observableOf(true)))
             .add(this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
 
-        // FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
+        // !FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
         this.create$$ = this.robotService.launchCreateRobot(this.create$
             .pipe(
                 map(form => this.createSaveParams(form))
@@ -144,7 +143,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             kLinePeriod: '',
             platform: ['', Validators.required],
             stock: '',
-        })
+        });
     }
 
     createSaveParams(formValue: RobotCreationForm): SaveRobotRequest {
@@ -174,7 +173,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
         if (templateName) {
             this.selectedStrategyArgs.semanticTemplateArgs.forEach(template => {
-                let index = template.variables.findIndex(item => item.variableName === arg.variableName);
+                const index = template.variables.findIndex(item => item.variableName === arg.variableName);
 
                 if (index >= 0) template.variables[index] = arg;
             });

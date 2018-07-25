@@ -1,0 +1,17 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div nz-row class="steps">
+    <div nz-col nzSpan="12">
+        <h3>
+            {{'AGENT_CREATE_GUIDE' | translate}}
+
+            <i class="anticon anticon-info-circle" [nz-tooltip]="'PRIVATE_AGENT_INTRO' | translate"></i>
+        </h3>
+        <app-create-agent></app-create-agent>
+    </div>
+
+    <div nz-col nzSpan="10" nzOffset="2" bt-text-center>
+        <h3>{{'SUBSCRIBE_WECHART_TIP' | translate}}</h3>
+        <img src="../../../assets/images/weixin_botvs.jpg">
+    </div>
+</div>

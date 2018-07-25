@@ -1,25 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
+
 import { isEmpty, isNull, isNumber } from 'lodash';
 import { combineLatest, concat, interval, merge, never, Observable, of, Subscription, zip } from 'rxjs';
 import {
-    distinct,
-    distinctUntilChanged,
-    filter,
-    map,
-    mapTo,
-    mergeMap,
-    mergeMapTo,
-    partition,
-    skip,
-    startWith,
-    switchMap,
-    switchMapTo,
-    take,
-    takeUntil,
-    tap,
-    withLatestFrom,
+    distinct, distinctUntilChanged, filter, map, mapTo, mergeMap, mergeMapTo, partition, skip, startWith, switchMap,
+    switchMapTo, take, takeUntil, tap, withLatestFrom
 } from 'rxjs/operators';
 
 import { BacktestIORequest, BacktestIOType, SettingTypes } from '../../interfaces/request.interface';
@@ -62,7 +49,7 @@ export class BacktestService extends BacktestParamService {
      * @param start 用户发起的开始回测的信号
      */
     launchBacktest(start: Observable<boolean>): Subscription {
-        const [atLocal, atServer] = partition((atLocal: boolean) => atLocal)(this.isLocalBacktest(start))
+        const [atLocal, atServer] = partition((isLocal: boolean) => isLocal)(this.isLocalBacktest(start));
 
         const server$$ = this.startServerBacktest(atServer);
 
@@ -84,7 +71,7 @@ export class BacktestService extends BacktestParamService {
      */
     private startServerBacktest(start: Observable<boolean>): Subscription {
 
-        //回测任务完成，也就是收到服务端的消息之后，拉取回测结果
+        // 回测任务完成，也就是收到服务端的消息之后，拉取回测结果
         return this.launchOperateBacktest(
             this.getServerSendBacktestMsg().pipe(
                 takeUntil(this.router.events)
@@ -104,7 +91,7 @@ export class BacktestService extends BacktestParamService {
                 BacktestIOType.deleteTask
             ))
             // 发起回测
-            .add(this.launchServerBacktest(this.guardBacktestStart(start)))
+            .add(this.launchServerBacktest(this.guardBacktestStart(start)));
     }
 
     /**
@@ -143,7 +130,7 @@ export class BacktestService extends BacktestParamService {
      * 服务端回测；
      * 1、第一个回测任务立即发起；
      * 2、之后的回测任务在当前回测的结果响应后发起，也就是上个回测任务的 result 接收完成后再发起。
-     * FIXME: 下一个回测任务应该在收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
+     * !FIXME: 下一个回测任务应该在收到服务端的推送消息后发起，但目前由于 getBacktestResult 的响应中没有带uuid，此时发起可能导致
      * 结果与请求无法对应，因此暂时在当前的任务结果接收完成后再发起下一次任务。
      * 2、之后的回测任务需要在服务端推送消息，也就是上个回测任务结束之后再发起。
      */
@@ -185,27 +172,27 @@ export class BacktestService extends BacktestParamService {
             this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result),
         );
 
-        const blob = this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
+        const blobObs = this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
             this.filterTruth()
         );
 
-        const cache = this.getBacktestResult().pipe(
+        const cacheObs = this.getBacktestResult().pipe(
             map(res => res.httpCache || {}),
             startWith({})
         );
 
-        const task = zip(notify, this.generatePutTaskParams()).pipe(
+        const taskObs = zip(notify, this.generatePutTaskParams()).pipe(
             map(([_, param]) => param)
         );
 
-        const params = combineLatest(task, blob).pipe(
+        const params = combineLatest(taskObs, blobObs).pipe(
             withLatestFrom(
-                cache,
+                cacheObs,
                 (([task, blob], cache) => ({ task, blob, cache }))
             ),
             tap(_ => this.store.dispatch(new Actions.IncreaseBacktestingTaskIndexAction())),
             mergeMap(param => this.computeService.run(param))
-        )
+        );
 
         return this.process.processWorkBacktest(this.guardBacktestStart(signal).pipe(
             switchMapTo(params)
@@ -252,7 +239,7 @@ export class BacktestService extends BacktestParamService {
      * @param force 是否强制发起，默认情况下只在回测开关开启时才发起任务。
      */
     launchOperateBacktest(command: Observable<any>, taskType: string, force: boolean = false): Subscription {
-        const params = this.getBacktestTaskParams(taskType).pipe(
+        const task = this.getBacktestTaskParams(taskType).pipe(
             take(1)
         );
 
@@ -261,7 +248,7 @@ export class BacktestService extends BacktestParamService {
         return this.process.processBacktestIO(
             command.pipe(
                 switchMapTo(
-                    force ? params : params.pipe(
+                    force ? task : task.pipe(
                         withLatestFrom(serverMsgSubscribeState),
                         filter(([_, onOff]) => onOff),
                         map(([params, _]) => params)
@@ -465,7 +452,7 @@ export class BacktestService extends BacktestParamService {
     isBacktestArgsValid(): Observable<boolean> {
         return this.getUIState().pipe(
             filter(({ backtestCode, backtestTasks }) => !!backtestCode && !!backtestTasks),
-            map(({ backtestCode, backtestTasks, isOptimizedBacktest }) => isOptimizedBacktest ? !isEmpty(backtestTasks) : true),
+            map(({ backtestTasks, isOptimizedBacktest }) => isOptimizedBacktest ? !isEmpty(backtestTasks) : true),
             take(1)
         );
     }

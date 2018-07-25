@@ -5,7 +5,7 @@ import { SelectedPair } from '../../interfaces/app.interface';
 @Component({
     selector: 'app-exchange-pair',
     templateUrl: './exchange-pair.component.html',
-    styleUrls: ['./exchange-pair.component.scss']
+    styleUrls: ['./exchange-pair.component.scss'],
 })
 export class ExchangePairComponent implements OnInit {
     @Input() pairs: SelectedPair[] = [];

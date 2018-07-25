@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject, merge, Subscription } from 'rxjs';
+
+import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilKeyChanged, filter, map, mapTo, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
@@ -8,11 +9,10 @@ import { PaymentMethod } from '../charge.config';
 import { PAY_METHODS } from '../providers/charge.constant.service';
 import { ChargeService, RechargeFormModal } from '../providers/charge.service';
 
-
 @Component({
     selector: 'app-charge',
     templateUrl: './charge.component.html',
-    styleUrls: ['./charge.component.scss']
+    styleUrls: ['./charge.component.scss'],
 })
 export class ChargeComponent implements BaseComponent {
     labelSm = 6;

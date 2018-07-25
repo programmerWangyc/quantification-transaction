@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
 
@@ -11,7 +12,7 @@ import { GenKeyType, StrategyOperateService } from '../../strategy/providers/str
 @Component({
     selector: 'app-strategy-verify-code',
     templateUrl: './strategy-verify-code.component.html',
-    styleUrls: ['./strategy-verify-code.component.scss']
+    styleUrls: ['./strategy-verify-code.component.scss'],
 })
 export class StrategyVerifyCodeComponent implements BaseComponent {
     subscription$$: Subscription;

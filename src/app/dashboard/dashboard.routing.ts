@@ -1,5 +1,6 @@
 import { RouterModule, Routes } from '@angular/router';
 
+import { AgentAddComponent } from './agent-add/agent-add.component';
 import { AgentComponent } from './agent/agent.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
@@ -43,6 +44,7 @@ const routs: Routes = [
 
             // agent
             { path: 'agent', component: AgentComponent},
+            { path: 'agent/add', component: AgentAddComponent },
 
             // { path: Path.exchange, component: ExchangeComponent },
             { path: 'square', component: SquareComponent },
@@ -51,7 +53,7 @@ const routs: Routes = [
             { path: 'fact', component: FactComponent },
             { path: '', redirectTo: 'robot', pathMatch: 'full' },
             // { path: '', redirectTo: Path.robot, pathMatch: 'full' },
-        ]
+        ],
     },
 ];
 

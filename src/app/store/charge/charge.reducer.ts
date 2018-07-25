@@ -1,5 +1,7 @@
 import { GetPaymentArgRequest } from '../../interfaces/request.interface';
-import { GetPaymentArgResponse, GetPayOrdersResponse, ServerSendPaymentMessage } from '../../interfaces/response.interface';
+import {
+    GetPaymentArgResponse, GetPayOrdersResponse, ServerSendPaymentMessage
+} from '../../interfaces/response.interface';
 import * as actions from './charge.action';
 
 export interface RequestParams {
@@ -18,11 +20,11 @@ const initialState: State = {
     paymentArgRes: null,
     payOrderRes: null,
     serverMessage: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
-        //pay orders
+        // pay orders
         case actions.GET_PAY_ORDERS_FAIL:
         case actions.GET_PAY_ORDERS_SUCCESS:
             return { ...state, payOrderRes: action.payload };

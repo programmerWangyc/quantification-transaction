@@ -1,22 +1,15 @@
 import { select, Store } from '@ngrx/store';
+
 import { cloneDeep, omit } from 'lodash';
 import * as moment from 'moment';
 import { combineLatest, from, Observable } from 'rxjs';
-import { delay, distinctUntilChanged, filter, map, mergeMap, take } from 'rxjs/operators';
+import { delay as observableDelay, distinctUntilChanged, filter, map, mergeMap, take } from 'rxjs/operators';
 
 import { VariableType } from '../../app.config';
 import { VariableOverview } from '../../interfaces/app.interface';
 import {
-    BacktestAdvanceOptions,
-    BacktestConstantOptions,
-    BacktestExchange,
-    BacktestIORequest,
-    BacktestIOType,
-    BacktestPlatformOptions,
-    BacktestPutTaskOptions,
-    BacktestPutTaskParams,
-    PutTaskCode,
-    PutTaskCodeArg,
+    BacktestAdvanceOptions, BacktestConstantOptions, BacktestExchange, BacktestIORequest, BacktestIOType,
+    BacktestPlatformOptions, BacktestPutTaskOptions, BacktestPutTaskParams, PutTaskCode, PutTaskCodeArg
 } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
@@ -93,13 +86,15 @@ export class BacktestParamService extends BacktestBaseService {
                         const result = cloneDeep(backtestCode);
 
                         return result.map(item => {
-                            let { name, args, id } = item;
+                            let { args } = item;
+
+                            const { name, id } = item;
 
                             args = args.map(arg => {
                                 if (!arg.isOptimizing) {
                                     return arg;
                                 } else {
-                                    const target = optimizeArgs.find(item => item.variableName === arg.variableName);
+                                    const target = optimizeArgs.find(optArg => optArg.variableName === arg.variableName);
 
                                     return target ? { ...arg, variableValue: target.variableValue } : arg;
                                 }
@@ -107,11 +102,11 @@ export class BacktestParamService extends BacktestBaseService {
 
                             return { name, args, id };
                         });
-                    })
+                    });
                 }
             }),
             mergeMap(tasks => from(tasks)),
-            delay(50)
+            observableDelay(50)
         );
     }
 
@@ -167,7 +162,7 @@ export class BacktestParamService extends BacktestBaseService {
             map(([{ is_owner }, language, node, task]) => ({
                 nodeId: is_owner ? node : 0,
                 language: is_owner ? language : language + 1000,
-                io: JSON.stringify([BacktestIOType.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(task)])
+                io: JSON.stringify([BacktestIOType.putTask, this.constant.BACK_END_LANGUAGES[language], JSON.stringify(task)]),
             })),
             distinctUntilChanged(this.compareAllValues())
         );
@@ -198,7 +193,7 @@ export class BacktestParamService extends BacktestBaseService {
             } else {
                 return overview.variableValue;
             }
-        }
+        };
 
         return combineLatest(
             this.getToBeTestedTask().pipe(
@@ -233,7 +228,7 @@ export class BacktestParamService extends BacktestBaseService {
             this.getUIState(),
             this.getUpdatePeriod()
         ).pipe(
-            map(([{ advancedOptions, timeOptions, backtestLevel, backtestCode, isOptimizedBacktest }, updatePeriod]) => {
+            map(([{ advancedOptions, timeOptions, backtestLevel, isOptimizedBacktest }, updatePeriod]) => {
                 const { log, profit, chart, delay } = advancedOptions;
 
                 const { start, end, klinePeriodId } = timeOptions;
@@ -255,7 +250,7 @@ export class BacktestParamService extends BacktestBaseService {
                     Period: this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60 * 1000,
                     NetDelay: Math.max(1, delay),
                     UpdatePeriod: updatePeriod,
-                }
+                };
             })
         );
     }
@@ -270,7 +265,7 @@ export class BacktestParamService extends BacktestBaseService {
             return this.constant.BT_PROFIT_LOGS | this.constant.BT_CLOSE_PROFIT_LOGS | this.constant.BT_ACCOUNTS;
         }
 
-        let result = this.constant.getRetFlags();
+        const result = this.constant.getRetFlags();
 
         if (level === BacktestLevel.simulation) {
             return result | this.constant.BT_SYMBOLS | this.constant.BT_INDICATORS;
@@ -294,7 +289,7 @@ export class BacktestParamService extends BacktestBaseService {
      * @param end 回测结束时间
      */
     private generateSnapshotPeriod(start: number, end: number): number {
-        let daySeconds = 24 * 60 * 60;
+        const daySeconds = 24 * 60 * 60;
 
         const range = end - start;
 
@@ -340,8 +335,8 @@ export class BacktestParamService extends BacktestBaseService {
 
                         // platform options
                         ...this.generatePlatformOptionsForExchange(option, klinePeriodId),
-                    }
-                })
+                    };
+                });
             })
         );
     }

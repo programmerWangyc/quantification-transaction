@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-    ActivatedRoute,
-    ActivatedRouteSnapshot,
-    CanActivate,
-    CanDeactivate,
-    Router,
-    RouterStateSnapshot,
+    ActivatedRoute, ActivatedRouteSnapshot, CanActivate, CanDeactivate, Router, RouterStateSnapshot
 } from '@angular/router';
 import { Store } from '@ngrx/store';
+
 import { NzModalService } from 'ng-zorro-antd';
 import { from, Observable, of } from 'rxjs';
 import { find, map, mergeMap, tap } from 'rxjs/operators';
@@ -32,7 +28,7 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
         public tip: TipService,
     ) { }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
         return this.store.select(selectStrategyListResponse)
             .pipe(
                 map(res => !!res),
@@ -41,12 +37,12 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
     }
 
     /**
-     *  是否可以退出当前路由。
+     * 是否可以退出当前路由。
      */
-    canDeactivate(component: CanDeactivateComponent, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    canDeactivate(component: CanDeactivateComponent, _route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
         const guards = component.canDeactivate();
 
-        //FIXME:  当焦点仍在 codemirror 中时，如果内容改变，切换路由会导致codemirror焦点的检测报错。
+        // !FIXME:  当焦点仍在 codemirror 中时，如果内容改变，切换路由会导致codemirror焦点的检测报错。
         // const modal = this.nzModal.confirm({
         //     nzContent: SimpleNzConfirmWrapComponent,
         //     nzComponentParams: { content: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM' },

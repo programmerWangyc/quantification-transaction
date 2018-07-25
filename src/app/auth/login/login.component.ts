@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
@@ -13,7 +14,7 @@ import { passwordValidator, usernameValidator } from '../../validators/validator
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+    styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent extends BaseComponent {
     loginForm: FormGroup;
@@ -57,7 +58,7 @@ export class LoginComponent extends BaseComponent {
         this.loginForm = this.fb.group({
             username: ['', usernameValidator],
             password: ['', passwordValidator],
-            verificationCode: ''
+            verificationCode: '',
         });
     }
 

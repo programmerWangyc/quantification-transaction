@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+
 import { isNull, isNumber } from 'lodash';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -9,14 +10,12 @@ import { TimeRange } from '../backtest.interface';
 import { BacktestConstantService, BacktestPeriodConfig } from '../providers/backtest.constant.service';
 import { BacktestService } from '../providers/backtest.service';
 
-export interface DisabledDateFn {
-    (target: Date): boolean;
-}
+export type DisabledDateFn = (target: Date) => boolean;
 
 @Component({
     selector: 'app-time-options',
     templateUrl: './time-options.component.html',
-    styleUrls: ['./time-options.component.scss']
+    styleUrls: ['./time-options.component.scss'],
 })
 export class TimeOptionsComponent implements OnInit, OnDestroy {
 
@@ -25,8 +24,6 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
      */
     @Input() set category(value: number) {
         if (!isNumber(value)) return;
-
-        this._category = value;
 
         this.timeConfig = this.constant.getBacktestPeriodTimeConfig(value);
 
@@ -115,11 +112,6 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
     periods: KLinePeriod[];
 
     /**
-     * @ignore
-     */
-    private _category: number;
-
-    /**
      * Function used for time range component used to forbidden selected some days;
      */
     disabledDate: DisabledDateFn;
@@ -203,7 +195,7 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
         return (target: Date) => {
             return !moment(target).isBetween(new Date(min), new Date(max));
-        }
+        };
     }
 
     /**

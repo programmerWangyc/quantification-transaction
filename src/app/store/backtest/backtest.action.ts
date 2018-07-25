@@ -30,7 +30,7 @@ class GetTemplatesAction extends ApiAction {
 
     allowSeparateRequest = true;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const GET_TEMPLATES = '[Backtest] GET_TEMPLATES';
@@ -38,7 +38,7 @@ export const GET_TEMPLATES = '[Backtest] GET_TEMPLATES';
 export class GetTemplatesRequestAction extends GetTemplatesAction implements Action {
     readonly type = GET_TEMPLATES;
 
-    constructor(public payload: GetTemplatesRequest) { super() };
+    constructor(public payload: GetTemplatesRequest) { super(); }
 }
 
 export const GET_TEMPLATES_FAIL = '[Backtest] GET_TEMPLATES_FAIL';
@@ -46,7 +46,7 @@ export const GET_TEMPLATES_FAIL = '[Backtest] GET_TEMPLATES_FAIL';
 export class GetTemplatesFailAction extends GetTemplatesAction implements Action {
     readonly type = GET_TEMPLATES_FAIL;
 
-    constructor(public payload: GetTemplatesResponse) { super() };
+    constructor(public payload: GetTemplatesResponse) { super(); }
 }
 
 export const GET_TEMPLATES_SUCCESS = '[Backtest] GET_TEMPLATES_SUCCESS';
@@ -54,7 +54,7 @@ export const GET_TEMPLATES_SUCCESS = '[Backtest] GET_TEMPLATES_SUCCESS';
 export class GetTemplatesSuccessAction extends GetTemplatesAction implements Action {
     readonly type = GET_TEMPLATES_SUCCESS;
 
-    constructor(public payload: GetTemplatesResponse) { super() };
+    constructor(public payload: GetTemplatesResponse) { super(); }
 }
 
 
@@ -71,7 +71,7 @@ export const backtestCallbackIdMapType: Map<string, string> = new Map([
     [BacktestOperateCallbackId.result, BacktestIOType.getTaskResult],
     [BacktestOperateCallbackId.status, BacktestIOType.getTaskStatus],
     [BacktestOperateCallbackId.delete, BacktestIOType.deleteTask],
-    [BacktestOperateCallbackId.stop, BacktestIOType.stopTask]
+    [BacktestOperateCallbackId.stop, BacktestIOType.stopTask],
 ]);
 
 // backtest io
@@ -83,7 +83,7 @@ export enum BacktestIOOrder {
     nodeId,
     language,
     io,
-    length
+    length,
 }
 
 class BacktestIOAction extends ApiAction {
@@ -91,13 +91,13 @@ class BacktestIOAction extends ApiAction {
 
     noneParams = false;
 
-    command = BacktestOperateCallbackId.backtest
+    command = BacktestOperateCallbackId.backtest;
 
     order = BacktestIOOrder;
 
     allowSeparateRequest = true;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const EXECUTE_BACKTEST = '[Backtest] EXECUTE_BACKTEST';
@@ -105,7 +105,7 @@ export const EXECUTE_BACKTEST = '[Backtest] EXECUTE_BACKTEST';
 export class BacktestIORequestAction extends BacktestIOAction implements Action {
     readonly type = EXECUTE_BACKTEST;
 
-    constructor(public payload: BacktestIORequest) { super() }
+    constructor(public payload: BacktestIORequest) { super(); }
 }
 
 export const EXECUTE_BACKTEST_FAIL = '[Backtest] EXECUTE_BACKTEST_FAIL';
@@ -113,7 +113,7 @@ export const EXECUTE_BACKTEST_FAIL = '[Backtest] EXECUTE_BACKTEST_FAIL';
 export class BacktestIOFailAction extends BacktestIOAction implements Action {
     readonly type = EXECUTE_BACKTEST_FAIL;
 
-    constructor(public payload: BacktestIOResponse) { super() };
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 export const EXECUTE_BACKTEST_SUCCESS = '[Backtest] EXECUTE_BACKTEST_SUCCESS';
@@ -121,7 +121,7 @@ export const EXECUTE_BACKTEST_SUCCESS = '[Backtest] EXECUTE_BACKTEST_SUCCESS';
 export class BacktestIOSuccessAction extends BacktestIOAction implements Action {
     readonly type = EXECUTE_BACKTEST_SUCCESS;
 
-    constructor(public payload: BacktestIOResponse) { super() };
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 // get backtest status;
@@ -134,7 +134,7 @@ class BacktestStatusAction extends BacktestIOAction {
 export class BacktestStatusRequestAction extends BacktestStatusAction implements Action {
     readonly type = GET_BACKTEST_STATUS;
 
-    constructor(public payload: BacktestIORequest) { super() }
+    constructor(public payload: BacktestIORequest) { super(); }
 }
 
 export const GET_BACKTEST_STATUS_FAIL = '[Backtest] GET_BACKTEST_STATUS_FAIL';
@@ -142,7 +142,7 @@ export const GET_BACKTEST_STATUS_FAIL = '[Backtest] GET_BACKTEST_STATUS_FAIL';
 export class BacktestStatusFailAction extends BacktestStatusAction implements Action {
     readonly type = GET_BACKTEST_STATUS_FAIL;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 export const GET_BACKTEST_STATUS_SUCCESS = '[Backtest] GET_BACKTEST_STATUS_SUCCESS';
@@ -150,7 +150,7 @@ export const GET_BACKTEST_STATUS_SUCCESS = '[Backtest] GET_BACKTEST_STATUS_SUCCE
 export class BacktestStatusSuccessAction extends BacktestStatusAction implements Action {
     readonly type = GET_BACKTEST_STATUS_SUCCESS;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 // get backtest result;
@@ -163,7 +163,7 @@ export const GET_BACKTEST_RESULT = '[Backtest] GET_BACKTEST_RESULT';
 export class BacktestResultRequestAction extends BacktestResultAction implements Action {
     readonly type = GET_BACKTEST_RESULT;
 
-    constructor(public payload: BacktestIORequest) { super() }
+    constructor(public payload: BacktestIORequest) { super(); }
 }
 
 export const GET_BACKTEST_RESULT_FAIL = '[Backtest] GET_BACKTEST_RESULT_FAIL';
@@ -171,7 +171,7 @@ export const GET_BACKTEST_RESULT_FAIL = '[Backtest] GET_BACKTEST_RESULT_FAIL';
 export class BacktestResultFailAction extends BacktestResultAction implements Action {
     readonly type = GET_BACKTEST_RESULT_FAIL;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 export const GET_BACKTEST_RESULT_SUCCESS = '[Backtest] GET_BACKTEST_RESULT_SUCCESS';
@@ -179,7 +179,7 @@ export const GET_BACKTEST_RESULT_SUCCESS = '[Backtest] GET_BACKTEST_RESULT_SUCCE
 export class BacktestResultSuccessAction extends BacktestResultAction implements Action {
     readonly type = GET_BACKTEST_RESULT_SUCCESS;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 // delete backtest task
@@ -192,7 +192,7 @@ export const DELETE_BACKTEST_TASK = '[Backtest] DELETE_BACKTEST_TASK';
 export class DeleteBacktestRequestAction extends DeleteBacktestAction implements Action {
     readonly type = DELETE_BACKTEST_TASK;
 
-    constructor(public payload: BacktestIORequest) { super() }
+    constructor(public payload: BacktestIORequest) { super(); }
 }
 
 export const DELETE_BACKTEST_TASK_FAIL = '[Backtest] DELETE_BACKTEST_TASK_FAIL';
@@ -200,7 +200,7 @@ export const DELETE_BACKTEST_TASK_FAIL = '[Backtest] DELETE_BACKTEST_TASK_FAIL';
 export class DeleteBacktestFailAction extends DeleteBacktestAction implements Action {
     readonly type = DELETE_BACKTEST_TASK_FAIL;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 export const DELETE_BACKTEST_TASK_SUCCESS = '[Backtest] DELETE_BACKTEST_TASK_SUCCESS';
@@ -208,7 +208,7 @@ export const DELETE_BACKTEST_TASK_SUCCESS = '[Backtest] DELETE_BACKTEST_TASK_SUC
 export class DeleteBacktestSuccessAction extends DeleteBacktestAction implements Action {
     readonly type = DELETE_BACKTEST_TASK_SUCCESS;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 // stop backtest task
@@ -221,7 +221,7 @@ export const STOP_BACKTEST_TASK = '[Backtest] STOP_BACKTEST_TASK';
 export class StopBacktestRequestAction extends StopBacktestAction implements Action {
     readonly type = STOP_BACKTEST_TASK;
 
-    constructor(public payload: BacktestIORequest) { super() }
+    constructor(public payload: BacktestIORequest) { super(); }
 }
 
 export const STOP_BACKTEST_TASK_FAIL = '[Backtest] STOP_BACKTEST_TASK_FAIL';
@@ -229,7 +229,7 @@ export const STOP_BACKTEST_TASK_FAIL = '[Backtest] STOP_BACKTEST_TASK_FAIL';
 export class StopBacktestFailAction extends StopBacktestAction implements Action {
     readonly type = STOP_BACKTEST_TASK_FAIL;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 export const STOP_BACKTEST_TASK_SUCCESS = '[Backtest] STOP_BACKTEST_TASK_SUCCESS';
@@ -237,7 +237,7 @@ export const STOP_BACKTEST_TASK_SUCCESS = '[Backtest] STOP_BACKTEST_TASK_SUCCESS
 export class StopBacktestSuccessAction extends StopBacktestAction implements Action {
     readonly type = STOP_BACKTEST_TASK_SUCCESS;
 
-    constructor(public payload: BacktestIOResponse) { super() }
+    constructor(public payload: BacktestIOResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -395,7 +395,7 @@ export type ApiActions = GetTemplatesRequestAction
     | GetTemplatesSuccessAction
     | StopBacktestFailAction
     | StopBacktestRequestAction
-    | StopBacktestSuccessAction
+    | StopBacktestSuccessAction;
 
 export type Actions = ApiActions
     | CheckBacktestTemplateCodeAction
@@ -416,7 +416,7 @@ export type Actions = ApiActions
     | UpdateSelectedTimeRangeAction
     | WorkerBacktestStatusUpdatedAction
     | WorkerBacktestSuccessAction
-    | TerminateWorkerBacktestAction
+    | TerminateWorkerBacktestAction;
 
 export const ResponseActions = {
     BacktestIOFailAction,
@@ -431,4 +431,4 @@ export const ResponseActions = {
     GetTemplatesSuccessAction,
     StopBacktestFailAction,
     StopBacktestSuccessAction,
-}
+};

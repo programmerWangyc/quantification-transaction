@@ -5,7 +5,7 @@ import { Path } from '../../app.config';
 @Component({
     selector: 'app-gen-key-panel',
     templateUrl: './gen-key-panel.component.html',
-    styleUrls: ['./gen-key-panel.component.scss']
+    styleUrls: ['./gen-key-panel.component.scss'],
 })
 export class GenKeyPanelComponent implements OnInit {
     @Input() set type(value) {
@@ -22,7 +22,7 @@ export class GenKeyPanelComponent implements OnInit {
 
     @Input() code: string;
 
-    private _type : number;
+    private _type: number;
 
     isShare = false;
 

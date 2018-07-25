@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
 import { Observable, Subscription } from 'rxjs';
 import { delayWhen, filter, map, mergeMap, switchMap, take } from 'rxjs/operators';
 
-import { LoginRequest, SetPasswordRequest, SignupRequest, VerifyPasswordRequest } from '../../interfaces/request.interface';
 import {
-    LoginResponse,
-    ResetPasswordResponse,
-    SetPasswordResponse,
-    SignupResponse,
-    VerifyPasswordResponse,
+    LoginRequest, SetPasswordRequest, SignupRequest, VerifyPasswordRequest
+} from '../../interfaces/request.interface';
+import {
+    LoginResponse, ResetPasswordResponse, SetPasswordResponse, SignupResponse, VerifyPasswordResponse
 } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
@@ -21,20 +20,9 @@ import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action'
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
 import { ResetVerifyPasswordResponseAction, StorePwdTemporaryAction } from '../../store/auth/verify-password.action';
 import {
-    AppState,
-    selectAgreeState,
-    selectLoginResponse,
-    selectNeedGoogleSecondaryVer,
-    selectResetPasswordResponse,
-    selectSetPwdResponse,
-    selectSignupResponse,
-    selectTemporaryPwd,
-    selectVerifyPwdResponse,
+    AppState, selectAgreeState, selectLoginResponse, selectNeedGoogleSecondaryVer, selectResetPasswordResponse,
+    selectSetPwdResponse, selectSignupResponse, selectTemporaryPwd, selectVerifyPwdResponse
 } from '../../store/index.reducer';
-
-
-
-
 
 @Injectable()
 export class AuthService {
@@ -58,10 +46,9 @@ export class AuthService {
     }
 
     launchRegain(source: Observable<string>): Subscription {
-        return this.process.processRegain(source
-            .pipe(
-                map(email => ({ email }))
-            )
+        return this.process.processRegain(source.pipe(
+            map(email => ({ email }))
+        )
         );
     }
 
@@ -77,10 +64,9 @@ export class AuthService {
 
     // login
     private getLoginResponse(): Observable<LoginResponse> {
-        return this.store.select(selectLoginResponse)
-            .pipe(
-                filter(data => !!data)
-            );
+        return this.store.select(selectLoginResponse).pipe(
+            filter(data => !!data)
+        );
     }
 
     needVerification(): Observable<boolean> {
@@ -88,29 +74,26 @@ export class AuthService {
     }
 
     isLoginSuccess(): Observable<boolean> {
-        return this.getLoginResponse()
-            .pipe(
-                map(data => data.result === 0)
-            );
+        return this.getLoginResponse().pipe(
+            map(data => data.result === 0)
+        );
     }
 
     resetLoginError(): void {
         this.store.dispatch(new ResetLoginErrorAction());
     }
 
-    //signup
+    // signup
     private getSignupResponse(): Observable<SignupResponse> {
-        return this.store.select(selectSignupResponse)
-            .pipe(
-                filter(data => !!data)
-            );
+        return this.store.select(selectSignupResponse).pipe(
+            filter(data => !!data)
+        );
     }
 
     isSignupSuccess(): Observable<boolean> {
-        return this.getSignupResponse()
-            .pipe(
-                map(data => data.result === 0)
-            );
+        return this.getSignupResponse().pipe(
+            map(data => data.result === 0)
+        );
     }
 
     isAgree(): Observable<boolean> {
@@ -118,7 +101,7 @@ export class AuthService {
     }
 
     toggleAgreeState(state: Observable<boolean>): Subscription {
-        return state.subscribe(state => this.store.dispatch(new ToggleAgreeStateAction(state)));
+        return state.subscribe(isAgree => this.store.dispatch(new ToggleAgreeStateAction(isAgree)));
     }
 
     resetSignupResponse(): void {
@@ -126,42 +109,37 @@ export class AuthService {
     }
 
     showSignupResponse(): Subscription {
-        return this.isSignupSuccess()
-            .pipe(
-                mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP'))
-            )
+        return this.isSignupSuccess().pipe(
+            mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP'))
+        )
             .subscribe(message => this.tip.showTip(message));
     }
 
     // reset password
     private getResetPasswordResponse(): Observable<ResetPasswordResponse> {
-        return this.store.select(selectResetPasswordResponse)
-            .pipe(
-                filter(res => !!res)
-            );
+        return this.store.select(selectResetPasswordResponse).pipe(
+            filter(res => !!res)
+        );
     }
 
     showResetPasswordResponse(): Subscription {
-        return this.getResetPasswordResponse()
-            .pipe(
-                mergeMap(res => this.translate.get(res.result ? 'EMAIL_VALID_TIP' : 'EMAIL_INVALID_TIP'))
-            )
+        return this.getResetPasswordResponse().pipe(
+            mergeMap(res => this.translate.get(res.result ? 'EMAIL_VALID_TIP' : 'EMAIL_INVALID_TIP'))
+        )
             .subscribe(message => this.tip.showTip(message, 60000));
     }
 
     // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
-        return this.store.select(selectSetPwdResponse)
-            .pipe(
-                filter(res => !!res)
-            );
+        return this.store.select(selectSetPwdResponse).pipe(
+            filter(res => !!res)
+        );
     }
 
     showSetPasswordResponse(): Subscription {
-        return this.getSetPasswordResponse()
-            .pipe(
-                mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP'))
-            )
+        return this.getSetPasswordResponse().pipe(
+            mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP'))
+        )
             .subscribe(message => this.tip.showTip(message));
     }
 
@@ -171,26 +149,23 @@ export class AuthService {
 
     // verify password
     private getVerifyPasswordResponse(): Observable<VerifyPasswordResponse> {
-        return this.store.select(selectVerifyPwdResponse)
-            .pipe(
-                filter(v => !!v)
-            );
+        return this.store.select(selectVerifyPwdResponse).pipe(
+            filter(v => !!v)
+        );
     }
 
     verifyPasswordSuccess(): Observable<boolean> {
-        return this.getVerifyPasswordResponse()
-            .pipe(
-                map(res => res.result),
-                // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
-                filter(success => success)
-            );
+        return this.getVerifyPasswordResponse().pipe(
+            map(res => res.result),
+            // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
+            filter(success => success)
+        );
     }
 
     getTemporaryPwd(): Observable<string> {
-        return this.store.select(selectTemporaryPwd)
-            .pipe(
-                filter(value => !!value)
-            );
+        return this.store.select(selectTemporaryPwd).pipe(
+            filter(value => !!value)
+        );
     }
 
     //  =======================================================Local Action=======================================================
@@ -198,11 +173,10 @@ export class AuthService {
     /**
      *  This action must take place after the VerifyPasswordSuccessAction action.
      */
-    storePwdTemporary(pwd: Observable<string>): Subscription {
-        return pwd
-            .pipe(
-                delayWhen(pwd => this.verifyPasswordSuccess())
-            )
+    storePwdTemporary(pwdObs: Observable<string>): Subscription {
+        return pwdObs.pipe(
+            delayWhen(_ => this.verifyPasswordSuccess())
+        )
             .subscribe(pwd => this.store.dispatch(new StorePwdTemporaryAction(pwd)));
     }
 
@@ -238,12 +212,11 @@ export class AuthService {
 
     handleVerifyPasswordError(): Subscription {
         return this.error.handleError(
-            this.getVerifyPasswordResponse()
-                .pipe(
-                    filter(res => !!res.error),
-                    switchMap(res => this.translate.get(res.error)),
-                    take(1)
-                )
+            this.getVerifyPasswordResponse().pipe(
+                filter(res => !!res.error),
+                switchMap(res => this.translate.get(res.error)),
+                take(1)
+            )
         );
     }
 }

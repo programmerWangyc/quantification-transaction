@@ -50,7 +50,7 @@ export abstract class ApiAction {
      *  If the request has multiple parameters, use this method to generate parameters that communicate with the server.
      */
     private orderParams(payload: any, defaultValue): any[] {
-        return new Array(this.order.length).fill(defaultValue).map((value, index) => {
+        return new Array(this.order.length).fill(defaultValue).map((_, index) => {
             const result = payload[this.order[index]];
 
             return result === undefined ? defaultValue : result;
@@ -105,7 +105,7 @@ export abstract class RequestAction extends ApiAction implements Action {
 
     abstract allowSeparateRequest: boolean;
 
-    constructor(public payload: any) { super() }
+    constructor(public payload: any) { super(); }
 }
 
 /**
@@ -115,5 +115,5 @@ export abstract class RequestAction extends ApiAction implements Action {
 export abstract class ResponseAction implements Action {
     abstract readonly type: string;
 
-    constructor(payload: any) { }
+    constructor(public payload: any) { }
 }

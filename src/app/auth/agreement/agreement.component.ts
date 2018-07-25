@@ -8,13 +8,13 @@ import { PublicService } from '../../providers/public.service';
 @Component({
     selector: 'app-agreement',
     templateUrl: './agreement.component.html',
-    styleUrls: ['./agreement.component.scss']
+    styleUrls: ['./agreement.component.scss'],
 })
 export class AgreementComponent implements OnInit {
 
     content: Observable<string>;
 
-    pending: Observable<boolean>
+    pending: Observable<boolean>;
 
     constructor(
         private publicService: PublicService,

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+
 import { NzModalService } from 'ng-zorro-antd';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/internal/operators/startWith';
@@ -20,7 +21,7 @@ export interface TemplateRefItem {
 @Component({
     selector: 'app-strategy-dependance',
     templateUrl: './strategy-dependance.component.html',
-    styleUrls: ['./strategy-dependance.component.scss']
+    styleUrls: ['./strategy-dependance.component.scss'],
 })
 export class StrategyDependanceComponent implements OnInit, OnDestroy {
 
@@ -80,7 +81,7 @@ export class StrategyDependanceComponent implements OnInit, OnDestroy {
                 nzContent: SimpleNzConfirmWrapComponent,
                 nzComponentParams: { content: 'RELEASE_SNAPSHOT_TEMPLATE_REFERENCE_WARNING', params: { name: target.name } },
                 nzCancelText: null,
-                nzOnOk: () => this.emit()
+                nzOnOk: () => this.emit(),
             });
         } else {
             this.emit();

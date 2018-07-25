@@ -1,0 +1,75 @@
+<nz-steps [nzCurrent]="currentStep | async" nzDirection="vertical">
+    <nz-step [nzTitle]="'OPERATE_SYSTEM' | translate" [nzDescription]="osTpl"></nz-step>
+    <nz-step [nzTitle]="'VERSION' | translate" [nzDescription]="versionTpl"></nz-step>
+    <nz-step [nzTitle]="'DOWNLOAD' | translate" [nzDescription]="downloadTpl"></nz-step>
+    <nz-step [nzTitle]="'RUN_COMMAND' | translate" [nzDescription]="commandTpl"></nz-step>
+    <nz-step [nzTitle]="'COMPLETE' | translate" [nzDescription]="completeTpl"></nz-step>
+</nz-steps>
+
+<p>{{latestVersion | async}}</p>
+
+<ng-template #osTpl>
+    <nz-radio-group [formControl]="system">
+        <label nz-radio nzValue="0">Windows</label>
+        <label nz-radio nzValue="1">Linux</label>
+        <label nz-radio nzValue="2">Mac OS</label>
+    </nz-radio-group>
+</ng-template>
+
+<ng-template #versionTpl>
+    <nz-radio-group [formControl]="version" [hidden]="(currentStep | async) < 1">
+        <!--数据类型是 string, 所以用的 == -->
+        <label nz-radio nzValue="0" *ngIf="system.value != 2">{{'SYSTEM_BIT' | translate: '{bit: 32}'}}</label>
+        <label nz-radio nzValue="1">{{'SYSTEM_BIT' | translate: '{bit: 64}'}}</label>
+        <span *ngIf="system.value == 1">
+            <label nz-radio nzValue="2">ARM v7</label>
+            <label nz-radio nzValue="3">ARM static</label>
+        </span>
+    </nz-radio-group>
+</ng-template>
+
+<ng-template #downloadTpl>
+    <div [hidden]="(currentStep | async) < 2">
+        <nz-radio-group [formControl]="clientVersion" *ngIf="system.value == 0">
+            <label nz-radio nzValue="0">{{'DOWNLOAD_COMMAND_VERSION' | translate}}</label>
+            <label nz-radio nzValue="1">{{'DOWNLOAD_UI_VERSION' | translate}}</label>
+        </nz-radio-group>
+
+        <button nz-button (click)="download$.next(true)" [disabled]="system.value == 0 && clientVersion.value == undefined">
+            <i class="anticon anticon-download"></i>
+            {{'DOWNLOAD' | translate}}
+        </button>
+
+        <a (click)="skipStep$.next(3)" class="skip">{{'SKIP' | translate}}</a>
+    </div>
+</ng-template>
+
+<ng-template #commandTpl>
+    <div [hidden]="(currentStep | async) < 3">
+
+        <section *ngIf="system.value == 0; else unixBlock">
+            <p *ngIf="clientVersion.value == 0; else uiBlock">robot.exe -s {{rpc | async}} -p {{'YOUR_PASSWORD' | translate}}</p>
+            <ng-template #uiBlock>
+                <p>{{'ADDRESS' | translate}}: {{rpc | async}}</p>
+                <p>{{'PASSWORD' | translate}}: {{'YOUR_PASSWORD' | translate}}</p>
+            </ng-template>
+        </section>
+
+        <ng-template #unixBlock>
+            <p>chmod +x robot</p>
+            <p>./robot -s {{rpc | async}} -p {{'YOUR_PASSWORD' | translate}}</p>
+        </ng-template>
+
+        <div>
+            <span class="command-run">{{'COMMAND_HAD_BEEN_RUN' | translate}}</span>
+            <label nz-checkbox [formControl]="isOperateComplete"></label>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #completeTpl>
+    <p [hidden]="(currentStep | async) < 4">
+        {{'SETTING_COMPLETE' | translate}}
+        <a [routerLink]="['../']">{{'GO_BACK' | translate}}</a>
+    </p>
+</ng-template>

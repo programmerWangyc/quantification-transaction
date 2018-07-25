@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+
 import { isString } from 'lodash';
 import { combineLatest, merge, Observable, of as observableOf, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, startWith, tap } from 'rxjs/operators';
@@ -10,26 +11,15 @@ import { EditorConfig, Referrer } from '../interfaces/app.interface';
 import { SettingTypes } from '../interfaces/request.interface';
 import { PublicResponse, ResponseState } from '../interfaces/response.interface';
 import {
-    AppState,
-    selectEditorConfig,
-    selectFooterState,
-    selectLanguage,
-    selectPublicResponse,
-    selectReferrer,
-    selectServerMsgSubscribeState,
-    selectSettings,
-    selectSettingsResponse,
+    AppState, selectEditorConfig, selectFooterState, selectLanguage, selectPublicResponse, selectReferrer,
+    selectServerMsgSubscribeState, selectSettings, selectSettingsResponse
 } from '../store/index.reducer';
 import {
-    SetLanguageAction,
-    SetReferrerAction,
-    ToggleFooterAction,
-    ToggleSubscribeServerSendMessageTypeAction,
-    UpdateFavoriteEditorConfigAction,
+    SetLanguageAction, SetReferrerAction, ToggleFooterAction, ToggleSubscribeServerSendMessageTypeAction,
+    UpdateFavoriteEditorConfigAction
 } from '../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
-
 
 @Injectable()
 export class PublicService extends BaseService {
@@ -47,10 +37,15 @@ export class PublicService extends BaseService {
 
     //  =======================================================Server Request=======================================================
 
-    launchGetSettings(type: string | Observable<string>, single = true): Subscription {
+    /**
+     * 请求设置信息
+     * @param typeSource 需要获取的设置种类
+     * @param single 是否允许此请求单独发送
+     */
+    launchGetSettings(typeSource: string | Observable<string>, single = true): Subscription {
         return this.process.processSettings(
-            isString(type) ? observableOf({ type })
-                : type.pipe(
+            isString(typeSource) ? observableOf({ type: typeSource })
+                : typeSource.pipe(
                     map(type => ({ type }))
                 ),
             single
@@ -59,6 +54,9 @@ export class PublicService extends BaseService {
 
     //  =======================================================Date acquisition=======================================================
 
+    /**
+     * 获取设置的服务器响应
+     */
     getSettingsResponse(): Observable<ResponseState> {
         return this.store.select(selectSettingsResponse).pipe(
             this.filterTruth()
@@ -87,17 +85,16 @@ export class PublicService extends BaseService {
         );
     }
 
-    // response body information
-    getPublicResponse(): Observable<PublicResponse> {
+    /**
+     * 服务器响应的公共信息。此部分信息在所有的接口都会返回。
+     */
+    private getPublicResponse(): Observable<PublicResponse> {
         return this.store.select(selectPublicResponse);
     }
 
-    private getSecurityPublicResponse(): Observable<PublicResponse> {
-        return this.getPublicResponse().pipe(
-            this.filterTruth()
-        );
-    }
-
+    /**
+     * 获取token
+     */
     getToken(): Observable<string> {
         return this.getPublicResponse().pipe(
             map(res => res ? res.token : localStorage.getItem(LocalStorageKey.token))
@@ -106,7 +103,7 @@ export class PublicService extends BaseService {
 
     isSubAccount(): Observable<boolean> {
         return this.getToken().pipe(
-            map(token => typeof token === 'string' && token.indexOf("1|") === 0)
+            map(token => typeof token === 'string' && token.indexOf('1|') === 0)
         );
     }
 
@@ -117,7 +114,8 @@ export class PublicService extends BaseService {
     }
 
     isAdmin(): Observable<boolean> {
-        return this.getSecurityPublicResponse().pipe(
+        return this.getPublicResponse().pipe(
+            this.filterTruth(),
             map(res => res.is_admin)
         );
     }
@@ -135,13 +133,15 @@ export class PublicService extends BaseService {
     }
 
     getBalance(): Observable<number> {
-        return this.getSecurityPublicResponse().pipe(
+        return this.getPublicResponse().pipe(
+            this.filterTruth(),
             map(res => res.balance)
         );
     }
 
     getConsumed(): Observable<number> {
-        return this.getSecurityPublicResponse().pipe(
+        return this.getPublicResponse().pipe(
+            this.filterTruth(),
             map(res => res.consumed)
         );
     }
@@ -225,8 +225,7 @@ export class PublicService extends BaseService {
             if (window.parent) {
                 try {
                     referrer = window.parent.document.referrer;
-                }
-                catch (e2) {
+                } catch (e2) {
                     referrer = '';
                 }
             }

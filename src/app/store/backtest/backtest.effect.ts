@@ -1,26 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
+
 import { isNumber, isString } from 'lodash';
 import { empty, Observable } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 
 import { ServerBacktestCode } from '../../backtest/backtest.config';
 import {
-    BacktestIOResponse,
-    BacktestResult,
-    ServerBacktestResult,
-    ServerSendBacktestMessage,
-    ServerSendEventType,
+    BacktestIOResponse, BacktestResult, ServerBacktestResult, ServerSendBacktestMessage, ServerSendEventType
 } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import { AppState, selectServerMsgSubscribeState } from '../index.reducer';
-import { UPDATE_STRATEGY_DEPENDANCE_TEMPLATES, UpdateStrategyDependanceTemplatesAction } from '../strategy/strategy.action';
+import {
+    UPDATE_STRATEGY_DEPENDANCE_TEMPLATES, UpdateStrategyDependanceTemplatesAction
+} from '../strategy/strategy.action';
 import * as backtestActions from './backtest.action';
-
 
 @Injectable()
 export class BacktestEffect extends BaseEffect {
@@ -37,7 +35,7 @@ export class BacktestEffect extends BaseEffect {
     backtestStatus$: Observable<ResponseAction> = this.getResponseAction(backtestActions.GET_BACKTEST_STATUS, backtestActions.ResponseActions, isBacktestFail);
 
     @Effect()
-    deleteBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.DELETE_BACKTEST_TASK, backtestActions.ResponseActions, isBacktestFail)
+    deleteBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.DELETE_BACKTEST_TASK, backtestActions.ResponseActions, isBacktestFail);
 
     @Effect()
     stopBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.STOP_BACKTEST_TASK, backtestActions.ResponseActions, isStopBacktestFail)

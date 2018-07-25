@@ -34,7 +34,7 @@ export class SettingsAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const GET_SETTINGS = '[Public] GET_SETTINGS';
@@ -42,7 +42,7 @@ export const GET_SETTINGS = '[Public] GET_SETTINGS';
 export class GetSettingsRequestAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS;
 
-    constructor(public payload: SettingsRequest, public allowSeparateRequest = true) { super() }
+    constructor(public payload: SettingsRequest, public allowSeparateRequest = true) { super(); }
 }
 
 export const GET_SETTINGS_FAIL = '[Public] GET_SETTINGS_FAIL';
@@ -50,7 +50,7 @@ export const GET_SETTINGS_FAIL = '[Public] GET_SETTINGS_FAIL';
 export class GetSettingsFailAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS_FAIL;
 
-    constructor(public payload: SettingsResponse) { super() }
+    constructor(public payload: SettingsResponse) { super(); }
 }
 
 export const GET_SETTINGS_SUCCESS = '[Public] GET_SETTINGS_SUCCESS';
@@ -58,7 +58,7 @@ export const GET_SETTINGS_SUCCESS = '[Public] GET_SETTINGS_SUCCESS';
 export class GetSettingsSuccessAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS_SUCCESS;
 
-    constructor(public payload: SettingsResponse) { super() }
+    constructor(public payload: SettingsResponse) { super(); }
 }
 
 //  ===========================================Local action===================================
@@ -97,7 +97,7 @@ export class ToggleSubscribeServerSendMessageTypeAction implements Action {
 
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
-    | GetSettingsSuccessAction
+    | GetSettingsSuccessAction;
 
 export type Actions = ApiActions
     | SetPublicInformationAction
@@ -105,9 +105,9 @@ export type Actions = ApiActions
     | SetLanguageAction
     | ToggleFooterAction
     | UpdateFavoriteEditorConfigAction
-    | ToggleSubscribeServerSendMessageTypeAction
+    | ToggleSubscribeServerSendMessageTypeAction;
 
 export const ResponseActions = {
     GetSettingsFailAction,
     GetSettingsSuccessAction,
-}
+};

@@ -8,20 +8,16 @@ import { StrategyMetaArg } from '../add-arg/add-arg.component';
 import { StrategyConstantService } from '../providers/strategy.constant.service';
 
 
-@Pipe({
-    name: 'strategyName'
-})
+@Pipe({ name: 'strategyName' })
 export class StrategyNamePipe implements PipeTransform {
     transform(target: Strategy): string {
-        let name = target.name;
+        const name = target.name;
 
         return target.category === CategoryType.TEMPLATE_SNAPSHOT ? name.substring(name.indexOf('-') + 1) : name;
     }
 }
 
-@Pipe({
-    name: 'commandButtonText'
-})
+@Pipe({ name: 'commandButtonText' })
 export class CommandButtonTextPipe implements PipeTransform {
     constructor(private constantService: StrategyConstantService) { }
 
@@ -30,9 +26,7 @@ export class CommandButtonTextPipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'removeMD5'
-})
+@Pipe({ name: 'removeMD5' })
 export class RemoveMd5Pipe implements PipeTransform {
     transform(name: string): string {
         const index = name.indexOf('-');
@@ -45,9 +39,7 @@ export class RemoveMd5Pipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'templateName'
-})
+@Pipe({ name: 'templateName' })
 export class TemplateNamePipe implements PipeTransform {
     transform(name: string): string {
         const index = name.indexOf('|');
@@ -56,9 +48,7 @@ export class TemplateNamePipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'variableType'
-})
+@Pipe({ name: 'variableType' })
 export class VariableTypePipe implements PipeTransform {
 
     constructor(private constantService: StrategyConstantService) { }
@@ -68,9 +58,7 @@ export class VariableTypePipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'variableTypeName'
-})
+@Pipe({ name: 'variableTypeName' })
 export class VariableTypeNamePipe implements PipeTransform {
 
     constructor(private constantService: StrategyConstantService) { }
@@ -80,9 +68,7 @@ export class VariableTypeNamePipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'variableToSelectList'
-})
+@Pipe({ name: 'variableToSelectList' })
 export class VariableToSelectListPipe implements PipeTransform {
     constructor(private constantService: StrategyConstantService) { }
 
@@ -91,27 +77,21 @@ export class VariableToSelectListPipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'latestModifyDes'
-})
+@Pipe({ name: 'latestModifyDes' })
 export class LatestModifyDesPipe implements PipeTransform {
     transform(value: string): string {
         return moment(value).fromNow();
     }
 }
 
-@Pipe({
-    name: 'expireStatus'
-})
+@Pipe({ name: 'expireStatus' })
 export class ExpireStatusPipe implements PipeTransform {
     transform(value: string): string {
         return moment(value).diff(moment()) < 0 ? 'EXPIRED' : 'ALREADY_PURCHASE';
     }
 }
 
-@Pipe({
-    name: 'variableValue'
-})
+@Pipe({ name: 'variableValue' })
 export class VariableValuePipe implements PipeTransform {
     transform(input: StrategyMetaArg): any {
         if (input.type === VariableType.BOOLEAN_TYPE) {

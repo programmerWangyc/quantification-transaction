@@ -9,8 +9,6 @@ import { RobotLogService } from '../providers/robot.log.service';
 import { SemanticsLog } from '../robot.config';
 
 
-
-
 @Component({
     selector: 'app-robot-strategy-chart',
     templateUrl: './robot-strategy-chart.component.html',

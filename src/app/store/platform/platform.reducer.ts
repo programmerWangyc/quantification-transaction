@@ -7,7 +7,7 @@ export interface State {
 
 const initialState: State = {
     platformListRes: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -29,8 +29,8 @@ export function addDefaultPlatform(data: GetPlatformListResponse): GetPlatformLi
         eid: '16',
         label: 'BotVS',
         name: 'BotVs',
-        stocks: ["BTC_USD", "ETH_BTC", "LTC_BTC", "BCC_BTC"],
-    }
+        stocks: ['BTC_USD', 'ETH_BTC', 'LTC_BTC', 'BCC_BTC'],
+    };
 
     data.result.platforms.push(custom);
 

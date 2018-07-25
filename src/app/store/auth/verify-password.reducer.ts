@@ -9,7 +9,7 @@ export interface State {
 export const initialState: State = {
     response: null,
     request: null,
-}
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {

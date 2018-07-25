@@ -10,7 +10,7 @@ import { BacktestService } from '../providers/backtest.service';
 @Component({
     selector: 'app-advanced-options',
     templateUrl: './advanced-options.component.html',
-    styleUrls: ['./advanced-options.component.scss']
+    styleUrls: ['./advanced-options.component.scss'],
 })
 export class AdvancedOptionsComponent implements OnInit, OnDestroy {
     /**
@@ -137,7 +137,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
                 const keys = Object.keys(options);
 
                 return this.constant.ADVANCED_OPTIONS_CONFIG.map(item => {
-                    const key = keys.find(key => item.storageKey === key);
+                    const key = keys.find(k => item.storageKey === k);
 
                     item.value = options[key];
 

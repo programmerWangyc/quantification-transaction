@@ -30,7 +30,7 @@ export type Actions = pub
     | watchDog
     | strategy
     | charge
-    | backtest
+    | backtest;
 
 export type ApiActions = apiLogin
     | apiSignup
@@ -45,4 +45,4 @@ export type ApiActions = apiLogin
     | apiWatchDog
     | apiStrategy
     | apiCharge
-    | apiBacktest
+    | apiBacktest;

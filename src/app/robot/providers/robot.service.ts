@@ -1,21 +1,22 @@
-import { from as observableFrom, of as observableOf, Observable, Subscription } from 'rxjs';
-import { withLatestFrom, map, mergeMap, switchMap, filter, tap, reduce } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import { includes, isEmpty } from 'lodash';
 import * as moment from 'moment';
-import { ResetRobotDetailAction, ResetRobotStateAction } from '../../store/robot/robot.action';
+import { from as observableFrom, Observable, of as observableOf, Subscription } from 'rxjs';
+import { filter, map, mergeMap, reduce, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+
+import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
+import { BtNodeService } from '../../providers/bt-node.service';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { PublicService } from '../../providers/public.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
-import { RobotStatus } from '../../interfaces/response.interface';
-import { BtNodeService } from '../../providers/bt-node.service';
+import { ResetRobotDetailAction, ResetRobotStateAction } from '../../store/robot/robot.action';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { BaseService } from '../../base/base.service';
 
 @Injectable()
 export class RobotService extends BaseService {
@@ -28,7 +29,7 @@ export class RobotService extends BaseService {
         private pubService: PublicService,
         private nodeService: BtNodeService,
     ) {
-        super()
+        super();
     }
 
     //  =======================================================Serve Request=======================================================
@@ -45,9 +46,9 @@ export class RobotService extends BaseService {
         return this.process.processSubscribeRobot(data, allowSeparateRequest);
     }
 
-    launchCreateRobot(data: Observable<fromReq.SaveRobotRequest>): Subscription {
+    launchCreateRobot(source: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
-            data.pipe(
+            source.pipe(
                 switchMap(data => this.nodeService.isPublicNode(data.nodeId)
                     .pipe(
                         mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(ConfirmComponent, { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' })
@@ -112,13 +113,13 @@ export class RobotService extends BaseService {
             .pipe(
                 withLatestFrom(this.pubService.getBalance()),
                 map(([robots, balance]) => {
-                    const now = parseInt(new Date().getTime() / 10000 + '') * 10000;
+                    const now = parseInt(new Date().getTime() / 10000 + '', 10) * 10000;
 
                     const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
 
                     const count = Math.max(1, robots.length);
 
-                    const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '');
+                    const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '', 10);
 
                     return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
                 })
@@ -160,7 +161,7 @@ export class RobotService extends BaseService {
                 const [kLinePeriod, exchangeIds, stocks] = JSON.parse(detail.strategy_exchange_pairs);
 
                 return { kLinePeriod, exchangeIds, stocks };
-            }))
+            }));
     }
 
     canChangePlatform(): Observable<boolean> {
@@ -201,8 +202,8 @@ export class RobotService extends BaseService {
             );
     }
 
-    getRobotSummary(summary: Observable<string>): Observable<any[]> {
-        return summary
+    getRobotSummary(data: Observable<string>): Observable<any[]> {
+        return data
             .pipe(
                 filter(summary => !isEmpty(summary)),
                 mergeMap(summary => {
@@ -235,11 +236,11 @@ export class RobotService extends BaseService {
     }
 
     isOverStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
-        return includes([RobotStatus.COMPLETE, RobotStatus.STOPPED, RobotStatus.ERROR], robot.status);
+        return includes([fromRes.RobotStatus.COMPLETE, fromRes.RobotStatus.STOPPED, fromRes.RobotStatus.ERROR], robot.status);
     }
 
     isNormalStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
-        return includes([RobotStatus.QUEUEING, RobotStatus.RUNNING, RobotStatus.STOPPING], robot.status);
+        return includes([fromRes.RobotStatus.QUEUEING, fromRes.RobotStatus.RUNNING, fromRes.RobotStatus.STOPPING], robot.status);
     }
 
     private getSummary(source: string): any {
@@ -247,7 +248,7 @@ export class RobotService extends BaseService {
 
         if (!regRes) return source;
 
-        const [_, content] = regRes;
+        const [, content] = regRes;
 
         const reg = /^\[.+\]$|^\{.+\}$/;
 

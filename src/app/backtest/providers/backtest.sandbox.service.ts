@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { isUndefined } from 'lodash';
 
 export interface SymbolRecord {
@@ -26,7 +27,7 @@ export class BacktestSandboxService {
         if (Array.isArray(arr[0])) {
             for (let i = 0; i < arr.length; i++) {
                 data[i] = [];
-                for (let j = 0; j <(<number[]>arr[i]).length; j++) {
+                for (let j = 0; j < (<number[]>arr[i]).length; j++) {
                     if (!isNaN(arr[i][j])) {
                         if (isUndefined(openHighLowClose[j])) {
                             data[i].push([openHighLowClose[openHighLowClose.length - 1][0] + ((j - openHighLowClose.length + 1) * skipMS), arr[i][j]]);
@@ -48,20 +49,18 @@ export class BacktestSandboxService {
     }
 
     _skip(arr: number[], period: number): number {
-        var j = 0;
-        for (var k = 0; j < arr.length; j++) {
-            if (!isNaN(arr[j]))
-                k++;
-            if (k === period)
-                break;
+        let j = 0;
+        for (let k = 0; j < arr.length; j++) {
+            if (!isNaN(arr[j])) k++;
+            if (k === period) break;
         }
         return j;
     }
 
     _sum(arr: number[], num: number): number {
-        var sum = 0.0;
+        let sum = 0.0;
 
-        for (var i = 0; i < num; i++) {
+        for (let i = 0; i < num; i++) {
             if (!isNaN(arr[i])) {
                 sum += arr[i];
             }
@@ -71,9 +70,9 @@ export class BacktestSandboxService {
     }
 
     _avg(arr: number[], num: number): number {
-        var n = 0;
-        var sum = 0.0;
-        for (var i = 0; i < num; i++) {
+        let n = 0;
+        let sum = 0.0;
+        for (let i = 0; i < num; i++) {
             if (!isNaN(arr[i])) {
                 sum += arr[i];
                 n++;
@@ -89,15 +88,15 @@ export class BacktestSandboxService {
     }
 
     private _set(arr: number[], start: number, end: number, value: number): void {
-        var e = Math.min(arr.length, end);
-        for (var i = start; i < e; i++) {
+        const e = Math.min(arr.length, end);
+        for (let i = start; i < e; i++) {
             arr[i] = value;
         }
     }
 
     _diff(a: number[], b: number[]): number[] {
-        var d = [];
-        for (var i = 0; i < b.length; i++) {
+        const d = [];
+        for (let i = 0; i < b.length; i++) {
             if (isNaN(a[i]) || isNaN(b[i])) {
                 d.push(NaN);
             } else {
@@ -108,21 +107,21 @@ export class BacktestSandboxService {
     }
 
     _move_diff(a: number[]): number[] {
-        var d = [];
-        for (var i = 1; i < a.length; i++) {
+        const d = [];
+        for (let i = 1; i < a.length; i++) {
             d.push(a[i] - a[i - 1]);
         }
         return d;
     }
 
     _sma(S: number[], period: number): number[] {
-        var R = this._zeros(S.length);
-        var j = this._skip(S, period);
+        const R = this._zeros(S.length);
+        const j = this._skip(S, period);
         this._set(R, 0, j, NaN);
         if (j < S.length) {
-            var sum = 0;
-            for (var i = j; i < S.length; i++) {
-                if (i == j) {
+            let sum = 0;
+            for (let i = j; i < S.length; i++) {
+                if (i === j) {
                     sum = this._sum(S, i + 1);
                 } else {
                     sum += S[i] - S[i - period];
@@ -134,12 +133,12 @@ export class BacktestSandboxService {
     }
 
     _smma(S: number[], period: number): number[] {
-        var R = this._zeros(S.length);
-        var j = this._skip(S, period);
+        const R = this._zeros(S.length);
+        const j = this._skip(S, period);
         this._set(R, 0, j, NaN);
         if (j < S.length) {
             R[j] = this._avg(S, j + 1);
-            for (var i = j + 1; i < S.length; i++) {
+            for (let i = j + 1; i < S.length; i++) {
                 R[i] = (R[i - 1] * (period - 1) + S[i]) / period;
             }
         }
@@ -153,7 +152,7 @@ export class BacktestSandboxService {
         this._set(result, 0, j, NaN);
         if (j < source.length) {
             result[j] = this._avg(source, j + 1);
-            for (var i = j + 1; i < source.length; i++) {
+            for (let i = j + 1; i < source.length; i++) {
                 result[i] = ((source[i] - result[i - 1]) * multiplier) + result[i - 1];
             }
         }
@@ -161,8 +160,8 @@ export class BacktestSandboxService {
     }
 
     _cmp(arr, start, end, cmpFunc) {
-        var v = arr[start];
-        for (var i = start; i < end; i++) {
+        let v = arr[start];
+        for (let i = start; i < end; i++) {
             v = cmpFunc(arr[i], v);
         }
         return v;
@@ -172,9 +171,9 @@ export class BacktestSandboxService {
         if (records.length < 2) {
             return NaN;
         }
-        var v = iv;
-        var pos = n !== 0 ? records.length - Math.min(records.length - 1, n) - 1 : 0;
-        for (var i = records.length - 2; i >= pos; i--) {
+        let v = iv;
+        const pos = n !== 0 ? records.length - Math.min(records.length - 1, n) - 1 : 0;
+        for (let i = records.length - 2; i >= pos; i--) {
             if (typeof (attr) !== 'undefined') {
                 v = cmpFunc(v, records[i][attr]);
             } else {
@@ -234,31 +233,32 @@ export class BacktestSandboxService {
     BOLL(records, period, multiplier) {
         period = typeof (period) === 'undefined' ? 20 : period;
         multiplier = typeof (multiplier) === 'undefined' ? 2 : multiplier;
-        var S = <number[]>this._ticks(records);
+        const S = <number[]>this._ticks(records);
+        // tslint:disable-next-line:no-var-keyword
         for (var j = period - 1; j < S.length && isNaN(S[j]); j++);
-        var UP = this._zeros(S.length);
-        var MB = this._zeros(S.length);
-        var DN = this._zeros(S.length);
+        const UP = this._zeros(S.length);
+        const MB = this._zeros(S.length);
+        const DN = this._zeros(S.length);
         this._set(UP, 0, j, NaN);
         this._set(MB, 0, j, NaN);
         this._set(DN, 0, j, NaN);
-        var sum = 0;
-        for (var i = j; i < S.length; i++) {
-            if (i == j) {
-                for (var k = 0; k < period; k++) {
+        let sum = 0;
+        for (let i = j; i < S.length; i++) {
+            if (i === j) {
+                for (let k = 0; k < period; k++) {
                     sum += S[k];
                 }
             } else {
                 sum = sum + S[i] - S[i - period];
             }
-            var ma = sum / period;
-            var d = 0;
-            for (var k = i + 1 - period; k <= i; k++) {
+            const ma = sum / period;
+            let d = 0;
+            for (let k = i + 1 - period; k <= i; k++) {
                 d += (S[k] - ma) * (S[k] - ma);
             }
-            var stdev = Math.sqrt(d / period);
-            var up = ma + (multiplier * stdev);
-            var dn = ma - (multiplier * stdev);
+            const stdev = Math.sqrt(d / period);
+            const up = ma + (multiplier * stdev);
+            const dn = ma - (multiplier * stdev);
             UP[i] = up;
             MB[i] = ma;
             DN[i] = dn;
@@ -269,25 +269,25 @@ export class BacktestSandboxService {
 
     KDJ(records: SymbolRecord[], n = 9, k = 3, d = 3): number[][] {
         const length = records.length;
-        var RSV = this._zeros(length);
+        const RSV = this._zeros(length);
         this._set(RSV, 0, n - 1, NaN);
-        var K = this._zeros(length);
-        var D = this._zeros(length);
-        var J = this._zeros(length);
+        const K = this._zeros(length);
+        const D = this._zeros(length);
+        const J = this._zeros(length);
 
-        var hs = this._zeros(length);
-        var ls = this._zeros(length);
-        for (var i = 0; i < records.length; i++) {
+        const hs = this._zeros(length);
+        const ls = this._zeros(length);
+        for (let i = 0; i < records.length; i++) {
             hs[i] = records[i].high;
             ls[i] = records[i].low;
         }
 
-        for (var i = 0; i < length; i++) {
+        for (let i = 0; i < length; i++) {
             if (i >= (n - 1)) {
-                var c = records[i].high;
-                var h = this._cmp(hs, i - (n - 1), i + 1, Math.max);
-                var l = this._cmp(ls, i - (n - 1), i + 1, Math.min);
-                RSV[i] = h != l ? (100 * ((c - l) / (h - l))) : 100;
+                const c = records[i].high;
+                const h = this._cmp(hs, i - (n - 1), i + 1, Math.max);
+                const l = this._cmp(ls, i - (n - 1), i + 1, Math.min);
+                RSV[i] = h !== l ? (100 * ((c - l) / (h - l))) : 100;
                 K[i] = (1 * RSV[i] + (k - 1) * K[i - 1]) / k;
                 D[i] = (1 * K[i] + (d - 1) * D[i - 1]) / d;
             } else {
@@ -297,25 +297,25 @@ export class BacktestSandboxService {
             J[i] = 3 * K[i] - 2 * D[i];
         }
         // remove prefix
-        for (var i = 0; i < n - 1; i++) {
+        for (let i = 0; i < n - 1; i++) {
             K[i] = D[i] = J[i] = NaN;
         }
         return [K, D, J];
     }
 
     RSI(records: SymbolRecord[], period = 14): number[] {
-        var i;
-        var n = period;
-        var rsi = this._zeros(records.length);
+        let i;
+        const n = period;
+        const rsi = this._zeros(records.length);
         this._set(rsi, 0, rsi.length, NaN);
         if (records.length < n) {
             return rsi;
         }
-        var ticks = <number[]>this._ticks(records);
-        var deltas = this._move_diff(ticks);
-        var seed = deltas.slice(0, n);
-        var up = 0;
-        var down = 0;
+        const ticks = <number[]>this._ticks(records);
+        const deltas = this._move_diff(ticks);
+        const seed = deltas.slice(0, n);
+        let up = 0;
+        let down = 0;
         for (i = 0; i < seed.length; i++) {
             if (seed[i] >= 0) {
                 up += seed[i];
@@ -325,11 +325,11 @@ export class BacktestSandboxService {
         }
         up /= n;
         down = -(down /= n);
-        var rs = down != 0 ? up / down : 0;
+        let rs = down !== 0 ? up / down : 0;
         rsi[n] = 100 - 100 / (1 + rs);
-        var delta = 0;
-        var upval = 0;
-        var downval = 0;
+        let delta = 0;
+        let upval = 0;
+        let downval = 0;
         for (i = n + 1; i < ticks.length; i++) {
             delta = deltas[i - 1];
             if (delta > 0) {
@@ -350,7 +350,7 @@ export class BacktestSandboxService {
     OBV(records: SymbolRecord[]): number[] {
         if (records.length === 0) return [];
 
-        if (isUndefined(records[0].close)) throw "argument must KLine";
+        if (isUndefined(records[0].close)) throw new Error('argument must KLine');
 
         const volumes = [];
 
@@ -372,15 +372,15 @@ export class BacktestSandboxService {
             return [];
         }
         if (typeof (records[0].high) === 'undefined') {
-            throw "argument must KLine";
+            throw new Error('argument must KLine');
         }
         period = typeof (period) === 'undefined' ? 14 : period;
-        var R = this._zeros(records.length);
-        var sum = 0;
-        var n = 0;
-        for (var i = 0; i < records.length; i++) {
-            var TR = 0;
-            if (i == 0) {
+        const R = this._zeros(records.length);
+        let sum = 0;
+        let n = 0;
+        for (let i = 0; i < records.length; i++) {
+            let TR = 0;
+            if (i === 0) {
                 TR = records[i].high - records[i].low;
             } else {
                 TR = Math.max(records[i].high - records[i].low, Math.abs(records[i].high - records[i - 1].close), Math.abs(records[i - 1].close - records[i].low));
@@ -409,13 +409,13 @@ export class BacktestSandboxService {
 
     CMF(records, periods) {
         periods = periods || 20;
-        var ret = [];
-        var sumD = 0;
-        var sumV = 0;
-        var arrD = [];
-        var arrV = [];
-        for (var i = 0; i < records.length; i++) {
-            var d = (records[i].high == records[i].low) ? 0 : (2 * records[i].high - records[i].low - records[i].high) / (records[i].high - records[i].low) * records[i].Volume;
+        const ret = [];
+        let sumD = 0;
+        let sumV = 0;
+        const arrD = [];
+        const arrV = [];
+        for (let i = 0; i < records.length; i++) {
+            const d = (records[i].high === records[i].low) ? 0 : (2 * records[i].high - records[i].low - records[i].high) / (records[i].high - records[i].low) * records[i].Volume;
             arrD.push(d);
             arrV.push(records[i].Volume);
             sumD += d;

@@ -1,15 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { mergeMap } from 'rxjs/operators';
 
 import { Filter } from '../arg-optimizer/arg-optimizer.component';
 import { CompareLogic } from '../providers/backtest.constant.service';
 
-
-
-@Pipe({
-    name: 'optimizeFilterDes'
-})
+@Pipe({ name: 'optimizeFilterDes' })
 export class OptimizeFilterDesPipe implements PipeTransform {
     constructor(
         private translate: TranslateService,

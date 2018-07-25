@@ -48,7 +48,9 @@ export abstract class ExchangePairBusinessComponent extends FoldableBusinessComp
 
     abstract platforms: Platform[];
 
-    constructor(public render: Renderer2, public eleRef: ElementRef) { super(render, eleRef) }
+    toggle = toggle;
+
+    constructor(public render: Renderer2, public eleRef: ElementRef) { super(render, eleRef); }
 
     addPair(platformId: number, stock: string) {
         if (!platformId || !stock) return;
@@ -67,6 +69,4 @@ export abstract class ExchangePairBusinessComponent extends FoldableBusinessComp
     removePair(index: number) {
         this.selectedPairs.splice(index, 1);
     }
-
-    toggle = toggle;
 }

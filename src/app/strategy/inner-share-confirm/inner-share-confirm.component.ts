@@ -1,6 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { NzModalRef } from 'ng-zorro-antd';
+
 import { StrategyShareType } from '../../interfaces/request.interface';
 
 export interface InnerShareFormModel {
@@ -11,12 +13,10 @@ export interface InnerShareFormModel {
 @Component({
     selector: 'app-inner-share-confirm',
     templateUrl: './inner-share-confirm.component.html',
-    styleUrls: ['./inner-share-confirm.component.scss']
+    styleUrls: ['./inner-share-confirm.component.scss'],
 })
 export class InnerShareConfirmComponent implements OnInit {
     @Input() set targetType(value) {
-        this._targetType = value;
-
         this.isShare = value === StrategyShareType.PUBLISH;
 
         this.tooltip = this.isShare ? 'MAX_COUNT_OF_RESOURCE_CODE_CAN_COPY' : 'MAX_CONCURRENT_TIP';
@@ -25,8 +25,6 @@ export class InnerShareConfirmComponent implements OnInit {
     }
 
     @Input() currentType: number;
-
-    private _targetType: number;
 
     form: FormGroup;
 

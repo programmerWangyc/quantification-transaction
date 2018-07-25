@@ -42,7 +42,7 @@ export interface BacktestConstantConfig extends BacktestConstantOptions {
 
 export const BACKTEST_MODES: BacktestMode[] = [
     { id: 0, name: 'SIMULATION_LEVEL_TICK' },
-    { id: 1, name: 'REAL_LEVEL_TICK' }
+    { id: 1, name: 'REAL_LEVEL_TICK' },
 ];
 
 export const ADVANCED_OPTIONS_CONFIG: AdvancedOptionConfig[] = [
@@ -65,18 +65,18 @@ export const BACKTEST_PLATFORMS: BacktestPlatform[] = [
 ];
 
 export const BACKTEST_PLATFORMS_CONFIG: BacktestConstantConfig[] = [
-    { eid: 'OKCoin_EN', DataSource: '', SymDots: 3, BasePrecision: 3, CurDots: 3, QuotePrecision: 3, Depth: 11, DepthDeep: 11, PriceTick: 0.01, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
-    { eid: 'Bitfinex', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 4, QuotePrecision: 4, Depth: 11, DepthDeep: 11, PriceTick: 0.001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
-    { eid: 'OKEX', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
-    { eid: 'Huobi', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
-    { eid: 'Futures_OKCoin', DataSource: 'this_week', SymDots: 0, BasePrecision: 0, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365, },
-    { eid: 'Futures_CTP', DataSource: 'CTP', SymDots: 0, BasePrecision: 0, CurDots: 3, QuotePrecision: 3, Depth: 2, DepthDeep: 2, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 252, },
+    { eid: 'OKCoin_EN', DataSource: '', SymDots: 3, BasePrecision: 3, CurDots: 3, QuotePrecision: 3, Depth: 11, DepthDeep: 11, PriceTick: 0.01, FeeMin: 0, FeeDenominator: 5, yearDays: 365 },
+    { eid: 'Bitfinex', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 4, QuotePrecision: 4, Depth: 11, DepthDeep: 11, PriceTick: 0.001, FeeMin: 0, FeeDenominator: 5, yearDays: 365 },
+    { eid: 'OKEX', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365 },
+    { eid: 'Huobi', DataSource: '', SymDots: 4, BasePrecision: 4, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365 },
+    { eid: 'Futures_OKCoin', DataSource: 'this_week', SymDots: 0, BasePrecision: 0, CurDots: 8, QuotePrecision: 8, Depth: 11, DepthDeep: 11, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 365 },
+    { eid: 'Futures_CTP', DataSource: 'CTP', SymDots: 0, BasePrecision: 0, CurDots: 3, QuotePrecision: 3, Depth: 2, DepthDeep: 2, PriceTick: 0.0000001, FeeMin: 0, FeeDenominator: 5, yearDays: 252 },
 ];
 
 export enum CompareLogic {
     MORE_THAN,
     LESS_THAN,
-    EQUAL
+    EQUAL,
 }
 
 export const COMPARE_OPERATORS: CompareOperator[] = [
@@ -128,7 +128,7 @@ export class BacktestConstantService extends ConstantService {
 
     BACK_END_LANGUAGES = BACK_END_LANGUAGES;
 
-    BACKTEST_RESULT_ELAPSED_RATE = 1000000000;// 没细看这个为啥是这么多0， 抄的。
+    BACKTEST_RESULT_ELAPSED_RATE = 1000000000; // 没细看这个为啥是这么多0， 抄的。
 
     constructor() {
         super();
@@ -141,11 +141,11 @@ export class BacktestConstantService extends ConstantService {
         return value < 1 ? {
             begin: 0.1,
             end: 1.0,
-            step: 0.1
+            step: 0.1,
         } : {
                 begin: Math.max(1, Math.round(value * 0.5)),
                 end: Math.max(2, Math.round(value * 1.5)),
-                step: Math.max(1, Math.round(value * 0.1))
+                step: Math.max(1, Math.round(value * 0.1)),
             };
     }
 
@@ -164,7 +164,7 @@ export class BacktestConstantService extends ConstantService {
         if (category !== CategoryType.STOCK_SECURITY && category !== CategoryType.COMMODITY_FUTURES) {
             const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD 00:00:00');
 
-            return { max: today, min: this.MIN_DATE, start: yesterday, end: today }
+            return { max: today, min: this.MIN_DATE, start: yesterday, end: today };
         } else {
             const days = category === CategoryType.COMMODITY_FUTURES ? 7 : 365;
 

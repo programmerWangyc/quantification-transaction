@@ -11,8 +11,6 @@ import {
     VariableValuePipe,
 } from './strategy.pipe';
 
-
-
 export const PIPES = [
     CommandButtonTextPipe,
     ExpireStatusPipe,

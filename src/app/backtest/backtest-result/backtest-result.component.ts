@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,7 +9,7 @@ import { BacktestService } from '../providers/backtest.service';
 @Component({
     selector: 'app-backtest-result',
     templateUrl: './backtest-result.component.html',
-    styleUrls: ['./backtest-result.component.scss']
+    styleUrls: ['./backtest-result.component.scss'],
 })
 export class BacktestResultComponent implements OnInit {
     /**

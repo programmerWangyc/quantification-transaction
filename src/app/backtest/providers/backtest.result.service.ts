@@ -1,23 +1,13 @@
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
 import * as fileSaver from 'file-saver';
 import { head, isEmpty, isNull, isNumber, isObject, last, range, zip as lodashZip } from 'lodash';
 import * as moment from 'moment';
 import { concat, from, merge, of, zip } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import {
-    bufferCount,
-    defaultIfEmpty,
-    filter,
-    map,
-    mapTo,
-    mergeMap,
-    min,
-    reduce,
-    startWith,
-    switchMap,
-    take,
-    withLatestFrom,
+    bufferCount, defaultIfEmpty, filter, map, mapTo, mergeMap, min, reduce, startWith, switchMap, take, withLatestFrom
 } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
@@ -29,21 +19,13 @@ import * as fromRoot from '../../store/index.reducer';
 import { Eid2StringPipe, ExtraContentPipe, LogPricePipe, LogTypePipe } from '../../tool/pipes/log.pipe';
 import { ServerBacktestCode } from '../backtest.config';
 import {
-    BacktestAccount,
-    BacktestAssetsAndTime,
-    BacktestLogResult,
-    BacktestMaxDrawDownDescription,
-    BacktestProfitDescription,
+    BacktestAccount, BacktestAssetsAndTime, BacktestLogResult, BacktestMaxDrawDownDescription, BacktestProfitDescription
 } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 
-export interface MaxDrawdownResultFn {
-    (maxDrawdown: number, [time, profit]: [number, number]): number;
-}
+export type MaxDrawdownResultFn = (maxDrawdown: number, [time, profit]: [number, number]) => number;
 
-export interface BacktestResultFilterer {
-    (res: fromRes.BacktestResult): boolean;
-}
+export type BacktestResultFilterer = (res: fromRes.BacktestResult) => boolean;
 
 /**
  * 获取收益，递归查找所有的 'Long' ，'Short' 字段，将各字段的值进行累积。
@@ -54,7 +36,7 @@ export interface BacktestResultFilterer {
 export function getProfit(data: Object, initial: { Profit: number; Margin: number }): { Profit: number; Margin: number } {
     return Object.entries(data).reduce((acc, [key, value]) => {
         if (key === 'Long' || key === 'Short') {
-            const { Profit, Margin } = <fromRes.BacktestResultSymbolProfit>value
+            const { Profit, Margin } = <fromRes.BacktestResultSymbolProfit>value;
 
             return { Profit: acc.Profit + Profit, Margin: acc.Margin + Margin };
         } else if (isObject(value)) {
@@ -96,11 +78,7 @@ export class BacktestBaseService extends BaseService {
             map(res => {
                 const { Result } = <fromRes.ServerBacktestResult<string>>res.result;
 
-                if (!Result) {
-                    return null;
-                } else {
-                    return <fromRes.BacktestResult>JSON.parse(Result);
-                }
+                return !Result ? null : <fromRes.BacktestResult>JSON.parse(Result);
             }),
             this.filterTruth()
         );
@@ -126,8 +104,6 @@ export class BacktestBaseService extends BaseService {
         return result;
     }
 }
-
-
 
 
 /**
@@ -166,7 +142,7 @@ export class BacktestResultService extends BacktestBaseService {
      * The name of the file to be download;
      */
     private createFileName(start: number, end: number): string {
-        return moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + "_" + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + ".csv"
+        return moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + '_' + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + '.csv';
     }
 
     /**
@@ -192,7 +168,7 @@ export class BacktestResultService extends BacktestBaseService {
         return code === ServerBacktestCode.SUCCESS || code === ServerBacktestCode.ALREADY_EXIST;
     }
 
-    //================================================Backtest status panel===============================================
+    // ================================================Backtest status panel===============================================
 
     /**
      * 获取回测的统计数据。
@@ -209,7 +185,7 @@ export class BacktestResultService extends BacktestBaseService {
                     if (isNumber(statisticRes)) {
                         return statisticRes;
                     } else {
-                        throw new TypeError(`The statistic result of ${statisticKey} is not a number.`)
+                        throw new TypeError(`The statistic result of ${statisticKey} is not a number.`);
                     }
                 }),
                 reduce((acc, cur) => acc + cur, 0)
@@ -236,7 +212,7 @@ export class BacktestResultService extends BacktestBaseService {
             map(state => state.GetTaskStatus),
             filter(state => !!state && !isNumber(state) && this.isTaskSuccessOrExist(state.Code)),
             map((status: fromRes.ServerBacktestResult<string>) => {
-                const { Code, Result } = status;
+                const { Result } = status;
 
                 const result = <fromRes.BacktestResult>JSON.parse(Result);
 
@@ -280,13 +256,13 @@ export class BacktestResultService extends BacktestBaseService {
     private calTradeCount(data: fromRes.BacktestResult): number {
         const { TradeStatus, Snapshort, Snapshorts } = data;
 
-        const acc = (acc: number, cur: number) => acc + cur;
+        const accumulate = (acc: number, cur: number) => acc + cur;
 
-        const cal = (data: fromRes.BacktestResultTradeStatus): number => Object.values(data || {}).reduce(acc, 0);
+        const cal = (status: fromRes.BacktestResultTradeStatus): number => Object.values(status || {}).reduce(accumulate, 0);
 
-        const calShort = (data: fromRes.BacktestResultSnapshot[]) => data ? data.map(item => cal(item.TradeStatus)).reduce(acc, 0) : 0;
+        const calShort = (shotArr: fromRes.BacktestResultSnapshot[]) => shotArr ? shotArr.map(item => cal(item.TradeStatus)).reduce(accumulate, 0) : 0;
 
-        const calShorts = (data: fromRes.BacktestSnapShots[]) => data && data.length > 0 ? calShort(data[data.length - 1][1]) : 0;
+        const calShorts = (shots: fromRes.BacktestSnapShots[]) => shots && shots.length > 0 ? calShort(shots[shots.length - 1][1]) : 0;
 
         return cal(TradeStatus) + calShort(Snapshort) + calShorts(Snapshorts);
     }
@@ -487,7 +463,7 @@ export class BacktestResultService extends BacktestBaseService {
             }
 
             return dayProfit;
-        }
+        };
     }
 
     /**
@@ -516,7 +492,7 @@ export class BacktestResultService extends BacktestBaseService {
             mergeMap(state => {
                 const ids = state.platformOptions.map(item => item.eid);
 
-                const platforms = this.constant.BACKTEST_PLATFORMS_CONFIG.filter(item => ids.includes(item.eid))
+                const platforms = this.constant.BACKTEST_PLATFORMS_CONFIG.filter(item => ids.includes(item.eid));
 
                 return from(platforms).pipe(
                     min((pre, cur) => pre.yearDays - cur.yearDays),
@@ -580,9 +556,9 @@ export class BacktestResultService extends BacktestBaseService {
                 winningRate: this.unwrap(this.getWinningRate(profitLogs)),
                 maxDrawdown: this.unwrap(this.getMaxDrawdown(profitLogs)).maxDrawdown,
                 sharpeRatio: this.unwrap(this.getSharpRatio(profitLogs)),
-                returns: this.unwrap(this.getAnnualizedReturns(profitLogs))
-            }
-        }
+                returns: this.unwrap(this.getAnnualizedReturns(profitLogs)),
+            };
+        };
 
         return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
             map(results => results.map(result => !!result ? generateLogResult(result) : null))
@@ -593,7 +569,7 @@ export class BacktestResultService extends BacktestBaseService {
      * 下载调优回测日志。
      */
     downloadLogs(): void {
-        const head = zip(
+        const colNames = zip(
             this.translate.get(['SEQUENCE_NUMBER', 'TIME_CONSUMING_WITH_UNIT', 'TRANSACTIONS', 'WINNING_RATE', 'MAXIMUM_WITHDRAWAL', 'SHARP', 'ESTIMATED_REVENUE', 'PROFIT']),
             this.getBacktestLogCols()
         ).pipe(
@@ -627,7 +603,7 @@ export class BacktestResultService extends BacktestBaseService {
                     (result.maxDrawdown * 100).toFixed(2) + '%',
                     result.sharpeRatio.toFixed(3),
                     result.returns.toFixed(5),
-                    result.profit.toFixed(5)
+                    result.profit.toFixed(5),
                 ] : [index + 1, ...task, ...new Array(7).fill('-')]),
                 reduce((acc: number[][], cur: number[]) => [...acc, cur], [])
             )),
@@ -635,7 +611,7 @@ export class BacktestResultService extends BacktestBaseService {
         );
 
         this.exportFile(
-            concat(head, data),
+            concat(colNames, data),
             this.getTimeRange().pipe(
                 map(({ start, end }) => 'optimize_' + this.createFileName(start, end))
             )
@@ -675,7 +651,7 @@ export class BacktestResultService extends BacktestBaseService {
 
                 const snapshotList = Snapshort ? <fromRes.BacktestSnapShots[]>[[Time, Snapshort]] : Snapshorts || [];
 
-                const snapshots = lodashZip(...snapshotList.map(([time, snapshots]) => snapshots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
+                const snapshots = lodashZip(...snapshotList.map(([time, shots]) => shots.map(item => ({ ...item, time } as fromRes.BacktestResultSnapshot))));
 
                 return Exchanges.map((exchange, index) => {
                     const account = this.getAccountInitialInfo(exchange);
@@ -683,7 +659,7 @@ export class BacktestResultService extends BacktestBaseService {
                     const source = snapshots[index];
 
                     return account.isFutures ? this.getFuturesAccount(account, source, futuresDataFilter) : this.getAccount(account, source);
-                })
+                });
             })
         );
     }
@@ -700,7 +676,7 @@ export class BacktestResultService extends BacktestBaseService {
 
         const commission = snapshot.Commission;
 
-        const profitAndLose = subSnapshots.map(snapshot => ({ time: snapshot.time, profit: this.calculateProfit(snapshot, account) }));
+        const profitAndLose = subSnapshots.map(shot => ({ time: shot.time, profit: this.calculateProfit(shot, account) }));
 
         return { ...account, returns, commission, profitAndLose };
     }
@@ -715,8 +691,8 @@ export class BacktestResultService extends BacktestBaseService {
     /**
      * 获取期货的帐户信息；
      */
-    private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[], filter: (data: fromRes.BacktestResultSnapshot) => boolean): BacktestAccount {
-        const subSnapshots = source.filter(filter);
+    private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[], filterFn: (data: fromRes.BacktestResultSnapshot) => boolean): BacktestAccount {
+        const subSnapshots = source.filter(filterFn);
 
         const snapshot = last(subSnapshots);
 
@@ -725,13 +701,14 @@ export class BacktestResultService extends BacktestBaseService {
 
         const returns = snapshot ? this.calculateFuturesProfit(snapshot, account, Profit + Margin) : 0;
 
-        const profitAndLose = subSnapshots.map(snapshot => {
-            const { Profit, Margin } = snapshot.Symbols ? getProfit(snapshot.Symbols, { Profit: 0, Margin: 0 }) : { Profit: 0, Margin: 0 };
+        const profitAndLose = subSnapshots.map(shot => {
+            // tslint:disable-next-line:no-shadowed-variable
+            const { Profit, Margin } = shot.Symbols ? getProfit(shot.Symbols, { Profit: 0, Margin: 0 }) : { Profit: 0, Margin: 0 };
 
-            const profit = this.calculateFuturesProfit(snapshot, account, Profit + Margin);
+            const profit = this.calculateFuturesProfit(shot, account, Profit + Margin);
 
             return { time: snapshot.time, profit };
-        })
+        });
 
         return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, returns, profitAndLose };
     }
@@ -776,7 +753,7 @@ export class BacktestResultService extends BacktestBaseService {
             quoteCurrency: QuoteCurrency,
             returns: 0,
             symbol: [BaseCurrency, QuoteCurrency, Id].join('_'),
-        }
+        };
     }
 
     // ============================================================非调优状态下的日志信息==================================================================
@@ -813,19 +790,19 @@ export class BacktestResultService extends BacktestBaseService {
      * Download running logs
      */
     downloadRunningLog(): void {
-        const head = this.translate.get(['TIME', 'PLATFORM', 'ORDER_ID', 'TYPE', 'PRICE', 'AMOUNT', 'INFORMATION']).pipe(
+        const cols = this.translate.get(['TIME', 'PLATFORM', 'ORDER_ID', 'TYPE', 'PRICE', 'AMOUNT', 'INFORMATION']).pipe(
             map(res => [res.TIME, res.PLATFORM, res.ORDER_ID, res.TYPE, res.PRICE, res.AMOUNT, res.INFORMATION])
         );
 
         const data = this.getRunningLogs().pipe(
             map(logs => logs.map(log => {
-                let { date, eid, orderId, logType, price, amount, extra } = log;
+                const { date, eid, orderId, logType, price, amount, extra } = log;
 
                 const platform = new Eid2StringPipe(this.constant);
 
                 const type = new LogTypePipe();
 
-                const logPrice = new LogPricePipe(this.translate)
+                const logPrice = new LogPricePipe(this.translate);
 
                 const logExtra = new ExtraContentPipe();
 
@@ -836,14 +813,14 @@ export class BacktestResultService extends BacktestBaseService {
                     this.unwrap(this.translate.get(type.transform(logType))),
                     logPrice.transform(price, logType),
                     logType < 2 ? amount : '',
-                    logExtra.transform(extra)
+                    logExtra.transform(extra),
                 ];
             })),
             take(1)
         );
 
         this.exportFile(
-            concat(head, data),
+            concat(cols, data),
             this.getTimeRange().pipe(
                 map(({ start, end }) => this.createFileName(start, end))
             )

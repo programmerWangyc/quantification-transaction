@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,12 +9,11 @@ import { BtNode, DockerSetting } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { PublicService } from '../../providers/public.service';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
-import { AgentService } from '../providers/agent.service';
 
 @Component({
     selector: 'app-agent-list',
     templateUrl: './agent-list.component.html',
-    styleUrls: ['./agent-list.component.scss']
+    styleUrls: ['./agent-list.component.scss'],
 })
 export class AgentListComponent extends BaseComponent {
     /**
@@ -52,7 +52,6 @@ export class AgentListComponent extends BaseComponent {
     isLoading: Observable<boolean>;
 
     constructor(
-        private agentService: AgentService,
         private nodeService: BtNodeService,
         private publicService: PublicService,
         private wdService: WatchDogService,

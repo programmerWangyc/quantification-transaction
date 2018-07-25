@@ -10,7 +10,7 @@
             true,
             "check-space"
         ],
-        "curly": true,
+        "curly": [true, "ignore-same-line"],
         "deprecation": {
             "severity": "warn"
         },
@@ -28,7 +28,7 @@
         "interface-over-type-literal": true,
         "label-position": true,
         "max-line-length": [
-            true,
+            false,
             {
                 "limit": 120,
                 "ignore-pattern": "//"
@@ -47,7 +47,7 @@
             }
         ],
         "no-arg": true,
-        "no-bitwise": true,
+        "no-bitwise": false,
         "no-console": [
             true,
             "debug",
@@ -60,11 +60,12 @@
         "no-debugger": true,
         "no-duplicate-super": true,
         "no-empty": false,
-        "no-empty-interface": true,
+        "no-empty-interface": false,
         "no-eval": true,
         "no-inferrable-types": [
             true,
-            "ignore-params"
+            "ignore-params",
+            "ignore-properties"
         ],
         "no-misused-new": true,
         "no-non-null-assertion": true,
@@ -74,7 +75,7 @@
         "no-switch-case-fall-through": true,
         "no-trailing-whitespace": true,
         "no-unnecessary-initializer": true,
-        "no-unused-expression": true,
+        "no-unused-expression": [true, "allow-fast-null-checks"],
         "no-use-before-declare": true,
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
@@ -122,7 +123,7 @@
         "directive-selector": [
             true,
             "attribute",
-            "app",
+            "",
             "camelCase"
         ],
         "component-selector": [
@@ -137,7 +138,7 @@
         "use-host-property-decorator": true,
         "no-input-rename": true,
         "no-output-rename": true,
-        "use-life-cycle-interface": true,
+        "use-life-cycle-interface": false,
         "use-pipe-transform-interface": true,
         "component-class-suffix": true,
         "directive-class-suffix": true,
@@ -145,8 +146,8 @@
             "multiline": {
                 "objects": "always",
                 "arrays": "always",
-                "functions": "never",
-                "typeLiterals": "ignore"
+                "functions": "ignore",
+                "typeLiterals": "always"
             },
             "singleline": {
                 "objects": "never",

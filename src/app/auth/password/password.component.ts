@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
 import { combineLatest, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -12,7 +13,7 @@ import { passwordMatchValidator, passwordValidator } from '../../validators/vali
 @Component({
     selector: 'app-password',
     templateUrl: './password.component.html',
-    styleUrls: ['./password.component.scss']
+    styleUrls: ['./password.component.scss'],
 })
 export class PasswordComponent extends BaseComponent {
 
@@ -31,7 +32,6 @@ export class PasswordComponent extends BaseComponent {
         private fb: FormBuilder,
         private authService: AuthService,
         private activatedRoute: ActivatedRoute,
-        private route: Router,
     ) {
         super();
         this.createFrom();
@@ -63,7 +63,7 @@ export class PasswordComponent extends BaseComponent {
     createFrom(): void {
         this.pwdForm = this.fb.group({
             password: ['', passwordValidator],
-            confirmPassword: ['', passwordValidator]
+            confirmPassword: ['', passwordValidator],
         }, { validator: passwordMatchValidator });
     }
 

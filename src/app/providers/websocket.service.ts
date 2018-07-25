@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { QueueingSubject } from 'queueing-subject/lib';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import websocketConnect, { IWebSocket } from 'rxjs-websockets/lib';
 import { delay, filter, map, retryWhen, share, tap } from 'rxjs/operators';
 
@@ -29,12 +30,6 @@ export class WebsocketService {
 
     public messages: Observable<ResponseBody>;
 
-    private connectionStatus: Observable<number>
-
-    private connectionStatusSubscription: Subscription;
-
-    private msgSubscription: Subscription;
-
     constructor(
         private tip: TipService,
         private constant: ConstantService
@@ -42,20 +37,20 @@ export class WebsocketService {
         this.connect();
     }
 
-    send(data: WsRequest): Observable<ResponseBody> {
+    send(request: WsRequest): Observable<ResponseBody> {
 
         const param = {
-            method: data.method,
-            params: data.params,
+            method: request.method,
+            params: request.params,
             token: localStorage.getItem(LocalStorageKey.token),
             version: this.constant.VERSION,
-            callbackId: data.callbackId,
-        }
+            callbackId: request.callbackId,
+        };
 
-        const request = this.deflate(param);
+        const info = this.deflate(param);
 
         // console.log(param);
-        this.inputStream.next(request);
+        this.inputStream.next(info);
 
         return this.messages.pipe(filter(data => data.callbackId === param.callbackId));
     }
@@ -69,7 +64,7 @@ export class WebsocketService {
             ws.binaryType = 'arraybuffer';
 
             return ws;
-        }
+        };
 
         const { messages, connectionStatus } = websocketConnect(this.url, this.inputStream, [], webSocketFactory);
 
@@ -89,20 +84,20 @@ export class WebsocketService {
                 share()
             );
 
-        this.connectionStatus = connectionStatus;
+        // this.connectionStatus = connectionStatus;
 
-        this.connectionStatusSubscription = connectionStatus.subscribe(numberConnected => {
+        connectionStatus.subscribe(numberConnected => {
             console.log('current websocket status: ', numberConnected);
             numberConnected && this.tip.messageSuccess('NETWORK_CONNECTED');
         });
 
         /**
-         *  The messages flow is 'HOT', so refCount keep on it, it would be release current resource as soon as the refCount is equals to zero.
+         * The messages flow is 'HOT', so refCount keep on it, it would be release current resource as soon as the refCount is equals to zero.
          * When next subscription come, the websocket instance would be re-initialized. So in order to prevent duplicate websocket instance object, we need
          * to keep at least one observer on this stream, the observer is the publicEffect observer provided by ngrx library. If no one plays this role, please
          * de-comment the code blow.
          */
-        this.msgSubscription = this.messages.subscribe(() => { });
+        this.messages.subscribe(() => { });
     }
 
     deflate(source: Object): ArrayBuffer {
@@ -120,7 +115,7 @@ export class WebsocketService {
             buf = new Buffer(8 + compressedSize);
             buf.writeUInt32LE(0x184D2204);
             buf.writeUInt32LE(input.length, 4);
-            for (var i = 0; i < output.length; i++) {
+            for (let i = 0; i < output.length; i++) {
                 buf[i + 8] = output[i];
             }
         } else {
@@ -136,8 +131,8 @@ export class WebsocketService {
     unfold(data: ArrayBuffer | string): string {
         const input: Buffer = new Buffer(data);
 
-        if (input.readUInt32LE(0) != 0x184D2204) {
-            console.log("invalid lz4 format");
+        if (input.readUInt32LE(0) !== 0x184D2204) {
+            console.log('invalid lz4 format');
             return '';
         }
 

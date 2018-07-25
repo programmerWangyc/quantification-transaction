@@ -44,13 +44,12 @@ export class AuthEffect extends BaseEffect {
     }
 }
 
-function isAuthFail(res: LoginResponse): boolean
+function isAuthFail(res: LoginResponse): boolean;
 function isAuthFail(res: SignupResponse): boolean {
     return res.result !== 0;
 }
 
-function isPwdFail(res: ResetPasswordResponse): boolean
-function isPwdFail(res: VerifyPasswordResponse): boolean
-function isPwdFail(res: SetPasswordResponse): boolean {
+function isPwdFail(res: ResetPasswordResponse): boolean;
+function isPwdFail(res: VerifyPasswordResponse | SetPasswordResponse): boolean {
     return !res.result;
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 import { combineLatest, Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
@@ -7,11 +8,10 @@ import { Robot, RobotStatus } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { RobotService } from '../providers/robot.service';
 
-
 @Component({
     selector: 'app-robot-duration',
     templateUrl: './robot-duration.component.html',
-    styleUrls: ['./robot-duration.component.scss']
+    styleUrls: ['./robot-duration.component.scss'],
 })
 export class RobotDurationComponent implements OnInit {
 
@@ -38,10 +38,9 @@ export class RobotDurationComponent implements OnInit {
     ngOnInit() {
         const predicate = (robot: Robot) => !robot.is_sandbox && this.robotService.isNormalStatus(robot);
 
-        const availableRobotCount = this.robotService.getRobotCountByStatus(predicate)
-            .pipe(
-                map(robots => Math.max(1, robots.length))
-            );
+        const availableRobotCount = this.robotService.getRobotCountByStatus(predicate).pipe(
+            map(robots => Math.max(1, robots.length))
+        );
 
         // const availableHours = availableRobotCount
         //     .pipe(
@@ -57,11 +56,10 @@ export class RobotDurationComponent implements OnInit {
             availableRobotCount,
             this.publicService.getBalance(),
             this.robotService.getRobotDeadLine()
-        )
-            .pipe(
-                map(([count, balance, datetime]) => ({ count, hours: (balance / 1e8 / count / 0.125).toFixed(2), datetime })),
-                mergeMap(data => this.translate.get('ROBOTS_AVAILABLE_STATE_STATISTICS', data))
-            );
+        ).pipe(
+            map(([count, balance, datetime]) => ({ count, hours: (balance / 1e8 / count / 0.125).toFixed(2), datetime })),
+            mergeMap(data => this.translate.get('ROBOTS_AVAILABLE_STATE_STATISTICS', data))
+        );
 
         this.balance = this.publicService.getBalance();
 
@@ -69,10 +67,9 @@ export class RobotDurationComponent implements OnInit {
 
         this.runningRobotCount = this.robotService.getRobotCountByStatus((robot: Robot) => robot.status === RobotStatus.RUNNING).pipe(map(robots => robots.length));
 
-        this.robotTotal = this.robotService.getRobots()
-            .pipe(
-                map(robots => robots.length)
-            );
+        this.robotTotal = this.robotService.getRobots().pipe(
+            map(robots => robots.length)
+        );
 
         this.grossProfit = this.robotService.getGrossProfit();
     }

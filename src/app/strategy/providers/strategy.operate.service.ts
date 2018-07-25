@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription, zip } from 'rxjs';
 import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
@@ -18,8 +19,6 @@ import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confi
 import { ShareStrategyStateSnapshot } from '../strategy.interface';
 import { StrategyConstantService } from './strategy.constant.service';
 import { StrategyService } from './strategy.service';
-
-
 
 export enum GenKeyType {
     COPY_CODE,
@@ -45,8 +44,8 @@ export class StrategyOperateService extends StrategyService {
 
     //  =======================================================Serve Request=======================================================
 
-    launchShareStrategy(params: Observable<ShareStrategyStateSnapshot>): Subscription {
-        return this.process.processShareStrategy(params.pipe(
+    launchShareStrategy(paramsObs: Observable<ShareStrategyStateSnapshot>): Subscription {
+        return this.process.processShareStrategy(paramsObs.pipe(
             switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent).pipe(
                 tap(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType])),
                 filter(confirmType => confirmType !== ConfirmType.INNER),
@@ -60,12 +59,12 @@ export class StrategyOperateService extends StrategyService {
 
     launchGenKey(): Subscription {
         return this.process.processGenKey(this.genKey$.pipe(
-            switchMap(([params, confirmType]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
+            switchMap(([params]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
                 map((form: InnerShareFormModel) => ({
                     type: params.type === fromReq.StrategyShareType.PUBLISH ? GenKeyType.COPY_CODE : GenKeyType.REGISTER_CODE,
                     strategyId: params.id,
                     days: form.days,
-                    concurrent: form.concurrent
+                    concurrent: form.concurrent,
                 }))
             )
             )
@@ -77,14 +76,14 @@ export class StrategyOperateService extends StrategyService {
         return this.process.processVerifyKey(params);
     }
 
-    launchDeleteStrategy(params: Observable<fromRes.Strategy>): Subscription {
-        return this.process.processDeleteStrategy(params.pipe(
+    launchDeleteStrategy(paramsObs: Observable<fromRes.Strategy>): Subscription {
+        return this.process.processDeleteStrategy(paramsObs.pipe(
             switchMap((params: fromRes.Strategy) => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
                 mergeMap(content => {
                     const modal: NzModalRef = this.nzModal.confirm({
                         nzContent: content,
                         nzOnOk: () => modal.close(true),
-                    })
+                    });
 
                     return modal.afterClose.pipe(
                         this.filterTruth()
@@ -97,9 +96,9 @@ export class StrategyOperateService extends StrategyService {
         );
     }
 
-    launchSaveStrategy(params: Observable<fromReq.SaveStrategyRequest>): Subscription {
+    launchSaveStrategy(paramsObs: Observable<fromReq.SaveStrategyRequest>): Subscription {
         return this.process.processSaveStrategy(
-            params.pipe(
+            paramsObs.pipe(
                 tap(params => params.name === '' && this.tip.messageError('STRATEGY_NAME_EMPTY_ERROR')),
                 filter(params => !!params.name)
             )
@@ -158,8 +157,8 @@ export class StrategyOperateService extends StrategyService {
                     nzOkText: label.I_KNOWN,
                     nzCancelText: null,
                     nzTitle: type === GenKeyType.COPY_CODE ? label.COPY_CODE : label.REGISTER_CODE,
-                    nzWidth: '30vw'
-                })
+                    nzWidth: '30vw',
+                });
             });
     }
 
@@ -190,14 +189,14 @@ export class StrategyOperateService extends StrategyService {
     //  =======================================================Shortcut methods=======================================================
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
-        const { id, type, currentType } = param;
+        const { type, currentType } = param;
 
 
         const modal = this.nzModal.create({
             nzContent: component,
             nzComponentParams: { targetType: type, currentType },
             nzFooter: null,
-        })
+        });
 
         return modal.afterClose.pipe(
             this.filterTruth()
@@ -207,7 +206,7 @@ export class StrategyOperateService extends StrategyService {
     //  =======================================================Error handler=======================================================
 
     handleShareStrategyError(): Subscription {
-        return this.error.handleResponseError(this.getShareStrategyResponse())
+        return this.error.handleResponseError(this.getShareStrategyResponse());
     }
 
     handleGenKeyError(): Subscription {

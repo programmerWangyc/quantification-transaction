@@ -11,15 +11,14 @@ import { PublicService } from '../../providers/public.service';
 import { RobotService } from '../../robot/providers/robot.service';
 
 
-
 @Component({
     selector: 'app-robot-detail',
     templateUrl: './robot-detail.component.html',
-    styleUrls: ['./robot-detail.component.scss']
+    styleUrls: ['./robot-detail.component.scss'],
 })
 export class RobotDetailComponent extends BaseComponent {
 
-    paths: Breadcrumb[]
+    paths: Breadcrumb[];
 
     subscription$$: Subscription;
 
@@ -31,7 +30,9 @@ export class RobotDetailComponent extends BaseComponent {
         private publicService: PublicService,
         private btNodeService: BtNodeService,
         private platformService: PlatformService,
-    ) { super() }
+    ) {
+        super();
+    }
 
     ngOnInit() {
         this.initialModel();
@@ -48,7 +49,7 @@ export class RobotDetailComponent extends BaseComponent {
     }
 
     launch() {
-        const id = this.activatedRoute.paramMap.pipe(
+        const idObs = this.activatedRoute.paramMap.pipe(
             map(param => +param.get('id'))
         );
 
@@ -57,10 +58,10 @@ export class RobotDetailComponent extends BaseComponent {
             distinctUntilChanged(),
         );
 
-        const requestById = id.pipe(map(id => ({ id })));
+        const requestById = idObs.pipe(map(id => ({ id })));
 
         const isMain = isMainAccount.pipe(
-            mergeMapTo(id.pipe(
+            mergeMapTo(idObs.pipe(
                 mapTo(true)
             ))
         );
@@ -73,7 +74,7 @@ export class RobotDetailComponent extends BaseComponent {
             .add(this.robotService.handleRobotDetailError())
             .add(this.robotService.handleSubscribeRobotError())
             .add(this.btNodeService.handleNodeListError())
-            .add(this.platformService.handlePlatformListError())
+            .add(this.platformService.handlePlatformListError());
     }
 
     ngOnDestroy() {

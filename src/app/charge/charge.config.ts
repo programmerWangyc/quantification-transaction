@@ -5,13 +5,13 @@ export enum PaymentMethod {
     PAY_PAL,
 }
 
-//FIXME: unused;
+// !FIXME: unused;
 export enum RentPaymentInfo {
     timestamp,
     strategyId,
     rentPeriod,
     uid,
-    paymentMethod
+    paymentMethod,
 }
 
 export enum ChargePaymentInfo {
@@ -19,5 +19,5 @@ export enum ChargePaymentInfo {
     days,
     amount,
     uid,
-    paymentMethod
+    paymentMethod,
 }

@@ -2,39 +2,17 @@ import { Action } from '@ngrx/store';
 
 import { VariableOverview } from '../../interfaces/app.interface';
 import {
-    CommandRobotRequest,
-    DeleteRobotRequest,
-    GetRobotDetailRequest,
-    GetRobotListRequest,
-    GetRobotLogsRequest,
-    ModifyRobotRequest,
-    PluginRunRequest,
-    PublicRobotRequest,
-    RestartRobotRequest,
-    SaveRobotRequest,
-    SetWDRequest,
-    StopRobotRequest,
-    SubscribeRobotRequest,
-    WsRequest,
+    CommandRobotRequest, DeleteRobotRequest, GetRobotDetailRequest, GetRobotListRequest, GetRobotLogsRequest,
+    ModifyRobotRequest, PluginRunRequest, PublicRobotRequest, RestartRobotRequest, SaveRobotRequest, SetWDRequest,
+    StopRobotRequest, SubscribeRobotRequest, WsRequest
 } from '../../interfaces/request.interface';
 import {
-    CommandRobotResponse,
-    DeleteRobotResponse,
-    GetRobotDetailResponse,
-    GetRobotListResponse,
-    GetRobotLogsResponse,
-    ModifyRobotResponse,
-    PluginRunResponse,
-    PublicRobotResponse,
-    RestartRobotResponse,
-    SaveRobotResponse,
-    ServerSendRobotMessage,
-    StopRobotResponse,
-    SubscribeRobotResponse,
+    CommandRobotResponse, DeleteRobotResponse, GetRobotDetailResponse, GetRobotListResponse, GetRobotLogsResponse,
+    ModifyRobotResponse, PluginRunResponse, PublicRobotResponse, RestartRobotResponse, SaveRobotResponse,
+    ServerSendRobotMessage, StopRobotResponse, SubscribeRobotResponse
 } from '../../interfaces/response.interface';
 import { ImportedArg } from '../../robot/robot.interface';
 import { ApiAction } from '../base.action';
-
 
 // =====================================================Server send event=========================================
 
@@ -52,7 +30,7 @@ export enum RobotListOrder {
     start,
     limit,
     status,
-    length
+    length,
 }
 
 class GetRobotListAction extends ApiAction {
@@ -64,7 +42,7 @@ class GetRobotListAction extends ApiAction {
 
     order = RobotListOrder;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const GET_ROBOT_LIST = '[Robot] GET_ROBOT_LIST';
@@ -74,7 +52,7 @@ export class GetRobotListRequestAction extends GetRobotListAction implements Act
 
     public allowSeparateRequest = true;
 
-    constructor(public payload: GetRobotListRequest) { super() }
+    constructor(public payload: GetRobotListRequest) { super(); }
 }
 
 export const GET_ROBOT_LIST_FAIL = '[Robot] GET_ROBOT_LIST_FAIL';
@@ -82,7 +60,7 @@ export const GET_ROBOT_LIST_FAIL = '[Robot] GET_ROBOT_LIST_FAIL';
 export class GetRobotListFailAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST_FAIL;
 
-    constructor(public payload: GetRobotListResponse) { super() }
+    constructor(public payload: GetRobotListResponse) { super(); }
 }
 
 export const GET_ROBOT_LIST_SUCCESS = '[Robot] GET_ROBOT_LIST_SUCCESS';
@@ -90,7 +68,7 @@ export const GET_ROBOT_LIST_SUCCESS = '[Robot] GET_ROBOT_LIST_SUCCESS';
 export class GetRobotListSuccessAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST_SUCCESS;
 
-    constructor(public payload: GetRobotListResponse) { super() }
+    constructor(public payload: GetRobotListResponse) { super(); }
 }
 
 // =====================================================Public robot=========================================
@@ -98,7 +76,7 @@ export class GetRobotListSuccessAction extends GetRobotListAction implements Act
 export enum PublicRobotOrder {
     id,
     type,
-    length
+    length,
 }
 
 class PublicRobotAction extends ApiAction {
@@ -110,7 +88,7 @@ class PublicRobotAction extends ApiAction {
 
     order = PublicRobotOrder;
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const PUBLIC_ROBOT = '[Robot] PUBLISH_ROBOT';
@@ -120,7 +98,7 @@ export class PublicRobotRequestAction extends PublicRobotAction implements Actio
 
     allowSeparateRequest = true;
 
-    constructor(public payload: PublicRobotRequest) { super() }
+    constructor(public payload: PublicRobotRequest) { super(); }
 }
 
 export const PUBLIC_ROBOT_FAIL = '[Robot] PUBLISH_ROBOT_FAIL';
@@ -128,7 +106,7 @@ export const PUBLIC_ROBOT_FAIL = '[Robot] PUBLISH_ROBOT_FAIL';
 export class PublicRobotFailAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT_FAIL;
 
-    constructor(public payload: PublicRobotResponse) { super() }
+    constructor(public payload: PublicRobotResponse) { super(); }
 }
 
 export const PUBLIC_ROBOT_SUCCESS = '[Robot] PUBLISH_ROBOT_SUCCESS';
@@ -136,7 +114,7 @@ export const PUBLIC_ROBOT_SUCCESS = '[Robot] PUBLISH_ROBOT_SUCCESS';
 export class PublicRobotSuccessAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT_SUCCESS;
 
-    constructor(public payload: PublicRobotResponse) { super() }
+    constructor(public payload: PublicRobotResponse) { super(); }
 }
 
 // =====================================================Robot Detail=========================================
@@ -150,7 +128,7 @@ class GetRobotDetailAction extends ApiAction {
 
     order = null;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const GET_ROBOT_DETAIL = '[Robot] GET_ROBOT_DETAIL';
@@ -160,7 +138,7 @@ export class GetRobotDetailRequestAction extends GetRobotDetailAction implements
 
     allowSeparateRequest = true;
 
-    constructor(public payload: GetRobotDetailRequest) { super() }
+    constructor(public payload: GetRobotDetailRequest) { super(); }
 }
 
 export const GET_ROBOT_DETAIL_FAIL = '[Robot] GET_ROBOT_DETAIL_FAIL';
@@ -168,7 +146,7 @@ export const GET_ROBOT_DETAIL_FAIL = '[Robot] GET_ROBOT_DETAIL_FAIL';
 export class GetRobotDetailFailAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL_FAIL;
 
-    constructor(public payload: GetRobotDetailResponse) { super() }
+    constructor(public payload: GetRobotDetailResponse) { super(); }
 }
 
 export const GET_ROBOT_DETAIL_SUCCESS = '[Robot] GET_ROBOT_DETAIL_SUCCESS';
@@ -176,7 +154,7 @@ export const GET_ROBOT_DETAIL_SUCCESS = '[Robot] GET_ROBOT_DETAIL_SUCCESS';
 export class GetRobotDetailSuccessAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL_SUCCESS;
 
-    constructor(public payload: GetRobotDetailResponse) { super() }
+    constructor(public payload: GetRobotDetailResponse) { super(); }
 }
 
 // =====================================================Robot Subscribe=========================================
@@ -190,7 +168,7 @@ class SubscribeRobotAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const SUBSCRIBE_ROBOT = '[Robot] SUBSCRIBE_ROBOT';
@@ -200,7 +178,7 @@ export class SubscribeRobotRequestAction extends SubscribeRobotAction implements
 
     // allowSeparateRequest = true;
 
-    constructor(public payload: SubscribeRobotRequest, public allowSeparateRequest: boolean) { super() }
+    constructor(public payload: SubscribeRobotRequest, public allowSeparateRequest: boolean) { super(); }
 }
 
 export const SUBSCRIBE_ROBOT_FAIL = '[Robot] SUBSCRIBE_ROBOT_FAIL';
@@ -208,7 +186,7 @@ export const SUBSCRIBE_ROBOT_FAIL = '[Robot] SUBSCRIBE_ROBOT_FAIL';
 export class SubscribeRobotFailAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT_FAIL;
 
-    constructor(public payload: SubscribeRobotResponse) { super() }
+    constructor(public payload: SubscribeRobotResponse) { super(); }
 }
 
 export const SUBSCRIBE_ROBOT_SUCCESS = '[Robot] SUBSCRIBE_ROBOT_SUCCESS';
@@ -216,7 +194,7 @@ export const SUBSCRIBE_ROBOT_SUCCESS = '[Robot] SUBSCRIBE_ROBOT_SUCCESS';
 export class SubscribeRobotSuccessAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT_SUCCESS;
 
-    constructor(public payload: SubscribeRobotResponse) { super() }
+    constructor(public payload: SubscribeRobotResponse) { super(); }
 }
 
 // =====================================================Robot logs=========================================
@@ -237,7 +215,7 @@ export enum RobotLogsOrder {
     chartLimit,
     chartUpdateBaseId,
     chartUpdateTime,
-    length
+    length,
 }
 
 class GetRobotLogsAction extends ApiAction {
@@ -249,7 +227,7 @@ class GetRobotLogsAction extends ApiAction {
 
     order = RobotLogsOrder;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const GET_ROBOT_LOGS = '[Robot] GET_ROBOT_LOGS';
@@ -257,7 +235,7 @@ export const GET_ROBOT_LOGS = '[Robot] GET_ROBOT_LOGS';
 export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS;
 
-    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean, public isSyncAction = false) { super() }
+    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean, public isSyncAction = false) { super(); }
 }
 
 export const GET_ROBOT_LOGS_FAIL = '[Robot] GET_ROBOT_LOGS_FAIL';
@@ -265,7 +243,7 @@ export const GET_ROBOT_LOGS_FAIL = '[Robot] GET_ROBOT_LOGS_FAIL';
 export class GetRobotLogsFailAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS_FAIL;
 
-    constructor(public payload: GetRobotLogsResponse) { super() }
+    constructor(public payload: GetRobotLogsResponse) { super(); }
 }
 
 export const GET_ROBOT_LOGS_SUCCESS = '[Robot] GET_ROBOT_LOGS_SUCCESS';
@@ -273,7 +251,7 @@ export const GET_ROBOT_LOGS_SUCCESS = '[Robot] GET_ROBOT_LOGS_SUCCESS';
 export class GetRobotLogsSuccessAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS_SUCCESS;
 
-    constructor(public payload: GetRobotLogsResponse) { super() }
+    constructor(public payload: GetRobotLogsResponse) { super(); }
 }
 
 // =====================================================Robot restart=========================================
@@ -287,7 +265,7 @@ class RestartRobotAction extends ApiAction {
 
     order = null;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const RESTART_ROBOT = '[Robot] RESTART_ROBOT';
@@ -297,7 +275,7 @@ export class RestartRobotRequestAction extends RestartRobotAction implements Act
 
     allowSeparateRequest = true;
 
-    constructor(public payload: RestartRobotRequest) { super() }
+    constructor(public payload: RestartRobotRequest) { super(); }
 }
 
 export const RESTART_ROBOT_FAIL = '[Robot] RESTART_ROBOT_FAIL';
@@ -305,7 +283,7 @@ export const RESTART_ROBOT_FAIL = '[Robot] RESTART_ROBOT_FAIL';
 export class RestartRobotFailAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT_FAIL;
 
-    constructor(public payload: RestartRobotResponse) { super() }
+    constructor(public payload: RestartRobotResponse) { super(); }
 }
 
 export const RESTART_ROBOT_SUCCESS = '[Robot] RESTART_ROBOT_SUCCESS';
@@ -313,7 +291,7 @@ export const RESTART_ROBOT_SUCCESS = '[Robot] RESTART_ROBOT_SUCCESS';
 export class RestartRobotSuccessAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT_SUCCESS;
 
-    constructor(public payload: RestartRobotResponse) { super() }
+    constructor(public payload: RestartRobotResponse) { super(); }
 }
 
 // =====================================================Robot stop=========================================
@@ -327,7 +305,7 @@ class StopRobotAction extends ApiAction {
 
     order = null;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const STOP_ROBOT = '[Robot] STOP_ROBOT';
@@ -337,7 +315,7 @@ export class StopRobotRequestAction extends StopRobotAction implements Action {
 
     allowSeparateRequest = true;
 
-    constructor(public payload: StopRobotRequest) { super() }
+    constructor(public payload: StopRobotRequest) { super(); }
 }
 
 export const STOP_ROBOT_FAIL = '[Robot] STOP_ROBOT_FAIL';
@@ -345,7 +323,7 @@ export const STOP_ROBOT_FAIL = '[Robot] STOP_ROBOT_FAIL';
 export class StopRobotFailAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT_FAIL;
 
-    constructor(public payload: StopRobotResponse) { super() }
+    constructor(public payload: StopRobotResponse) { super(); }
 }
 
 export const STOP_ROBOT_SUCCESS = '[Robot] STOP_ROBOT_SUCCESS';
@@ -353,7 +331,7 @@ export const STOP_ROBOT_SUCCESS = '[Robot] STOP_ROBOT_SUCCESS';
 export class StopRobotSuccessAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT_SUCCESS;
 
-    constructor(public payload: StopRobotResponse) { super() }
+    constructor(public payload: StopRobotResponse) { super(); }
 }
 
 // ======================================================Modify robot=========================================
@@ -366,7 +344,7 @@ export enum ModifyRobotOrder {
     platform,
     stocks,
     args,
-    length
+    length,
 }
 
 class ModifyRobotAction extends ApiAction {
@@ -378,7 +356,7 @@ class ModifyRobotAction extends ApiAction {
 
     noneParams = false;
 
-    constructor() { super() }
+    constructor() { super(); }
 }
 
 export const MODIFY_ROBOT = '[Robot] MODIFY_ROBOT';
@@ -388,7 +366,7 @@ export class ModifyRobotRequestAction extends ModifyRobotAction implements Actio
 
     allowSeparateRequest = true;
 
-    constructor(public payload: ModifyRobotRequest) { super() };
+    constructor(public payload: ModifyRobotRequest) { super(); }
 }
 
 export const MODIFY_ROBOT_FAIL = '[Robot] MODIFY_ROBOT_FAIL';
@@ -396,7 +374,7 @@ export const MODIFY_ROBOT_FAIL = '[Robot] MODIFY_ROBOT_FAIL';
 export class ModifyRobotFailAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT_FAIL;
 
-    constructor(public payload: ModifyRobotResponse) { super() }
+    constructor(public payload: ModifyRobotResponse) { super(); }
 }
 
 export const MODIFY_ROBOT_SUCCESS = '[Robot] MODIFY_ROBOT_SUCCESS';
@@ -404,7 +382,7 @@ export const MODIFY_ROBOT_SUCCESS = '[Robot] MODIFY_ROBOT_SUCCESS';
 export class ModifyRobotSuccessAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT_SUCCESS;
 
-    constructor(public payload: ModifyRobotResponse) { super() }
+    constructor(public payload: ModifyRobotResponse) { super(); }
 }
 
 // ======================================================Command robot=========================================
@@ -412,7 +390,7 @@ export class ModifyRobotSuccessAction extends ModifyRobotAction implements Actio
 export enum CommandRobotOrder {
     id,
     command,
-    length
+    length,
 }
 
 export class CommandRobotAction extends ApiAction {
@@ -424,7 +402,7 @@ export class CommandRobotAction extends ApiAction {
 
     command = 'CommandRobot';
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const COMMAND_ROBOT = '[Robot] COMMAND_ROBOT';
@@ -434,7 +412,7 @@ export class CommandRobotRequestAction extends CommandRobotAction implements Act
 
     allowSeparateRequest = true;
 
-    constructor(public payload: CommandRobotRequest) { super() }
+    constructor(public payload: CommandRobotRequest) { super(); }
 }
 
 export const COMMAND_ROBOT_FAIL = '[Robot] COMMAND_ROBOT_FAIL';
@@ -442,7 +420,7 @@ export const COMMAND_ROBOT_FAIL = '[Robot] COMMAND_ROBOT_FAIL';
 export class CommandRobotFailAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT_FAIL;
 
-    constructor(public payload: CommandRobotResponse) { super() }
+    constructor(public payload: CommandRobotResponse) { super(); }
 }
 
 export const COMMAND_ROBOT_SUCCESS = '[Robot] COMMAND_ROBOT_SUCCESS';
@@ -450,7 +428,7 @@ export const COMMAND_ROBOT_SUCCESS = '[Robot] COMMAND_ROBOT_SUCCESS';
 export class CommandRobotSuccessAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT_SUCCESS;
 
-    constructor(public payload: CommandRobotResponse) { super() }
+    constructor(public payload: CommandRobotResponse) { super(); }
 }
 
 // ======================================================Delete robot=========================================
@@ -458,7 +436,7 @@ export class CommandRobotSuccessAction extends CommandRobotAction implements Act
 export enum DeleteRobotOrder {
     id,
     checked,
-    length
+    length,
 }
 
 export class DeleteRobotAction extends ApiAction {
@@ -470,7 +448,7 @@ export class DeleteRobotAction extends ApiAction {
 
     command = 'DeleteRobot';
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const DELETE_ROBOT = '[Robot] DELETE_ROBOT';
@@ -480,7 +458,7 @@ export class DeleteRobotRequestAction extends DeleteRobotAction implements Actio
 
     allowSeparateRequest = true;
 
-    constructor(public payload: DeleteRobotRequest) { super() }
+    constructor(public payload: DeleteRobotRequest) { super(); }
 }
 
 export const DELETE_ROBOT_FAIL = '[Robot] DELETE_ROBOT_FAIL';
@@ -488,7 +466,7 @@ export const DELETE_ROBOT_FAIL = '[Robot] DELETE_ROBOT_FAIL';
 export class DeleteRobotFailAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT_FAIL;
 
-    constructor(public payload: DeleteRobotResponse) { super() }
+    constructor(public payload: DeleteRobotResponse) { super(); }
 }
 
 export const DELETE_ROBOT_SUCCESS = '[Robot] DELETE_ROBOT_SUCCESS';
@@ -496,7 +474,7 @@ export const DELETE_ROBOT_SUCCESS = '[Robot] DELETE_ROBOT_SUCCESS';
 export class DeleteRobotSuccessAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT_SUCCESS;
 
-    constructor(public payload: DeleteRobotResponse) { super() }
+    constructor(public payload: DeleteRobotResponse) { super(); }
 }
 
 // ======================================================Create robot=========================================
@@ -509,7 +487,7 @@ export enum SaveRobotOrder {
     pairExchanges,
     pairStocks,
     nodeId,
-    length
+    length,
 }
 
 export class SaveRobotAction extends ApiAction {
@@ -521,7 +499,7 @@ export class SaveRobotAction extends ApiAction {
 
     command = 'SaveRobot';
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const SAVE_ROBOT = '[Robot] SAVE_ROBOT';
@@ -531,7 +509,7 @@ export class SaveRobotRequestAction extends SaveRobotAction implements Action {
 
     allowSeparateRequest = true;
 
-    constructor(public payload: SaveRobotRequest) { super() }
+    constructor(public payload: SaveRobotRequest) { super(); }
 }
 
 export const SAVE_ROBOT_FAIL = '[Robot] SAVE_ROBOT_FAIL';
@@ -539,7 +517,7 @@ export const SAVE_ROBOT_FAIL = '[Robot] SAVE_ROBOT_FAIL';
 export class SaveRobotFailAction extends SaveRobotAction implements Action {
     readonly type = SAVE_ROBOT_FAIL;
 
-    constructor(public payload: SaveRobotResponse) { super() }
+    constructor(public payload: SaveRobotResponse) { super(); }
 }
 
 export const SAVE_ROBOT_SUCCESS = '[Robot] SAVE_ROBOT_SUCCESS';
@@ -547,7 +525,7 @@ export const SAVE_ROBOT_SUCCESS = '[Robot] SAVE_ROBOT_SUCCESS';
 export class SaveRobotSuccessAction extends SaveRobotAction implements Action {
     readonly type = SAVE_ROBOT_SUCCESS;
 
-    constructor(public payload: SaveRobotResponse) { super() }
+    constructor(public payload: SaveRobotResponse) { super(); }
 }
 
 // ======================================================Plugin run=========================================
@@ -565,7 +543,7 @@ export class PluginRunAction extends ApiAction {
         return { method: [this.command], params: [[JSON.stringify(params)]], callbackId: this.command };
     }
 
-    constructor() { super() };
+    constructor() { super(); }
 }
 
 export const RUN_PLUGIN = '[Robot] RUN_PLUGIN';
@@ -575,7 +553,7 @@ export class PluginRunRequestAction extends PluginRunAction implements Action {
 
     allowSeparateRequest = true;
 
-    constructor(public payload: PluginRunRequest) { super() }
+    constructor(public payload: PluginRunRequest) { super(); }
 }
 
 export const RUN_PLUGIN_FAIL = '[Robot] RUN_PLUGIN_FAIL';
@@ -583,7 +561,7 @@ export const RUN_PLUGIN_FAIL = '[Robot] RUN_PLUGIN_FAIL';
 export class PluginRunFailAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN_FAIL;
 
-    constructor(public payload: PluginRunResponse) { super() }
+    constructor(public payload: PluginRunResponse) { super(); }
 }
 
 export const RUN_PLUGIN_SUCCESS = '[Robot] RUN_PLUGIN_SUCCESS';
@@ -591,7 +569,7 @@ export const RUN_PLUGIN_SUCCESS = '[Robot] RUN_PLUGIN_SUCCESS';
 export class PluginRunSuccessAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN_SUCCESS;
 
-    constructor(public payload: PluginRunResponse) { super() }
+    constructor(public payload: PluginRunResponse) { super(); }
 }
 
 // ======================================================Local action=========================================
@@ -718,7 +696,7 @@ export type ApiActions = GetRobotListRequestAction
     | StopRobotSuccessAction
     | SubscribeRobotFailAction
     | SubscribeRobotRequestAction
-    | SubscribeRobotSuccessAction
+    | SubscribeRobotSuccessAction;
 
 export type Actions = ApiActions
     | ChangeLogPageAction
@@ -732,7 +710,7 @@ export type Actions = ApiActions
     | ResetRobotOperateAction
     | ToggleMonitorSoundAction
     | UpdateRobotWatchDogStateAction
-    | ResetRobotStateAction
+    | ResetRobotStateAction;
 
 export const ResponseActions = {
     CommandRobotFailAction,
@@ -759,4 +737,4 @@ export const ResponseActions = {
     StopRobotSuccessAction,
     SubscribeRobotFailAction,
     SubscribeRobotSuccessAction,
-}
+};

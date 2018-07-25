@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
+
 import { isString } from 'lodash';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
@@ -10,7 +11,6 @@ import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import * as strategyActions from './strategy.action';
-
 
 @Injectable()
 export class StrategyEffect extends BaseEffect {
@@ -25,16 +25,14 @@ export class StrategyEffect extends BaseEffect {
     genKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GEN_KEY, strategyActions.ResponseActions);
 
     @Effect()
-    verifyKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.VERIFY_KEY, strategyActions.ResponseActions)
-        .pipe(
-            tap((action: strategyActions.VerifyKeySuccessAction | strategyActions.VerifyKeyFailAction) => action.payload.result && this.tip.messageError('VERIFY_KEY_SUCCESS'))
-        );
+    verifyKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.VERIFY_KEY, strategyActions.ResponseActions).pipe(
+        tap((action: strategyActions.VerifyKeySuccessAction | strategyActions.VerifyKeyFailAction) => action.payload.result && this.tip.messageError('VERIFY_KEY_SUCCESS'))
+    );
 
     @Effect()
-    delete$: Observable<ResponseAction> = this.getResponseAction(strategyActions.DELETE_STRATEGY, strategyActions.ResponseActions, isDeleteFail)
-        .pipe(
-            tap((action: strategyActions.DeleteStrategyFailAction | strategyActions.DeleteStrategySuccessAction) => isDeleteFail(action.payload) && this.tip.showTip('DELETE_ROBOT_RELATED_WITH_STRATEGY'))
-        );
+    delete$: Observable<ResponseAction> = this.getResponseAction(strategyActions.DELETE_STRATEGY, strategyActions.ResponseActions, isDeleteFail).pipe(
+        tap((action: strategyActions.DeleteStrategyFailAction | strategyActions.DeleteStrategySuccessAction) => isDeleteFail(action.payload) && this.tip.showTip('DELETE_ROBOT_RELATED_WITH_STRATEGY'))
+    );
 
     @Effect()
     opToke$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_TOKEN, strategyActions.ResponseActions);

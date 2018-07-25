@@ -8,6 +8,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 import { NgZorroAntdModule, NzNotificationService } from 'ng-zorro-antd';
 
 import { AppComponent } from './app.component';
@@ -45,7 +46,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
         StoreModule.forRoot(reducers),
         StoreDevtoolsModule.instrument({
-            maxAge: 50
+            maxAge: 50,
         }),
         EffectsModule.forRoot(EFFECTS),
         MatSnackBarModule,

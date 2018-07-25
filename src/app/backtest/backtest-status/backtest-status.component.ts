@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Observable } from 'rxjs/internal/Observable';
 import { filter, map, startWith } from 'rxjs/operators';
 
@@ -10,7 +11,7 @@ import { BacktestService } from '../providers/backtest.service';
 @Component({
     selector: 'app-backtest-status',
     templateUrl: './backtest-status.component.html',
-    styleUrls: ['./backtest-status.component.scss']
+    styleUrls: ['./backtest-status.component.scss'],
 })
 export class BacktestStatusComponent implements OnInit {
 

@@ -9,18 +9,14 @@ import { RobotOperateType } from '../../store/robot/robot.reducer';
 import { RobotConstantService } from '../providers/robot.constant.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 
-@Pipe({
-    name: 'robotStatus'
-})
+@Pipe({ name: 'robotStatus' })
 export class RobotStatusPipe implements PipeTransform {
     transform(status: number): string {
         return RobotStatus[status];
     }
 }
 
-@Pipe({
-    name: 'robotPublicStatus'
-})
+@Pipe({ name: 'robotPublicStatus' })
 export class RobotPublicStatusPipe implements PipeTransform {
     transform(status: number): string {
         return RobotPublicStatus[status];
@@ -31,20 +27,16 @@ export interface PlatformStockPair {
     platform: string;
     stock: string;
 }
-@Pipe({
-    name: 'platformStock'
-})
+@Pipe({ name: 'platformStock' })
 export class PlatformStockPipe implements PipeTransform {
     transform(source: any[][]): PlatformStockPair[] {
-        const [id, platforms, stocks] = source;
+        const [, platforms, stocks] = source;
 
         return zip(platforms, stocks).map(ary => ({ platform: ary[0] === -1 ? 'BotVS' : ary[0], stock: ary[1] }));
     }
 }
 
-@Pipe({
-    name: 'strategyChartTitle'
-})
+@Pipe({ name: 'strategyChartTitle' })
 export class StrategyChartTitlePipe implements PipeTransform {
     constructor(private translate: TranslateService) { }
 
@@ -61,9 +53,7 @@ export class StrategyChartTitlePipe implements PipeTransform {
     }
 }
 
-@Pipe({
-    name: 'robotOperateBtnText'
-})
+@Pipe({ name: 'robotOperateBtnText' })
 export class RobotOperateBtnTextPipe implements PipeTransform {
     constructor(
         private robotOperate: RobotOperateService,

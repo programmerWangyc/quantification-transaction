@@ -1,4 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
+
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
@@ -7,10 +8,6 @@ import { WatchDogService } from '../../shared/providers/watch-dog.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
 
-interface RobotStatusBtn {
-    status: string;
-
-}
 @Component({
     selector: 'app-robot-overview',
     templateUrl: './robot-overview.component.html',
@@ -26,7 +23,7 @@ interface RobotStatusBtn {
 })
 export class RobotOverviewComponent extends FoldableBusinessComponent implements BaseComponent {
 
-    robot: Observable<RobotDetail>
+    robot: Observable<RobotDetail>;
 
     subscription$$: Subscription;
 
