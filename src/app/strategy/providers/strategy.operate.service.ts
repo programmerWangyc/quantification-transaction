@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription, zip } from 'rxjs';
-import { distinctUntilKeyChanged, filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilKeyChanged, filter, map, mapTo, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
@@ -50,10 +50,8 @@ export class StrategyOperateService extends StrategyService {
                 tap(confirmType => (confirmType === ConfirmType.INNER) && this.genKey$.next([params, confirmType])),
                 filter(confirmType => confirmType !== ConfirmType.INNER),
                 mapTo({ id: params.id, type: params.type })
-            )
-            )
-        )
-        )
+            ))
+        ))
             .add(this.launchGenKey());
     }
 
@@ -66,34 +64,23 @@ export class StrategyOperateService extends StrategyService {
                     days: form.days,
                     concurrent: form.concurrent,
                 }))
-            )
-            )
-        )
-        );
+            ))
+        ));
     }
 
     launchVerifyKey(params: Observable<fromReq.VerifyKeyRequest>): Subscription {
         return this.process.processVerifyKey(params);
     }
 
+    /**
+     * 发起删除策略请求
+     */
     launchDeleteStrategy(paramsObs: Observable<fromRes.Strategy>): Subscription {
         return this.process.processDeleteStrategy(paramsObs.pipe(
-            switchMap((params: fromRes.Strategy) => this.translate.get('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
-                mergeMap(content => {
-                    const modal: NzModalRef = this.nzModal.confirm({
-                        nzContent: content,
-                        nzOnOk: () => modal.close(true),
-                    });
-
-                    return modal.afterClose.pipe(
-                        this.filterTruth()
-                    );
-                }),
+            switchMap((params: fromRes.Strategy) => this.utilService.guardRiskOperate('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
                 mapTo({ id: params.id })
-            )
-            )
-        )
-        );
+            ))
+        ));
     }
 
     launchSaveStrategy(paramsObs: Observable<fromReq.SaveStrategyRequest>): Subscription {

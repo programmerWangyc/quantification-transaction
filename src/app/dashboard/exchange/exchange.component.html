@@ -1,0 +1,12 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div class="btn-group">
+    <button nz-button nzType="primary" (click)="navigateTo('add')">
+        <i class="anticon anticon-plus"></i>
+        {{'ADD_EXCHANGE' | translate}}
+    </button>
+
+    <i class="anticon anticon-question-circle" [nz-tooltip]="'EXCHANGE_DEFINITION' | translate" style="color: #1890ff"></i>
+</div>
+
+<app-exchange-list></app-exchange-list>

@@ -194,7 +194,16 @@ export const selectNodeHashResponse = createSelector(getBtNodeState, btNode.getN
 
 const getPlatformState = (state: AppState) => state.platform;
 
+// platform list
 export const selectPlatformListResponse = createSelector(getPlatformState, platform.getPlatformListResponse);
+
+export const selectPlatformIsLoading = createSelector(getPlatformState, platform.getPlatformIsLoading);
+
+// delete platform
+export const selectPlatformDeleteResponse = createSelector(getPlatformState, platform.getPlatformDeleteRes);
+
+// platform requests
+export const selectPlatformRequests = createSelector(getPlatformState, platform.getPlatformRequests);
 
 //  ===================================================Watch dog===================================================
 

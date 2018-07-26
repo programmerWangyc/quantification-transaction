@@ -440,6 +440,9 @@ export interface PlatformListResponse {
 
 export interface GetPlatformListResponse extends ResponseUnit<PlatformListResponse> { }
 
+// delete platform;
+export interface DeletePlatformResponse extends ResponseUnit<boolean> { }
+
 // ===================================================Watch dog=========================================
 
 // watch dog

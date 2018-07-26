@@ -14,7 +14,7 @@ import * as BtNode from '../store/bt-node/bt-node.action';
 import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/charge/charge.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
-import { GetPlatformListRequestAction } from '../store/platform/platform.action';
+import { GetPlatformListRequestAction, DeletePlatformRequestAction } from '../store/platform/platform.action';
 import { GetSettingsRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
@@ -126,10 +126,14 @@ export class ProcessService {
         return paramObs.subscribe(_ => this.store.dispatch(new BtNode.GetNodeHashRequestAction(null)));
     }
 
-    //  ===================================================Platform list===================================================
+    //  ===================================================Platform===================================================
 
-    processGetPlatformList(paramObs: Observable<Request.GetPlatformListRequest>): Subscription {
-        return paramObs.subscribe(_ => this.store.dispatch(new GetPlatformListRequestAction()));
+    processGetPlatformList(paramObs: Observable<Request.GetPlatformListRequest>, allowSeparateRequest = false): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new GetPlatformListRequestAction(null, allowSeparateRequest)));
+    }
+
+    processDeletePlatform(paramObs: Observable<Request.DeletePlatformRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new DeletePlatformRequestAction(params)));
     }
 
     //  ===================================================Watch dog===================================================

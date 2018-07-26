@@ -56,41 +56,37 @@ export class RobotEffect extends BaseEffect {
         );
 
     @Effect()
-    commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail)
-        .pipe(
-            tap(action => {
-                const message = (<robotActions.CommandRobotSuccessAction | robotActions.CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
+    commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail).pipe(
+        tap(action => {
+            const message = (<robotActions.CommandRobotSuccessAction | robotActions.CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
 
-                this.tip.showTip(message);
-            })
-        );
+            this.tip.showTip(message);
+        })
+    );
 
     @Effect()
     deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail);
 
     @Effect()
-    saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions)
-        .pipe(
-            tap(action => {
-                const message = (<robotActions.SaveRobotSuccessAction | robotActions.SaveRobotFailAction>action).payload.result ? 'CREATE_ROBOT_SUCCESS' : 'CREATE_ROBOT_FAIL';
+    saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions).pipe(
+        tap(action => {
+            const message = (<robotActions.SaveRobotSuccessAction | robotActions.SaveRobotFailAction>action).payload.result ? 'CREATE_ROBOT_SUCCESS' : 'CREATE_ROBOT_FAIL';
 
-                this.tip.showTip(message);
-            })
-        );
+            this.tip.showTip(message);
+        })
+    );
 
     @Effect()
-    serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
-        .pipe(
-            switchMap(state => this.ws.messages
-                .pipe(
-                    filter(msg => {
-                        const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
+    serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
+        switchMap(state => this.ws.messages.pipe(
+            filter(msg => {
+                const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
 
-                        return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS);
-                    }),
-                    map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)),
-            ))
-        );
+                return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS);
+            }),
+            map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)),
+        ))
+    );
 
     @Effect()
     robotDebug$: Observable<ResponseAction> = this.getMultiResponseActions(
@@ -115,29 +111,26 @@ export class RobotEffect extends BaseEffect {
 
     getOtherObsOfRobotDetail(): Observable<Action>[] {
         return [
-            this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT)
-                .pipe(
-                    filter((action: robotActions.SubscribeRobotRequestAction) => action.payload.id !== 0)
-                ),
-            this.actions$.ofType(robotActions.GET_ROBOT_LOGS)
-                .pipe(
-                    filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest)
-                ),
+            this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT).pipe(
+                filter((action: robotActions.SubscribeRobotRequestAction) => action.payload.id !== 0)
+            ),
+            this.actions$.ofType(robotActions.GET_ROBOT_LOGS).pipe(
+                filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest)
+            ),
             this.actions$.ofType(btNodeActions.GET_NODE_LIST),
             this.actions$.ofType(platformActions.GET_PLATFORM_LIST),
         ];
     }
 
     /**
-     *  这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时除了机器人的状态变更外，其它的相关信息将不再被订阅。
+     * 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时除了机器人的状态变更外，其它的相关信息将不再被订阅。
      */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
-        return this.store.select(selectRobotRequestParameters)
-            .pipe(
-                filter(v => !!v),
-                map(res => res.subscribeRobot && res.subscribeRobot.id !== 0),
-                distinctUntilChanged()
-            );
+        return this.store.select(selectRobotRequestParameters).pipe(
+            filter(v => !!v),
+            map(res => res.subscribeRobot && res.subscribeRobot.id !== 0),
+            distinctUntilChanged()
+        );
     }
 }
 

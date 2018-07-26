@@ -33,6 +33,9 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
+import { ExchangeModule } from '../exchange/exchange.module';
+import { ExchangeComponent } from './exchange/exchange.component';
+import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 
 @NgModule({
     imports: [
@@ -47,6 +50,7 @@ import { StrategyComponent } from './strategy/strategy.component';
         StoreRouterConnectingModule,
         BacktestModule,
         AgentModule,
+        ExchangeModule,
     ],
     declarations: [
         DashboardComponent,
@@ -68,6 +72,8 @@ import { StrategyComponent } from './strategy/strategy.component';
         StrategyAddComponent,
         AgentComponent,
         AgentAddComponent,
+        ExchangeComponent,
+        ExchangeAddComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

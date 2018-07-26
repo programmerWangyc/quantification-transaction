@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { TranslateService } from '@ngx-translate/core';
 
 import { isArray, isString } from 'lodash';
@@ -8,6 +9,7 @@ import { distinctUntilChanged, groupBy, map, mergeMap, reduce, switchMap } from 
 
 import { ChartSize } from '../interfaces/app.interface';
 import { RunningLog } from '../interfaces/response.interface';
+import { BaseService } from '../base/base.service';
 
 export interface GroupedList<T> {
     groupName: string;
@@ -48,7 +50,7 @@ export function getRunningLogs(source: (string | number)[][], isBacktest = false
 }
 
 @Injectable()
-export class UtilService {
+export class UtilService extends BaseService {
 
     /**
      * @ignore
@@ -57,7 +59,10 @@ export class UtilService {
 
     constructor(
         private translate: TranslateService,
-    ) { }
+        private nzModal: NzModalService,
+    ) {
+        super();
+    }
 
     /**
      * @ignore
@@ -67,28 +72,24 @@ export class UtilService {
     }
 
     /**
+     * Save incoming data packets.
      * @param source - Origin data would be grouped.
      * @param distinctKey - The key used to distinct data.
      * @param getGroupName - Get grouped group name;
      * @returns Observable<GroupedList<T>[]> Grouped data.
-     * Save incoming data packets.
      */
     getGroupedList<T>(source: Observable<T[]>, distinctKey: string, getGroupName = arg => String(arg)): Observable<GroupedList<T>[]> {
-        return source
-            .pipe(
-                mergeMap(list => observableFrom(list)
-                    .pipe(
-                        groupBy(item => item[distinctKey]),
-                        mergeMap(obs => obs
-                            .pipe(
-                                reduce((acc, cur) => [...acc, cur], [obs.key]),
-                                map(ary => ({ groupName: isString(ary[0]) ? ary[0] : getGroupName(ary[0]), values: ary.slice(1) }))
-                            )
-                        ),
-                        reduce((acc, cur) => [...acc, cur], [])
-                    )
+        return source.pipe(
+            mergeMap(list => observableFrom(list).pipe(
+                groupBy(item => item[distinctKey]),
+                mergeMap(obs => obs.pipe(
+                    reduce((acc, cur) => [...acc, cur], [obs.key]),
+                    map(ary => ({ groupName: isString(ary[0]) ? ary[0] : getGroupName(ary[0]), values: ary.slice(1) }))
                 )
-            );
+                ),
+                reduce((acc, cur) => [...acc, cur], [])
+            ))
+        );
     }
 
     /**
@@ -108,7 +109,7 @@ export class UtilService {
     }
 
     /**
-     *  Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
+     * Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
      */
     getPaginationStatistics(totalObs: Observable<number>, pageSizeObs: Observable<number>): Observable<string> {
         return combineLatest(
@@ -118,6 +119,24 @@ export class UtilService {
             map(([total, page]) => ({ total, page: Math.ceil(total / page) })),
             switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),
             distinctUntilChanged()
+        );
+    }
+
+    /**
+     * 执行操作之前的确认
+     */
+    guardRiskOperate(message: string, options: { [key: string]: any }): Observable<boolean> {
+        return this.translate.get(message, options).pipe(
+            mergeMap(content => {
+                const modal: NzModalRef = this.nzModal.confirm({
+                    nzContent: content,
+                    nzOnOk: () => modal.close(true),
+                });
+
+                return modal.afterClose.pipe(
+                    this.filterTruth()
+                );
+            })
         );
     }
 }

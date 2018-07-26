@@ -654,5 +654,9 @@
     "PRIVATE_AGENT_INTRO": "布署的私有托管者不受 FMZ 服务器性能的影响，托管者直接与交易所进行通信，只在本地保存日志信息。",
     "YOUR_PASSWORD": "你的 FMZ 密码",
     "SUBSCRIBE_WECHART_TIP": "关注下方微信号(或搜索公众号botvs) 绑定后可查看机器人状态与接收策略推送消息！",
-    "AGENT_LATEST_VERSION": "最新版本：{{version}}, 更新时间：{{time}}"
+    "AGENT_LATEST_VERSION": "最新版本：{{version}}, 更新时间：{{time}}",
+    "EXCHANGE_DEFINITION": "交易所指具体执行买卖交易的平台，一个策略可以连接多个交易所。没有列出的交易对可以在创建机器人时通过自定义交易对添加。",
+    "EXCHANGE_DELETE_SUCCESS": "交易所删除成功",
+    "DELETE_EXCHANGE_TIP": "确定要删除 {{name}} 交易所设置吗？",
+    "ADD_EXCHANGE": "添加交易所"
 }

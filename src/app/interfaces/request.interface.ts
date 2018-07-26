@@ -181,6 +181,10 @@ export interface GetNodeHashRequest { }
 
 export interface GetPlatformListRequest { }
 
+export interface DeletePlatformRequest {
+    id: number;
+}
+
 // ===================================================Watch dog=========================================
 
 // watch dog

@@ -34,6 +34,6 @@ import { SundryComponent } from './sundry/sundry.component';
     ],
     providers: [
         HomeService,
-    ]
+    ],
 })
 export class HomeModule { }

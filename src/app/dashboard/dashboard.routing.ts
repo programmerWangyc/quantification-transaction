@@ -19,6 +19,8 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
+import { ExchangeComponent } from './exchange/exchange.component';
+import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 
 const routs: Routes = [
     {
@@ -30,6 +32,7 @@ const routs: Routes = [
             { path: 'robot/add', component: RobotCreationComponent },
             { path: 'robot/:id/:name', component: RobotDetailComponent },
             { path: 'robot/debug', component: RobotDebugComponent },
+
             // strategy
             { path: 'strategy', component: StrategyComponent },
             { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
@@ -43,8 +46,12 @@ const routs: Routes = [
             { path: 'charge', component: RechargeComponent },
 
             // agent
-            { path: 'agent', component: AgentComponent},
+            { path: 'agent', component: AgentComponent },
             { path: 'agent/add', component: AgentAddComponent },
+
+            // exchange
+            { path: 'exchange', component: ExchangeComponent },
+            { path: 'exchange/add', component: ExchangeAddComponent },
 
             // { path: Path.exchange, component: ExchangeComponent },
             { path: 'square', component: SquareComponent },
