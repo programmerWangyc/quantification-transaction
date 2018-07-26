@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
 import { BtNode, DeleteNodeResponse, GetNodeListResponse } from '../interfaces/response.interface';
@@ -11,6 +11,8 @@ import * as fromRoot from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { GroupedList, UtilService } from './util.service';
+import { HttpClient } from '@angular/common/http';
+import { last } from 'lodash';
 
 export interface GroupedNode extends GroupedList<BtNode> {
     groupNameValue?: any;
@@ -26,6 +28,7 @@ export class BtNodeService extends BaseService {
         private error: ErrorService,
         private process: ProcessService,
         private utilService: UtilService,
+        private httpClient: HttpClient,
     ) {
         super();
     }
@@ -53,6 +56,36 @@ export class BtNodeService extends BaseService {
      */
     launchNodeHash(start: Observable<any>): Subscription {
         return this.process.processGetNodeHash(start);
+    }
+
+    /**
+     * 下载agent package
+     */
+    launchDownloadPackage(uri: Observable<string>): Subscription {
+        return uri.pipe(
+            switchMap(url => this.httpClient.get(url, { responseType: 'blob' }).pipe(
+                map(file => ({ file, fileName: last(url.split('/')) }))
+            ))
+        )
+            .subscribe(({ file, fileName }) => {
+                const url = window.URL.createObjectURL(file);
+
+                const a = document.createElement('a');
+
+                document.body.appendChild(a);
+
+                a.setAttribute('style', 'display: none');
+
+                a.href = url;
+
+                a.download = fileName;
+
+                a.click();
+
+                window.URL.revokeObjectURL(url);
+
+                a.remove();
+            });
     }
 
     // =======================================================Date Acquisition=======================================================

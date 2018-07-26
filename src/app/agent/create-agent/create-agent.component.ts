@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { merge, Observable, Subject, Subscription, of, combineLatest } from 'rxjs';
-import { filter, mapTo, map, mergeMap } from 'rxjs/operators';
+import { filter, mapTo, map, mergeMap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PublicService } from '../../providers/public.service';
@@ -10,6 +10,7 @@ import { SettingTypes } from '../../interfaces/request.interface';
 import { DockerSetting } from '../../interfaces/response.interface';
 import { TranslateService } from '@ngx-translate/core';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { AgentConstantService } from '../providers/agent.constant.service';
 
 @Component({
     selector: 'app-create-agent',
@@ -77,6 +78,7 @@ export class CreateAgentComponent extends BaseComponent {
         private publicService: PublicService,
         private translate: TranslateService,
         private nodeService: BtNodeService,
+        private constant: AgentConstantService,
     ) {
         super();
     }
@@ -127,6 +129,7 @@ export class CreateAgentComponent extends BaseComponent {
                 this.isOperateComplete.reset();
             }))
             .add(this.clientVersion.valueChanges.subscribe(_c => this.isOperateComplete.reset(false)))
+            .add(this.nodeService.launchDownloadPackage(this.getDownloadUri()))
             .add(this.nodeService.launchNodeHash(of(true)));
     }
 
@@ -157,6 +160,18 @@ export class CreateAgentComponent extends BaseComponent {
         );
 
         return merge(systemReady, versionReady, clientReady, commandReady);
+    }
+
+    /**
+     * 获取下载uri
+     */
+    private getDownloadUri(): Observable<string> {
+        return this.download$.pipe(
+            map(_ => this.constant.getClient(this.system.value, this.version.value, this.clientVersion.value)),
+            filter(isFound => !!isFound),
+            withLatestFrom(this.agentSetting),
+            map(([{ href }, { base }]) => base + '/' + href)
+        );
     }
 
     /**

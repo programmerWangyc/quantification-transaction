@@ -8,6 +8,7 @@ import { CreateAgentComponent } from './create-agent/create-agent.component';
 import { PIPES } from './pipes/index.pipe';
 import { AgentService } from './providers/agent.service';
 import { RouterModule } from '@angular/router';
+import { AgentConstantService } from './providers/agent.constant.service';
 
 @NgModule({
     imports: [
@@ -27,6 +28,7 @@ import { RouterModule } from '@angular/router';
     ],
     providers: [
         AgentService,
+        AgentConstantService,
     ],
 })
 export class AgentModule { }

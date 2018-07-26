@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 
 
+/**
+ * @ignore
+ */
 @Injectable()
 export class AgentService {
     constructor(
