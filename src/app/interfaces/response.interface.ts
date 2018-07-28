@@ -108,7 +108,29 @@ export interface DockerSetting {
     rpcBase: string;
 }
 
-export type SettingResResult = string & DockerSetting & IndexSetting;
+/**
+ * 获取 broker 的响应
+ */
+export interface BrokerNet {
+    quote: string[];
+    name: string;
+    trade: string[];
+}
+
+export interface BrokerGroup {
+    name: string;
+    nets: BrokerNet[];
+}
+
+export interface Broker {
+    key: string;
+    name: string;
+    type: number;
+    brokerId: string;
+    groups: BrokerGroup[];
+}
+
+export type SettingResResult = string & DockerSetting & IndexSetting & Broker;
 
 export interface SettingsResponse extends ResponseUnit<SettingResResult> { }
 
@@ -421,7 +443,7 @@ export interface DeleteNodeResponse extends ResponseUnit<number> { }
 // get node hash
 export interface GetNodeHashResponse extends ResponseUnit<string> { }
 
-// ===================================================Platform list=========================================
+// ===================================================Platform===============================================
 
 // platform list
 export interface Platform {
@@ -442,6 +464,44 @@ export interface GetPlatformListResponse extends ResponseUnit<PlatformListRespon
 
 // delete platform;
 export interface DeletePlatformResponse extends ResponseUnit<boolean> { }
+
+// platform detail
+export interface PlatformAccessKey {
+    AccessKey: string;
+    Front: string;
+    SecretKey: string;
+}
+
+export interface PlatformMeta {
+    desc: string;
+    encrypt?: boolean;
+    label: string;
+    name: string;
+    required: boolean;
+    type: string;
+}
+
+export interface PlatformDetail {
+    access_key: PlatformAccessKey;
+    date: string;
+    eid: string;
+    id: number;
+    label: string;
+    logo: string;
+    meta: PlatformMeta[];
+    name: string;
+    website: string;
+}
+
+export interface PlatformDetailResponse {
+    platform: PlatformDetail;
+}
+
+export interface GetPlatformDetailResponse extends ResponseUnit<PlatformDetailResponse> { }
+
+// save platform
+
+export interface SavePlatformResponse extends ResponseUnit<any> { }
 
 // ===================================================Watch dog=========================================
 

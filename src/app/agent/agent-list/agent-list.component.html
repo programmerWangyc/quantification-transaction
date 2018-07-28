@@ -17,13 +17,13 @@
 
                 <td bt-text-center>
                     {{agent.build}}
-                    <nz-tag *ngIf="agent.build | isOldVersion: (latestVersion | async)" nzColor="cyan">{{'OLD_VERSION' | translate}}</nz-tag>
+                    <nz-tag *ngIf="agent.build | isOldVersion: latestVersion" nzColor="cyan">{{'OLD_VERSION' | translate}}</nz-tag>
                 </td>
 
                 <td bt-text-center>{{agent.date}}</td>
 
                 <td bt-text-center>
-                    <span *ngIf="agent.build | isOldVersion: (latestVersion | async); else elseBlock">{{agent.date}}</span>
+                    <span *ngIf="agent.build | isOldVersion: latestVersion; else elseBlock">{{agent.date}}</span>
                     <ng-template #elseBlock>
                         <span>{{(agent.online ? 'ONLINE' : 'OFFLINE') | translate}}</span>
                     </ng-template>

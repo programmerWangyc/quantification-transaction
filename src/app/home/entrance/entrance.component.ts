@@ -19,42 +19,42 @@ export const list: Entrance[] = [
         title: 'STRATEGY_SQUARE',
         subtitle: 'STRATEGY_SUBTITLE',
         list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square'
+        route: 'square',
     },
     {
         icon: 'anticon anticon-play-circle-o',
         title: 'FACT_FINDER',
         subtitle: 'STRATEGY_SUBTITLE',
         list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square'
+        route: 'square',
     },
     {
         icon: 'anticon anticon-aliwangwang-o',
         title: 'COMMUNITY',
         subtitle: 'STRATEGY_SUBTITLE',
         list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square'
+        route: 'square',
     },
     {
         icon: 'anticon anticon-folder',
         title: 'API_DOCUMENTATION',
         subtitle: 'STRATEGY_SUBTITLE',
         list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square'
+        route: 'square',
     },
     {
         icon: 'anticon anticon-tool',
         title: 'TOOLS',
         subtitle: 'STRATEGY_SUBTITLE',
         list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square'
+        route: 'square',
     },
 ];
 
 @Component({
     selector: 'app-entrance',
     templateUrl: './entrance.component.html',
-    styleUrls: ['./entrance.component.scss']
+    styleUrls: ['./entrance.component.scss'],
 })
 export class EntranceComponent implements OnInit {
 
@@ -68,5 +68,4 @@ export class EntranceComponent implements OnInit {
     goTo(target: Direct): void {
         console.log(target);
     }
-
 }

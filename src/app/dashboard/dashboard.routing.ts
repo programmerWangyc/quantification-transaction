@@ -21,6 +21,7 @@ import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-ver
 import { StrategyComponent } from './strategy/strategy.component';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
+import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 
 const routs: Routes = [
     {
@@ -52,6 +53,7 @@ const routs: Routes = [
             // exchange
             { path: 'exchange', component: ExchangeComponent },
             { path: 'exchange/add', component: ExchangeAddComponent },
+            { path: 'exchange/edit/:id', component: ExchangeEditComponent },
 
             // { path: Path.exchange, component: ExchangeComponent },
             { path: 'square', component: SquareComponent },

@@ -24,11 +24,21 @@ export class PlatformEffect extends BaseEffect {
         tap((action: platform.DeletePlatformFailAction | platform.DeletePlatformSuccessAction) => action.payload.result && this.tip.messageSuccess('EXCHANGE_DELETE_SUCCESS'))
     );
 
+    @Effect()
+    detail$: Observable<ResponseAction> = this.privateGetResponseAction(platform.GET_PLATFORM_DETAIL);
+
+    @Effect()
+    update$: Observable<ResponseAction> = this.privateGetResponseAction(platform.UPDATE_PLATFORM);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
         private tip: TipService,
     ) {
         super(ws, actions$);
+    }
+
+    private privateGetResponseAction(action): Observable<ResponseAction> {
+        return this.getResponseAction(action, platform.ResponseActions);
     }
 }

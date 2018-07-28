@@ -28,6 +28,9 @@ export class RobotEffect extends BaseEffect {
     @Effect()
     publishRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.PUBLIC_ROBOT, robotActions.ResponseActions);
 
+    /**
+     * !FIXME: 修复这个动作；删除整个应用下的allowSeparateRequest 参数;
+     */
     @Effect()
     robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
         zip(
@@ -86,15 +89,6 @@ export class RobotEffect extends BaseEffect {
             }),
             map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)),
         ))
-    );
-
-    @Effect()
-    robotDebug$: Observable<ResponseAction> = this.getMultiResponseActions(
-        zip(
-            this.actions$.ofType(btNodeActions.GET_NODE_LIST),
-            this.actions$.ofType(platformActions.GET_PLATFORM_LIST)
-        ),
-        { ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
     );
 
     @Effect()

@@ -1,9 +1,15 @@
-import { DeletePlatformRequest } from '../../interfaces/request.interface';
-import { DeletePlatformResponse, GetPlatformListResponse, Platform } from '../../interfaces/response.interface';
+import {
+    DeletePlatformRequest, GetPlatformDetailRequest, SavePlatformRequest
+} from '../../interfaces/request.interface';
+import {
+    DeletePlatformResponse, GetPlatformDetailResponse, GetPlatformListResponse, Platform, SavePlatformResponse
+} from '../../interfaces/response.interface';
 import * as actions from './platform.action';
 
 export interface PlatformRequest {
     delete: DeletePlatformRequest;
+    update: SavePlatformRequest;
+    detail: GetPlatformDetailRequest;
 }
 
 export interface State {
@@ -11,19 +17,26 @@ export interface State {
     deletePlatformRes: DeletePlatformResponse;
     requestParams: PlatformRequest;
     isLoading: boolean;
+    updatePlatformRes: SavePlatformResponse;
+    platformDetailRes: GetPlatformDetailResponse;
 }
 
 const initialState: State = {
     platformListRes: null,
     requestParams: {
         delete: null,
+        update: null,
+        detail: null,
     },
     isLoading: false,
     deletePlatformRes: null,
+    updatePlatformRes: null,
+    platformDetailRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
+        // platform list
         case actions.GET_PLATFORM_LIST:
             return { ...state, isLoading: true };
 
@@ -33,6 +46,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_PLATFORM_LIST_SUCCESS:
             return { ...state, platformListRes: addDefaultPlatform(action.payload), isLoading: false };
 
+        // delete platform
         case actions.DELETE_PLATFORM:
             return { ...state, requestParams: { ...state.requestParams, delete: action.payload } };
 
@@ -41,6 +55,22 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.DELETE_PLATFORM_SUCCESS:
             return { ...state, deletePlatformRes: action.payload, platformListRes: { ...state.platformListRes, result: { platforms: state.platformListRes.result.platforms.filter(platform => platform.id !== state.requestParams.delete.id) } } };
+
+        // update platform
+        case actions.UPDATE_PLATFORM:
+            return { ...state, requestParams: { ...state.requestParams, update: action.payload } };
+
+        case actions.UPDATE_PLATFORM_FAIL:
+        case actions.UPDATE_PLATFORM_SUCCESS:
+            return { ...state, updatePlatformRes: action.payload };
+
+        // platform detail
+        case actions.GET_PLATFORM_DETAIL:
+            return { ...state, requestParams: { ...state.requestParams, detail: action.payload } };
+
+        case actions.GET_PLATFORM_DETAIL_FAIL:
+        case actions.GET_PLATFORM_DETAIL_SUCCESS:
+            return { ...state, platformDetailRes: action.payload };
 
         default:
             return state;
@@ -71,3 +101,7 @@ export const getPlatformIsLoading = (state: State) => state.isLoading;
 export const getPlatformDeleteRes = (state: State) => state.deletePlatformRes;
 
 export const getPlatformRequests = (state: State) => state.requestParams;
+
+export const getUpdatePlatformRes = (state: State) => state.updatePlatformRes;
+
+export const getPlatformDetailRes = (state: State) => state.platformDetailRes;

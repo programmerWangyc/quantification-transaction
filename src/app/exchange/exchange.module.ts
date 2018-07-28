@@ -6,6 +6,9 @@ import { SharedModule } from '../shared/shared.module';
 import { ToolModule } from '../tool/tool.module';
 import { RouterModule } from '@angular/router';
 import { ExchangeConstantService } from './providers/exchange.constant.service';
+import { UpdateExchangeComponent } from './update-exchange/update-exchange.component';
+import { ExchangeSelectComponent } from './exchange-select/exchange-select.component';
+import { ExchangeService } from './providers/exchange.service';
 
 @NgModule({
     imports: [
@@ -16,14 +19,18 @@ import { ExchangeConstantService } from './providers/exchange.constant.service';
     ],
     declarations: [
         ExchangeListComponent,
+        ExchangeSelectComponent,
         CreateExchangeComponent,
+        UpdateExchangeComponent,
     ],
     exports: [
         ExchangeListComponent,
         CreateExchangeComponent,
+        UpdateExchangeComponent,
     ],
     providers: [
         ExchangeConstantService,
+        ExchangeService,
     ],
 })
 export class ExchangeModule { }

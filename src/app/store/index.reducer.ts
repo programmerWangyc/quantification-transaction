@@ -100,8 +100,10 @@ export const selectTemporaryPwd = createSelector(getVerifyPwdState, verifyPwd.ge
 
 // exchange list
 const getExchangeState = (state: AppState) => state.exchange;
-export const selectExchangeList = createSelector(getExchangeState, exchange.getExchangeListResponse);
-export const selectExchangeResponseState = createSelector(getExchangeState, exchange.getExchangeListResponseState);
+export const selectExchangeListResponse = createSelector(getExchangeState, exchange.getExchangeListResponse);
+
+// exchange ui state
+export const selectExchangeUIState = createSelector(getExchangeState, exchange.getExchangeUIStateResponse);
 
 
 //  ===================================================Robot===================================================
@@ -204,6 +206,12 @@ export const selectPlatformDeleteResponse = createSelector(getPlatformState, pla
 
 // platform requests
 export const selectPlatformRequests = createSelector(getPlatformState, platform.getPlatformRequests);
+
+// platform detail
+export const selectPlatformDetailResponse = createSelector(getPlatformState, platform.getPlatformDetailRes);
+
+// update platform
+export const selectPlatformUpdateResponse = createSelector(getPlatformState, platform.getPlatformDeleteRes);
 
 //  ===================================================Watch dog===================================================
 

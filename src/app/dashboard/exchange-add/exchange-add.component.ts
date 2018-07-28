@@ -1,15 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Breadcrumb } from '../../interfaces/app.interface';
+
 @Component({
-  selector: 'app-exchange-add',
-  templateUrl: './exchange-add.component.html',
-  styleUrls: ['./exchange-add.component.scss']
+    selector: 'app-exchange-add',
+    templateUrl: './exchange-add.component.html',
+    styleUrls: ['./exchange-add.component.scss'],
 })
 export class ExchangeAddComponent implements OnInit {
 
-  constructor() { }
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'EXCHANGE', path: '../' }, { name: 'ADD' }];
 
-  ngOnInit() {
-  }
+    constructor(
+    ) {
+    }
 
+    /**
+     * @ignore
+     */
+    ngOnInit() {
+    }
 }

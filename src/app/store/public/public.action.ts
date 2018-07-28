@@ -34,6 +34,8 @@ export class SettingsAction extends ApiAction {
 
     noneParams = false;
 
+    allowSeparateRequest = true;
+
     constructor() { super(); }
 }
 
@@ -42,7 +44,7 @@ export const GET_SETTINGS = '[Public] GET_SETTINGS';
 export class GetSettingsRequestAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS;
 
-    constructor(public payload: SettingsRequest, public allowSeparateRequest = true) { super(); }
+    constructor(public payload: SettingsRequest) { super(); }
 }
 
 export const GET_SETTINGS_FAIL = '[Public] GET_SETTINGS_FAIL';

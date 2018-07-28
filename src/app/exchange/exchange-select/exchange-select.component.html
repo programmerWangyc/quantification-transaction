@@ -1,0 +1,67 @@
+<div class="exchange-config">
+    <nz-radio-group [formControl]="exchangeType">
+        <label nz-radio-button [nzValue]="0">{{'TRADITIONAL_FUTURES' | translate}}</label>
+        <label nz-radio-button [nzValue]="1">{{'YI_SHENG_WAI_PAN' | translate}}</label>
+        <label nz-radio-button [nzValue]="2">{{'DIGITAL_CURRENCY' | translate}}</label>
+        <label nz-radio-button [nzValue]="3">{{'COMMON_PROTOCOL' | translate}}</label>
+    </nz-radio-group>
+
+    <nz-tag *ngIf="exchangeType.value === 0 || exchangeType.value === 1" [nzColor]="'green'" (click)="goTo()">
+        <i class="anticon anticon-rocket"></i>
+        {{'LOW_COMMISSION_ACCOUNT_OPENING' | translate}}
+    </nz-tag>
+</div>
+
+<div class="exchange-config exchanges">
+    <nz-radio-group [formControl]="exchange" nz-row>
+
+        <span *ngFor="let item of obviouslyExchanges" nz-col [nzSpan]="exchanges.length > 10 ? 4: ''">
+            <label nz-radio [nzValue]="item.id">
+                {{item.name}}
+            </label>
+            <a *ngIf="item.logo" [href]="item.website" target="_blank">
+                <img src="../../../assets/images/logo/small/{{item.logo}}">
+            </a>
+        </span>
+
+        <label *ngIf="exchanges.length > maxCount" nz-radio nzValue="more" nz-col [nzSpan]="3">
+            <a>{{'MORE' | translate}}</a>
+            <nz-select *ngIf="exchange.value === 'more'" nzShowSearch nzAllowClear [nzPlaceHolder]="'SEARCH_EXCHANGE' | translate" [formControl]="search">
+                <nz-option *ngFor="let other of moreExchanges" [nzValue]="other.id" [nzLabel]="other.name"></nz-option>
+            </nz-select>
+        </label>
+
+    </nz-radio-group>
+</div>
+
+<div *ngIf="exchangeType.value < 2 && (!!exchange.value && exchange.value !== 'more' || !!search.value)" class="server-info">
+
+    <div class="exchange-config">
+        <nz-form-label>{{'SERVER_REGION' | translate}}</nz-form-label>
+
+        <nz-select [formControl]="region">
+            <nz-option *ngFor="let item of regions; index as idx" [nzValue]="idx" [nzLabel]="item.name"></nz-option>
+        </nz-select>
+
+        <nz-select [formControl]="provider">
+            <nz-option *ngFor="let item of nets; index as idx" [nzValue]="idx" [nzLabel]="item.name"></nz-option>
+        </nz-select>
+    </div>
+
+    <div class="exchange-config">
+        <nz-form-label>{{'QUOTA_SERVER' | translate}}</nz-form-label>
+
+        <nz-radio-group [formControl]="quotaIP" nz-row>
+            <label nz-radio *ngFor="let item of quotaIPs; index as idx" [nzValue]="idx" nz-col>{{item}}</label>
+        </nz-radio-group>
+    </div>
+
+    <div class="exchange-config">
+        <nz-form-label>{{'TRADE_SERVER' | translate}}</nz-form-label>
+
+        <nz-radio-group [formControl]="tradeIP" nz-row>
+            <label nz-radio *ngFor="let item of tradeIPs; index as idx" [nzValue]="idx" nz-col>{{item}}</label>
+        </nz-radio-group>
+    </div>
+
+</div>

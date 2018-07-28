@@ -5,11 +5,12 @@ import { from as observableFrom, Observable, Subscription } from 'rxjs';
 import { groupBy, map, mergeMap, reduce, switchMap, mapTo } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
-import { GetPlatformListResponse, Platform, DeletePlatformResponse } from '../interfaces/response.interface';
+import { GetPlatformListResponse, Platform, DeletePlatformResponse, GetPlatformDetailResponse, PlatformDetail, SavePlatformResponse } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { UtilService } from './util.service';
+import { GetPlatformDetailRequest, SavePlatformRequest } from '../interfaces/request.interface';
 
 export interface GroupPlatform extends Platform {
     group: string;
@@ -39,8 +40,8 @@ export class PlatformService extends BaseService {
      * @param data command to request platform list;
      * @param allowSeparateRequest 是否允单独发起请求
      */
-    launchGetPlatformList(data: Observable<any>, allowSeparateRequest = false): Subscription {
-        return this.process.processGetPlatformList(data, allowSeparateRequest);
+    launchGetPlatformList(data: Observable<any>): Subscription {
+        return this.process.processGetPlatformList(data);
     }
 
     /**
@@ -52,6 +53,20 @@ export class PlatformService extends BaseService {
                 mapTo({ id: platform.id })
             ))
         ));
+    }
+
+    /**
+     * 请求平台详情
+     */
+    launchGetPlatformDetail(idObs: Observable<GetPlatformDetailRequest>): Subscription {
+        return this.process.processGetPlatformDetail(idObs);
+    }
+
+    /**
+     * 更新交易所信息
+     */
+    launchUpdatePlatform(paramsObs: Observable<SavePlatformRequest>): Subscription {
+        return this.process.processUpdatePlatform(paramsObs);
     }
 
     //  =======================================================Date Acquisition=======================================================
@@ -126,6 +141,44 @@ export class PlatformService extends BaseService {
         );
     }
 
+    /**
+     * 获取平台详情的响应
+     */
+    private getPlatformDetailResponse(): Observable<GetPlatformDetailResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectPlatformDetailResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * 获取交易平台详情
+     */
+    getPlatformDetail(): Observable<PlatformDetail> {
+        return this.getPlatformDetailResponse().pipe(
+            map(res => res.result.platform)
+        );
+    }
+
+    /**
+     * 获取更新平台的响应
+     */
+    private getUpdatePlatformResponse(): Observable<SavePlatformResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectPlatformUpdateResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * 平台更新是否成功
+     */
+    isUpdatePlatformSuccess(): Observable<boolean> {
+        return this.getUpdatePlatformResponse().pipe(
+            map(res => res.result)
+        );
+    }
+
     //  =======================================================Error Handle=======================================================
 
     /**
@@ -140,5 +193,19 @@ export class PlatformService extends BaseService {
      */
     handleDeletePlatformError(): Subscription {
         return this.error.handleResponseError(this.getDeletePlatformResponse());
+    }
+
+    /**
+     * @ignore
+     */
+    handlePlatformDetailError(): Subscription {
+        return this.error.handleResponseError(this.getPlatformDetailResponse());
+    }
+
+    /**
+     * @ignore
+     */
+    handleUpdatePlatformError(): Subscription {
+        return this.error.handleResponseError(this.getUpdatePlatformResponse());
     }
 }

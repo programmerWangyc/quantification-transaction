@@ -34,7 +34,7 @@ export class AgentListComponent extends BaseComponent {
     /**
      * Latest version
      */
-    latestVersion: Observable<string>;
+    latestVersion: string;
 
     /**
      * 删除
@@ -76,11 +76,6 @@ export class AgentListComponent extends BaseComponent {
             map(nodes => nodes.filter(node => node.is_owner))
         );
 
-        this.latestVersion = this.publicService.getSetting(SettingTypes.docker).pipe(
-            map(res => JSON.parse(res) as DockerSetting),
-            map(({ version }) => version)
-        );
-
         this.isLoading = this.nodeService.isLoading();
     }
 
@@ -92,7 +87,10 @@ export class AgentListComponent extends BaseComponent {
             .add(this.nodeService.handleDeleteNodeError())
             .add(this.wdService.launchSetWatchDog(this.setNodeWd$))
             .add(this.nodeService.launchDeleteNode(this.delete$))
-            .add(this.publicService.launchGetSettings(SettingTypes.docker))
+            .add(this.publicService.getSetting(SettingTypes.docker).pipe(
+                map(res => JSON.parse(res) as DockerSetting),
+                map(({ version }) => version)
+            ).subscribe(version => this.latestVersion = version))
             .add(this.nodeService.launchGetNodeList(of(true), true));
     }
 

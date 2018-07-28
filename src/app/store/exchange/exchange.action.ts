@@ -15,6 +15,8 @@ export class GetExchangeListAction extends ApiAction {
 
     noneParams = true;
 
+    allowSeparateRequest = true;
+
     constructor() { super(); }
 }
 
@@ -44,13 +46,66 @@ export class GetExchangeListSuccessAction extends GetExchangeListAction implemen
 
 //  ===========================================Local action===================================
 
-//  none local action
+export const UPDATE_SELECTED_EXCHANGE_TYPE = '[Exchange] UPDATE_SELECTED_EXCHANGE_TYPE';
+
+export class UpdateSelectedExchangeTypeAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE_TYPE;
+
+    constructor(public payload: number) { }
+}
+
+export const UPDATE_SELECTED_EXCHANGE = '[Exchange] UPDATE_SELECTED_EXCHANGE';
+
+export class UpdateSelectedExchangeAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE;
+
+    constructor(public payload: number | string) { }
+}
+
+export const UPDATE_SELECTED_EXCHANGE_REGION = '[Exchange] UPDATE_SELECTED_EXCHANGE_REGION';
+
+export class UpdateSelectedExchangeRegionAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE_REGION;
+
+    constructor(public payload: number) { }
+}
+
+export const UPDATE_SELECTED_EXCHANGE_PROVIDER = '[Exchange] UPDATE_SELECTED_EXCHANGE_PROVIDER';
+
+export class UpdateSelectedExchangeProviderAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE_PROVIDER;
+
+    constructor(public payload: number) { }
+}
+
+export const UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER = '[Exchange] UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER';
+
+export class UpdateSelectedExchangeQuotaServerAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER;
+
+    constructor(public payload: number) { }
+}
+
+export const UPDATE_SELECTED_EXCHANGE_TRADE_SERVER = '[Exchange] UPDATE_SELECTED_EXCHANGE_TRADE_SERVER';
+
+export class UpdateSelectedExchangeTradeServerAction implements Action {
+    readonly type = UPDATE_SELECTED_EXCHANGE_TRADE_SERVER;
+
+    constructor(public payload: number) { }
+}
+
 
 export type ApiActions = GetExchangeListRequestAction
     | GetExchangeListFailAction
     | GetExchangeListSuccessAction;
 
-export type Actions = ApiActions;
+export type Actions = ApiActions
+    | UpdateSelectedExchangeAction
+    | UpdateSelectedExchangeProviderAction
+    | UpdateSelectedExchangeQuotaServerAction
+    | UpdateSelectedExchangeRegionAction
+    | UpdateSelectedExchangeTradeServerAction
+    | UpdateSelectedExchangeTypeAction;
 
 export const ResponseActions = {
     GetExchangeListFailAction,

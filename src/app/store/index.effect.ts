@@ -7,10 +7,12 @@ import { PublicEffect } from './public/public.effect';
 import { RobotEffect } from './robot/robot.effect';
 import { StrategyEffect } from './strategy/strategy.effect';
 import { WatchDogEffect } from './watch-dog/watch-dog.effect';
+import { ExchangeEffect } from './exchange/exchange.effect';
 
 export const EFFECTS = [
     PublicEffect,
     AuthEffect,
+    ExchangeEffect,
 ];
 
 export const DASHBOARD_EFFECTS = [

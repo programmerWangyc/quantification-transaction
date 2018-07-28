@@ -1,0 +1,25 @@
+.exchange-config {
+    margin: 1em 0;
+}
+
+nz-tag {
+    margin: 0 0 0 2em;
+}
+
+.exchanges {
+    nz-select {
+        margin: 0 0 0 1em;
+        min-width: 10em;
+    }
+}
+
+.server-info {
+    nz-select {
+        margin: 0 2em 0 0;
+    }
+}
+
+.server-info label,
+.exchanges label {
+    margin: 5px 8px 5px 0;
+}

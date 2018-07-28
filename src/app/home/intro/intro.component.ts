@@ -4,19 +4,19 @@ import { Subscription } from 'rxjs';
 import { BaseComponent } from '../../base/base.component';
 import { SettingTypes } from '../../interfaces/request.interface';
 import { PublicService } from '../../providers/public.service';
-import { HomeService } from '../providers/home.service';
+import { ExchangeService } from '../../providers/exchange.service';
 
 @Component({
     selector: 'app-intro',
     templateUrl: './intro.component.html',
-    styleUrls: ['./intro.component.scss']
+    styleUrls: ['./intro.component.scss'],
 })
 export class IntroComponent extends BaseComponent {
 
     subscription$$: Subscription;
 
     constructor(
-        private homeService: HomeService,
+        private exchangeService: ExchangeService,
         private publicService: PublicService,
     ) {
         super();
@@ -27,10 +27,10 @@ export class IntroComponent extends BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.publicService.launchGetSettings(SettingTypes.index, false)
-            .add(this.homeService.launchExchangeList())
+        this.subscription$$ = this.publicService.launchGetSettings(SettingTypes.index)
+            .add(this.exchangeService.launchExchangeList())
             .add(this.publicService.handleSettingsError())
-            .add(this.homeService.handleExchangeListError());
+            .add(this.exchangeService.handleExchangeListError());
     }
 
     initialModel() {

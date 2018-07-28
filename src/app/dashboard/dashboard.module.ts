@@ -36,6 +36,7 @@ import { StrategyComponent } from './strategy/strategy.component';
 import { ExchangeModule } from '../exchange/exchange.module';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
+import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 
 @NgModule({
     imports: [
@@ -74,6 +75,7 @@ import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
         AgentAddComponent,
         ExchangeComponent,
         ExchangeAddComponent,
+        ExchangeEditComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

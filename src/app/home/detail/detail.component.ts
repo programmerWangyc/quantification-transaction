@@ -25,17 +25,17 @@ export const list = [
         src: '../../../assets/images/analytics.png',
         title: 'INTRO_DETAIL_TITLE_3',
         detail: 'INTRO_DETAIL_3',
-    }
+    },
 ];
 
 @Component({
     selector: 'app-detail',
     templateUrl: './detail.component.html',
-    styleUrls: ['./detail.component.scss']
+    styleUrls: ['./detail.component.scss'],
 })
 export class DetailComponent implements OnInit {
 
-    list: Observable<Detail[]>
+    list: Observable<Detail[]>;
 
     constructor(
         private translate: TranslateService,
@@ -43,18 +43,16 @@ export class DetailComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.list = observableFrom(list)
-            .pipe(
-                mergeMap(item => this.translate.get(item.detail)
-                    .pipe(
-                        map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) }))
-                    )
-                ),
-                reduce((acc, cur) => {
-                    acc.push(cur);
+        this.list = observableFrom(list).pipe(
+            mergeMap(item => this.translate.get(item.detail).pipe(
+                map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) }))
+            )
+            ),
+            reduce((acc, cur) => {
+                acc.push(cur);
 
-                    return acc;
-                }, [])
-            );
+                return acc;
+            }, [])
+        );
     }
 }

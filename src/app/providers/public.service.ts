@@ -42,13 +42,12 @@ export class PublicService extends BaseService {
      * @param typeSource 需要获取的设置种类
      * @param single 是否允许此请求单独发送
      */
-    launchGetSettings(typeSource: string | Observable<string>, single = true): Subscription {
+    launchGetSettings(typeSource: string | Observable<string>): Subscription {
         return this.process.processSettings(
             isString(typeSource) ? observableOf({ type: typeSource })
                 : typeSource.pipe(
                     map(type => ({ type }))
-                ),
-            single
+                )
         );
     }
 
@@ -64,7 +63,7 @@ export class PublicService extends BaseService {
     }
 
     /**
-     * 是否有指定的指定的设置
+     * 是否有指定的设置
      */
     hasSetting(settingType: string): Observable<boolean> {
         return this.store.select(selectSettings).pipe(

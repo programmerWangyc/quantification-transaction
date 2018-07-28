@@ -23,7 +23,7 @@ export const list: Sundry[] = [
             { label: '开发者工具', url: '' },
             { label: '身份验证与安全', url: '' },
             { label: '系统状态', url: '' },
-        ]
+        ],
     },
     {
         title: '了解详情',
@@ -40,7 +40,7 @@ export const list: Sundry[] = [
             { label: '支持', url: '' },
             { label: '招贤纳士', url: '' },
             { label: '新闻', url: '' },
-        ]
+        ],
     },
     {
         title: '互动',
@@ -56,13 +56,14 @@ export const list: Sundry[] = [
             { label: '播客', url: '' },
             { label: '简报注册', url: '' },
             { label: '用户体验调查', url: '' },
-        ]
-    }
-]
+        ],
+    },
+];
+
 @Component({
     selector: 'app-sundry',
     templateUrl: './sundry.component.html',
-    styleUrls: ['./sundry.component.scss']
+    styleUrls: ['./sundry.component.scss'],
 })
 export class SundryComponent implements OnInit {
 

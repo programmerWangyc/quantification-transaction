@@ -10,12 +10,14 @@ import { RoutingService } from './routing.service';
 import { TipService } from './tip.service';
 import { UtilService } from './util.service';
 import { WebsocketService } from './websocket.service';
+import { ExchangeService } from './exchange.service';
 
 export const GLOBAL_SERVICES = [
     ErrorService,
     WebsocketService,
     ProcessService,
     EncryptService,
+    ExchangeService,
     TipService,
     PublicService,
     BtNodeService,

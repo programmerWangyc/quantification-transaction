@@ -84,7 +84,7 @@ export class ExchangeListComponent extends BaseComponent {
     launch() {
         this.subscription$$ = this.platform.handlePlatformListError()
             .add(this.platform.launchDeletePlatform(this.delete$))
-            .add(this.platform.launchGetPlatformList(of(true), true));
+            .add(this.platform.launchGetPlatformList(of(true)));
     }
 
     /**

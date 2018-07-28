@@ -177,12 +177,28 @@ export interface DeleteNodeRequest {
 
 export interface GetNodeHashRequest { }
 
-// ===================================================Platform list=========================================
+// ===================================================Platform============================================
 
+// platform list
 export interface GetPlatformListRequest { }
 
+// delete platform
 export interface DeletePlatformRequest {
     id: number;
+}
+
+// platform detail
+export interface GetPlatformDetailRequest {
+    id: number;
+}
+
+// save platform; update
+export interface SavePlatformRequest {
+    id: number;
+    exchangeId: number;
+    dic: string; // json
+    magic1: string;
+    label: string;
 }
 
 // ===================================================Watch dog=========================================
@@ -425,6 +441,6 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 34
+ * 接口总数： 83， 已完成： 37
  */
 

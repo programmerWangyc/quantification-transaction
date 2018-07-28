@@ -71,6 +71,7 @@ export class BaseEffect {
      * If a request calls multiple interfaces, use this method.
      * @param source Collection of request actions.
      * @param actionModule Collection of response actions;
+     * @deprecated 停止使用这种方式，可能导致一个请求触发多个响应动作，这些动作可能散落在不同的模块中，非常难以调试。
      */
     protected getMultiResponseActions(source: Observable<Action[]>, actionModule: object): Observable<ResponseAction> {
         return source.pipe(
