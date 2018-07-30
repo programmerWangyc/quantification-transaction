@@ -1,3 +1,7 @@
 <h3>{{'EXCHANGE' | translate}}</h3>
 
 <app-exchange-select [exchanges]="exchanges | async"></app-exchange-select>
+
+<h3 *ngIf="showForm | async">{{'ARGUMENTS_CONFIG' | translate}}</h3>
+
+<app-exchange-form></app-exchange-form>

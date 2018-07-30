@@ -1,6 +1,6 @@
 export enum ExchangeType {
     futures,
-    yiSheng,
+    eSunny,
     currency,
     protocol,
 }

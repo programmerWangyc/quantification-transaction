@@ -30,6 +30,11 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
     private excludes = ['Futures_CTP', 'Futures_LTS', 'Futures_Esunny', 'Exchange'];
 
     /**
+     * 是否显示表单
+     */
+    showForm: Observable<boolean>;
+
+    /**
      * @ignore
      */
     isAlive = true;
@@ -54,14 +59,13 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
      * @ignore
      */
     initialModel() {
-
         const exchanges = this.globalExchangeService.getExchangeList(this.excludes);
 
         this.exchanges = this.exchangeService.getExchangeConfig().pipe(
             map(config => config.selectedTypeId),
             distinctUntilChanged(),
             switchMap(type => {
-                if (type === ExchangeType.futures || type === ExchangeType.yiSheng) {
+                if (type === ExchangeType.futures || type === ExchangeType.eSunny) {
                     return this.getBrokers(type);
                 } else if (type === ExchangeType.currency) {
                     return exchanges;
@@ -70,6 +74,10 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
                 }
             })
         );
+
+       this.showForm = this.exchangeService.getExchangeConfig().pipe(
+           map(config => !!config.selectedExchange)
+       );
     }
 
     /**

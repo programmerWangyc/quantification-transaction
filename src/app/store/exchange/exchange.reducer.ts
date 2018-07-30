@@ -1,4 +1,4 @@
-import { GetExchangeListResponse } from '../../interfaces/response.interface';
+import { GetExchangeListResponse, ExchangeMetaData } from '../../interfaces/response.interface';
 import * as actions from './exchange.action';
 
 export interface ExchangeConfig {
@@ -6,8 +6,8 @@ export interface ExchangeConfig {
     selectedExchange: number | string;
     regionIndex?: number;
     providerIndex?: number;
-    quotaServerIndex?: number;
-    tradeServerIndex?: number;
+    quotaServer?: string;
+    tradeServer?: string;
 }
 
 export interface UIState {
@@ -40,8 +40,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // exchange list
         case actions.GET_EXCHANGE_LIST_FAIL:
-        case actions.GET_EXCHANGE_LIST_SUCCESS:
             return { ...state, exchangeListRes: action.payload };
+
+        case actions.GET_EXCHANGE_LIST_SUCCESS: {
+            const { result } = action.payload;
+
+            return { ...state, exchangeListRes: { ...action.payload, result: { exchanges: result.exchanges.map(item => ({ ...item, meta: <ExchangeMetaData[]>JSON.parse(<string>item.meta) })) } } };
+        }
 
         // ======================================================Local action===================================================
 
@@ -56,10 +61,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, providerIndex: action.payload } } };
 
         case actions.UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER:
-            return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, quotaServerIndex: action.payload } } };
+            return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, quotaServer: action.payload } } };
 
         case actions.UPDATE_SELECTED_EXCHANGE_TRADE_SERVER:
-            return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, tradeServerIndex: action.payload } } };
+            return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, tradeServer: action.payload } } };
 
         case actions.UPDATE_SELECTED_EXCHANGE_REGION:
             return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, regionIndex: action.payload } } };

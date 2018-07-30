@@ -14,7 +14,7 @@ import { BtNodeService, GroupedNode } from '../../providers/bt-node.service';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import { EncryptService } from '../../providers/encrypt.service';
 import { PlatformService } from '../../providers/platform.service';
-import { SemanticArg, StrategyService } from '../../strategy/providers/strategy.service';
+import { SemanticArg, StrategyService, GroupedStrategy } from '../../strategy/providers/strategy.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
 
@@ -32,34 +32,77 @@ export interface RobotCreationForm {
     styleUrls: ['./create-robot.component.scss'],
 })
 export class CreateRobotComponent extends ExchangePairBusinessComponent {
+    /**
+     * @ignore
+     */
     isFold = false;
 
+    /**
+     * @ignore
+     */
     labelSm = 6;
 
+    /**
+     * @ignore
+     */
     controlSm = 14;
 
+    /**
+     * @ignore
+     */
     xs = 24;
 
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * @ignore
+     */
     form: FormGroup;
 
+    /**
+     * kline period;
+     */
     periods = K_LINE_PERIOD;
 
+
+    /**
+     * 交易平台
+     */
     platforms: Platform[] = [];
 
+    /**
+     * 是否自定义股票
+     */
     isCustomStock = false;
 
+    /**
+     * 选中的交易对
+     */
     selectedPairs: SelectedPair[] = [];
 
+    /**
+     * 创建指令
+     */
     create$: Subject<RobotCreationForm> = new Subject();
 
+    /**
+     * @ignore
+     */
     create$$: Subscription;
 
+    /**
+     * 托管者
+     */
     agents: Observable<GroupedNode[]>;
 
-    strategies: Observable<any>;
+    /**
+     * 分组后的策略
+     */
+    strategies: Observable<GroupedStrategy[]>;
 
     /**
      * !FIXME: selectAgent, selectedStrategy, selectedKLine, selectedExchange 实际是没有用的，
@@ -74,8 +117,14 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
     selectedExchange = null;
 
+    /**
+     * 选中的策略
+     */
     selectedStrategy$: Subject<number> = new Subject();
 
+    /**
+     * 策略参数
+     */
     selectedStrategyArgs: SemanticArg = null;
 
     constructor(
@@ -94,25 +143,33 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         this.initForm();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.agents = this.btNodeService.getGroupedNodeList('public', this.btNodeService.getAgentName);
 
-        this.strategies = this.strategyService.getGroupedStrategy('category', this.strategyService.getCategoryName, this.strategyService.reverseGetCategoryName)
-            .pipe(
-                map(list => list.map(({ groupName, values, groupNameValue }) => ({
-                    groupName,
-                    groupNameValue,
-                    values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY),
-                })).filter(collection => !isEmpty(collection.values)))
-            );
+        this.strategies = this.strategyService.getGroupedStrategy('category', this.strategyService.getCategoryName, this.strategyService.reverseGetCategoryName).pipe(
+            map(list => list.map(({ groupName, values, groupNameValue }) => ({
+                groupName,
+                groupNameValue,
+                values: values.filter(item => item.is_owner && item.category !== CategoryType.TEMPLATE_SNAPSHOT || item.category < CategoryType.TEMPLATE_LIBRARY),
+            })).filter(collection => !isEmpty(collection.values)))
+        );
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         /**
          *  Be careful ensure observables that emit 'complete' notification added at last;
@@ -128,14 +185,15 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             .add(this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
 
         // !FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
-        this.create$$ = this.robotService.launchCreateRobot(this.create$
-            .pipe(
-                map(form => this.createSaveParams(form))
-            )
-        );
+        this.create$$ = this.robotService.launchCreateRobot(this.create$.pipe(
+            map(form => this.createSaveParams(form))
+        ));
     }
 
-    initForm() {
+    /**
+     * @ignore
+     */
+    private initForm() {
         this.form = this.fb.group({
             robotName: '',
             agent: '',
@@ -146,7 +204,10 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         });
     }
 
-    createSaveParams(formValue: RobotCreationForm): SaveRobotRequest {
+    /**
+     * 创建请求参数
+     */
+    private createSaveParams(formValue: RobotCreationForm): SaveRobotRequest {
         const { robotName, kLinePeriod, agent, strategy } = formValue;
 
         const { platform, stocks } = this.robotOperate.getPairsParams(this.selectedPairs);
@@ -168,6 +229,9 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         return { name: robotName, kLineId: kLinePeriod, nodeId: agent, args, strategyId: strategy, pairExchanges: platform, pairStocks: stocks };
     }
 
+    /**
+     * 处理参数变化
+     */
     argChange(arg: VariableOverview, templateName?: string): void {
         if (!arg.variableName) return;
 
@@ -184,34 +248,58 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         }
     }
 
+    /**
+     * @ignore
+     */
     goBack() {
         this.location.back();
     }
 
+    /**
+     * @ignore
+     */
     get robotName(): AbstractControl {
         return this.form.get('robotName');
     }
 
+    /**
+     * @ignore
+     */
     get kLinePeriod(): AbstractControl {
         return this.form.get('kLinePeriod');
     }
 
+    /**
+     * @ignore
+     */
     get agent(): AbstractControl {
         return this.form.get('agent');
     }
 
+    /**
+     * @ignore
+     */
     get stock(): AbstractControl {
         return this.form.get('stock');
     }
 
+    /**
+     * @ignore
+     */
     get platform(): AbstractControl {
         return this.form.get('platform');
     }
 
+    /**
+     * @ignore
+     */
     get selectedPlatform(): Observable<Platform> {
         return this.platformService.getPlatformList().pipe(map(list => list.find(item => item.id === this.platform.value)));
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
 

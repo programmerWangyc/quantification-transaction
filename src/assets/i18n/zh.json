@@ -668,5 +668,23 @@
     "SERVER_REGION": "服务器区域",
     "QUOTA_SERVER": "行情服务器",
     "TRADE_SERVER": "交易服务器",
-    "LOW_COMMISSION_ACCOUNT_OPENING": "合作单位低佣金开户"
+    "LOW_COMMISSION_ACCOUNT_OPENING": "合作单位低佣金开户",
+    "INPUT_TIP": "请输入{{label}}",
+
+    "TRADE_ACCOUNT": "交易帐号",
+    "TRADE_PASSWORD": "交易密码",
+    "QUOTA_ACCOUNT": "行情帐号",
+    "QUOTA_PASSWORD": "行情密码",
+    "BROKER_ID": "broker ID",
+    "TERMINATE_FLAG": "终端标识",
+    "OPEN_TERMINATE_AUTHENTICATION": "开启终端认证",
+    "TERMINATE_AUTH_CODE": "终端认证码",
+    "TRADE_APP_AUTH_ID": "交易授权 App ID",
+    "TRADE_AUTH_CERT_INFO": "交易授权 certInfo",
+    "TRADE_ACCESS_KEY": "Access Key",
+    "TRADE_SECRET_KEY": "Secret Key",
+    "SERVER_ADDRESS": "服务地址",
+    "FLAG": "标签",
+    "LENGTH_MUST_BE": "{{label}}的长度必须为{{length}}",
+    "LENGTH_MUST_BE_LESS_THAN": "{{label}}的长度不能大于{{maxLength}}"
 }

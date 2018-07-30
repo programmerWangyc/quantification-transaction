@@ -122,6 +122,10 @@ export const removeConditionInName = (name: string): string => name.split('@')[0
 
 export const VALUE_OF_BUTTON_TYPE_ARG = '__button__';
 
+export const FUTURES_CTP = 'Futures_CTP';
+
+export const FUTURES_ESUNNY = 'Futures_Esunny';
+
 @Injectable()
 export class ConstantService {
 
@@ -144,6 +148,10 @@ export class ConstantService {
     PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
     VALUE_OF_BUTTON_TYPE_ARG = VALUE_OF_BUTTON_TYPE_ARG;
+
+    FUTURES_CTP = FUTURES_CTP;
+
+    FUTURES_ESUNNY  = FUTURES_ESUNNY;
 
     /**
      * 去掉参数名称中的条件；

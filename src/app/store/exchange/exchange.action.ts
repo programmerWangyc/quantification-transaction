@@ -83,7 +83,7 @@ export const UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER = '[Exchange] UPDATE_SELECTED
 export class UpdateSelectedExchangeQuotaServerAction implements Action {
     readonly type = UPDATE_SELECTED_EXCHANGE_QUOTA_SERVER;
 
-    constructor(public payload: number) { }
+    constructor(public payload: string) { }
 }
 
 export const UPDATE_SELECTED_EXCHANGE_TRADE_SERVER = '[Exchange] UPDATE_SELECTED_EXCHANGE_TRADE_SERVER';
@@ -91,7 +91,7 @@ export const UPDATE_SELECTED_EXCHANGE_TRADE_SERVER = '[Exchange] UPDATE_SELECTED
 export class UpdateSelectedExchangeTradeServerAction implements Action {
     readonly type = UPDATE_SELECTED_EXCHANGE_TRADE_SERVER;
 
-    constructor(public payload: number) { }
+    constructor(public payload: string) { }
 }
 
 

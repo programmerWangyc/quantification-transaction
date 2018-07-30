@@ -1,0 +1,38 @@
+<ng-container *ngIf="!!form && !!group">
+
+    <form nz-form [formGroup]="form">
+
+        <nz-form-item *ngFor="let field of group">
+            <nz-form-label [nzSm]="6" [nzXs]="24" *ngIf="isControlShow(field)" [nzRequired]="field.required">{{field.label | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+
+                <ng-container [ngSwitch]="field.controlType">
+                    <ng-container *ngSwitchCase="'checkbox'">
+                        <label [formControlName]="field.key" nz-checkbox> </label>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'textarea'">
+                        <textarea [formControlName]="field.key" rows="10" nz-input></textarea>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        <input *ngIf="isControlShow(field)" [formControlName]="field.key" [type]="field.controlType" nz-input>
+                    </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="accessField(field.key) as control">
+                    <nz-form-explain *ngIf="control.invalid && control.dirty || control.touched">
+                        <div *ngIf="!!control.getError('required'); else otherErrorBlock">{{'INPUT_TIP' | translate : getTipParams(field.label)}}</div>
+
+                        <ng-template #otherErrorBlock>
+                            <div *ngIf="control.getError('length') as length">{{'LENGTH_MUST_BE' | translate: getTipParams(field.label, {length: length} ) }}</div>
+                            <div *ngIf="control.getError('maxLength') as maxLength">{{'LENGTH_MUST_BE_LESS_THAN' | translate : getTipParams(field.label, {maxLength: maxLength})}}</div>
+                        </ng-template>
+                    </nz-form-explain>
+                </ng-container>
+            </nz-form-control>
+        </nz-form-item>
+
+        <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="submit$.next(form.value)" [disabled]="form.invalid">
+            {{'CREATE' | translate}}
+        </button>
+    </form>
+</ng-container>

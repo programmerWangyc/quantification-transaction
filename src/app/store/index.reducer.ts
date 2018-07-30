@@ -105,7 +105,6 @@ export const selectExchangeListResponse = createSelector(getExchangeState, excha
 // exchange ui state
 export const selectExchangeUIState = createSelector(getExchangeState, exchange.getExchangeUIStateResponse);
 
-
 //  ===================================================Robot===================================================
 
 const getRobotState = (state: AppState) => state.robot;

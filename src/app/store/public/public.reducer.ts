@@ -10,7 +10,7 @@ export interface Settings {
     api: string;
     promotion: Object;
     docker: Object;
-    brokers: Object;
+    brokers: string;
     index: Object;
     backtest_javascript: string; // !FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
 }

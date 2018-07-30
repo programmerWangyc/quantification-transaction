@@ -52,7 +52,7 @@
         <nz-form-label>{{'QUOTA_SERVER' | translate}}</nz-form-label>
 
         <nz-radio-group [formControl]="quotaIP" nz-row>
-            <label nz-radio *ngFor="let item of quotaIPs; index as idx" [nzValue]="idx" nz-col>{{item}}</label>
+            <label nz-radio *ngFor="let item of quotaIPs" [nzValue]="item" nz-col>{{item}}</label>
         </nz-radio-group>
     </div>
 
@@ -60,7 +60,7 @@
         <nz-form-label>{{'TRADE_SERVER' | translate}}</nz-form-label>
 
         <nz-radio-group [formControl]="tradeIP" nz-row>
-            <label nz-radio *ngFor="let item of tradeIPs; index as idx" [nzValue]="idx" nz-col>{{item}}</label>
+            <label nz-radio *ngFor="let item of tradeIPs" [nzValue]="item" nz-col>{{item}}</label>
         </nz-radio-group>
     </div>
 

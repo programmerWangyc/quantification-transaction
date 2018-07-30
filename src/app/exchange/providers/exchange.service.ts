@@ -73,14 +73,14 @@ export class ExchangeService extends BaseService {
     /**
      * @ignore
      */
-    updateExchangeQuotaServer(serverObs: Observable<number>): Subscription {
+    updateExchangeQuotaServer(serverObs: Observable<string>): Subscription {
         return serverObs.subscribe(server => this.store.dispatch(new Actions.UpdateSelectedExchangeQuotaServerAction(server)));
     }
 
     /**
      * @ignore
      */
-    updateExchangeTradeServer(serverObs: Observable<number>): Subscription {
+    updateExchangeTradeServer(serverObs: Observable<string>): Subscription {
         return serverObs.subscribe(server => this.store.dispatch(new Actions.UpdateSelectedExchangeTradeServerAction(server)));
     }
 }

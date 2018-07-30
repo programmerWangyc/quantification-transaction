@@ -143,13 +143,18 @@ export interface ExchangeMetaData {
     type: string;
     name: string;
     label: string;
+    encrypt?: boolean;
+    def?: string;
+    length?: number;
+    maxlength?: number;
+    checkbox?: string;
 }
 
 export interface Exchange {
     eid: string;
     id: number;
     logo: string;
-    meta: ExchangeMetaData[];
+    meta: string | ExchangeMetaData[]; // parse result ExchangeMetaData[];
     name: string;
     priority: number;
     website: string;

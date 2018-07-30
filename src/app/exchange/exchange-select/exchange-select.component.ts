@@ -242,9 +242,9 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
 
             this.tradeIPs = trade;
 
-            this.quotaIP.patchValue(0);
+            this.quotaIP.patchValue(this.quotaIPs[0]);
 
-            this.tradeIP.patchValue(0);
+            this.tradeIP.patchValue(this.tradeIPs[0]);
         });
     }
 
