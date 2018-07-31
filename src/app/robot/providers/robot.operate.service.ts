@@ -566,15 +566,13 @@ export class RobotOperateService extends BaseService {
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
         return combineLatest(
             this.encryptService.transformStrategyArgsToEncryptType(
-                this.store.select(fromRoot.selectRobotStrategyArgs)
-                    .pipe(
+                this.store.select(fromRoot.selectRobotStrategyArgs).pipe(
                         map(args => args || [])
                     ),
                 isEncrypt
             ),
             this.encryptService.transformTemplateArgsToEncryptType(
-                this.store.select(fromRoot.selectRobotTemplateArgs)
-                    .pipe(
+                this.store.select(fromRoot.selectRobotTemplateArgs).pipe(
                         map(args => args || [])
                     ),
                 isEncrypt
@@ -605,6 +603,9 @@ export class RobotOperateService extends BaseService {
             )));
     }
 
+    /**
+     * 验证密码成功后的通知流；
+     */
     private isSecurityVerifySuccess(): Observable<boolean> {
         return this.tipService.confirmOperateTip(VerifyPasswordComponent, { message: 'PASSWORD', needTranslate: true }).pipe(
             this.filterTruth(),

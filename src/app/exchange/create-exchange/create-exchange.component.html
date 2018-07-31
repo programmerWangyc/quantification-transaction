@@ -4,4 +4,4 @@
 
 <h3 *ngIf="showForm | async">{{'ARGUMENTS_CONFIG' | translate}}</h3>
 
-<app-exchange-form></app-exchange-form>
+<app-exchange-form (save)="save$.next($event)"></app-exchange-form>

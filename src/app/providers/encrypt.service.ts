@@ -21,6 +21,11 @@ export class EncryptService {
         return CryptoJS.MD5(password + '/botvs').toString();
     }
 
+    /**
+     * 加密文本
+     * @param data 被加密的值
+     * @param password 密码
+     */
     encryptText(data: string, password: string): string {
         let key: string = this.encryptPassword(password);
 
@@ -50,39 +55,29 @@ export class EncryptService {
     }
 
     transformStrategyArgsToEncryptType(data: Observable<VariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data
-            .pipe(
-                mergeMap(variables => observableFrom(variables)
-                    .pipe(
-                        mergeMap(item => this.transformArgs(item, isEncrypt)),
-                        reduce(this.putInArray, [])
-                    )
-                )
-            );
+        return data.pipe(
+            mergeMap(variables => observableFrom(variables).pipe(
+                mergeMap(item => this.transformArgs(item, isEncrypt)),
+                reduce(this.putInArray, [])
+            ))
+        );
     }
 
     transformTemplateArgsToEncryptType(data: Observable<TemplateVariableOverview[]>, isEncrypt = true): Observable<Array<string | number | boolean>[]> {
-        return data
-            .pipe(
-                mergeMap(variables => observableFrom(variables)
-                    .pipe(
-                        mergeMap(variable => observableFrom(variable.variables)
-                            .pipe(
-                                mergeMap(item => this.transformArgs(item, isEncrypt)
-                                    .pipe(
-                                        map(res => [...res, variable.id])
-                                    )
-                                )
-                            )
-                        ),
-                        reduce(this.putInArray, [])
-                    )
-                )
-            );
+        return data.pipe(
+            mergeMap(variables => observableFrom(variables).pipe(
+                mergeMap(variable => observableFrom(variable.variables).pipe(
+                    mergeMap(item => this.transformArgs(item, isEncrypt).pipe(
+                        map(res => [...res, variable.id])
+                    ))
+                )),
+                reduce(this.putInArray, [])
+            ))
+        );
     }
 
     /**
-     *  Transform data to ary structure, usually for api interactive purpose;
+     * Transform data to ary structure, usually for api interactive purpose;
      */
     private transformArgs(data: VariableOverview, isEncrypt = true): Observable<Array<string | number | boolean>> {
         const { variableName, variableValue, variableTypeId, originValue } = data;
@@ -95,11 +90,10 @@ export class EncryptService {
 
             return observableOf([name, index]);
         } else if (variableTypeId === VariableType.ENCRYPT_STRING_TYPE && (<string>variableValue).indexOf(this.constantService.ENCRYPT_PREFIX) !== 0 && isEncrypt) {
-            return this.authService.getTemporaryPwd()
-                .pipe(
-                    map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)]),
-                    take(1)
-                );
+            return this.authService.getTemporaryPwd().pipe(
+                map(pwd => [name, this.constantService.ENCRYPT_PREFIX + this.encryptText(<string>variableValue, pwd)]),
+                take(1)
+            );
 
         } else {
             return observableOf([name, variableValue]);

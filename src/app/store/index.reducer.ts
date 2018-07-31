@@ -210,7 +210,7 @@ export const selectPlatformRequests = createSelector(getPlatformState, platform.
 export const selectPlatformDetailResponse = createSelector(getPlatformState, platform.getPlatformDetailRes);
 
 // update platform
-export const selectPlatformUpdateResponse = createSelector(getPlatformState, platform.getPlatformDeleteRes);
+export const selectPlatformUpdateResponse = createSelector(getPlatformState, platform.getUpdatePlatformRes);
 
 //  ===================================================Watch dog===================================================
 

@@ -40,12 +40,11 @@ export class BaseEffect {
         return zip(
             observableFrom(<ResponseUnit<ResponseItem>[]>data.result || []),
             observableFrom(data.callbackId.split(this.callbackIdFlag))
-        )
-            .pipe(
-                map(([result, action]) => ({ ...result, action })),
-                // tap(res => console.log(`Action-${res.action} get response: `, res.result)),
-                map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res))
-            );
+        ).pipe(
+            map(([result, action]) => ({ ...result, action })),
+            // tap(res => console.log(`Action-${res.action} get response: `, res.result)),
+            map(res => new actionModule[res.action + (resultFail(res) ? failTail : successTail)](res))
+        );
     }
 
     /**

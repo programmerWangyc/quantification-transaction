@@ -195,10 +195,10 @@ export interface GetPlatformDetailRequest {
 // save platform; update
 export interface SavePlatformRequest {
     id: number;
-    exchangeId: number;
-    dic: string; // json
-    magic1: string;
-    label: string;
+    exchangeId: number | string;
+    config: string; // json type string;
+    reserved: string; // constant '';
+    flag: string;
 }
 
 // ===================================================Watch dog=========================================

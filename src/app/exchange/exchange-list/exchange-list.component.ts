@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -6,7 +7,6 @@ import { mergeMap } from 'rxjs/operators';
 import { BaseComponent } from '../../base/base.component';
 import { Platform } from '../../interfaces/response.interface';
 import { PlatformService } from '../../providers/platform.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-exchange-list',
@@ -27,7 +27,7 @@ export class ExchangeListComponent extends BaseComponent {
     /**
      * @ignore
      */
-    tableHead: string[] = ['NAME', 'EXCHANGE_PAIR', 'OPERATE'];
+    tableHead: string[] = ['FLAG', 'NAME', 'EXCHANGE_PAIR', 'OPERATE'];
 
     /**
      * 删除

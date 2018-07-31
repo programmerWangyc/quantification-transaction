@@ -31,8 +31,8 @@
             </nz-form-control>
         </nz-form-item>
 
-        <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="submit$.next(form.value)" [disabled]="form.invalid">
-            {{'CREATE' | translate}}
+        <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="generateConfig(form.value)" [disabled]="form.invalid">
+            {{buttonText | translate}}
         </button>
     </form>
 </ng-container>

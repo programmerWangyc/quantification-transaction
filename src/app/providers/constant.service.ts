@@ -74,6 +74,8 @@ export const COMMAND_PREFIX = '$$$__cmd__$$$';
 
 export const ENCRYPT_PREFIX = '$$$__enc__$$$';
 
+export const ENCRYPT_PREFIX2 = '$$$__';
+
 export const VARIABLE_NAME_REGEXPS: RegExp[] = [comparableVariableNameFormat, booleanableVariableNameFormat];
 
 export const COINS = {
@@ -126,32 +128,38 @@ export const FUTURES_CTP = 'Futures_CTP';
 
 export const FUTURES_ESUNNY = 'Futures_Esunny';
 
+export const COMMON_PROTOCOL_EXCHANGE = 'Exchange';
+
 @Injectable()
 export class ConstantService {
 
-    VERSION = VERSION;
+    readonly VERSION = VERSION;
 
-    K_LINE_PERIOD = K_LINE_PERIOD;
+    readonly K_LINE_PERIOD = K_LINE_PERIOD;
 
-    VARIABLE_TYPES = VARIABLE_TYPES;
+    readonly VARIABLE_TYPES = VARIABLE_TYPES;
 
-    LIST_PREFIX = LIST_PREFIX;
+    readonly LIST_PREFIX = LIST_PREFIX;
 
-    COMMAND_PREFIX = COMMAND_PREFIX;
+    readonly COMMAND_PREFIX = COMMAND_PREFIX;
 
-    ENCRYPT_PREFIX = ENCRYPT_PREFIX;
+    readonly ENCRYPT_PREFIX = ENCRYPT_PREFIX;
 
-    VARIABLE_NAME_REGEXPS = VARIABLE_NAME_REGEXPS;
+    readonly ENCRYPT_PREFIX2 = ENCRYPT_PREFIX2;
 
-    COINS = COINS;
+    readonly VARIABLE_NAME_REGEXPS = VARIABLE_NAME_REGEXPS;
 
-    PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
+    readonly COINS = COINS;
 
-    VALUE_OF_BUTTON_TYPE_ARG = VALUE_OF_BUTTON_TYPE_ARG;
+    readonly PAGE_SIZE_SELECT_VALUES = PAGE_SIZE_SELECT_VALUES;
 
-    FUTURES_CTP = FUTURES_CTP;
+    readonly VALUE_OF_BUTTON_TYPE_ARG = VALUE_OF_BUTTON_TYPE_ARG;
 
-    FUTURES_ESUNNY  = FUTURES_ESUNNY;
+    readonly FUTURES_CTP = FUTURES_CTP;
+
+    readonly FUTURES_ESUNNY = FUTURES_ESUNNY;
+
+    readonly COMMON_PROTOCOL_EXCHANGE = COMMON_PROTOCOL_EXCHANGE;
 
     /**
      * 去掉参数名称中的条件；

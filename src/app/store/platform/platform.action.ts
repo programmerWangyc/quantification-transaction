@@ -128,9 +128,9 @@ export class GetPlatformDetailSuccessAction extends GetPlatformDetailAction impl
 enum SavePlatformOrder {
     id,
     exchangeId,
-    dic,
-    magic1,
-    label,
+    config,
+    reserved,
+    flag,
     length,
 }
 
@@ -148,29 +148,36 @@ class SavePlatformAction extends ApiAction {
     constructor() { super(); }
 }
 
-export const UPDATE_PLATFORM = '[Platform] UPDATE_PLATFORM';
+export const SAVE_PLATFORM = '[Platform] SAVE_PLATFORM';
 
-export class UpdatePlatformRequestAction extends SavePlatformAction implements Action {
-    readonly type = UPDATE_PLATFORM;
+export class SavePlatformRequestAction extends SavePlatformAction implements Action {
+    readonly type = SAVE_PLATFORM;
 
     constructor(public payload: SavePlatformRequest) { super(); }
 }
 
-export const UPDATE_PLATFORM_FAIL = '[Platform] UPDATE_PLATFORM_FAIL';
+export const SAVE_PLATFORM_FAIL = '[Platform] SAVE_PLATFORM_FAIL';
 
-export class UpdatePlatformFailAction extends SavePlatformAction implements Action {
-    readonly type = UPDATE_PLATFORM_FAIL;
+export class SavePlatformFailAction extends SavePlatformAction implements Action {
+    readonly type = SAVE_PLATFORM_FAIL;
+
+    constructor(public payload: SavePlatformResponse) { super(); }
+}
+
+export const SAVE_PLATFORM_SUCCESS = '[Platform] SAVE_PLATFORM_SUCCESS';
+
+export class SavePlatformSuccessAction extends SavePlatformAction implements Action {
+    readonly type = SAVE_PLATFORM_SUCCESS;
 
     constructor(public payload: SavePlatformResponse) { super(); }
 }
 
-export const UPDATE_PLATFORM_SUCCESS = '[Platform] UPDATE_PLATFORM_FAIL_SUCCESS';
+export const RESET_STATE = '[Platform] RESET_STATE';
 
-export class UpdatePlatformSuccessAction extends SavePlatformAction implements Action {
-    readonly type = UPDATE_PLATFORM_SUCCESS;
-
-    constructor(public payload: SavePlatformResponse) { super(); }
+export class ResetStateAction implements Action {
+    readonly type = RESET_STATE;
 }
+
 
 //  ===========================================Local action===================================
 
@@ -185,21 +192,20 @@ export type ApiActions = GetPlatformListRequestAction
     | GetPlatformDetailSuccessAction
     | GetPlatformListFailAction
     | GetPlatformListSuccessAction
-    | UpdatePlatformFailAction
-    | UpdatePlatformRequestAction
-    | UpdatePlatformSuccessAction;
+    | SavePlatformFailAction
+    | SavePlatformRequestAction
+    | SavePlatformSuccessAction;
 
-export type Actions = ApiActions;
+export type Actions = ApiActions
+    | ResetStateAction;
 
 export const ResponseActions = {
     DeletePlatformFailAction,
     DeletePlatformSuccessAction,
     GetPlatformDetailFailAction,
-    GetPlatformDetailRequestAction,
     GetPlatformDetailSuccessAction,
     GetPlatformListFailAction,
     GetPlatformListSuccessAction,
-    UpdatePlatformFailAction,
-    UpdatePlatformRequestAction,
-    UpdatePlatformSuccessAction,
+    SavePlatformFailAction,
+    SavePlatformSuccessAction,
 };

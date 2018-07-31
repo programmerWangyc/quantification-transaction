@@ -94,6 +94,12 @@ export class UpdateSelectedExchangeTradeServerAction implements Action {
     constructor(public payload: string) { }
 }
 
+export const RESET_STATE = '[Exchange] RESET_STATE';
+
+export class ResetStateAction implements Action {
+    readonly type = RESET_STATE;
+}
+
 
 export type ApiActions = GetExchangeListRequestAction
     | GetExchangeListFailAction
@@ -105,7 +111,8 @@ export type Actions = ApiActions
     | UpdateSelectedExchangeQuotaServerAction
     | UpdateSelectedExchangeRegionAction
     | UpdateSelectedExchangeTradeServerAction
-    | UpdateSelectedExchangeTypeAction;
+    | UpdateSelectedExchangeTypeAction
+    | ResetStateAction;
 
 export const ResponseActions = {
     GetExchangeListFailAction,

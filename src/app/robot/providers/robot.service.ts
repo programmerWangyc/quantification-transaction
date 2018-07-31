@@ -49,15 +49,11 @@ export class RobotService extends BaseService {
     launchCreateRobot(source: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
             source.pipe(
-                switchMap(data => this.nodeService.isPublicNode(data.nodeId)
-                    .pipe(
-                        mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(ConfirmComponent, { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' })
-                            .pipe(
-                                map(sure => sure ? data : null)
-                            ) : observableOf(data)
-                        )
-                    )
-                ),
+                switchMap(data => this.nodeService.isPublicNode(data.nodeId).pipe(
+                    mergeMap(isPublic => isPublic ? this.tipService.confirmOperateTip(ConfirmComponent, { message: 'RECOMMENDED_USE_PRIVATE_NODE', needTranslate: true, confirmBtnText: 'GO_ON' }).pipe(
+                        map(sure => sure ? data : null)
+                    ) : observableOf(data))
+                )),
                 filter(v => !!v)
             )
         );

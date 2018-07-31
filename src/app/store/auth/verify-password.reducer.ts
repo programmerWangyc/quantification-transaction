@@ -31,7 +31,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RESET_VERIFY_PASSWORD:
             return { ...state, response: null };
 
-        case actions.RESET_VERIFY_PASSWORD:
         default:
             return state;
     }

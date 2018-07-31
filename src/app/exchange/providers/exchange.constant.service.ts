@@ -6,9 +6,9 @@ import { Exchange } from '../exchange-select/exchange-select.component';
 
 @Injectable()
 export class ExchangeConstantService extends ConstantService {
-    EXCHANGES: Platform[] = [{ eid: 'BotVS', id: -1, label: 'BotVS', name: 'BotVS', stocks: ['BTC_USD'] }];
+    readonly EXCHANGES: Platform[] = [{ eid: 'BotVS', id: -1, label: 'BotVS', name: 'BotVS', stocks: ['BTC_USD'] }];
 
-    PROTOCOLS: Exchange[] = [{ id: 0, name: 'REST' }, { id: 1, name: 'FIX' }];
+    readonly PROTOCOLS: Exchange[] = [{ id: 0, name: 'REST' }, { id: 1, name: 'FIX' }];
 
     constructor() {
         super();

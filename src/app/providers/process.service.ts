@@ -141,7 +141,7 @@ export class ProcessService {
     }
 
     processUpdatePlatform(paramObs: Observable<Request.SavePlatformRequest>): Subscription {
-        return paramObs.subscribe(params => this.store.dispatch(new PlatformActions.UpdatePlatformRequestAction(params)));
+        return paramObs.subscribe(params => this.store.dispatch(new PlatformActions.SavePlatformRequestAction(params)));
     }
 
     //  ===================================================Watch dog===================================================

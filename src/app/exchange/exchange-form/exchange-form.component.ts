@@ -1,10 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 
-import { Subject, Subscription } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { takeWhile, map } from 'rxjs/operators';
 
 import { ExchangeFormService, FormBase } from '../providers/exchange.form.service';
+
+export interface ExchangeFormConfigInfo {
+    config: string;
+    flag: string;
+}
 
 @Component({
     selector: 'app-exchange-form',
@@ -12,6 +17,7 @@ import { ExchangeFormService, FormBase } from '../providers/exchange.form.servic
     styleUrls: ['./exchange-form.component.scss'],
 })
 export class ExchangeFormComponent implements OnInit, OnDestroy {
+    @Input() buttonText: string = 'ADD';
 
     /**
      * @ignore
@@ -26,7 +32,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
     /**
      * 提交按钮
      */
-    submit$: Subject<any> = new Subject();
+    @Output() save: EventEmitter<ExchangeFormConfigInfo> = new EventEmitter();
 
     /**
      * @ignore
@@ -123,6 +129,15 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
      */
     isControlShow(field: FormBase): boolean {
         return field.key === 'AuthCode' ? this.accessField('needAuth').value : true;
+    }
+
+    /**
+     * 获取表单配置字符串
+     */
+    generateConfig(form: any): void {
+        this.formService.generateConfigString(form, this.group).pipe(
+            map(config => ({ config, flag: this.accessField('flag').value }))
+        ).subscribe(data => this.save.next(data)); // ! subscribe(this.save) 这种写法导致save触发 complete 通知，无法再向组件外传输值。
     }
 
     /**

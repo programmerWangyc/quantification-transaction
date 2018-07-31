@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable, of } from 'rxjs';
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { distinctUntilChanged, map, switchMap, takeWhile, withLatestFrom } from 'rxjs/operators';
 
 import { SettingTypes } from '../../interfaces/request.interface';
 import { Broker } from '../../interfaces/response.interface';
 import { ExchangeService as GlobalExchangeService } from '../../providers/exchange.service';
+import { PlatformService } from '../../providers/platform.service';
 import { PublicService } from '../../providers/public.service';
+import { ExchangeFormConfigInfo } from '../exchange-form/exchange-form.component';
 import { Exchange } from '../exchange-select/exchange-select.component';
 import { ExchangeType } from '../exchange.config';
 import { ExchangeConstantService } from '../providers/exchange.constant.service';
@@ -17,7 +19,7 @@ import { ExchangeService } from '../providers/exchange.service';
     templateUrl: './create-exchange.component.html',
     styleUrls: ['./create-exchange.component.scss'],
 })
-export class CreateExchangeComponent implements OnInit, OnDestroy {
+export class CreateExchangeComponent implements OnDestroy, OnInit {
 
     /**
      * exchanges
@@ -39,12 +41,19 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
      */
     isAlive = true;
 
+    /**
+     * @ignore
+     */
+    save$: Subject<ExchangeFormConfigInfo> = new Subject();
+
     constructor(
         private publicService: PublicService,
         private globalExchangeService: GlobalExchangeService,
         private exchangeService: ExchangeService,
         private constant: ExchangeConstantService,
-    ) { }
+        private platform: PlatformService,
+    ) {
+    }
 
     /**
      * @ignore
@@ -75,9 +84,31 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
             })
         );
 
-       this.showForm = this.exchangeService.getExchangeConfig().pipe(
-           map(config => !!config.selectedExchange)
-       );
+        this.showForm = this.exchangeService.getExchangeConfig().pipe(
+            map(config => !!config.selectedExchange)
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    launch() {
+        this.globalExchangeService.launchExchangeList();
+
+        this.platform.launchUpdatePlatform(this.save$.pipe(
+            takeWhile(() => this.isAlive),
+            withLatestFrom(
+                this.exchangeService.getExchangeConfig(),
+                this.globalExchangeService.getExchangeList(),
+                (requestConfigInfo, config, list) => {
+                    const exchange = this.exchangeService.getTargetExchange(config, list);
+
+                    return { ...requestConfigInfo, id: -1, exchangeId: exchange.id, reserved: '' };
+                }
+            )
+        ));
+
+        this.platform.tipUpdatePlatformResult(() => this.isAlive);
     }
 
     /**
@@ -94,14 +125,11 @@ export class CreateExchangeComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    launch() {
-        this.globalExchangeService.launchExchangeList();
-    }
-
-    /**
-     * @ignore
-     */
     ngOnDestroy() {
         this.isAlive = false;
+
+        this.exchangeService.resetState();
+
+        this.platform.resetState();
     }
 }

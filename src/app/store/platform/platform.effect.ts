@@ -9,6 +9,7 @@ import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import * as platform from './platform.action';
 import { TipService } from '../../providers/tip.service';
+import { SavePlatformResponse } from '../../interfaces/response.interface';
 
 /**
  * @ignore
@@ -25,10 +26,10 @@ export class PlatformEffect extends BaseEffect {
     );
 
     @Effect()
-    detail$: Observable<ResponseAction> = this.privateGetResponseAction(platform.GET_PLATFORM_DETAIL);
+    detail$: Observable<ResponseAction> = this.getResponseAction(platform.GET_PLATFORM_DETAIL, platform.ResponseActions);
 
     @Effect()
-    update$: Observable<ResponseAction> = this.privateGetResponseAction(platform.UPDATE_PLATFORM);
+    update$: Observable<ResponseAction> = this.getResponseAction(platform.SAVE_PLATFORM, platform.ResponseActions, isSavePlatformFail);
 
     constructor(
         public actions$: Actions,
@@ -37,8 +38,11 @@ export class PlatformEffect extends BaseEffect {
     ) {
         super(ws, actions$);
     }
+}
 
-    private privateGetResponseAction(action): Observable<ResponseAction> {
-        return this.getResponseAction(action, platform.ResponseActions);
-    }
+/**
+ * @ignore
+ */
+export function isSavePlatformFail(response: SavePlatformResponse): boolean {
+    return !response.result || !!response.error;
 }

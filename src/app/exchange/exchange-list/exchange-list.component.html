@@ -1,5 +1,5 @@
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
-    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize">
+    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta">
         <thead>
             <tr>
                 <th *ngFor="let item of tableHead; first as isFirst" bt-text-center [nzWidth]="isFirst ? '30%' : 'auto'">{{item | translate}}</th>
@@ -7,13 +7,15 @@
         </thead>
         <tbody>
             <tr *ngFor="let platform of nzTable.data">
-                <td>
-                    <span *ngIf="platform.id === -1;else otherExchange">{{platform.label}}</span>
+                <td>{{platform.label}}</td>
+
+                <td bt-text-center>
+                    <span *ngIf="platform.id === -1;else otherExchange">{{platform.name}}</span>
 
                     <ng-template #otherExchange>
                         <a [href]="platform.website || '#'" target="_blank">
                             <img *ngIf="!!platform.logo" src="../../../assets/images/logo/small/{{platform.logo}}">
-                            <span>{{platform.label}}</span>
+                            <span>{{platform.name}}</span>
                         </a>
                     </ng-template>
                 </td>
@@ -40,5 +42,8 @@
         </tbody>
     </nz-table>
 
-    <div class="statistics">{{statistics | async}}</div>
 </nz-spin>
+
+<ng-template #sta>
+    <div>{{statistics | async}}</div>
+</ng-template>

@@ -1,24 +1,28 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 
-import { isNull, last, isBoolean, isEmpty } from 'lodash';
-import { Observable, from } from 'rxjs';
-import { map, withLatestFrom, mergeMap, reduce, filter, startWith } from 'rxjs/operators';
+import { isBoolean, isEmpty, isNull, last, omit } from 'lodash';
+import { from, Observable, of } from 'rxjs';
+import { filter, map, mergeMap, reduce, startWith, switchMapTo, take, withLatestFrom, switchMap } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { Exchange, ExchangeMetaData, Broker, Platform } from '../../interfaces/response.interface';
+import { SettingTypes } from '../../interfaces/request.interface';
+import { Broker, Exchange, ExchangeMetaData, Platform } from '../../interfaces/response.interface';
+import { EncryptService } from '../../providers/encrypt.service';
+import { ExchangeService as GlobalExchangeService } from '../../providers/exchange.service';
+import { PlatformService } from '../../providers/platform.service';
+import { PublicService } from '../../providers/public.service';
+import { TipService } from '../../providers/tip.service';
+import { AuthService } from '../../shared/providers/auth.service';
 import { ExchangeConfig } from '../../store/exchange/exchange.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
+import { ValidatorResult } from '../../validators/validators';
 import { ExchangeType } from '../exchange.config';
 import { ExchangeConstantService } from './exchange.constant.service';
 import { ExchangeService } from './exchange.service';
-import { ValidatorResult } from '../../validators/validators';
-import { TranslateService } from '@ngx-translate/core';
-import { PublicService } from '../../providers/public.service';
-import { ExchangeService as GlobalExchangeService } from '../../providers/exchange.service';
-import { SettingTypes } from '../../interfaces/request.interface';
-import { PlatformService } from '../../providers/platform.service';
 
 export type Validator = (input: AbstractControl) => ValidatorResult;
 
@@ -29,6 +33,7 @@ export interface FormOptions {
     required?: boolean;
     controlType?: string;
     validators?: Validator[];
+    encrypt?: boolean;
 }
 
 export interface FormedExchange extends Exchange {
@@ -44,6 +49,7 @@ export class FormBase {
     controlType: string;
     disabled: boolean;
     validators: Validator[];
+    encrypt: boolean;
 
     constructor(options: FormOptions) {
         this.value = options.value || '';
@@ -52,6 +58,7 @@ export class FormBase {
         this.required = isBoolean(options.required) ? options.required : true;
         this.controlType = options.controlType || 'text';
         this.validators = options.validators;
+        this.encrypt = options.encrypt || false;
     }
 }
 
@@ -106,6 +113,9 @@ export class ExchangeFormService extends BaseService {
         private publicService: PublicService,
         private globalExchangeService: GlobalExchangeService,
         private platformService: PlatformService,
+        private authService: AuthService,
+        private encryptService: EncryptService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -171,23 +181,11 @@ export class ExchangeFormService extends BaseService {
      * Get form base instances
      */
     private getFormBases(config: ExchangeConfig, source: FormedExchange[]): FormBase[] {
-        const { selectedTypeId } = config;
-
-        let result: FormedExchange = null;
-
-        if (selectedTypeId === ExchangeType.futures) {
-            result = source.find(item => item.eid === this.constant.FUTURES_CTP);
-        } else if (selectedTypeId === ExchangeType.eSunny) {
-            result = source.find(item => item.eid === this.constant.FUTURES_ESUNNY);
-        } else if (selectedTypeId === ExchangeType.currency) {
-            result = source.find(item => item.id === config.selectedExchange);
-        } else {
-            // do nothing;
-        }
+        const result: FormedExchange = this.exchangeService.getTargetExchange(config, source);
 
         const constantFormControls = this.getConstantFormOptions();
 
-        const options = !!result ? [...result.form, last(constantFormControls)] : constantFormControls;
+        const options = config.selectedTypeId !== ExchangeType.protocol ? [...result.form, last(constantFormControls)] : constantFormControls;
 
         return options.map(option => {
             const control = this.patchFormValue(option, config);
@@ -268,7 +266,7 @@ export class ExchangeFormService extends BaseService {
      */
     private getCommonFuturesFormOptions(data: ExchangeMetaData[]): FormOptions[] {
         return data.reduce((acc, cur) => {
-            const { name, label, type, length, maxlength, def, checkbox } = cur;
+            const { name, label, type, length, def, checkbox, encrypt } = cur;
 
             if (checkbox) {
 
@@ -277,7 +275,7 @@ export class ExchangeFormService extends BaseService {
                 return [
                     ...acc,
                     { required: false, key: this.AUTH_CODE_KEY, label: checkbox, controlType: 'checkbox', value: !!def, validators: null },
-                    { required: true, key: name, label, controlType: this.getControlType(type), validators: this.createValidators(length, maxlength) },
+                    { required: true, key: name, label, controlType: this.getControlType(type), encrypt, validators: null },
                 ];
             } else {
                 return [...acc, this.transformMetaDataToFormControl(cur)];
@@ -326,9 +324,9 @@ export class ExchangeFormService extends BaseService {
      * @param meta Exchange meta data;
      */
     private transformMetaDataToFormControl(meta: ExchangeMetaData): FormOptions {
-        const { name, label, type, required, length, maxlength, def } = meta;
+        const { name, label, type, required, length, maxlength, def, encrypt } = meta;
 
-        return { required, key: name, label, value: def || '', controlType: this.getControlType(type), validators: this.createValidators(length, maxlength) };
+        return { required, key: name, label, value: def || '', controlType: this.getControlType(type), validators: this.createValidators(length, maxlength), encrypt };
     }
 
     /**
@@ -363,5 +361,53 @@ export class ExchangeFormService extends BaseService {
         }
 
         return result;
+    }
+
+    /**
+     * 生成可用于发送请求的配置字符串
+     */
+    generateConfigString(source: any, group: FormBase[]): Observable<string> {
+        return this.isSecurityVerifySuccess().pipe(
+            switchMapTo(this.store.pipe(
+                select(fromRoot.selectTemporaryPwd),
+                map(pwd => Object.keys(source).reduce((acc, key) => {
+                    const target = group.find(item => item.key === key);
+
+                    if (target.encrypt) {
+                        const prefix = this.constant.ENCRYPT_PREFIX2;
+
+                        acc[key] = prefix + this.encryptService.encryptText(prefix + source[key], pwd);
+                    } else {
+                        acc[key] = source[key];
+                    }
+
+                    return acc;
+                }, {})),
+                map(config => {
+                    const result: any = omit(config, ['flag', this.AUTH_CODE_KEY]);
+
+                    if (config[this.AUTH_CODE_KEY] !== undefined) {
+                        result.AuthCode = !config[this.AUTH_CODE_KEY] ? '' : result.AuthCode;
+                    }
+
+                    return JSON.stringify(result);
+                })
+            )),
+            take(1)
+        );
+    }
+
+    /**
+     * 安全验证
+     */
+    private isSecurityVerifySuccess(): Observable<boolean> {
+        return this.store.pipe(
+            select(fromRoot.selectTemporaryPwd),
+            map(pwd => !!pwd),
+            switchMap(verified => verified ? of(true) : this.tipService.confirmOperateTip(VerifyPasswordComponent, { message: 'PASSWORD', needTranslate: true }).pipe(
+                this.filterTruth(),
+                switchMapTo(this.authService.verifyPasswordSuccess())
+            ))
+        );
     }
 }

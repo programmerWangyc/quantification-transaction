@@ -36,6 +36,8 @@ const initialState: State = {
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
+        // ==============================================Api action===========================================
+
         // platform list
         case actions.GET_PLATFORM_LIST:
             return { ...state, isLoading: true };
@@ -57,11 +59,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, deletePlatformRes: action.payload, platformListRes: { ...state.platformListRes, result: { platforms: state.platformListRes.result.platforms.filter(platform => platform.id !== state.requestParams.delete.id) } } };
 
         // update platform
-        case actions.UPDATE_PLATFORM:
+        case actions.SAVE_PLATFORM:
             return { ...state, requestParams: { ...state.requestParams, update: action.payload } };
 
-        case actions.UPDATE_PLATFORM_FAIL:
-        case actions.UPDATE_PLATFORM_SUCCESS:
+        case actions.SAVE_PLATFORM_FAIL:
+        case actions.SAVE_PLATFORM_SUCCESS:
             return { ...state, updatePlatformRes: action.payload };
 
         // platform detail
@@ -71,6 +73,12 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_PLATFORM_DETAIL_FAIL:
         case actions.GET_PLATFORM_DETAIL_SUCCESS:
             return { ...state, platformDetailRes: action.payload };
+
+        // ==============================================Local action===========================================
+
+        // reset state
+        case actions.RESET_STATE:
+            return { ...state, updatePlatformRes: null };
 
         default:
             return state;

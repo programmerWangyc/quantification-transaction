@@ -506,7 +506,7 @@ export interface GetPlatformDetailResponse extends ResponseUnit<PlatformDetailRe
 
 // save platform
 
-export interface SavePlatformResponse extends ResponseUnit<any> { }
+export interface SavePlatformResponse extends ResponseUnit<boolean> { }
 
 // ===================================================Watch dog=========================================
 

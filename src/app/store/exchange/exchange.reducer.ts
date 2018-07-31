@@ -19,18 +19,18 @@ export interface State {
     UIState: UIState;
 }
 
-export const initialUIState: UIState = {
-    exchange: {
-        selectedTypeId: 0,
-        selectedExchange: null,
-    },
+const initialExchange: ExchangeConfig = {
+    selectedTypeId: 0,
+    selectedExchange: null,
+};
+
+const initialUIState: UIState = {
+    exchange: initialExchange,
 };
 
 const initialState: State = {
     exchangeListRes: null,
-    UIState: {
-        exchange: null,
-    },
+    UIState: initialUIState,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -68,6 +68,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.UPDATE_SELECTED_EXCHANGE_REGION:
             return { ...state, UIState: { ...state.UIState, exchange: { ...state.UIState.exchange, regionIndex: action.payload } } };
+
+        case actions.RESET_STATE:
+            return { ...state, UIState: { ...state.UIState, exchange: initialExchange } };
 
         case actions.GET_EXCHANGE_LIST:
         default:

@@ -37,7 +37,7 @@ export class TipService {
 
 
     /**
-     *  angular material related methods;
+     * angular material related methods;
      */
     showTip(data: string, duration = 3000): MatSnackBarRef<CustomSnackBarComponent> {
         return this.snackBar.openFromComponent(CustomSnackBarComponent, {
@@ -54,7 +54,7 @@ export class TipService {
     }
 
     /**
-     *  NzNotificationService secondary wrap.
+     * NzNotificationService secondary wrap.
      */
     success(msg: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
         this.translate.get(msg)
@@ -67,7 +67,7 @@ export class TipService {
     }
 
     /**
-     *  NzMessageService secondary wrap.
+     * NzMessageService secondary wrap.
      */
     messageSuccess(msg: string, options?: NzMessageDataOptions): void {
         this.translate.get(msg).subscribe(content => this.message.success(content, options));
@@ -82,7 +82,7 @@ export class TipService {
     }
 
     /**
-     *  NzModalService secondary wrap.
+     * NzModalService secondary wrap.
      */
     getNzConfirmOperateConfig(): Observable<object> {
         return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(
@@ -96,7 +96,7 @@ export class TipService {
     }
 
     /**
-     *  Custom method related with tip functional.
+     * Custom method related with tip functional.
      */
     playAudio(src: string): void {
         const audio = new Audio();

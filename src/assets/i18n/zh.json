@@ -38,6 +38,8 @@
     "STATUS": "状态",
     "STATUS_INFORMATION": "状态信息",
     "COMPLETE": "完成",
+    "FAIL": "失败",
+    "SUCCESS": "成功",
     "ERROR": "错误",
     "RUNNING": "运行中",
     "QUEUEING": "排队中",
@@ -685,6 +687,8 @@
     "TRADE_SECRET_KEY": "Secret Key",
     "SERVER_ADDRESS": "服务地址",
     "FLAG": "标签",
-    "LENGTH_MUST_BE": "{{label}}的长度必须为{{length}}",
-    "LENGTH_MUST_BE_LESS_THAN": "{{label}}的长度不能大于{{maxLength}}"
+    "LENGTH_MUST_BE": "{{label}}的长度必须为{{length}}。",
+    "LENGTH_MUST_BE_LESS_THAN": "{{label}}的长度不能大于{{maxLength}}。",
+    "ADD_EXCHANGE_RESULT_TIP": "交易所{{operate}}{{result}}。",
+    "EXCHANGE_FLAG_REPEATED_ERROR": "交易所标签重复。"
 }

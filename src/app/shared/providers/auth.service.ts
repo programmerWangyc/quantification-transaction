@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, Subscription } from 'rxjs';
-import { delayWhen, filter, map, mergeMap, switchMap, take } from 'rxjs/operators';
+import { Observable, Subscription, of } from 'rxjs';
+import { delayWhen, filter, map, mergeMap, switchMap, take, delay } from 'rxjs/operators';
 
+import { BaseService } from '../../base/base.service';
 import {
     LoginRequest, SetPasswordRequest, SignupRequest, VerifyPasswordRequest
 } from '../../interfaces/request.interface';
@@ -25,7 +26,7 @@ import {
 } from '../../store/index.reducer';
 
 @Injectable()
-export class AuthService {
+export class AuthService extends BaseService {
 
     constructor(
         private store: Store<AppState>,
@@ -33,7 +34,9 @@ export class AuthService {
         private error: ErrorService,
         private translate: TranslateService,
         private tip: TipService,
-    ) { }
+    ) {
+        super();
+    }
 
     //  =======================================================Serve Request=======================================================
 
@@ -48,14 +51,17 @@ export class AuthService {
     launchRegain(source: Observable<string>): Subscription {
         return this.process.processRegain(source.pipe(
             map(email => ({ email }))
-        )
-        );
+        ));
     }
 
     launchSetPwd(source: Observable<SetPasswordRequest>): Subscription {
         return this.process.processSetPwd(source);
     }
 
+    /**
+     * 请求验证用户的密码
+     * @param source 验证用户密码
+     */
     launchVerifyPassword(source: Observable<VerifyPasswordRequest>): Subscription {
         return this.process.processVerifyPwd(source);
     }
@@ -65,7 +71,7 @@ export class AuthService {
     // login
     private getLoginResponse(): Observable<LoginResponse> {
         return this.store.select(selectLoginResponse).pipe(
-            filter(data => !!data)
+            this.filterTruth()
         );
     }
 
@@ -86,7 +92,7 @@ export class AuthService {
     // signup
     private getSignupResponse(): Observable<SignupResponse> {
         return this.store.select(selectSignupResponse).pipe(
-            filter(data => !!data)
+            this.filterTruth()
         );
     }
 
@@ -132,7 +138,7 @@ export class AuthService {
     // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
         return this.store.select(selectSetPwdResponse).pipe(
-            filter(res => !!res)
+            this.filterTruth()
         );
     }
 
@@ -150,7 +156,7 @@ export class AuthService {
     // verify password
     private getVerifyPasswordResponse(): Observable<VerifyPasswordResponse> {
         return this.store.select(selectVerifyPwdResponse).pipe(
-            filter(v => !!v)
+            this.filterTruth()
         );
     }
 
@@ -158,26 +164,31 @@ export class AuthService {
         return this.getVerifyPasswordResponse().pipe(
             map(res => res.result),
             // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
-            filter(success => success)
+            this.filterTruth()
         );
     }
 
+    /**
+     * 验证通过的密码
+     */
     getTemporaryPwd(): Observable<string> {
         return this.store.select(selectTemporaryPwd).pipe(
-            filter(value => !!value)
+            this.filterTruth()
         );
     }
 
     //  =======================================================Local Action=======================================================
 
     /**
-     *  This action must take place after the VerifyPasswordSuccessAction action.
+     * This action must take place after the VerifyPasswordSuccessAction action.
      */
     storePwdTemporary(pwdObs: Observable<string>): Subscription {
         return pwdObs.pipe(
             delayWhen(_ => this.verifyPasswordSuccess())
-        )
-            .subscribe(pwd => this.store.dispatch(new StorePwdTemporaryAction(pwd)));
+        ).subscribe(pwd => {
+            this.store.dispatch(new StorePwdTemporaryAction(pwd));
+            this.clearPwdTemporary();
+        });
     }
 
     resetResetPasswordResponse(): void {
@@ -190,6 +201,15 @@ export class AuthService {
 
     closeSecondaryVerify(): void {
         this.store.dispatch(new CloseSecondaryVerifyAction());
+    }
+
+    /**
+     * 清理密码
+     */
+    private clearPwdTemporary(): Subscription {
+        return of(null).pipe(
+            delay(5 * 60 * 1000)
+        ).subscribe(_ => this.resetVerifyPwdResponse());
     }
 
     //  =======================================================Error Handle=======================================================
