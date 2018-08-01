@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ConstantService } from '../../providers/constant.service';
 import { Platform } from '../../interfaces/response.interface';
 import { Exchange } from '../exchange-select/exchange-select.component';
+import { ExchangeType } from '../exchange.config';
 
 @Injectable()
 export class ExchangeConstantService extends ConstantService {
@@ -12,5 +13,17 @@ export class ExchangeConstantService extends ConstantService {
 
     constructor() {
         super();
+    }
+
+    eidToExchangeType(eid: string): number {
+        if (eid === this.FUTURES_CTP) {
+            return ExchangeType.futures;
+        } else if (eid === this.FUTURES_ESUNNY) {
+            return ExchangeType.eSunny;
+        } else if (eid === this.COMMON_PROTOCOL_EXCHANGE) {
+            return ExchangeType.protocol;
+        } else {
+            return ExchangeType.currency;
+        }
     }
 }

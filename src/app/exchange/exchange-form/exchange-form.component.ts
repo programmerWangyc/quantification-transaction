@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 
-import { Subscription } from 'rxjs';
-import { takeWhile, map } from 'rxjs/operators';
+import { isNumber } from 'lodash';
+import { combineLatest, Subscription } from 'rxjs';
+import { map, takeWhile, take } from 'rxjs/operators';
 
+import { PlatformAccessKey } from '../../interfaces/response.interface';
+import { PlatformService } from '../../providers/platform.service';
 import { ExchangeFormService, FormBase } from '../providers/exchange.form.service';
 
 export interface ExchangeFormConfigInfo {
@@ -17,7 +20,22 @@ export interface ExchangeFormConfigInfo {
     styleUrls: ['./exchange-form.component.scss'],
 })
 export class ExchangeFormComponent implements OnInit, OnDestroy {
-    @Input() buttonText: string = 'ADD';
+
+    /**
+     * 是否编辑交易所
+     */
+    @Input() set frozen(input: number) {
+        if (isNumber(input)) {
+            this.isEdit = true;
+
+            this.patchValue();
+        }
+    }
+
+    /**
+     * 是否编辑交易所
+     */
+    isEdit = false;
 
     /**
      * @ignore
@@ -46,6 +64,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
 
     constructor(
         private formService: ExchangeFormService,
+        private platform: PlatformService,
     ) { }
 
     /**
@@ -58,7 +77,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
             takeWhile(() => this.isAlive)
         ).subscribe(name => {
             if (this.form) {
-                const flag = this.accessField('flag');
+                const flag = this.accessField(this.formService.FLAG_KEY);
 
                 flag.patchValue(name);
             }
@@ -73,7 +92,6 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
             takeWhile(() => this.isAlive),
         ).subscribe(group => this.group = group);
 
-
         this.formService.getCurrentForm().pipe(
             takeWhile(() => this.isAlive)
         ).subscribe(form => {
@@ -82,7 +100,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
             if (this.checkbox$$) this.checkbox$$.unsubscribe();
 
             if (this.form) {
-                const checkbox = this.accessField(this.formService.AUTH_CODE_KEY);
+                const checkbox = this.accessField(this.formService.AUTH_CODE_CHECKBOX_KEY);
 
                 if (!!checkbox) {
                     this.checkbox$$ = this.monitorAuthCode(checkbox);
@@ -97,7 +115,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
      */
     monitorAuthCode(control: AbstractControl): Subscription {
         return control.valueChanges.subscribe(checked => {
-            const authCode = this.accessField('AuthCode');
+            const authCode = this.accessField(this.formService.AUTH_CODE_INPUT_KEY);
 
             if (checked) {
                 authCode.setValidators([Validators.required, this.formService.validateLength]);
@@ -128,7 +146,7 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
      * @param field 表单控件的基础数据
      */
     isControlShow(field: FormBase): boolean {
-        return field.key === 'AuthCode' ? this.accessField('needAuth').value : true;
+        return field.key === this.formService.AUTH_CODE_INPUT_KEY ? this.accessField(this.formService.AUTH_CODE_CHECKBOX_KEY).value : true;
     }
 
     /**
@@ -136,8 +154,35 @@ export class ExchangeFormComponent implements OnInit, OnDestroy {
      */
     generateConfig(form: any): void {
         this.formService.generateConfigString(form, this.group).pipe(
-            map(config => ({ config, flag: this.accessField('flag').value }))
+            map(config => ({ config, flag: this.accessField(this.formService.FLAG_KEY).value }))
         ).subscribe(data => this.save.next(data)); // ! subscribe(this.save) 这种写法导致save触发 complete 通知，无法再向组件外传输值。
+    }
+
+    /**
+     * 编辑状态下设置表单的值
+     */
+    private patchValue(): void {
+        combineLatest(
+            this.platform.getPlatformDetail(),
+            this.formService.getCurrentForm().pipe(
+                take(1)
+            )
+        ).pipe(
+            takeWhile(() => this.isAlive),
+            map(([detail, _]) => detail)
+        ).subscribe(detail => {
+            const { access_key, label } = detail;
+
+            const access = JSON.parse(access_key) as PlatformAccessKey;
+
+            this.accessField(this.formService.FLAG_KEY).patchValue(label);
+
+            Object.entries(access).forEach(([key, value]) => {
+                const control = this.accessField(key);
+
+                control && control.patchValue(value);
+            });
+        });
     }
 
     /**

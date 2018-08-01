@@ -10,7 +10,6 @@ import { ExchangeSelectComponent } from './exchange-select/exchange-select.compo
 import { ExchangeConstantService } from './providers/exchange.constant.service';
 import { ExchangeFormService } from './providers/exchange.form.service';
 import { ExchangeService } from './providers/exchange.service';
-import { UpdateExchangeComponent } from './update-exchange/update-exchange.component';
 import { ExchangeFormComponent } from './exchange-form/exchange-form.component';
 
 @NgModule({
@@ -24,13 +23,11 @@ import { ExchangeFormComponent } from './exchange-form/exchange-form.component';
         ExchangeListComponent,
         ExchangeSelectComponent,
         CreateExchangeComponent,
-        UpdateExchangeComponent,
         ExchangeFormComponent,
     ],
     exports: [
         ExchangeListComponent,
         CreateExchangeComponent,
-        UpdateExchangeComponent,
     ],
     providers: [
         ExchangeConstantService,

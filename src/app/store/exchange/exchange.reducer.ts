@@ -20,7 +20,7 @@ export interface State {
 }
 
 const initialExchange: ExchangeConfig = {
-    selectedTypeId: 0,
+    selectedTypeId: null,
     selectedExchange: null,
 };
 

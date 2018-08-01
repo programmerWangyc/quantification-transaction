@@ -3,13 +3,12 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { isBoolean, isEmpty, isNull, last, omit } from 'lodash';
-import { from, Observable, of } from 'rxjs';
-import { filter, map, mergeMap, reduce, startWith, switchMapTo, take, withLatestFrom, switchMap } from 'rxjs/operators';
+import { isBoolean, isEmpty, isNull, omit, isNumber } from 'lodash';
+import { Observable, of } from 'rxjs';
+import { filter, map, startWith, switchMap, switchMapTo, take, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { SettingTypes } from '../../interfaces/request.interface';
-import { Broker, Exchange, ExchangeMetaData, Platform } from '../../interfaces/response.interface';
+import { Exchange, ExchangeMetaData, Platform } from '../../interfaces/response.interface';
 import { EncryptService } from '../../providers/encrypt.service';
 import { ExchangeService as GlobalExchangeService } from '../../providers/exchange.service';
 import { PlatformService } from '../../providers/platform.service';
@@ -62,38 +61,12 @@ export class FormBase {
     }
 }
 
-// access key
-export const accessKey: FormOptions = {
-    value: '',
-    key: 'accessKey',
-    label: 'TRADE_ACCESS_KEY',
-    required: true,
-    validators: [Validators.required],
-};
-
-// secret Key
-export const secretKey: FormOptions = {
-    value: '',
-    key: 'secretKey',
-    label: 'TRADE_SECRET_KEY',
-    required: true,
-    controlType: 'password',
-    validators: [Validators.required],
-};
-
-// 服务地址
-export const serverAddress: FormOptions = {
-    value: '',
-    key: 'serverAddress',
-    label: 'SERVER_ADDRESS',
-    required: true,
-    validators: [Validators.required],
-};
-
 // flag
+const flagKey = 'flag';
+
 export const flag: FormOptions = {
     value: '',
-    key: 'flag',
+    key: flagKey,
     label: 'FLAG',
     required: true,
     validators: [Validators.required],
@@ -101,7 +74,11 @@ export const flag: FormOptions = {
 
 @Injectable()
 export class ExchangeFormService extends BaseService {
-    readonly AUTH_CODE_KEY = 'needAuth';
+    readonly AUTH_CODE_CHECKBOX_KEY = 'needAuth';
+
+    readonly FLAG_KEY = flagKey;
+
+    AUTH_CODE_INPUT_KEY = '';
 
     validateLength: (input: AbstractControl) => ValidatorResult;
 
@@ -183,9 +160,7 @@ export class ExchangeFormService extends BaseService {
     private getFormBases(config: ExchangeConfig, source: FormedExchange[]): FormBase[] {
         const result: FormedExchange = this.exchangeService.getTargetExchange(config, source);
 
-        const constantFormControls = this.getConstantFormOptions();
-
-        const options = config.selectedTypeId !== ExchangeType.protocol ? [...result.form, last(constantFormControls)] : constantFormControls;
+        const options = [...result.form, { ...flag, label: this.unwrap(this.translate.get(flag.label)) }];
 
         return options.map(option => {
             const control = this.patchFormValue(option, config);
@@ -201,9 +176,7 @@ export class ExchangeFormService extends BaseService {
         return this.exchangeService.getExchangeConfig().pipe(
             filter(config => !isNull(config.selectedExchange)),
             withLatestFrom(
-                this.publicService.getSetting(SettingTypes.brokers).pipe(
-                    map(source => JSON.parse(source) as Broker[]),
-                ),
+                this.publicService.getBrokers(),
                 this.globalExchangeService.getExchangeList(),
                 this.platformService.getPlatformList().pipe(
                     startWith([])
@@ -217,7 +190,9 @@ export class ExchangeFormService extends BaseService {
 
                         return this.addSuffixForFlag(target.name, platforms);
                     } else if (selectedTypeId === ExchangeType.currency) {
-                        const target = exchanges.find(item => item.id === selectedExchange);
+                        const key = isNumber(selectedExchange) ? 'id' : 'eid'; // *编辑状态下 platformDetail 返回后，存入 store 的实际是交易所的 eid。
+
+                        const target = exchanges.find(item => item[key] === selectedExchange);
 
                         return this.addSuffixForFlag(target.name, platforms);
                     } else {
@@ -246,22 +221,6 @@ export class ExchangeFormService extends BaseService {
     }
 
     /**
-     * 生成常量表单项，包含通用协议下的所有表单配置，标签表单项也在其中。
-     */
-    private getConstantFormOptions(): FormOptions[] {
-        let result: FormOptions[] = null;
-
-        from([serverAddress, accessKey, secretKey, flag]).pipe(
-            mergeMap(option => this.translate.get(option.label).pipe(
-                map(label => ({ ...option, label } as FormOptions))
-            )),
-            reduce((acc: FormOptions[], cur: FormOptions) => [...acc, cur], [])
-        ).subscribe(options => result = options);
-
-        return result;
-    }
-
-    /**
      * 普通期货的表表单配置信息
      */
     private getCommonFuturesFormOptions(data: ExchangeMetaData[]): FormOptions[] {
@@ -270,11 +229,14 @@ export class ExchangeFormService extends BaseService {
 
             if (checkbox) {
 
+                // * 这里赋值了两个额外的变量，供组件使用。
                 this.validateLength = (input: AbstractControl) => input.value.length === length ? null : { length };
+
+                this.AUTH_CODE_INPUT_KEY = name;
 
                 return [
                     ...acc,
-                    { required: false, key: this.AUTH_CODE_KEY, label: checkbox, controlType: 'checkbox', value: !!def, validators: null },
+                    { required: false, key: this.AUTH_CODE_CHECKBOX_KEY, label: checkbox, controlType: 'checkbox', value: !!def, validators: null },
                     { required: true, key: name, label, controlType: this.getControlType(type), encrypt, validators: null },
                 ];
             } else {
@@ -384,10 +346,10 @@ export class ExchangeFormService extends BaseService {
                     return acc;
                 }, {})),
                 map(config => {
-                    const result: any = omit(config, ['flag', this.AUTH_CODE_KEY]);
+                    const result: any = omit(config, [this.FLAG_KEY, this.AUTH_CODE_CHECKBOX_KEY]);
 
-                    if (config[this.AUTH_CODE_KEY] !== undefined) {
-                        result.AuthCode = !config[this.AUTH_CODE_KEY] ? '' : result.AuthCode;
+                    if (config[this.AUTH_CODE_CHECKBOX_KEY] !== undefined) {
+                        result.AuthCode = !config[this.AUTH_CODE_CHECKBOX_KEY] ? '' : result.AuthCode;
                     }
 
                     return JSON.stringify(result);

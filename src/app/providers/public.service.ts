@@ -9,7 +9,7 @@ import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
 import { EditorConfig, Referrer } from '../interfaces/app.interface';
 import { SettingTypes } from '../interfaces/request.interface';
-import { PublicResponse, ResponseState } from '../interfaces/response.interface';
+import { PublicResponse, ResponseState, Broker } from '../interfaces/response.interface';
 import {
     AppState, selectEditorConfig, selectFooterState, selectLanguage, selectPublicResponse, selectReferrer,
     selectServerMsgSubscribeState, selectSettings, selectSettingsResponse
@@ -81,6 +81,15 @@ export class PublicService extends BaseService {
             tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType])),
             filter(settings => !!settings[settingType]),
             map(settings => settings[settingType])
+        );
+    }
+
+    /**
+     * Get brokers
+     */
+    getBrokers(): Observable<Broker[]> {
+        return this.getSetting(SettingTypes.brokers).pipe(
+            map(source => JSON.parse(source) as Broker[])
         );
     }
 

@@ -1,7 +1,7 @@
 <h3>{{'EXCHANGE' | translate}}</h3>
 
-<app-exchange-select [exchanges]="exchanges | async"></app-exchange-select>
+<app-exchange-select [exchanges]="exchanges" [selectedExchangeType]="freezeExchangeType | async"></app-exchange-select>
 
 <h3 *ngIf="showForm | async">{{'ARGUMENTS_CONFIG' | translate}}</h3>
 
-<app-exchange-form (save)="save$.next($event)"></app-exchange-form>
+<app-exchange-form (save)="save$.next($event)" [frozen]="freezeExchangeType | async"></app-exchange-form>

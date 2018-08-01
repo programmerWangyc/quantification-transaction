@@ -1,15 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
-import { SettingTypes } from '../../interfaces/request.interface';
-import { PlatformDetail } from '../../interfaces/response.interface';
-import { PlatformService } from '../../providers/platform.service';
-import { PublicService } from '../../providers/public.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
+import { PlatformService } from '../../providers/platform.service';
 
 @Component({
     selector: 'app-exchange-edit',
@@ -23,24 +20,13 @@ export class ExchangeEditComponent extends BaseComponent {
     subscription$$: Subscription;
 
     /**
-     * platform detail
-     */
-    detail: Observable<PlatformDetail>;
-
-    /**
-     * brokers
-     */
-    brokers: Observable<string>;
-
-    /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'EXCHANGE', path: '../' }, { name: 'ADD' }];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'EXCHANGE', path: '../' }, { name: 'EDIT' }];
 
     constructor(
         private activateRoute: ActivatedRoute,
         private platformService: PlatformService,
-        private publicService: PublicService,
     ) {
         super();
     }
@@ -49,7 +35,6 @@ export class ExchangeEditComponent extends BaseComponent {
      * @ignore
      */
     ngOnInit() {
-
         this.initialModel();
 
         this.launch();
@@ -59,11 +44,6 @@ export class ExchangeEditComponent extends BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.detail = this.platformService.getPlatformDetail();
-
-        this.brokers = this.publicService.getSetting(SettingTypes.brokers);
-
-        this.brokers.subscribe(v => console.log(v));
     }
 
     /**
@@ -83,6 +63,4 @@ export class ExchangeEditComponent extends BaseComponent {
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }
-
-
 }

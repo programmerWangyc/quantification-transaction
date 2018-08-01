@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
+import { Exchange } from '../../interfaces/response.interface';
 import * as Actions from '../../store/exchange/exchange.action';
 import { ExchangeConfig, UIState } from '../../store/exchange/exchange.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { ExchangeType } from '../exchange.config';
 import { ExchangeConstantService } from './exchange.constant.service';
-import { Exchange } from '../../interfaces/response.interface';
+import { isNumber } from 'lodash';
 
 @Injectable()
 export class ExchangeService extends BaseService {
@@ -20,7 +21,6 @@ export class ExchangeService extends BaseService {
     ) {
         super();
     }
-
 
     // ========================================Data acquisition==================================
 
@@ -40,7 +40,7 @@ export class ExchangeService extends BaseService {
     getExchangeConfig(): Observable<ExchangeConfig> {
         return this.getExchangeUIState().pipe(
             map(state => state.exchange),
-            this.filterTruth()
+            filter(exchange => exchange.selectedTypeId !== null)
         );
     }
 
@@ -55,10 +55,21 @@ export class ExchangeService extends BaseService {
         } else if (selectedTypeId === ExchangeType.eSunny) {
             return source.find(item => item.eid === this.constant.FUTURES_ESUNNY);
         } else if (selectedTypeId === ExchangeType.currency) {
-            return source.find(item => item.id === config.selectedExchange);
+            const key = isNumber(config.selectedExchange) ? 'id' : 'eid'; // *编辑状态下 platformDetail 返回后，存入 store 的实际是交易所的 eid。
+
+            return source.find(item => item[key] === config.selectedExchange);
         } else {
             return source.find(item => item.eid === this.constant.COMMON_PROTOCOL_EXCHANGE);
         }
+    }
+
+    /**
+     * 获取锁定的交易所类型
+     */
+    getFreezeExchangeType(eidObs: Observable<string>): Observable<number> {
+        return eidObs.pipe(
+            map(eid => this.constant.eidToExchangeType(eid))
+        );
     }
 
     // ========================================Local date update===================================

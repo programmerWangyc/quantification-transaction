@@ -472,9 +472,7 @@ export interface DeletePlatformResponse extends ResponseUnit<boolean> { }
 
 // platform detail
 export interface PlatformAccessKey {
-    AccessKey: string;
-    Front: string;
-    SecretKey: string;
+    [key: string]: any;
 }
 
 export interface PlatformMeta {
@@ -487,7 +485,7 @@ export interface PlatformMeta {
 }
 
 export interface PlatformDetail {
-    access_key: PlatformAccessKey;
+    access_key: string; // JSON type string; Parse result: PlatformAccessKey;
     date: string;
     eid: string;
     id: number;

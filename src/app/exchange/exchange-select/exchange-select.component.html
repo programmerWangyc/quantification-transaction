@@ -1,7 +1,7 @@
 <div class="exchange-config">
-    <nz-radio-group [formControl]="exchangeType">
+    <nz-radio-group [nzDisabled]="disableTypeChange" [formControl]="exchangeType">
         <label nz-radio-button [nzValue]="0">{{'TRADITIONAL_FUTURES' | translate}}</label>
-        <label nz-radio-button [nzValue]="1">{{'YI_SHENG_WAI_PAN' | translate}}</label>
+        <label nz-radio-button [nzValue]="1">{{'E_SUNNY' | translate}}</label>
         <label nz-radio-button [nzValue]="2">{{'DIGITAL_CURRENCY' | translate}}</label>
         <label nz-radio-button [nzValue]="3">{{'COMMON_PROTOCOL' | translate}}</label>
     </nz-radio-group>
@@ -15,22 +15,27 @@
 <div class="exchange-config exchanges">
     <nz-radio-group [formControl]="exchange" nz-row>
 
-        <span *ngFor="let item of obviouslyExchanges" nz-col [nzSpan]="exchanges.length > 10 ? 4: ''">
-            <label nz-radio [nzValue]="item.id">
-                {{item.name}}
+        <ng-container *ngIf="!frozenExchange; else exchangeBlock">
+            <span *ngFor="let item of obviouslyExchanges" nz-col [nzSpan]="obviouslyExchanges.length > 10 ? 4: ''">
+                <label nz-radio [nzValue]="item.id">
+                    {{item.name}}
+                </label>
+                <a *ngIf="item.logo" [href]="item.website" target="_blank">
+                    <img src="../../../assets/images/logo/small/{{item.logo}}">
+                </a>
+            </span>
+
+            <label *ngIf="moreExchanges.length > 0" nz-radio [nzValue]="specialRatio" nz-col [nzSpan]="3">
+                <a>{{'MORE' | translate}}</a>
+                <nz-select *ngIf="exchange.value === 'more'" nzShowSearch nzAllowClear [nzPlaceHolder]="'SEARCH_EXCHANGE' | translate" [formControl]="search">
+                    <nz-option *ngFor="let other of moreExchanges" [nzValue]="other.id" [nzLabel]="other.name"></nz-option>
+                </nz-select>
             </label>
-            <a *ngIf="item.logo" [href]="item.website" target="_blank">
-                <img src="../../../assets/images/logo/small/{{item.logo}}">
-            </a>
-        </span>
+        </ng-container>
 
-        <label *ngIf="exchanges.length > maxCount" nz-radio nzValue="more" nz-col [nzSpan]="3">
-            <a>{{'MORE' | translate}}</a>
-            <nz-select *ngIf="exchange.value === 'more'" nzShowSearch nzAllowClear [nzPlaceHolder]="'SEARCH_EXCHANGE' | translate" [formControl]="search">
-                <nz-option *ngFor="let other of moreExchanges" [nzValue]="other.id" [nzLabel]="other.name"></nz-option>
-            </nz-select>
-        </label>
-
+        <ng-template #exchangeBlock>
+            <label nz-radio [ngModel]="true" [nzDisabled]="true">{{frozenExchange}}</label>
+        </ng-template>
     </nz-radio-group>
 </div>
 

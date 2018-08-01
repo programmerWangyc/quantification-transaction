@@ -32,7 +32,7 @@
         </nz-form-item>
 
         <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="generateConfig(form.value)" [disabled]="form.invalid">
-            {{buttonText | translate}}
+            {{(isEdit ? 'SAVE' : 'CREATE') | translate}}
         </button>
     </form>
 </ng-container>

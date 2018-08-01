@@ -92,17 +92,6 @@ export class BacktestBaseService extends BaseService {
             select(fromRoot.selectBacktestUIState)
         );
     }
-
-    /**
-     * 取出 Observable 中的结果;
-     */
-    protected unwrap<T>(obs: Observable<T>): T {
-        let result = null;
-
-        obs.subscribe(res => result = res);
-
-        return result;
-    }
 }
 
 

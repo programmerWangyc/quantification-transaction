@@ -78,7 +78,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // reset state
         case actions.RESET_STATE:
-            return { ...state, updatePlatformRes: null };
+            return { ...state, updatePlatformRes: null, platformDetailRes: null };
 
         default:
             return state;

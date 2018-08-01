@@ -1,13 +1,16 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
+import { isNumber } from 'lodash';
 import { merge, Observable } from 'rxjs';
-import { filter, map, startWith, takeWhile } from 'rxjs/operators';
+import { filter, map, mergeMap, startWith, takeWhile } from 'rxjs/operators';
 
-import { BrokerGroup, BrokerNet } from '../../interfaces/response.interface';
-import { ExchangeService } from '../providers/exchange.service';
 import { Path } from '../../app.config';
+import { BrokerGroup, BrokerNet } from '../../interfaces/response.interface';
+import { PlatformService } from '../../providers/platform.service';
+import { ExchangeType } from '../exchange.config';
+import { ExchangeService } from '../providers/exchange.service';
 
 export interface Exchange {
     id: number | string;
@@ -27,20 +30,25 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
     /**
      * 交易所源数据
      */
-    @Input() set exchanges(input: Exchange[]) {
-        if (!Array.isArray(input)) return;
+    @Input() exchanges: Observable<Exchange[]>;
 
-        this._exchanges = input;
+    /**
+     * 选中的交易所类型
+     */
+    @Input() set selectedExchangeType(input: number) {
+        if (isNumber(input)) {
+            this.exchangeType.patchValue(input);
 
-        this.updateData();
+            this.disableTypeChange = true;
+
+            this.patchInitialValue(input);
+        }
     }
 
     /**
-     * @ignore
+     * 是否禁用易所类型选择
      */
-    get exchanges(): Exchange[] {
-        return this._exchanges;
-    }
+    disableTypeChange = false;
 
     /**
      * @ignore
@@ -53,9 +61,9 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
     moreExchanges: Exchange[] = [];
 
     /**
-     * @ignore
+     * 锁定的交易所名称
      */
-    private _exchanges: Exchange[] = [];
+    frozenExchange: string = '';
 
     /**
      * 用户选择的交易所；
@@ -98,6 +106,26 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
     tradeIP: FormControl = new FormControl();
 
     /**
+     * 服务器的区域信息
+     */
+    regions: BrokerGroup[] = [];
+
+    /**
+     * 服务器使用的网络
+     */
+    nets: BrokerNet[] = [];
+
+    /**
+     * 行情服务器可用IP
+     */
+    quotaIPs: string[] = [];
+
+    /**
+     * 交易服务器可用IP
+     */
+    tradeIPs: string[] = [];
+
+    /**
      * @ignore
      */
     private isAlive = true;
@@ -108,41 +136,24 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
     maxCount = 30;
 
     /**
-     * 服务器的区域信息
+     * @ignore
      */
-    regions: BrokerGroup[] = [];
-
-    /**
-     * 服务器使用的网络
-     */
-    nets: BrokerNet[] = [];
-
-
-    /**
-     * 行情服务器可用IP
-     */
-    quotaIPs: string[] = [];
-
-
-    /**
-     * 交易服务器可用IP
-     */
-    tradeIPs: string[] = [];
+    specialRatio = 'more';
 
     constructor(
         private exchangeService: ExchangeService,
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        private platform: PlatformService,
     ) { }
 
     /**
      * @ignore
      */
     ngOnInit() {
-
         const exchangeValue = merge(
             this.exchange.valueChanges.pipe(
-                filter(value => value !== 'more')
+                filter(value => value !== this.specialRatio)
             ),
             this.search.valueChanges
         ).pipe(
@@ -152,6 +163,8 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
         this.syncData(exchangeValue);
 
         this.monitorFormControl(exchangeValue);
+
+        this.updateData();
     }
 
     /**
@@ -196,7 +209,9 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
         });
 
         exchangeObs.pipe(
-            map(exchange => this.exchanges.find(item => item.id === exchange)),
+            mergeMap(exchange => this.exchanges.pipe(
+                map(exchanges => exchanges.find(item => item.id === exchange))
+            )),
             filter(exist => !!exist),
             map((exchange: Exchange) => exchange.groups)
         ).subscribe(groups => {
@@ -207,7 +222,7 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
 
         this.exchange.valueChanges.pipe(
             takeWhile(() => this.isAlive),
-            filter(value => value === 'more')
+            filter(value => value === this.specialRatio)
         ).subscribe(() => {
             this.search.reset();
 
@@ -252,13 +267,68 @@ export class ExchangeSelectComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private updateData() {
-        if (this.exchanges.length > 30) {
-            this.obviouslyExchanges = this.exchanges.slice(0, this.maxCount);
+        this.exchanges.pipe(
+            takeWhile(() => this.isAlive)
+        ).subscribe(exchanges => {
+            if (exchanges.length > this.maxCount) {
+                this.obviouslyExchanges = exchanges.slice(0, this.maxCount);
 
-            this.moreExchanges = this.exchanges.slice(this.maxCount);
+                this.moreExchanges = exchanges.slice(this.maxCount);
+            } else {
+                this.obviouslyExchanges = exchanges;
+
+                this.moreExchanges = [];
+            }
+        });
+    }
+
+    /**
+     * 当交易所类型选择被禁用时，修改相应控件的初始值。
+     */
+    private patchInitialValue(type: number): void {
+        if (type === ExchangeType.currency) {
+            this.setSelectedCurrencyExchange();
+        } else if (type === ExchangeType.futures || type === ExchangeType.eSunny) {
+            this.setSelectedFuturesExchange(type);
         } else {
-            this.obviouslyExchanges = this.exchanges;
+            this.exchange.patchValue(0); // !随便设的。。。返回的 platformDetail 信息上无法确定到底是哪一种类型的协议。
         }
+    }
+
+    /**
+     * 获取数字货币交易所信息
+     */
+    private setSelectedCurrencyExchange(): void {
+        this.platform.getPlatformDetail().pipe(
+            takeWhile(() => this.isAlive)
+        ).subscribe(platform => {
+            this.frozenExchange = platform.name;
+            this.exchange.patchValue(platform.eid);
+        });
+    }
+
+    /**
+     * 获取期货的交易所信息
+     */
+    private setSelectedFuturesExchange(type: number): void {
+        this.platform.getPreviousPlatformInfo().pipe(
+            takeWhile(() => this.isAlive)
+        ).subscribe(info => {
+            if (info.brokerIndex >= this.maxCount && type === ExchangeType.futures) {
+                this.exchange.patchValue(this.specialRatio);
+                this.search.patchValue(info.brokerId);
+            } else {
+                this.exchange.patchValue(info.brokerId);
+            }
+
+            this.region.patchValue(info.regionIndex);
+
+            this.provider.patchValue(info.providerIndex);
+
+            this.quotaIP.patchValue(info.quotaServer);
+
+            this.tradeIP.patchValue(info.tradeServer);
+        });
     }
 
     /**

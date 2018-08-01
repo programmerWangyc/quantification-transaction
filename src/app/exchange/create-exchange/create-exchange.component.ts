@@ -3,8 +3,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { distinctUntilChanged, map, switchMap, takeWhile, withLatestFrom } from 'rxjs/operators';
 
-import { SettingTypes } from '../../interfaces/request.interface';
-import { Broker } from '../../interfaces/response.interface';
 import { ExchangeService as GlobalExchangeService } from '../../providers/exchange.service';
 import { PlatformService } from '../../providers/platform.service';
 import { PublicService } from '../../providers/public.service';
@@ -13,6 +11,7 @@ import { Exchange } from '../exchange-select/exchange-select.component';
 import { ExchangeType } from '../exchange.config';
 import { ExchangeConstantService } from '../providers/exchange.constant.service';
 import { ExchangeService } from '../providers/exchange.service';
+import { isNull } from 'lodash';
 
 @Component({
     selector: 'app-create-exchange',
@@ -45,6 +44,11 @@ export class CreateExchangeComponent implements OnDestroy, OnInit {
      * @ignore
      */
     save$: Subject<ExchangeFormConfigInfo> = new Subject();
+
+    /**
+     * 锁定的交易所类型
+     */
+    freezeExchangeType: Observable<number>;
 
     constructor(
         private publicService: PublicService,
@@ -85,8 +89,12 @@ export class CreateExchangeComponent implements OnDestroy, OnInit {
         );
 
         this.showForm = this.exchangeService.getExchangeConfig().pipe(
-            map(config => !!config.selectedExchange)
+            map(config => !isNull(config.selectedExchange))
         );
+
+        this.freezeExchangeType = this.exchangeService.getFreezeExchangeType(this.platform.getPlatformDetail().pipe(
+            map(({ eid }) => eid)
+        ));
     }
 
     /**
@@ -116,8 +124,7 @@ export class CreateExchangeComponent implements OnDestroy, OnInit {
      * @param type Broker type
      */
     private getBrokers(type: number): Observable<Exchange[]> {
-        return this.publicService.getSetting(SettingTypes.brokers).pipe(
-            map(source => JSON.parse(source) as Broker[]),
+        return this.publicService.getBrokers().pipe(
             map(list => list.filter(item => item.type === type).map(({ brokerId, name, groups }) => ({ id: brokerId, name, groups })))
         );
     }

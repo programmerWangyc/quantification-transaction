@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { MonoTypeOperatorFunction } from 'rxjs/internal/types';
 import { filter, tap } from 'rxjs/operators';
 
@@ -44,6 +45,17 @@ export class BaseService {
                 return fn(param1, param2);
             };
         };
+    }
+
+    /**
+     * 取出 Observable 中的结果;
+     */
+    protected unwrap<T>(obs: Observable<T>): T {
+        let result = null;
+
+        obs.subscribe(res => result = res);
+
+        return result;
     }
 }
 

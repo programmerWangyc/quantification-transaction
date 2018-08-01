@@ -2,21 +2,26 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
+import { flattenDeep } from 'lodash';
 import { from as observableFrom, Observable, Subscription } from 'rxjs';
-import { groupBy, map, mapTo, mergeMap, reduce, switchMap, takeWhile } from 'rxjs/operators';
+import {
+    distinctUntilChanged, filter, groupBy, map, mapTo, mergeMap, reduce, switchMap, takeWhile, withLatestFrom
+} from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
 import { GetPlatformDetailRequest, SavePlatformRequest } from '../interfaces/request.interface';
 import {
-    DeletePlatformResponse, GetPlatformDetailResponse, GetPlatformListResponse, Platform, PlatformDetail,
-    SavePlatformResponse
+    DeletePlatformResponse, GetPlatformDetailResponse, GetPlatformListResponse, Platform, PlatformAccessKey,
+    PlatformDetail, SavePlatformResponse
 } from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
+import { ResetStateAction } from '../store/platform/platform.action';
+import { ConstantService } from './constant.service';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
-import { UtilService } from './util.service';
+import { PublicService } from './public.service';
 import { TipService } from './tip.service';
-import { ResetStateAction } from '../store/platform/platform.action';
+import { UtilService } from './util.service';
 
 export interface GroupPlatform extends Platform {
     group: string;
@@ -34,6 +39,15 @@ export interface SavePlatformInfo {
     errorReason: string;
 }
 
+export interface PreviousPlatformInfo {
+    regionIndex: number;
+    providerIndex: number;
+    quotaServer: string;
+    tradeServer: string;
+    brokerId: string;
+    brokerIndex: number;
+}
+
 @Injectable()
 export class PlatformService extends BaseService {
 
@@ -44,6 +58,8 @@ export class PlatformService extends BaseService {
         private util: UtilService,
         private translate: TranslateService,
         private tip: TipService,
+        private publicService: PublicService,
+        private constant: ConstantService,
     ) {
         super();
     }
@@ -217,6 +233,55 @@ export class PlatformService extends BaseService {
             });
         });
     }
+
+    /**
+     * 获取当前交易所所属的broker, 根据行情服务器的ip地址进行查找，如果此 ip 地址在 broker 中没有，则可能找不到；
+     */
+    getPreviousPlatformInfo(): Observable<PreviousPlatformInfo> {
+        return this.getPlatformDetail().pipe(
+            filter(detail => detail.eid === this.constant.FUTURES_CTP || detail.eid === this.constant.FUTURES_ESUNNY),
+            distinctUntilChanged(),
+            withLatestFrom(this.publicService.getBrokers()),
+            map(([platform, brokers]) => {
+                const { access_key } = platform;
+
+                const access = JSON.parse(access_key) as PlatformAccessKey;
+
+                // !只能这么凑合了, 没有提供准确的信息来找回之前的设置。服务器信息可能重复。
+                const brokerIndex = brokers.findIndex(item => {
+                    const quotaServers = flattenDeep(item.groups.map(group => group.nets.map(net => net.quote)));
+
+                    return quotaServers.includes(access.MDFront);
+                });
+
+                const broker = brokers[brokerIndex];
+
+                const { MDFront, TDFront } = access;
+
+                let regionIndex = 0;
+
+                let providerIndex = 0;
+
+                for (let groupIdx = 0, len = broker.groups.length; groupIdx < len; groupIdx += 1) {
+                    const { nets } = broker.groups[groupIdx];
+
+                    const netIdx = nets.findIndex(net => net.quote.includes(MDFront) && net.trade.includes(TDFront));
+
+                    if (netIdx !== -1) {
+                        providerIndex = netIdx;
+
+                        regionIndex = groupIdx;
+
+                        break;
+                    }
+                }
+
+                return { brokerId: broker.brokerId, regionIndex, providerIndex, quotaServer: MDFront, tradeServer: TDFront, brokerIndex };
+            })
+        );
+    }
+
+    //  =======================================================Local state change=======================================================
 
     /**
      * @ignore
