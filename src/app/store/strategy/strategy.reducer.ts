@@ -1,10 +1,10 @@
 import {
     CategoryType, DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest,
-    OpStrategyTokenRequest, SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest
+    OpStrategyTokenRequest, SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest
 } from '../../interfaces/request.interface';
 import {
     DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
-    SaveStrategyResponse, ShareStrategyResponse, Strategy, VerifyKeyResponse
+    SaveStrategyResponse, ShareStrategyResponse, Strategy, VerifyKeyResponse, GetStrategyListByNameResponse
 } from '../../interfaces/response.interface';
 import { createScriptArgs } from '../robot/robot.reducer';
 import * as actions from './strategy.action';
@@ -18,6 +18,7 @@ export interface RequestParams {
     opStrategyToken: OpStrategyTokenRequest;
     strategyDetail: GetStrategyDetailRequest;
     saveStrategy: SaveStrategyRequest;
+    strategyListByName: GetStrategyListByNameRequest;
 }
 
 export interface UIState {
@@ -37,6 +38,7 @@ export interface State {
     strategyDetailRes: GetStrategyDetailResponse;
     saveStrategyRes: SaveStrategyResponse;
     UIState: UIState;
+    strategyListByNameRes: GetStrategyListByNameResponse;
 }
 
 const initialState: State = {
@@ -50,6 +52,7 @@ const initialState: State = {
     strategyDetailRes: null,
     saveStrategyRes: null,
     UIState: null,
+    strategyListByNameRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -158,6 +161,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.SAVE_STRATEGY_SUCCESS:
             return { ...state, saveStrategyRes: action.payload };
 
+        case actions.GET_STRATEGY_LIST_BY_NAME:
+            return { ...state, requestParams: { ...state.requestParams, strategyListByName: action.payload }, UIState: { ...state.UIState, loading: true } };
+
+        case actions.GET_STRATEGY_LIST_BY_NAME_FAIL:
+        case actions.GET_STRATEGY_LIST_BY_NAME_SUCCESS:
+            return { ...state, strategyListByNameRes: action.payload, UIState: { ...state.UIState, loading: false} };
+
         /**==================================================================Local State change=========================================== **/
 
         // update strategy hasToken
@@ -221,3 +231,5 @@ export const getStrategyDetailRes = (state: State) => state.strategyDetailRes;
 export const getSaveStrategyRes = (state: State) => state.saveStrategyRes;
 
 export const getUIState = (state: State) => state.UIState;
+
+export const getStrategyListByNameResponse = (state: State) => state.strategyListByNameRes;

@@ -87,8 +87,8 @@ export class StrategyListComponent implements OnInit {
     /**
      * TODO:
      */
-    // createKey(strategy: Strategy): void {
-
-    // }
+    createKey(strategy: Strategy): void {
+        console.log(strategy);
+    }
 
 }

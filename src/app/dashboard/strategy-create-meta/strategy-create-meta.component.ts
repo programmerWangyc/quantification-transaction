@@ -10,7 +10,7 @@ import { filter, find, map, mapTo, mergeMap, startWith, switchMap, take } from '
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { Breadcrumb, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
-import { Strategy, StrategyDetail } from '../../interfaces/response.interface';
+import { Strategy, StrategyDetail, StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { StrategyMetaArg } from '../../strategy/add-arg/add-arg.component';
 import { ArgListComponent } from '../../strategy/arg-list/arg-list.component';
@@ -22,7 +22,7 @@ import {
 import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
 import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
-import { StrategyDetailDeactivateGuard } from '../dashboard.interface';
+import { DeactivateGuard } from '../dashboard.interface';
 import { CanDeactivateComponent } from '../providers/guard.service';
 
 export interface Tab {
@@ -69,7 +69,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
      * Strategy data;
      */
-    strategy: Observable<Strategy>;
+    strategy: Observable<Strategy | StrategyListByNameStrategy>;
 
     /**
      * Strategy name;
@@ -250,7 +250,11 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         /**
          * 这里的信息没有从detail里取，因为通过编辑或复制按钮进来时，从list上来取这些信息时更快，不需要等后台响应就可以拿到。
          */
-        this.strategy = this.strategyService.getStrategies().pipe(
+
+        this.strategy = merge(
+            this.strategyService.getStrategies() as Observable<StrategyListByNameStrategy[]>,
+            this.strategyService.getMarketStrategyList(),
+        ).pipe(
             mergeMap(list => from(list)),
             find(item => item.id === this.strategyId)
         );
@@ -399,13 +403,13 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
      * Router guard.
      */
-    canDeactivate(): StrategyDetailDeactivateGuard[] {
-        const codeMirrorGuard: StrategyDetailDeactivateGuard = {
+    canDeactivate(): DeactivateGuard[] {
+        const codeMirrorGuard: DeactivateGuard = {
             canDeactivate: of(!this.codeMirror.isCodeChanged()),
             message: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM',
         };
 
-        const backtestGuard: StrategyDetailDeactivateGuard = {
+        const backtestGuard: DeactivateGuard = {
             canDeactivate: this.backtestService.isBacktesting().pipe(
                 map(isTesting => !isTesting),
                 take(1)

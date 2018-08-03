@@ -2,11 +2,11 @@ import { Action } from '@ngrx/store';
 
 import {
     DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest, OpStrategyTokenRequest,
-    SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest
+    SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest
 } from '../../interfaces/request.interface';
 import {
     DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
-    SaveStrategyResponse, ShareStrategyResponse, VerifyKeyResponse
+    SaveStrategyResponse, ShareStrategyResponse, VerifyKeyResponse, GetStrategyListByNameResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -373,6 +373,53 @@ export class SaveStrategySuccessAction extends SaveStrategyAction implements Act
     constructor(public payload: SaveStrategyResponse) { super(); }
 }
 
+// strategy list by name
+export enum StrategyListByNameOrder {
+    offset,
+    limit,
+    strategyType,
+    categoryId,
+    needArgs,
+    keyword,
+    length,
+}
+
+export class GetStrategyListByName extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    order = StrategyListByNameOrder;
+
+    command = 'GetStrategyListByName';
+
+    allowSeparateRequest = true;
+}
+
+export const GET_STRATEGY_LIST_BY_NAME = '[Strategy] GET_STRATEGY_LIST_BY_NAME';
+
+export class GetStrategyListByNameRequestAction extends GetStrategyListByName implements Action {
+    readonly type = GET_STRATEGY_LIST_BY_NAME;
+
+    constructor(public payload: GetStrategyListByNameRequest) { super(); }
+}
+
+export const GET_STRATEGY_LIST_BY_NAME_FAIL = '[Strategy] GET_STRATEGY_LIST_BY_NAME_FAIL';
+
+export class GetStrategyListByNameFailAction extends GetStrategyListByName implements Action {
+    readonly type = GET_STRATEGY_LIST_BY_NAME_FAIL;
+
+    constructor(public payload: GetStrategyListByNameResponse) { super(); }
+}
+
+export const GET_STRATEGY_LIST_BY_NAME_SUCCESS = '[Strategy] GET_STRATEGY_LIST_BY_NAME_SUCCESS';
+
+export class GetStrategyListByNameSuccessAction extends GetStrategyListByName implements Action {
+    readonly type = GET_STRATEGY_LIST_BY_NAME_SUCCESS;
+
+    constructor(public payload: GetStrategyListByNameResponse) { super(); }
+}
+
 //  ===========================================Local action===================================
 
 // update strategy hasToken field
@@ -416,6 +463,9 @@ export type ApiActions = GetStrategyListRequestAction
     | GetStrategyListFailAction
     | GetStrategyListSuccessAction
     | ShareStrategyRequestAction
+    | GetStrategyListByNameRequestAction
+    | GetStrategyListByNameFailAction
+    | GetStrategyListByNameSuccessAction
     | ShareStrategyFailAction
     | ShareStrategySuccessAction
     | GenKeyRequestAction
@@ -443,6 +493,8 @@ export type Actions = ApiActions
 export const ResponseActions = {
     GetStrategyListFailAction,
     GetStrategyListSuccessAction,
+    GetStrategyListByNameFailAction,
+    GetStrategyListByNameSuccessAction,
     ShareStrategyFailAction,
     ShareStrategySuccessAction,
     GenKeyFailAction,

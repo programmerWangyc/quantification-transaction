@@ -24,6 +24,7 @@ import { StrategyListComponent } from './strategy-list/strategy-list.component';
 import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
+import { StrategyMarketComponent } from './strategy-market/strategy-market.component';
 
 @NgModule({
     imports: [
@@ -50,6 +51,7 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         ArgListComponent,
         StrategyDependanceComponent,
         AlternationPreviewComponent,
+        StrategyMarketComponent,
     ],
     providers: [
         StrategyService,
@@ -76,6 +78,7 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
         ArgListComponent,
         StrategyDependanceComponent,
         AlternationPreviewComponent,
+        StrategyMarketComponent,
     ],
 })
 export class StrategyModule { }

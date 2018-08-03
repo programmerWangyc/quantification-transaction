@@ -1,0 +1,14 @@
+.table-head {
+    margin: 2em 0;
+    position: relative;
+    nz-input-group {
+        position: absolute;
+        right: 0;
+        width: 200px;
+    }
+}
+
+.pagination {
+    margin: 10px 0;
+    font-size: 12px;
+}

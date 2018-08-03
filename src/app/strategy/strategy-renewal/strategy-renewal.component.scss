@@ -25,3 +25,14 @@ ul {
         color: rgba(0, 0, 0, .5);
     }
 }
+
+.button-group {
+    button {
+        margin: 0 5px;
+    }
+}
+
+.title-icon {
+    color: $blue;
+    margin: 0 5px 0 0;
+}

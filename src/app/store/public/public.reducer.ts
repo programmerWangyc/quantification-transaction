@@ -54,8 +54,8 @@ export const initialState: State = {
         payment: false,
         charge: false,
         backtest: false,
-    }
-}
+    },
+};
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
@@ -123,7 +123,7 @@ function updateSettingsState(payload: SettingsResponse): ResponseState {
     return {
         action: payload.action,
         error: payload.error,
-    }
+    };
 }
 
 function updateSettings(settings: Settings, key: string, data: any): Settings {

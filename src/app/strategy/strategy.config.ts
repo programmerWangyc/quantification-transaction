@@ -13,3 +13,11 @@ export enum OpStrategyTokenTypeAdapter {
    DELETE,
    ADD,
 }
+
+/**
+ * 策略的可见性分类
+ */
+export enum StrategyVisibilityType {
+    publicOrRentable = -2,
+    visibleMySelf,
+}

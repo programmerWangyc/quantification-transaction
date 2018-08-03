@@ -30,8 +30,14 @@ export const filterTypes: FilterType[] = [
 export class RunningLogComponent implements OnInit {
     filterTypes = [];
 
+    /**
+     * 可选择的每页展示的策略数目
+     */
     pageSizeSelectorValues = PAGE_SIZE_SELECT_VALUES;
 
+    /**
+     * 当前页码
+     */
     currentPage = 1;
 
     @Input() logs: RunningLog[];
@@ -49,16 +55,12 @@ export class RunningLogComponent implements OnInit {
     @Output() pageSizeChange: EventEmitter<number> = new EventEmitter();
 
     constructor(private translate: TranslateService) {
-        observableFrom(filterTypes)
-            .pipe(
-                mergeMap(type => this.translate.get(type.text)
-                    .pipe(
-                        map(text => ({ text, value: type.value }))
-                    )
-                ),
-                reduce((acc: FilterType[], cur: FilterType) => [...acc, cur], [])
-            )
-            .subscribe(types => this.filterTypes = types);
+        observableFrom(filterTypes).pipe(
+            mergeMap(type => this.translate.get(type.text).pipe(
+                map(text => ({ text, value: type.value }))
+            )),
+            reduce((acc: FilterType[], cur: FilterType) => [...acc, cur], [])
+        ).subscribe(types => this.filterTypes = types);
     }
 
     ngOnInit() {

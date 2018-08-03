@@ -1,0 +1,92 @@
+<app-payment-indicator [processing]="processing" [start]="start" [payMethodState]="payMethodSelected" [title]="'PAYMENT_STEP'"
+    [inputText]="'SET_RENT_DAYS'"></app-payment-indicator>
+
+<div nz-row [nzAlign]="'middle'">
+    <div nz-col [nzSpan]="12">
+        <form [formGroup]="form" nz-form>
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY_NAME' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <input formControlName="name" nz-input>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'PRICE' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <input formControlName="price" nz-input>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>
+                    {{'RENT_PERIOD' | translate}}
+                    <i class="anticon anticon-question-circle" [nz-tooltip]="'RENT_PERIOD_TIP' | translate" style="color: #1890ff;vertical-align: middle; font-size: 12px;"></i>
+                </nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+
+                    <nz-radio-group formControlName="chargeShortcut">
+                        <label *ngFor="let item of periods" nz-radio [nzValue]="item.days">
+                            {{item.label | translate}}
+                        </label>
+                    </nz-radio-group>
+
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item *ngIf="!chargeShortcut.value">
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'RENT_DAYS' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <nz-input-number formControlName="charge" required [nzMax]="100000" [nzMin]="30"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'PAYMENT' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <nz-input-number formControlName="amount" [nzFormatter]="amountFormatter" style="width:auto;"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'AVAILABLE_USE_TO' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <input formControlName="deadline" nz-input>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'PAYMENT_METHOD' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                    <nz-select formControlName="payMethod" required>
+                        <nz-option *ngFor="let item of payMethods" [nzLabel]="item.name | translate" [nzValue]="item.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-control [nzXs]="{span:24,offset:0}" [nzSm]="{span:14,offset:6}" class="pay-btn">
+                    <button nz-button [nzSize]="'large'" [nzType]="'primary'" [disabled]="form.invalid || payMethod.value === 1" (click)="pay$.next(form.value)">
+                        {{'CONFIRM_PAY_ACTION' | translate}}
+                    </button>
+                    <span *ngIf="payMethod.value === 1 && charge.valid" class="scan-tip">{{'SCAN_QR_CODE_TO_PAY' | translate}}</span>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </div>
+
+    <div nz-col [nzSpan]="6" [nzOffset]="4" class="qr-code">
+        <div *ngIf="strategy | async; let source" class="auth">
+            <span>
+                <b>{{'AUTHOR' | translate}}</b>
+                <i>{{source.username}}</i>
+            </span>
+            <span>
+                <b>{{'EMAIL' | translate}}</b>
+                <i>{{source.email}}</i>
+            </span>
+        </div>
+
+        <qr-code *ngIf="payMethod.value === 1 && charge.valid" [value]="wechartQRCode | async" [size]="150"></qr-code>
+    </div>
+</div>

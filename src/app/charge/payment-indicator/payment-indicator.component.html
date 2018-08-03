@@ -1,0 +1,11 @@
+<h3>{{title | translate}}</h3>
+
+<nz-steps>
+    <nz-step [nzTitle]="inputText | translate" nzStatus="finish" nzIcon="anticon anticon-plus-circle-o"></nz-step>
+    <nz-step [nzTitle]="'SELECT_PAYMENT_METHOD' | translate" [nzStatus]="payMethodState | async" nzIcon="anticon anticon-pay-circle-o"></nz-step>
+    <nz-step [nzTitle]="'PAY' | translate" [nzStatus]="processState | async" [nzIcon]="iconTemplate"></nz-step>
+    <nz-step [nzTitle]="'COMPLETE' | translate" [nzStatus]="completeState | async" nzIcon="anticon anticon-smile-o"></nz-step>
+    <ng-template #iconTemplate>
+        <i class="anticon" [ngClass]="paymentStateIcon | async"></i>
+    </ng-template>
+</nz-steps>

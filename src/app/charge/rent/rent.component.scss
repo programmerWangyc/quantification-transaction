@@ -1,0 +1,11 @@
+@import '../charge/charge.component';
+.auth {
+    margin: 0 0 1em 0;
+}
+
+b {
+    margin: 0 10px 0 5px;
+    &::after {
+        content: ':'
+    }
+}

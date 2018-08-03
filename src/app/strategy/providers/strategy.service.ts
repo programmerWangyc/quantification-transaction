@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
 import { intersectionWith, isNumber, sortBy, uniqBy } from 'lodash';
 import * as moment from 'moment';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
-import { find, map, mergeMap, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { find, map, mergeMap, switchMap, take, withLatestFrom, takeWhile, filter } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
@@ -71,8 +71,18 @@ export class StrategyService extends BaseService {
         ));
     }
 
+    /**
+     * 查询策略详情
+     */
     launchStrategyDetail(source: Observable<fromReq.GetStrategyDetailRequest>): Subscription {
         return this.process.processStrategyDetail(source);
+    }
+
+    /**
+     * 能过名称查询策略详情
+     */
+    launchStrategyListByName(source: Observable<fromReq.GetStrategyListByNameRequest>): Subscription {
+        return this.process.processStrategyListByName(source);
     }
 
     //  =======================================================Date acquisition=======================================================
@@ -86,6 +96,9 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * store 中的请求参数;
+     */
     protected getRequestParams(): Observable<RequestParams> {
         return this.store.select(fromRoot.selectStrategyRequestParams).pipe(
             this.filterTruth()
@@ -267,6 +280,34 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * @ignore
+     */
+    private getStrategyListByNameResponse(): Observable<fromRes.GetStrategyListByNameResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectStrategyListByNameResponse),
+            filter(res => !!res && !!res.result)
+        );
+    }
+
+    /**
+     * 策略广场的数据源
+     */
+    getMarketStrategyList(): Observable<fromRes.StrategyListByNameStrategy[]> {
+        return this.getStrategyListByNameResponse().pipe(
+            map(res => res.result.strategies)
+        );
+    }
+
+    /**
+     * 策略广场的数据总量
+     */
+    getMarketStrategyTotal(): Observable<number> {
+        return this.getStrategyListByNameResponse().pipe(
+            map(res => res.result.all)
+        );
+    }
+
     //  =======================================================Local state change=======================================================
 
     resetState(): void {
@@ -336,15 +377,33 @@ export class StrategyService extends BaseService {
 
     //  =======================================================Error handler=======================================================
 
+    /**
+     * @ignore
+     */
     handleStrategyListError(): Subscription {
         return this.error.handleResponseError(this.getStrategyListResponse());
     }
 
+    /**
+     * @ignore
+     */
     handleOpStrategyTokenError(): Subscription {
         return this.error.handleResponseError(this.getOpStrategyTokenResponse());
     }
 
+    /**
+     * @ignore
+     */
     handleStrategyDetailError(): Subscription {
         return this.error.handleResponseError(this.getStrategyDetailResponse());
+    }
+
+    /**
+     * @ignore
+     */
+    handleStrategyListByNameError(keepAlive: () => boolean = () => true): Subscription {
+        return this.error.handleResponseError(this.getStrategyListByNameResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

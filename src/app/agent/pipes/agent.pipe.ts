@@ -32,7 +32,7 @@ export class AgentRegionPipe implements PipeTransform {
         const reg = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi;
 
         if (!reg.exec(arr[0])) {
-            return language === 'en' ? arr[0] : arr[1];
+            return language === 'en-us' ? arr[0] : arr[1];
         }
 
         return language === 'zh' ? arr[0] : arr[1];

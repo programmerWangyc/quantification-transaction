@@ -1,3 +1,4 @@
+@import '../../../theme/_variable.theme';
 .radius {
     border-radius: 5px;
 }
@@ -30,4 +31,9 @@ p {
     text-align: right;
     border-radius: 0 0 4px 4px;
     justify-content: flex-end
+}
+
+.title-icon {
+    color: $warn;
+    margin: 0 5px 0 0;
 }

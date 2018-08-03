@@ -513,6 +513,19 @@ export interface SetWDResponse extends ResponseUnit<boolean> { }
 
 // ===================================================Strategy==============================================
 
+interface StrategyBase {
+    category: number;
+    date: string;
+    forked: number;
+    id: number;
+    is_buy: boolean;
+    is_owner: boolean;
+    language: number;
+    last_modified: string;
+    name: string;
+    public: number;
+}
+
 // strategy list
 export enum StrategyPublicState {
     UNDISCLOSED, // 未公开
@@ -521,30 +534,19 @@ export enum StrategyPublicState {
     PREMIUM,
 }
 
-export interface Strategy {
+export interface Strategy extends StrategyBase {
     args?: string; // JSON type string
     buy_count?: number;
-    category: number;
-    date: string;
     email?: string;
     expire_date?: string;
-    forked: number;
     hasToken: boolean; // indicate has remote edit token;
-    id: number;
-    is_buy: boolean;
-    is_owner: boolean;
-    language: number;
-    last_modified: string;
-    name: string;
     pricing?: string; // 斜线分割的自定义格式，天数/价格
-    public: number;
     templates?: number[]; // 模板的ID, 在category 是30的响应里找， var  item = category是30中的某一个， item.id === 这个数组中的id，item.args 就是这个模板的 arg
     username: string;
     // 以下两个字段是自定义字段
     semanticArgs?: VariableOverview[]; // from args field
     semanticTemplateArgs?: TemplateVariableOverview[]; // form template snapshot
 }
-
 
 export interface StrategyListResponse {
     all: number;
@@ -589,22 +591,12 @@ export interface TemplateSnapshot {
     semanticArgs?: VariableOverview[];
 }
 
-export interface StrategyDetail {
+export interface StrategyDetail extends StrategyBase {
     args: string;
-    category: number;
-    date: string;
     description: string;
     expire_date: string;
-    forked?: number;
-    id: number;
-    is_buy: boolean;
-    is_owner: boolean;
-    language: number;
-    last_modified: string;
     manual: string;
-    name: string;
     note?: string;
-    public: number;
     source?: string;
     templates?: TemplateSnapshot[];
     // custom filed
@@ -619,6 +611,21 @@ export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailRe
 
 // save strategy
 export interface SaveStrategyResponse extends ResponseUnit<string | boolean> { }
+
+// strategy list by name
+export interface StrategyListByNameStrategy extends StrategyBase {
+    args?: string;
+    email: string;
+    username: string;
+    pricing?: string;
+}
+
+export interface StrategyListByNameResponse {
+    all: number;
+    strategies: StrategyListByNameStrategy[];
+}
+
+export interface GetStrategyListByNameResponse extends ResponseUnit<StrategyListByNameResponse> { }
 
 // ===================================================Backtest==============================================
 

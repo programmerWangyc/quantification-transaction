@@ -213,6 +213,7 @@ export interface SetWDRequest {
 
 // strategy list
 export enum CategoryType {
+    ALL = -1,
     GENERAL_STRATEGY,
     COMMODITY_FUTURES,
     STOCK_SECURITY,
@@ -300,6 +301,16 @@ export interface SaveStrategyRequest {
     manual: string;
     name: string;
     note: string;
+}
+
+// strategy list by name
+export interface GetStrategyListByNameRequest {
+    offset: number;
+    limit: number;
+    strategyType: number; // -1: 自已写的或买别人的， -2： 公开的或出租的
+    categoryId: number;
+    needArgs: number; // 0: 不需要 1: 需要
+    keyword: string;
 }
 
 // ===================================================Backtest==============================================
@@ -441,6 +452,6 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 37
+ * 接口总数： 83， 已完成： 40
  */
 

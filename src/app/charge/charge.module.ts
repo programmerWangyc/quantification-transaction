@@ -9,6 +9,8 @@ import { ChargeComponent } from './charge/charge.component';
 import { PIPES } from './pipes/index.pipe';
 import { ChargeConstantService } from './providers/charge.constant.service';
 import { ChargeService } from './providers/charge.service';
+import { RentComponent } from './rent/rent.component';
+import { PaymentIndicatorComponent } from './payment-indicator/payment-indicator.component';
 
 @NgModule({
     imports: [
@@ -21,6 +23,8 @@ import { ChargeService } from './providers/charge.service';
         ChargeHistoryComponent,
         PIPES,
         AccountBalanceComponent,
+        RentComponent,
+        PaymentIndicatorComponent,
     ],
     providers: [
         ChargeService,
@@ -31,6 +35,7 @@ import { ChargeService } from './providers/charge.service';
         ChargeHistoryComponent,
         AccountBalanceComponent,
         PIPES,
+        RentComponent,
     ],
 })
 export class ChargeModule { }

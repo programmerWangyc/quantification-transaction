@@ -254,8 +254,7 @@ export const selectSaveStrategyResponse = createSelector(getStrategyState, strat
 export const selectStrategyUIState = createSelector(getStrategyState, strategy.getUIState);
 
 /**
- * @function selectTemplateSnapshots
- *  Get templates from strategy reducer, there are two resources, which one from strategy list that queried by category id equals to
+ * Get templates from strategy reducer, there are two resources, which one from strategy list that queried by category id equals to
  * template flag and other comes from templates field of strategy detail.
  */
 export const selectTemplateSnapshots = createSelector(selectStrategyListResponse, selectStrategyDetailResponse, (list, detail) => {
@@ -273,6 +272,9 @@ export const selectTemplateSnapshots = createSelector(selectStrategyListResponse
 
     return [...availableTemplates, ...currentTemplates];
 });
+
+// strategy list by name
+export const selectStrategyListByNameResponse = createSelector(getStrategyState, strategy.getStrategyListByNameResponse);
 
 //  ===================================================Charge======================================================
 

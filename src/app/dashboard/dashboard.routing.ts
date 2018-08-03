@@ -6,7 +6,7 @@ import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
 import { FactComponent } from './fact/fact.component';
-import { StrategyDetailGuard } from './providers/guard.service';
+import { StrategyGuard, RobotGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
@@ -36,15 +36,15 @@ const routs: Routes = [
 
             // strategy
             { path: 'strategy', component: StrategyComponent },
-            { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            { path: 'strategy/copy/:id', component: StrategyCopyComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
-            { path: 'strategy/edit/:id', component: StrategyEditComponent, canActivate: [StrategyDetailGuard], canDeactivate: [StrategyDetailGuard] },
+            { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
+            { path: 'strategy/copy/:id', component: StrategyCopyComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
+            { path: 'strategy/edit/:id', component: StrategyEditComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
             { path: 'strategy/backtest/:id', component: DocComponent },
             { path: 'strategy/verify/:id/:codeType', component: StrategyVerifyCodeComponent },
-            { path: 'strategy/rent/:id', component: StrategyRentComponent },
+            { path: 'strategy/rent/:id', component: StrategyRentComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
 
             // charge
-            { path: 'charge', component: RechargeComponent },
+            { path: 'charge', component: RechargeComponent, canDeactivate: [RobotGuard] },
 
             // agent
             { path: 'agent', component: AgentComponent },

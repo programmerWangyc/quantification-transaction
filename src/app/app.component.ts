@@ -42,7 +42,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.translate.use(actualLanguage);
 
         actualLanguage === 'zh' && moment.locale('zh-cn');
-
     }
 
     ngOnDestroy() {

@@ -39,13 +39,3 @@ export enum VariableType {
     ENCRYPT_STRING_TYPE,
     BUTTON_TYPE,
 }
-
-/**
- * !FIXME: unused
- */
-export enum NotificationType {
-    SUCCESS = 'success',
-    ERROR = 'error',
-    WARNING = 'warning',
-    INFO = 'INFO',
-}

@@ -9,6 +9,9 @@ import {
     VariableTypeNamePipe,
     VariableTypePipe,
     VariableValuePipe,
+    CategoryNamePipe,
+    ProgramLanguagePipe,
+    CategoryColorPipe,
 } from './strategy.pipe';
 
 export const PIPES = [
@@ -23,4 +26,7 @@ export const PIPES = [
     VariableTypeNamePipe,
     VariableTypePipe,
     VariableValuePipe,
+    CategoryNamePipe,
+    ProgramLanguagePipe,
+    CategoryColorPipe,
 ];

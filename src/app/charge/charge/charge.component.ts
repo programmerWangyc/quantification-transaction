@@ -2,136 +2,191 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilKeyChanged, filter, map, mapTo, startWith } from 'rxjs/operators';
+import { distinctUntilKeyChanged, filter, mapTo, startWith, take } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PaymentMethod } from '../charge.config';
 import { PAY_METHODS } from '../providers/charge.constant.service';
 import { ChargeService, RechargeFormModal } from '../providers/charge.service';
 
+export class ChargeBase {
+
+    /**
+     * @ignore
+     */
+    labelSm = 6;
+
+    /**
+     * @ignore
+     */
+    controlSm = 14;
+
+    /**
+     * @ignore
+     */
+    xs = 24;
+
+    /**
+     * 支付方式
+     */
+    payMethods = PAY_METHODS;
+
+    /**
+     * 支付处理开始状态中的流
+     */
+    protected notifyPayStart(control: AbstractControl): Observable<any> {
+        return control.valueChanges.pipe(
+            filter(method => method !== PaymentMethod.WECHART),
+            startWith(null)
+        );
+    }
+
+    /**
+     * 支付处理进行中状态的流
+     */
+    protected notifyPayProcessing(submit: Observable<any>, control: AbstractControl): Observable<any> {
+        return merge(
+            submit,
+            control.valueChanges.pipe(
+                filter(method => method === PaymentMethod.WECHART)
+            )
+        );
+    }
+
+    /**
+     * 支付方式选择所处的状态
+     */
+    protected notifyPayMethodState(control: AbstractControl): Observable<string> {
+        return control.valueChanges.pipe(
+            take(1),
+            mapTo('finish'),
+            startWith('wait')
+        );
+    }
+}
+
 @Component({
     selector: 'app-charge',
     templateUrl: './charge.component.html',
     styleUrls: ['./charge.component.scss'],
 })
-export class ChargeComponent implements BaseComponent {
-    labelSm = 6;
+export class ChargeComponent extends ChargeBase implements BaseComponent {
 
-    controlSm = 14;
-
-    xs = 24;
-
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * @ignore
+     */
     form: FormGroup;
 
     /**
-     * TODO: 同一个DOM元素上同时时使用了响应式表单字段和 ngModel，需修复。
+     * 提交支付
      */
-    selectedPayMethod = 0;
-
-    payMethods = PAY_METHODS;
-
     pay$: Subject<RechargeFormModal> = new Subject();
 
+    /**
+     * 微信支付码
+     */
     wechartQRCode: Observable<string>;
 
-    processState: Observable<string>;
+    /**
+     * 标识支付正在进行的流
+     */
+    processing: Observable<RechargeFormModal>;
 
-    completeState: Observable<string>;
+    /**
+     * 标识支付重新开始的流
+     */
+    start: Observable<any>;
 
-    paymentStateIcon: Observable<string>;
+    /**
+     * 是否已选择了支付方式
+     */
+    payMethodSelected: Observable<string>;
 
     constructor(
         private fb: FormBuilder,
         private chargeService: ChargeService
     ) {
+        super();
+
         this.initForm();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
-        this.launch();
-
         this.initialModel();
+
+        this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.wechartQRCode = this.chargeService.getWechartQrCode();
 
-        this.processState = this.mapPaymentStateTo('wait', 'process', 'finish');
+        this.start = this.notifyPayStart(this.payMethod);
 
-        this.paymentStateIcon = this.mapPaymentStateTo('anticon-reload', 'anticon-spin anticon-loading', 'anticon-check-circle-o');
+        this.processing = this.notifyPayProcessing(this.pay$, this.payMethod);
 
-        this.completeState = this.chargeService.isRechargeSuccess()
-            .pipe(
-                startWith(false),
-                map(isSuccess => isSuccess ? 'finish' : 'wait')
-            );
+        this.payMethodSelected = this.notifyPayMethodState(this.payMethod);
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         this.subscription$$ = this.chargeService.launchPaymentArg(
-            merge(
-                this.pay$,
-                this.getQRCodeIfWechart()
-            )
+            merge(this.pay$, this.getArgsIfWechart())
         )
             .add(this.chargeService.goToAlipayPage())
             .add(this.chargeService.goToPayPal())
             .add(this.chargeService.handlePaymentsArgsError());
     }
 
+    /**
+     * @ignore
+     */
     initForm() {
         this.form = this.fb.group({
-            chargeAmount: [3, Validators.required],
+            charge: [3, Validators.required],
             payMethod: '',
         });
     }
 
-    getQRCodeIfWechart(): Observable<RechargeFormModal> {
-        return this.form.valueChanges
-            .pipe(
-                filter((form: RechargeFormModal) => this.chargeAmount.valid && (form.payMethod === PaymentMethod.WECHART)),
-                distinctUntilKeyChanged('chargeAmount')
-            );
-    }
-
-    mapPaymentStateTo(start: string, processing: string, finish: string): Observable<string> {
-        const obs1 = merge(
-            this.pay$,
-            this.getQRCodeIfWechart()
-        )
-            .pipe(
-                map(_ => processing)
-            );
-
-        const obs2 = merge(
-            obs1,
-            this.chargeService.isRechargeSuccess()
-                .pipe(
-                    map(_ => finish)
-                )
-        );
-
-        return merge(
-            obs2,
-            this.form.valueChanges
-                .pipe(
-                    filter((form: RechargeFormModal) => form.payMethod !== PaymentMethod.WECHART),
-                    mapTo(start),
-                    startWith(start)
-                )
+    /**
+     * 用户选择微信支付时，获取参数
+     */
+    private getArgsIfWechart(): Observable<RechargeFormModal> {
+        return this.form.valueChanges.pipe(
+            filter((form: RechargeFormModal) => this.charge.valid && (form.payMethod === PaymentMethod.WECHART)),
+            distinctUntilKeyChanged('charge')
         );
     }
 
-    get chargeAmount(): AbstractControl {
-        return this.form.get('chargeAmount');
+    /**
+     * @ignore
+     */
+    get charge(): AbstractControl {
+        return this.form.get('charge');
     }
 
+    /**
+     * @ignore
+     */
     get payMethod(): AbstractControl {
         return this.form.get('payMethod');
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/internal/Observable';
 
-export interface StrategyDetailDeactivateGuard {
+export interface DeactivateGuard {
     canDeactivate: Observable<boolean>;
     message: string;
 }

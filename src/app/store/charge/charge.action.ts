@@ -76,7 +76,7 @@ export class GetPaymentArg extends ApiAction {
     constructor() { super(); }
 }
 
-export const GET_PAYMENT_ARG = 'GET_PAYMENT_ARG';
+export const GET_PAYMENT_ARG = '[Charge] GET_PAYMENT_ARG';
 
 export class GetPaymentArgRequestAction extends GetPaymentArg implements Action {
     readonly type = GET_PAYMENT_ARG;
@@ -86,7 +86,7 @@ export class GetPaymentArgRequestAction extends GetPaymentArg implements Action 
     constructor(public payload: GetPaymentArgRequest) { super(); }
 }
 
-export const GET_PAYMENT_ARG_FAIL = 'GET_PAYMENT_ARG_FAIL';
+export const GET_PAYMENT_ARG_FAIL = '[Charge] GET_PAYMENT_ARG_FAIL';
 
 export class GetPaymentArgFailAction extends GetPaymentArg implements Action {
     readonly type = GET_PAYMENT_ARG_FAIL;
@@ -94,7 +94,7 @@ export class GetPaymentArgFailAction extends GetPaymentArg implements Action {
     constructor(public payload: GetPaymentArgResponse) { super(); }
 }
 
-export const GET_PAYMENT_ARG_SUCCESS = 'GET_PAYMENT_ARG_SUCCESS';
+export const GET_PAYMENT_ARG_SUCCESS = '[Charge] GET_PAYMENT_ARG_SUCCESS';
 
 export class GetPaymentArgSuccessAction extends GetPaymentArg implements Action {
     readonly type = GET_PAYMENT_ARG_SUCCESS;
@@ -104,7 +104,7 @@ export class GetPaymentArgSuccessAction extends GetPaymentArg implements Action 
 
 //  ===========================================Local action===================================
 
-export const RESET_RECHARGE = 'RESET_RECHARGE';
+export const RESET_RECHARGE = '[Charge] RESET_RECHARGE';
 
 export class ResetRechargeAction implements Action {
     readonly type = RESET_RECHARGE;

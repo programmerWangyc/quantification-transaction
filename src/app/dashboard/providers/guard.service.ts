@@ -1,43 +1,30 @@
 import { Injectable } from '@angular/core';
-import {
-    ActivatedRoute, ActivatedRouteSnapshot, CanActivate, CanDeactivate, Router, RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, CanDeactivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { NzModalService } from 'ng-zorro-antd';
-import { from, Observable, of } from 'rxjs';
+import { combineLatest, from, Observable, of } from 'rxjs';
 import { find, map, mergeMap, tap } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { TipService } from '../../providers/tip.service';
-import { AppState, selectStrategyListResponse } from '../../store/index.reducer';
+import { AppState, selectStrategyListByNameResponse, selectStrategyListResponse } from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { StrategyDetailDeactivateGuard } from '../dashboard.interface';
+import { DeactivateGuard } from '../dashboard.interface';
 
 export interface CanDeactivateComponent {
-    canDeactivate(): StrategyDetailDeactivateGuard[];
+    canDeactivate(): DeactivateGuard[];
 }
 
-@Injectable()
-export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeactivateComponent> {
+class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
     constructor(
-        public store: Store<AppState>,
-        public router: Router,
-        public route: ActivatedRoute,
-        public nzModal: NzModalService,
         public tip: TipService,
-    ) { }
+    ) {
 
-    canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
-        return this.store.select(selectStrategyListResponse)
-            .pipe(
-                map(res => !!res),
-                tap(v => !v && this.router.navigate([Path.dashboard, Path.strategy]))
-            );
     }
 
     /**
      * 是否可以退出当前路由。
+     * !FIXME:守卫上有一个bug，被拦截后点取消时，侧边栏没有恢复
      */
     canDeactivate(component: CanDeactivateComponent, _route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
         const guards = component.canDeactivate();
@@ -57,5 +44,42 @@ export class StrategyDetailGuard implements CanActivate, CanDeactivate<CanDeacti
             find(guard => !guard.can),
             mergeMap(item => !item ? of(true) : this.tip.confirmOperateTip(ConfirmComponent, { message: item.message, needTranslate: true }))
         );
+    }
+}
+
+@Injectable()
+export class StrategyGuard extends BaseGuard implements CanActivate {
+    constructor(
+        public store: Store<AppState>,
+        public router: Router,
+        public tip: TipService,
+    ) {
+        super(tip);
+    }
+
+    /**
+     * 是否可以进入当前路由
+     */
+    canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
+        return combineLatest(
+            this.store.select(selectStrategyListResponse).pipe(
+                map(res => !!res)
+            ),
+            this.store.select(selectStrategyListByNameResponse).pipe(
+                map(res => !!res)
+            )
+        ).pipe(
+            map(([hasList, hasListByName]) => hasList || hasListByName),
+            tap(v => !v && this.router.navigate([Path.dashboard, Path.strategy]))
+        );
+    }
+}
+
+@Injectable()
+export class RobotGuard extends BaseGuard {
+    constructor(
+        public tip: TipService
+    ) {
+        super(tip);
     }
 }

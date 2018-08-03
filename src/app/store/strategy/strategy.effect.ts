@@ -5,7 +5,7 @@ import { isString } from 'lodash';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
 
-import { DeleteStrategyResponse } from '../../interfaces/response.interface';
+import { DeleteStrategyResponse, VerifyKeyResponse } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
@@ -25,7 +25,7 @@ export class StrategyEffect extends BaseEffect {
     genKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GEN_KEY, strategyActions.ResponseActions);
 
     @Effect()
-    verifyKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.VERIFY_KEY, strategyActions.ResponseActions).pipe(
+    verifyKey$: Observable<ResponseAction> = this.getResponseAction(strategyActions.VERIFY_KEY, strategyActions.ResponseActions, isVerifyKeyFail).pipe(
         tap((action: strategyActions.VerifyKeySuccessAction | strategyActions.VerifyKeyFailAction) => action.payload.result && this.tip.messageError('VERIFY_KEY_SUCCESS'))
     );
 
@@ -55,6 +55,9 @@ export class StrategyEffect extends BaseEffect {
         })
     );
 
+    @Effect()
+    listByName$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_LIST_BY_NAME, strategyActions.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
@@ -64,6 +67,16 @@ export class StrategyEffect extends BaseEffect {
     }
 }
 
+/**
+ * @ignore
+ */
+function isVerifyKeyFail(res: VerifyKeyResponse): boolean {
+    return !!res.error || !res.result;
+}
+
+/**
+ * @ignore
+ */
 function isDeleteFail(res: DeleteStrategyResponse): boolean {
     return !!res.error || res.result === -1;
 }

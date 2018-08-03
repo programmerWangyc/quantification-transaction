@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ChargeService } from '../../charge/providers/charge.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
+import { DeactivateGuard } from '../dashboard.interface';
 
 @Component({
     selector: 'app-recharge',
@@ -17,6 +18,18 @@ export class RechargeComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
+    }
+
+    /**
+     * 路由守卫
+     */
+    canDeactivate(): DeactivateGuard[] {
+        const chargeComplete: DeactivateGuard = {
+            canDeactivate: this.chargeService.isRechargeSuccess(),
+            message: 'CHARGE_LEAVE_CONFIRM',
+        };
+
+        return [chargeComplete];
     }
 
     ngOnDestroy() {

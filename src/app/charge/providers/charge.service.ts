@@ -1,26 +1,23 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { Observable, of as observableOf, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, withLatestFrom } from 'rxjs/operators';
+import { Observable, of as observableOf, race, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
-    GetPaymentArgResponse, GetPayOrdersResponse, PayOrder, ServerSendPaymentMessage
+    GetPaymentArgResponse, GetPayOrdersResponse, GetStrategyListResponse, PayOrder, Strategy
 } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { ResetRechargeAction } from '../../store/charge/charge.action';
-import {
-    AppState, selectPaymentArgRequestParams, selectPaymentArgResponse, selectPayOrdersResponse,
-    selectServerSendRechargeMessage
-} from '../../store/index.reducer';
+import * as fromRoot from '../../store/index.reducer';
 import { PaymentMethod } from '../charge.config';
 import { getChargePrice } from '../pipes/charge.pipe';
 
 export interface RechargeFormModal {
     payMethod: number;
-    chargeAmount: number;
+    charge: number;
 }
 
 @Injectable()
@@ -31,7 +28,7 @@ export class ChargeService extends BaseService {
     alipayAddress = 'https://mapi.alipay.com/gateway.do';
 
     constructor(
-        private store: Store<AppState>,
+        private store: Store<fromRoot.AppState>,
         private error: ErrorService,
         private process: ProcessService,
         public rendererFactory: RendererFactory2,
@@ -44,11 +41,10 @@ export class ChargeService extends BaseService {
 
     launchPaymentArg(data: Observable<RechargeFormModal>, strategyIdObs: Observable<number> = observableOf(0)): Subscription {
         return this.process.processPaymentArg(
-            data.pipe(
-                withLatestFrom(
-                    strategyIdObs,
-                    ({ payMethod, chargeAmount }, strategyId) => ({ payMethod, chargeAmount, strategyId })
-                )
+            data.pipe(withLatestFrom(
+                strategyIdObs,
+                ({ payMethod, charge }, strategyId) => ({ payMethod, chargeAmount: charge, strategyId })
+            )
             )
         );
     }
@@ -59,21 +55,31 @@ export class ChargeService extends BaseService {
 
     //  =======================================================Date Acquisition=======================================================
 
-    // payment
+    /**
+     * 支付参数接口的响应
+     */
     private getPaymentArgsResponse(): Observable<GetPaymentArgResponse> {
-        return this.store.pipe(select(selectPaymentArgResponse)).pipe(
-            filter(this.isTruth)
+        return this.store.pipe(
+            select(fromRoot.selectPaymentArgResponse),
+            this.filterTruth()
         );
     }
 
+    /**
+     * 跳转到相应的支付页面
+     * @param payMethod 支付方式
+     */
     private goToPaymentPage(payMethod: number): Observable<GetPaymentArgResponse> {
         return this.getPaymentArgsResponse().pipe(
-            withLatestFrom(this.store.select(selectPaymentArgRequestParams)),
+            withLatestFrom(this.store.select(fromRoot.selectPaymentArgRequestParams)),
             filter(([_, req]) => !!req && (req.payMethod === payMethod)),
             map(([res, _]) => res)
         );
     }
 
+    /**
+     * 跳转到支付宝付款页面
+     */
     goToAlipayPage(): Subscription {
         return this.goToPaymentPage(PaymentMethod.ALIPAY).pipe(
             map(res => {
@@ -101,11 +107,17 @@ export class ChargeService extends BaseService {
             .subscribe(form => this.renderer2.removeChild(document.body, form));
     }
 
+    /**
+     * 跳转到payPal 支付页面
+     */
     goToPayPal(): Subscription {
         return this.goToPaymentPage(PaymentMethod.PAY_PAL)
             .subscribe(res => location.href = res.result.code_url);
     }
 
+    /**
+     * 获取微信扫描二维码
+     */
     getWechartQrCode(): Observable<string> {
         return this.goToPaymentPage(PaymentMethod.WECHART).pipe(
             map(res => res.result.code_url),
@@ -113,19 +125,28 @@ export class ChargeService extends BaseService {
         );
     }
 
-    // pay orders
+    /**
+     * 获取支付订单的响应
+     */
     private getPayOrdersResponse(): Observable<GetPayOrdersResponse> {
-        return this.store.select(selectPayOrdersResponse).pipe(
+        return this.store.select(fromRoot.selectPayOrdersResponse).pipe(
             filter(this.isTruth)
         );
     }
 
+    /**
+     * 获取历史订单
+     */
     getHistoryOrders(): Observable<PayOrder[]> {
         return this.getPayOrdersResponse().pipe(
             map(res => res.result.items)
         );
     }
 
+    /**
+     * 获取指定标识的订单
+     * @param flag 订单标识
+     */
     getSpecificHistoryOrders(flag: string): Observable<PayOrder[]> {
         const predicate = this.isSpecificOrder(flag);
 
@@ -134,26 +155,57 @@ export class ChargeService extends BaseService {
         );
     }
 
-    isSpecificOrder(flag: string): (order: PayOrder) => boolean {
+    /**
+     * 是否指定标识的订单
+     * @param flag 订单标识
+     */
+    private isSpecificOrder(flag: string): (order: PayOrder) => boolean {
         return order => order.order_guid.indexOf(flag) !== -1;
     }
 
+    /**
+     * 获取订单总额
+     * @param data 订单数据
+     */
     getHistoryOrderTotalAmount(data: Observable<PayOrder[]>): Observable<number> {
         return data.pipe(
             map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0))
         );
     }
 
-    // server send message
-    private getServerSendRechargeMessage(): Observable<ServerSendPaymentMessage> {
-        return this.store.select(selectServerSendRechargeMessage).pipe(
-            this.filterTruth()
+    /**
+     * 充值是否成功
+     */
+    isRechargeSuccess(): Observable<boolean> {
+        return this.store.select(fromRoot.selectServerSendRechargeMessage).pipe(
+            map(res => !!res && !!res.orderId)
         );
     }
 
-    isRechargeSuccess(): Observable<boolean> {
-        return this.getServerSendRechargeMessage().pipe(
-            mapTo(true)
+    /**
+     * 是否完成了
+     */
+
+    /**
+     * 获取需要租用的策略
+     * @param idObs 目标id
+     */
+    getChargeStrategy(idObs: Observable<number>): Observable<Strategy> {
+        return race(
+            this.store.pipe(
+                select(fromRoot.selectStrategyListResponse),
+                filter(res => !!res && !!res.result.strategies.length),
+            ),
+            this.store.pipe(
+                select(fromRoot.selectStrategyListByNameResponse),
+                filter(res => !!res && !!res.result.strategies.length),
+            ) as Observable<GetStrategyListResponse>,
+        ).pipe(
+            withLatestFrom(
+                idObs,
+                ({ result }, id) => result.strategies.find(item => item.id === id)
+            ),
+            this.filterTruth()
         );
     }
 
@@ -161,16 +213,25 @@ export class ChargeService extends BaseService {
 
     //  =======================================================Local state modify==================================================
 
+    /**
+     * @ignore
+     */
     resetRecharge(): void {
         this.store.dispatch(new ResetRechargeAction());
     }
 
     //  =======================================================Error Handle=======================================================
 
+    /**
+     * @ignore
+     */
     handlePaymentsArgsError(): Subscription {
         return this.error.handleResponseError(this.getPaymentArgsResponse());
     }
 
+    /**
+     * @ignore
+     */
     handlePayOrdersError(): Subscription {
         return this.error.handleResponseError(this.getPayOrdersResponse());
     }

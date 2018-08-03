@@ -17,6 +17,7 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import { StrategyService } from '../../strategy/providers/strategy.service';
 import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
+import { Path } from '../../app.config';
 
 @Component({
     selector: 'app-strategy',
@@ -104,7 +105,7 @@ export class StrategyComponent implements BaseComponent {
      * @ignore
      */
     launch() {
-        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.indexOf('/') !== -1)(this.renewal$);
+        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$);
 
         this.subscription$$ = this.strategyService.handleStrategyListError()
             .add(this.btNodeService.handleNodeListError())
@@ -121,7 +122,7 @@ export class StrategyComponent implements BaseComponent {
                 nzComponentParams: { name, author: username, email, id },
                 nzFooter: null,
             })))
-            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate(['rent', strategy.id], { relativeTo: this.activatedRoute })))
+            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.rent, strategy.id], { relativeTo: this.activatedRoute })))
             .add(this.btNodeService.launchGetNodeList(of(true)))
             .add(this.platformService.launchGetPlatformList(of(true)))
             .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })));

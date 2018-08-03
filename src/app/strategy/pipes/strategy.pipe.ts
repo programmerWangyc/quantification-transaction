@@ -6,6 +6,7 @@ import { CategoryType } from '../../interfaces/request.interface';
 import { Strategy } from '../../interfaces/response.interface';
 import { StrategyMetaArg } from '../add-arg/add-arg.component';
 import { StrategyConstantService } from '../providers/strategy.constant.service';
+import { Language } from '../strategy.config';
 
 
 @Pipe({ name: 'strategyName' })
@@ -100,6 +101,42 @@ export class VariableValuePipe implements PipeTransform {
             return (<string>input.defaultValue).replace(/./g, '*');
         } else {
             return input.defaultValue;
+        }
+    }
+}
+
+@Pipe({ name: 'categoryName' })
+export class CategoryNamePipe implements PipeTransform {
+    transform(input: number): string {
+        return CategoryType[input];
+    }
+}
+
+@Pipe({ name: 'programLanguage' })
+export class ProgramLanguagePipe implements PipeTransform {
+    transform(input: number): string {
+        return Language[input];
+    }
+}
+
+@Pipe({ name: 'categoryColor' })
+export class CategoryColorPipe implements PipeTransform {
+    transform(input: number): string {
+        switch (input) {
+            case CategoryType.DIGITAL_CURRENCY:
+                return 'green';
+
+            case CategoryType.COMMODITY_FUTURES:
+                return 'gold';
+
+            case CategoryType.STOCK_SECURITY:
+                return 'purple';
+
+            case CategoryType.TEMPLATE_LIBRARY:
+                return 'cyan';
+
+            default:
+                return 'blue';
         }
     }
 }

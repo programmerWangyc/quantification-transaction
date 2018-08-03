@@ -184,6 +184,10 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new StrategyActions.SaveStrategyRequestAction(params)));
     }
 
+    processStrategyListByName(paramObs: Observable<Request.GetStrategyListByNameRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyListByNameRequestAction(params)));
+    }
+
     //  ===================================================Backtest======================================================
 
     processGetTemplates(paramObs: Observable<Request.GetTemplatesRequest>): Subscription {
