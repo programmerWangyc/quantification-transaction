@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StrategyTypeComponent } from './strategy-type.component';
+import { StrategyDetailComponent } from './strategy-detail.component';
 
-describe('StrategyTypeComponent', () => {
-  let component: StrategyTypeComponent;
-  let fixture: ComponentFixture<StrategyTypeComponent>;
+describe('StrategyDetailComponent', () => {
+  let component: StrategyDetailComponent;
+  let fixture: ComponentFixture<StrategyDetailComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StrategyTypeComponent ]
+      declarations: [ StrategyDetailComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StrategyTypeComponent);
+    fixture = TestBed.createComponent(StrategyDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

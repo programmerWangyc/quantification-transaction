@@ -9,10 +9,23 @@ export interface PayMethod {
     redirectTo?: string;
 }
 
+export interface RentPeriod {
+    days: number;
+    label: string;
+}
+
 export const PAY_METHODS: PayMethod[] = [
     { name: PaymentMethod[0], id: 0, redirectTo: '' },
     { name: PaymentMethod[1], id: 1, redirectTo: '' },
     { name: PaymentMethod[2], id: 2, redirectTo: '' },
+];
+
+export const RENT_OPTIONS: RentPeriod[] = [
+    { days: 30, label: 'ONE_MONTH' },
+    { days: 90, label: 'ONE_QUARTER' },
+    { days: 180, label: 'HALF_YEARS' },
+    { days: 360, label: 'ONE_YEAR' },
+    { days: null, label: 'OTHER' },
 ];
 
 @Injectable()
@@ -22,6 +35,8 @@ export class ChargeConstantService extends ConstantService {
     RENT_PAYMENT_FLAG = 'R';
 
     RECHARGE_PAYMENT_FLAG = 'N';
+
+    RENT_OPTIONS = RENT_OPTIONS;
 
     constructor() {
         super();

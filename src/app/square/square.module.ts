@@ -2,21 +2,25 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../shared/shared.module';
-import { ContainerComponent } from './container/container.component';
-import { SquareRoutingModule } from './square.routing.module';
 import { SquareComponent } from './square/square.component';
-import { StrategyTypeComponent } from './strategy-type/strategy-type.component';
-
-// const squareRoutes: Routes = [
-//     { path: '', component: ContainerComponent }
-// ];
+import { StrategyModule } from '../strategy/strategy.module';
+import { ToolModule } from '../tool/tool.module';
+import { StrategyDetailComponent } from './strategy-detail/strategy-detail.component';
 
 @NgModule({
     imports: [
         CommonModule,
-        SquareRoutingModule,
         SharedModule,
+        StrategyModule,
+        ToolModule,
     ],
-    declarations: [StrategyTypeComponent, SquareComponent, ContainerComponent]
+    declarations: [
+        SquareComponent,
+        StrategyDetailComponent,
+    ],
+    exports: [
+        SquareComponent,
+        StrategyDetailComponent,
+    ],
 })
 export class SquareModule { }

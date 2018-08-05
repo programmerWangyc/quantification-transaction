@@ -1,8 +1,8 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { Observable, of as observableOf, race, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs/operators';
+import { merge, Observable, of as observableOf, Subscription } from 'rxjs';
+import { distinctUntilChanged, distinctUntilKeyChanged, filter, map, mapTo, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
@@ -18,6 +18,12 @@ import { getChargePrice } from '../pipes/charge.pipe';
 export interface RechargeFormModal {
     payMethod: number;
     charge: number;
+}
+
+export interface RentPrice {
+    price: number;
+    days: number;
+    discount: number;
 }
 
 @Injectable()
@@ -174,6 +180,16 @@ export class ChargeService extends BaseService {
     }
 
     /**
+     * 充值成功
+     */
+    chargeAlreadySuccess(): Observable<boolean> {
+        return this.store.select(fromRoot.selectServerSendRechargeMessage).pipe(
+            this.filterTruth(),
+            mapTo(true)
+        );
+    }
+
+    /**
      * 充值是否成功
      */
     isRechargeSuccess(): Observable<boolean> {
@@ -183,15 +199,11 @@ export class ChargeService extends BaseService {
     }
 
     /**
-     * 是否完成了
-     */
-
-    /**
      * 获取需要租用的策略
      * @param idObs 目标id
      */
     getChargeStrategy(idObs: Observable<number>): Observable<Strategy> {
-        return race(
+        return merge(
             this.store.pipe(
                 select(fromRoot.selectStrategyListResponse),
                 filter(res => !!res && !!res.result.strategies.length),
@@ -205,11 +217,35 @@ export class ChargeService extends BaseService {
                 idObs,
                 ({ result }, id) => result.strategies.find(item => item.id === id)
             ),
-            this.filterTruth()
+            this.filterTruth(),
+            distinctUntilKeyChanged('id')
         );
     }
 
     //  =======================================================Short cart method==================================================
+
+    /**
+     * 解析策略的租用价格
+     */
+    parsePricing(info: string): RentPrice[] {
+        const data = info.split(',');
+
+        let basePrice = 0;
+
+        return data.map((item, index) => {
+            const [price, days] = item.split('/');
+
+            if (index === 0) {
+                basePrice = Number(price) / Number(days);
+
+                return { price: Number(price), days: Number(days), discount: 0 };
+            } else {
+                const discount = basePrice * Number(days) - Number(price);
+
+                return { price: Number(price), days: Number(days), discount };
+            }
+        });
+    }
 
     //  =======================================================Local state modify==================================================
 

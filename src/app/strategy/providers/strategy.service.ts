@@ -79,10 +79,17 @@ export class StrategyService extends BaseService {
     }
 
     /**
-     * 能过名称查询策略详情
+     * 通过名称查询策略详情
      */
     launchStrategyListByName(source: Observable<fromReq.GetStrategyListByNameRequest>): Subscription {
         return this.process.processStrategyListByName(source);
+    }
+
+    /**
+     * 查询公共策略的详情信息
+     */
+    launchPublicStrategyDetail(source: Observable<fromReq.GetPublicStrategyDetailRequest>): Subscription {
+        return this.process.processPublicStrategyDetail(source);
     }
 
     //  =======================================================Date acquisition=======================================================
@@ -308,6 +315,25 @@ export class StrategyService extends BaseService {
         );
     }
 
+    /**
+     * @ignore
+     */
+    private getPublicStrategyDetailResponse(): Observable<fromRes.GetPublicStrategyDetailResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectPublicStrategyDetailResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * 公共策略详情
+     */
+    getPublicStrategyDetail(): Observable<fromRes.PublicStrategyDetail> {
+        return this.getPublicStrategyDetailResponse().pipe(
+            map(res => res.result.strategy)
+        );
+    }
+
     //  =======================================================Local state change=======================================================
 
     resetState(): void {
@@ -405,5 +431,12 @@ export class StrategyService extends BaseService {
         return this.error.handleResponseError(this.getStrategyListByNameResponse().pipe(
             takeWhile(keepAlive)
         ));
+    }
+
+    /**
+     * @ignore
+     */
+    handlePublicStrategyDetailError(): Subscription {
+        return this.error.handleResponseError(this.getPublicStrategyDetailResponse());
     }
 }

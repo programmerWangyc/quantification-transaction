@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { MarkdownModule } from 'ngx-markdown';
+
 import { SharedModule } from '../shared/shared.module';
 import { ToolModule } from '../tool/tool.module';
 import { AddArgComponent } from './add-arg/add-arg.component';
@@ -14,23 +16,25 @@ import { PIPES } from './pipes/index.pipe';
 import { StrategyConstantService } from './providers/strategy.constant.service';
 import { StrategyOperateService } from './providers/strategy.operate.service';
 import { StrategyService } from './providers/strategy.service';
+import { PublicDetailComponent } from './public-detail/public-detail.component';
 import { ShareConfirmComponent } from './share-confirm/share-confirm.component';
-import { StrategyOverviewComponent } from './strategy-overview/strategy-overview.component';
 import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
 import { StrategyCodemirrorComponent } from './strategy-codemirror/strategy-codemirror.component';
 import { StrategyDependanceComponent } from './strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from './strategy-des/strategy-des.component';
 import { StrategyListComponent } from './strategy-list/strategy-list.component';
+import { StrategyMarketComponent } from './strategy-market/strategy-market.component';
+import { StrategyOverviewComponent } from './strategy-overview/strategy-overview.component';
 import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
-import { StrategyMarketComponent } from './strategy-market/strategy-market.component';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
         ToolModule,
+        MarkdownModule.forRoot(),
         RouterModule,
     ],
     declarations: [
@@ -52,13 +56,14 @@ import { StrategyMarketComponent } from './strategy-market/strategy-market.compo
         StrategyDependanceComponent,
         AlternationPreviewComponent,
         StrategyMarketComponent,
+        PublicDetailComponent,
     ],
     providers: [
         StrategyService,
         StrategyOperateService,
         StrategyConstantService,
     ],
-    entryComponents:  [
+    entryComponents: [
         ShareConfirmComponent,
         InnerShareConfirmComponent,
         GenKeyPanelComponent,
@@ -79,6 +84,7 @@ import { StrategyMarketComponent } from './strategy-market/strategy-market.compo
         StrategyDependanceComponent,
         AlternationPreviewComponent,
         StrategyMarketComponent,
+        PublicDetailComponent,
     ],
 })
 export class StrategyModule { }

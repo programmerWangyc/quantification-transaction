@@ -516,6 +516,7 @@ export interface SetWDResponse extends ResponseUnit<boolean> { }
 interface StrategyBase {
     category: number;
     date: string;
+    email: string;
     forked: number;
     id: number;
     is_buy: boolean;
@@ -524,6 +525,7 @@ interface StrategyBase {
     last_modified: string;
     name: string;
     public: number;
+    username: string;
 }
 
 // strategy list
@@ -537,7 +539,6 @@ export enum StrategyPublicState {
 export interface Strategy extends StrategyBase {
     args?: string; // JSON type string
     buy_count?: number;
-    email?: string;
     expire_date?: string;
     hasToken: boolean; // indicate has remote edit token;
     pricing?: string; // 斜线分割的自定义格式，天数/价格
@@ -603,11 +604,20 @@ export interface StrategyDetail extends StrategyBase {
     semanticArgs?: VariableOverview[];
 }
 
-export interface StrategyDetailResponse {
-    strategy: StrategyDetail;
+export interface StrategyDetailResponse<T> {
+    strategy: T;
 }
 
-export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailResponse> { }
+export interface GetStrategyDetailResponse extends ResponseUnit<StrategyDetailResponse<StrategyDetail>> { }
+
+// public strategy detail
+export interface PublicStrategyDetail extends StrategyDetail {
+    is_deleted: boolean;
+    pricing?: string;
+    source?: string; // code;
+}
+
+export interface GetPublicStrategyDetailResponse extends ResponseUnit<StrategyDetailResponse<PublicStrategyDetail>> { }
 
 // save strategy
 export interface SaveStrategyResponse extends ResponseUnit<string | boolean> { }

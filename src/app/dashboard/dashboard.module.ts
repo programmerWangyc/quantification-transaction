@@ -25,7 +25,6 @@ import { RobotCreationComponent } from './robot-creation/robot-creation.componen
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
-import { SquareComponent } from './square/square.component';
 import { StrategyAddComponent } from './strategy-add/strategy-add.component';
 import { StrategyCopyComponent } from './strategy-copy/strategy-copy.component';
 import { StrategyCreateMetaComponent } from './strategy-create-meta/strategy-create-meta.component';
@@ -37,45 +36,46 @@ import { ExchangeModule } from '../exchange/exchange.module';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
+import { SquareModule } from '../square/square.module';
 
 @NgModule({
     imports: [
-        CommonModule,
-        SharedModule,
-        RobotModule,
-        routing,
-        EffectsModule.forFeature(DASHBOARD_EFFECTS),
-        ToolModule,
-        ChargeModule,
-        StrategyModule,
-        StoreRouterConnectingModule,
-        BacktestModule,
         AgentModule,
+        BacktestModule,
+        ChargeModule,
+        CommonModule,
+        EffectsModule.forFeature(DASHBOARD_EFFECTS),
         ExchangeModule,
+        RobotModule,
+        SharedModule,
+        SquareModule,
+        StoreRouterConnectingModule,
+        StrategyModule,
+        ToolModule,
+        routing,
     ],
     declarations: [
-        DashboardComponent,
-        SquareComponent,
+        AgentAddComponent,
+        AgentComponent,
         CommunityComponent,
+        DashboardComponent,
         DocComponent,
+        ExchangeAddComponent,
+        ExchangeComponent,
+        ExchangeEditComponent,
         FactComponent,
-        RobotDetailComponent,
+        RechargeComponent,
         RobotComponent,
         RobotCreationComponent,
-        RechargeComponent,
         RobotDebugComponent,
-        StrategyComponent,
-        StrategyVerifyCodeComponent,
-        StrategyRentComponent,
-        StrategyCopyComponent,
-        StrategyEditComponent,
-        StrategyCreateMetaComponent,
+        RobotDetailComponent,
         StrategyAddComponent,
-        AgentComponent,
-        AgentAddComponent,
-        ExchangeComponent,
-        ExchangeAddComponent,
-        ExchangeEditComponent,
+        StrategyComponent,
+        StrategyCopyComponent,
+        StrategyCreateMetaComponent,
+        StrategyEditComponent,
+        StrategyRentComponent,
+        StrategyVerifyCodeComponent,
     ],
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },

@@ -188,6 +188,10 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyListByNameRequestAction(params)));
     }
 
+    processPublicStrategyDetail(paramObs: Observable<Request.GetPublicStrategyDetailRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new StrategyActions.GetPublicStrategyDetailRequestAction(params)));
+    }
+
     //  ===================================================Backtest======================================================
 
     processGetTemplates(paramObs: Observable<Request.GetTemplatesRequest>): Subscription {

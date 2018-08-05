@@ -44,7 +44,7 @@ export class ChargeHistoryComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPayOrders(this.chargeService.isRechargeSuccess().pipe(
+        this.subscription$$ = this.chargeService.launchPayOrders(this.chargeService.chargeAlreadySuccess().pipe(
             startWith(true)
         ))
             .add(this.chargeService.handlePayOrdersError());

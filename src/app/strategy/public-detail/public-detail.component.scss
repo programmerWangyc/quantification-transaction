@@ -1,0 +1,24 @@
+ul {
+    font-size: 12px;
+    list-style: none;
+    li {
+        padding: 0 1em 0 0;
+        b::after {
+            content: ':'
+        }
+    }
+}
+
+#markdown {
+    img {
+        width: 100%;
+    }
+}
+
+.share-bar {
+    padding: 2em 1em;
+}
+
+.operate-btn {
+    margin: 2em 0;
+}

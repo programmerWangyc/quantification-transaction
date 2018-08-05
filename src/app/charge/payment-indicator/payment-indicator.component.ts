@@ -71,7 +71,7 @@ export class PaymentIndicatorComponent implements OnInit {
 
         this.paymentStateIcon = this.mapPaymentStateTo('anticon-reload', 'anticon-spin anticon-loading', 'anticon-check-circle-o');
 
-        this.completeState = this.chargeService.isRechargeSuccess().pipe(
+        this.completeState = this.chargeService.chargeAlreadySuccess().pipe(
             startWith(false),
             map(isSuccess => isSuccess ? 'finish' : 'wait')
         );
@@ -89,7 +89,7 @@ export class PaymentIndicatorComponent implements OnInit {
             this.processing.pipe(
                 mapTo(processing)
             ),
-            this.chargeService.isRechargeSuccess().pipe(
+            this.chargeService.chargeAlreadySuccess().pipe(
                 mapTo(finish)
             )
         );

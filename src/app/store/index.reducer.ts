@@ -276,6 +276,9 @@ export const selectTemplateSnapshots = createSelector(selectStrategyListResponse
 // strategy list by name
 export const selectStrategyListByNameResponse = createSelector(getStrategyState, strategy.getStrategyListByNameResponse);
 
+// public strategy detail
+export const selectPublicStrategyDetailResponse = createSelector(getStrategyState, strategy.getPublicStrategyDetailResponse);
+
 //  ===================================================Charge======================================================
 
 const getChargeState = (state: AppState) => state.charge;

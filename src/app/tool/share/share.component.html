@@ -1,0 +1,19 @@
+<div id="share" [fxLayout]="direction" fxLayoutAlign="center center">
+    <span class="title">{{'SHARE' | translate}}</span>
+
+    <button nz-button nzShape="circle" [nzContent]="qrcode" nzPlacement="left" nz-popover>
+        <i class="anticon anticon-wechat"></i>
+    </button>
+
+    <a nz-button nzShape="circle" [href]="weibo" target="_blank">
+        <i class="anticon anticon-weibo"></i>
+    </a>
+
+    <a nz-button nzShape="circle" [href]="qZone" target="_blank">
+        <i class="anticon anticon-qq"></i>
+    </a>
+</div>
+
+<ng-template #qrcode>
+    <qr-code [value]="wechart" [size]="150"></qr-code>
+</ng-template>

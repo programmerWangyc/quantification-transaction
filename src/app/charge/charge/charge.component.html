@@ -1,7 +1,7 @@
 <app-payment-indicator [processing]="processing" [start]="start" [payMethodState]="payMethodSelected"></app-payment-indicator>
 
 <div nz-row [nzAlign]="'middle'">
-    <div nz-col [nzSpan]="12">
+    <div nz-col [nzSpan]="16">
         <form [formGroup]="form" nz-form>
             <nz-form-item>
                 <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'RECHARGE_AMOUNT' | translate}}</nz-form-label>
@@ -30,7 +30,7 @@
         </form>
     </div>
 
-    <div *ngIf="payMethod.value === 1 && charge.valid" nz-col [nzSpan]="6" [nzOffset]="4" class="qr-code">
+    <div *ngIf="payMethod.value === 1 && charge.valid" nz-col [nzSpan]="6" class="qr-code">
         <qr-code [value]="wechartQRCode | async" [size]="150"></qr-code>
     </div>
 </div>

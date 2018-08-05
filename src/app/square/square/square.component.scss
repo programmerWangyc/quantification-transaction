@@ -1,0 +1,11 @@
+.indicator {
+    position: relative;
+    .github {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-55%);
+        font-size: 24px;
+        color: black;
+    }
+}

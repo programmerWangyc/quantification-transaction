@@ -313,6 +313,11 @@ export interface GetStrategyListByNameRequest {
     keyword: string;
 }
 
+// public strategy detail
+export interface GetPublicStrategyDetailRequest {
+    id: number;
+}
+
 // ===================================================Backtest==============================================
 
 export interface GetTemplatesRequest {
@@ -452,6 +457,6 @@ export interface GetPaymentArgRequest {
 }
 
 /**
- * 接口总数： 83， 已完成： 40
+ * 接口总数： 83， 已完成： 41
  */
 

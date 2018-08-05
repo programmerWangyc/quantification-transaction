@@ -12,7 +12,7 @@ import { RobotCreationComponent } from './robot-creation/robot-creation.componen
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
-import { SquareComponent } from './square/square.component';
+import { SquareComponent } from '../square/square/square.component';
 import { StrategyAddComponent } from './strategy-add/strategy-add.component';
 import { StrategyCopyComponent } from './strategy-copy/strategy-copy.component';
 import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
@@ -22,6 +22,7 @@ import { StrategyComponent } from './strategy/strategy.component';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
+import { StrategyDetailComponent } from '../square/strategy-detail/strategy-detail.component';
 
 const routs: Routes = [
     {
@@ -57,6 +58,8 @@ const routs: Routes = [
 
             // { path: Path.exchange, component: ExchangeComponent },
             { path: 'square', component: SquareComponent },
+            { path: 'square/strategy/:id', component: StrategyDetailComponent },
+
             { path: 'community', component: CommunityComponent },
             { path: 'doc', component: DocComponent },
             { path: 'fact', component: FactComponent },

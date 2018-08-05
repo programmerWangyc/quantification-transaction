@@ -1,58 +1,61 @@
 import {
     CategoryType, DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest,
-    OpStrategyTokenRequest, SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest
+    OpStrategyTokenRequest, SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest, GetPublicStrategyDetailRequest
 } from '../../interfaces/request.interface';
 import {
     DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
-    SaveStrategyResponse, ShareStrategyResponse, Strategy, VerifyKeyResponse, GetStrategyListByNameResponse
+    SaveStrategyResponse, ShareStrategyResponse, Strategy, VerifyKeyResponse, GetStrategyListByNameResponse, GetPublicStrategyDetailResponse
 } from '../../interfaces/response.interface';
 import { createScriptArgs } from '../robot/robot.reducer';
 import * as actions from './strategy.action';
 
 export interface RequestParams {
-    strategyList: GetStrategyListRequest;
-    shareStrategy: ShareStrategyRequest;
-    genKey: GenKeyRequest;
-    verifyKey: VerifyKeyRequest;
     deleteStrategy: DeleteStrategyRequest;
+    genKey: GenKeyRequest;
     opStrategyToken: OpStrategyTokenRequest;
-    strategyDetail: GetStrategyDetailRequest;
+    publicStrategyDetail: GetPublicStrategyDetailRequest;
     saveStrategy: SaveStrategyRequest;
+    shareStrategy: ShareStrategyRequest;
+    strategyDetail: GetStrategyDetailRequest;
+    strategyList: GetStrategyListRequest;
     strategyListByName: GetStrategyListByNameRequest;
+    verifyKey: VerifyKeyRequest;
 }
 
 export interface UIState {
     loading: boolean;
-    selectedTemplates: number[];
     selectedLanguage: number;
+    selectedTemplates: number[];
 }
 
 export interface State {
-    requestParams: RequestParams;
-    strategyListRes: GetStrategyListResponse;
-    shareStrategyRes: ShareStrategyResponse;
-    genKeyRes: GenKeyResponse;
-    verifyKeyRes: VerifyKeyResponse;
-    deleteStrategyRes: DeleteStrategyResponse;
-    opStrategyTokenRes: OpStrategyTokenResponse;
-    strategyDetailRes: GetStrategyDetailResponse;
-    saveStrategyRes: SaveStrategyResponse;
     UIState: UIState;
+    deleteStrategyRes: DeleteStrategyResponse;
+    genKeyRes: GenKeyResponse;
+    opStrategyTokenRes: OpStrategyTokenResponse;
+    publicStrategyDetailRes: GetPublicStrategyDetailResponse;
+    requestParams: RequestParams;
+    saveStrategyRes: SaveStrategyResponse;
+    shareStrategyRes: ShareStrategyResponse;
+    strategyDetailRes: GetStrategyDetailResponse;
     strategyListByNameRes: GetStrategyListByNameResponse;
+    strategyListRes: GetStrategyListResponse;
+    verifyKeyRes: VerifyKeyResponse;
 }
 
 const initialState: State = {
-    requestParams: null,
-    strategyListRes: null,
-    shareStrategyRes: null,
-    genKeyRes: null,
-    verifyKeyRes: null,
-    deleteStrategyRes: null,
-    opStrategyTokenRes: null,
-    strategyDetailRes: null,
-    saveStrategyRes: null,
     UIState: null,
+    deleteStrategyRes: null,
+    genKeyRes: null,
+    opStrategyTokenRes: null,
+    publicStrategyDetailRes: null,
+    requestParams: null,
+    saveStrategyRes: null,
+    shareStrategyRes: null,
+    strategyDetailRes: null,
     strategyListByNameRes: null,
+    strategyListRes: null,
+    verifyKeyRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -166,7 +169,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.GET_STRATEGY_LIST_BY_NAME_FAIL:
         case actions.GET_STRATEGY_LIST_BY_NAME_SUCCESS:
-            return { ...state, strategyListByNameRes: action.payload, UIState: { ...state.UIState, loading: false} };
+            return { ...state, strategyListByNameRes: action.payload, UIState: { ...state.UIState, loading: false } };
+
+        // public strategy detail
+        case actions.GET_PUBLIC_STRATEGY_DETAIL:
+            return { ...state, requestParams: { ...state.requestParams, publicStrategyDetail: action.payload }, UIState: { ...state.UIState, loading: true } };
+
+        case actions.GET_PUBLIC_STRATEGY_DETAIL_FAIL:
+        case actions.GET_PUBLIC_STRATEGY_DETAIL_SUCCESS:
+            return { ...state, publicStrategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
         /**==================================================================Local State change=========================================== **/
 
@@ -233,3 +244,5 @@ export const getSaveStrategyRes = (state: State) => state.saveStrategyRes;
 export const getUIState = (state: State) => state.UIState;
 
 export const getStrategyListByNameResponse = (state: State) => state.strategyListByNameRes;
+
+export const getPublicStrategyDetailResponse = (state: State) => state.publicStrategyDetailRes;

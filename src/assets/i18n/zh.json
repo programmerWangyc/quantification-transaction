@@ -708,8 +708,13 @@
     "PAYMENT_STEP": "支付步骤",
     "SET_RENT_DAYS": "设置租用天数",
     "STRATEGY_PRICE_DESCRIPTION": "{{days}}天{{price}}元",
-    "RENT_PERIOD_TIP": "时间规则：1个月=30天；1个季度=90天； 半年=180天； 一年=365天",
+    "RENT_PERIOD_TIP": "时间规则：1个月=30天；1个季度=90天； 半年=180天； 一年=360天",
     "RENT_PERIOD": "租用时长",
     "RENT_DAYS": "租用天数",
-    "CHARGE_LEAVE_CONFIRM": "尚未充值成功，确定要离开吗？"
+    "CHARGE_LEAVE_CONFIRM": "尚未充值成功，确定要离开吗？",
+
+    "STRATEGY_DETAIL": "策略详情",
+    "STRATEGY_NONE_DESCRIPTION": "该策略没有任何描述",
+    "STRATEGY_COPY": "复制策略",
+    "CHART_DISCOUNT_TIP": "价格优惠"
 }

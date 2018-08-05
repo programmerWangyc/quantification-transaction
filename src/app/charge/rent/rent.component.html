@@ -2,7 +2,7 @@
     [inputText]="'SET_RENT_DAYS'"></app-payment-indicator>
 
 <div nz-row [nzAlign]="'middle'">
-    <div nz-col [nzSpan]="12">
+    <div nz-col [nzSpan]="16">
         <form [formGroup]="form" nz-form>
             <nz-form-item>
                 <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY_NAME' | translate}}</nz-form-label>
@@ -21,17 +21,24 @@
             <nz-form-item>
                 <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>
                     {{'RENT_PERIOD' | translate}}
-                    <i class="anticon anticon-question-circle" [nz-tooltip]="'RENT_PERIOD_TIP' | translate" style="color: #1890ff;vertical-align: middle; font-size: 12px;"></i>
                 </nz-form-label>
                 <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
 
                     <nz-radio-group formControlName="chargeShortcut">
+
                         <label *ngFor="let item of periods" nz-radio [nzValue]="item.days">
-                            {{item.label | translate}}
+                            <span *ngIf="item.discount; else elseBlock" [nz-tooltip]="'CHART_DISCOUNT_TIP' | translate" class="discount">
+                                {{item.label | translate}}
+                            </span>
+
+                            <ng-template #elseBlock>{{item.label | translate}}</ng-template>
                         </label>
+
+                        <i class="anticon anticon-question-circle" [nz-tooltip]="'RENT_PERIOD_TIP' | translate" style="color: #1890ff;vertical-align: middle; font-size: 12px;"></i>
                     </nz-radio-group>
 
                 </nz-form-control>
+
             </nz-form-item>
 
             <nz-form-item *ngIf="!chargeShortcut.value">
@@ -75,7 +82,7 @@
         </form>
     </div>
 
-    <div nz-col [nzSpan]="6" [nzOffset]="4" class="qr-code">
+    <div nz-col [nzSpan]="6" class="qr-code">
         <div *ngIf="strategy | async; let source" class="auth">
             <span>
                 <b>{{'AUTHOR' | translate}}</b>

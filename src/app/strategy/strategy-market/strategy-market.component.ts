@@ -1,20 +1,20 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable, Subject, combineLatest, of, concat } from 'rxjs';
-import { startWith, map, takeWhile, tap } from 'rxjs/operators';
 import { NzModalService } from 'ng-zorro-antd';
+import { combineLatest, concat, Observable, of, Subject } from 'rxjs';
+import { map, startWith, takeWhile } from 'rxjs/operators';
 
-import { GetStrategyListByNameRequest, CategoryType } from '../../interfaces/request.interface';
-import { StrategyListByNameStrategy } from '../../interfaces/response.interface';
-import { StrategyService } from '../providers/strategy.service';
-import { StrategyVisibilityType } from '../strategy.config';
-import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
-import { Category, StrategyConstantService } from '../providers/strategy.constant.service';
 import { Path } from '../../app.config';
+import { CategoryType, GetStrategyListByNameRequest } from '../../interfaces/request.interface';
+import { StrategyListByNameStrategy } from '../../interfaces/response.interface';
+import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { UtilService } from '../../providers/util.service';
+import { Category, StrategyConstantService } from '../providers/strategy.constant.service';
+import { StrategyService } from '../providers/strategy.service';
 import { StrategyRenewalComponent } from '../strategy-renewal/strategy-renewal.component';
+import { StrategyVisibilityType } from '../strategy.config';
 
 @Component({
     selector: 'app-strategy-market',
@@ -107,11 +107,12 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
     constructor(
         private strategyService: StrategyService,
         private constant: StrategyConstantService,
-        private router: Router,
         private utilService: UtilService,
+        private router: Router,
         private activatedRoute: ActivatedRoute,
         private nzModal: NzModalService,
-    ) { }
+    ) {
+    }
 
     /**
      * @ignore
@@ -147,34 +148,10 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 接口发送的参数流
-     */
-    private getRequestParams(): Observable<GetStrategyListByNameRequest> {
-        return combineLatest(
-            this.offset$.pipe(
-                startWith(this.currentPage),
-                map(page => page - 1)
-            ),
-            this.pageSize,
-            this.categoryId.valueChanges.pipe(
-                startWith(this.categoryId.value)
-            ),
-            this.keyword.valueChanges.pipe(
-                startWith('')
-            )
-        ).pipe(
-            takeWhile(() => this.isAlive),
-            tap(v => console.log(v)),
-            map(([offset, limit, categoryId, keyword]) => ({ offset: offset * limit, limit, categoryId, keyword, strategyType: this.strategyVisible, needArgs: this.needArgs }))
-        );
-    }
-
-    /**
      * @ignore
      */
     navigateTo(strategy: StrategyListByNameStrategy): void {
-        console.log(strategy);
-        this.router.navigate([Path.strategy, strategy.id]);
+        this.router.navigate([Path.strategy, strategy.id], { relativeTo: this.activatedRoute });
     }
 
     /**
@@ -192,6 +169,28 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
                 nzFooter: null,
             });
         }
+    }
+
+    /**
+     * 接口发送的参数流
+     */
+    private getRequestParams(): Observable<GetStrategyListByNameRequest> {
+        return combineLatest(
+            this.offset$.pipe(
+                startWith(this.currentPage),
+                map(page => page - 1)
+            ),
+            this.pageSize,
+            this.categoryId.valueChanges.pipe(
+                startWith(this.categoryId.value)
+            ),
+            this.keyword.valueChanges.pipe(
+                startWith('')
+            )
+        ).pipe(
+            takeWhile(() => this.isAlive),
+            map(([offset, limit, categoryId, keyword]) => ({ offset: offset * limit, limit, categoryId, keyword, strategyType: this.strategyVisible, needArgs: this.needArgs }))
+        );
     }
 
     /**

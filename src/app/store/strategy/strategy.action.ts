@@ -2,11 +2,11 @@ import { Action } from '@ngrx/store';
 
 import {
     DeleteStrategyRequest, GenKeyRequest, GetStrategyDetailRequest, GetStrategyListRequest, OpStrategyTokenRequest,
-    SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest
+    SaveStrategyRequest, ShareStrategyRequest, VerifyKeyRequest, GetStrategyListByNameRequest, GetPublicStrategyDetailRequest
 } from '../../interfaces/request.interface';
 import {
     DeleteStrategyResponse, GenKeyResponse, GetStrategyDetailResponse, GetStrategyListResponse, OpStrategyTokenResponse,
-    SaveStrategyResponse, ShareStrategyResponse, VerifyKeyResponse, GetStrategyListByNameResponse
+    SaveStrategyResponse, ShareStrategyResponse, VerifyKeyResponse, GetStrategyListByNameResponse, GetPublicStrategyDetailResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -320,6 +320,43 @@ export class GetStrategyDetailSuccessAction extends GetStrategyDetailAction impl
     constructor(public payload: GetStrategyDetailResponse) { super(); }
 }
 
+// public strategy detail
+class GetPublicStrategyDetailAction extends ApiAction {
+    isSingleParams = true;
+
+    noneParams = false;
+
+    command = 'GetPublicStrategyDetail';
+
+    order = null;
+
+    allowSeparateRequest = true;
+}
+
+export const GET_PUBLIC_STRATEGY_DETAIL = '[Strategy] GET_PUBLIC_STRATEGY_DETAIL';
+
+export class GetPublicStrategyDetailRequestAction extends GetPublicStrategyDetailAction implements Action {
+    readonly type = GET_PUBLIC_STRATEGY_DETAIL;
+
+    constructor(public payload: GetPublicStrategyDetailRequest) { super(); }
+}
+
+export const GET_PUBLIC_STRATEGY_DETAIL_FAIL = '[Strategy] GET_PUBLIC_STRATEGY_DETAIL_FAIL';
+
+export class GetPublicStrategyDetailFailAction extends GetPublicStrategyDetailAction implements Action {
+    readonly type = GET_PUBLIC_STRATEGY_DETAIL_FAIL;
+
+    constructor(public payload: GetPublicStrategyDetailResponse) { super(); }
+}
+
+export const GET_PUBLIC_STRATEGY_DETAIL_SUCCESS = '[Strategy] GET_PUBLIC_STRATEGY_DETAIL_SUCCESS';
+
+export class GetPublicStrategyDetailSuccessAction extends GetPublicStrategyDetailAction implements Action {
+    readonly type = GET_PUBLIC_STRATEGY_DETAIL_SUCCESS;
+
+    constructor(public payload: GetPublicStrategyDetailResponse) { super(); }
+}
+
 // save strategy
 export enum SaveStrategyOrder {
     id,
@@ -457,40 +494,45 @@ export class UpdateStrategyLanguageAction implements Action {
 }
 
 export type ApiActions = GetStrategyListRequestAction
-    | DeleteStrategyRequestAction
     | DeleteStrategyFailAction
+    | DeleteStrategyRequestAction
     | DeleteStrategySuccessAction
+    | GenKeyFailAction
+    | GenKeyRequestAction
+    | GenKeySuccessAction
+    | GetPublicStrategyDetailFailAction
+    | GetPublicStrategyDetailRequestAction
+    | GetPublicStrategyDetailSuccessAction
+    | GetStrategyDetailFailAction
+    | GetStrategyDetailRequestAction
+    | GetStrategyDetailSuccessAction
+    | GetStrategyListByNameFailAction
+    | GetStrategyListByNameRequestAction
+    | GetStrategyListByNameSuccessAction
     | GetStrategyListFailAction
     | GetStrategyListSuccessAction
-    | ShareStrategyRequestAction
-    | GetStrategyListByNameRequestAction
-    | GetStrategyListByNameFailAction
-    | GetStrategyListByNameSuccessAction
-    | ShareStrategyFailAction
-    | ShareStrategySuccessAction
-    | GenKeyRequestAction
-    | GenKeyFailAction
-    | GenKeySuccessAction
-    | VerifyKeyRequestAction
-    | VerifyKeyFailAction
-    | VerifyKeySuccessAction
-    | OpStrategyTokenRequestAction
     | OpStrategyTokenFailAction
+    | OpStrategyTokenRequestAction
     | OpStrategyTokenSuccessAction
-    | GetStrategyDetailRequestAction
-    | GetStrategyDetailFailAction
-    | GetStrategyDetailSuccessAction
-    | SaveStrategyRequestAction
     | SaveStrategyFailAction
-    | SaveStrategySuccessAction;
+    | SaveStrategyRequestAction
+    | SaveStrategySuccessAction
+    | ShareStrategyFailAction
+    | ShareStrategyRequestAction
+    | ShareStrategySuccessAction
+    | VerifyKeyFailAction
+    | VerifyKeyRequestAction
+    | VerifyKeySuccessAction;
 
 export type Actions = ApiActions
-    | UpdateStrategySecretKeyStateAction
     | ResetStateAction
     | UpdateStrategyDependanceTemplatesAction
-    | UpdateStrategyLanguageAction;
+    | UpdateStrategyLanguageAction
+    | UpdateStrategySecretKeyStateAction;
 
 export const ResponseActions = {
+    GetPublicStrategyDetailRequestAction,
+    GetPublicStrategyDetailSuccessAction,
     GetStrategyListFailAction,
     GetStrategyListSuccessAction,
     GetStrategyListByNameFailAction,

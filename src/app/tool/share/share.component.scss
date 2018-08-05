@@ -1,0 +1,29 @@
+@import '../../../theme/_variable.theme';
+#share {
+    .title {
+        position: relative;
+        color: $gray;
+        &::after {
+            content: '';
+            height: 1px;
+            width: 5px;
+            position: absolute;
+            top: 50%;
+            right: -1em;
+            background-color: $gray;
+        }
+        &::before {
+            content: '';
+            height: 1px;
+            width: 5px;
+            position: absolute;
+            top: 50%;
+            left: -1em;
+            background-color: $gray;
+        }
+    }
+    button,
+    a {
+        margin: 10px;
+    }
+}

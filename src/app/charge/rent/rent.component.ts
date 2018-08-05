@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,16 +7,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { isNull } from 'lodash';
 import * as moment from 'moment';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, takeWhile, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Strategy, StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { PaymentMethod } from '../charge.config';
 import { ChargeBase } from '../charge/charge.component';
-import { ChargeService, RechargeFormModal } from '../providers/charge.service';
+import { ChargeConstantService } from '../providers/charge.constant.service';
+import { ChargeService, RechargeFormModal, RentPrice } from '../providers/charge.service';
 
-interface FastChargeOption {
-    days: number;
+interface RentOption extends RentPrice {
     label: string;
 }
 
@@ -63,7 +63,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
     /**
      * 快速充值设置
      */
-    periods: FastChargeOption[] = [{ days: 30, label: 'ONE_MONTH' }, { days: 90, label: 'ONE_QUARTER' }, { days: 180, label: 'HALF_YEARS' }, { days: 365, label: 'ONE_YEAR' }, { days: null, label: 'OTHER' }];
+    periods: RentOption[] = [];
 
     /**
      * 标识支付正在进行的流
@@ -90,6 +90,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         private chargeService: ChargeService,
         private activatedRoute: ActivatedRoute,
         private translate: TranslateService,
+        private constant: ChargeConstantService,
     ) {
         super();
 
@@ -164,7 +165,19 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         ).subscribe(strategy => {
             const { pricing, name } = strategy;
 
-            const [price, days] = pricing.split('/');
+            const periods = this.chargeService.parsePricing(pricing);
+
+            const { price, days } = periods[0];
+
+            this.periods = this.constant.RENT_OPTIONS.map(item => {
+                const target = periods.find(period => period.days === item.days);
+
+                if (target) {
+                    return { ...item, ...target };
+                } else {
+                    return { ...item, price: item.days * price, discount: 0 };
+                }
+            });
 
             this.translate.get('STRATEGY_PRICE_DESCRIPTION', { days, price })
                 .subscribe(label => this.price.patchValue(label));
@@ -205,19 +218,38 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         this.form.valueChanges.pipe(
             takeWhile(() => this.isAlive),
             distinctUntilChanged((pre, cur) => pre.charge === cur.charge && pre.chargeShortcut === cur.chargeShortcut),
-            map((form: RentFormModal) => form.chargeShortcut || form.charge),
-            withLatestFrom(this.strategy.pipe(
-                map(({ pricing }) => {
-                    const [price, days] = pricing.split('/');
+            map((form: RentFormModal) => form.chargeShortcut || form.charge)
+        ).subscribe(period => {
+            const prePrice = this.periods[0].price / this.periods[0].days;
 
-                    return Number(price) / Number(days);
-                })
-            ))
-        ).subscribe(([period, prePrice]) => {
-            this.amount.patchValue(Math.ceil(period * prePrice));
+            const total = Math.ceil(+(period * prePrice).toFixed(4));
+
+            const { discount } = this.getRentOption();
+
+            this.amount.patchValue(total - discount);
 
             this.deadline.patchValue(moment().add(period, 'days').format('YYYY-MM-DD hh:mm:ss'));
         });
+    }
+
+    /**
+     * 获取计算当前价格所使用配置信息
+     */
+    private getRentOption(): RentOption {
+        if (this.chargeShortcut.value) {
+            return this.periods.find(item => item.days === this.chargeShortcut.value);
+
+        } else {
+            return this.periods.find((item, index) => {
+                const next = this.periods[index + 1];
+
+                if (next && next.days) {
+                    return this.charge.value >= item.days && this.charge.value < next.days;
+                } else {
+                    return this.charge.value >= item.days;
+                }
+            });
+        }
     }
 
     /**

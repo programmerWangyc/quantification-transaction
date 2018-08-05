@@ -1,0 +1,45 @@
+<nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
+    <div *ngIf="detail | async as data;">
+        <ul fxLayout="row-reverse">
+            <li>
+                <b>{{'STRATEGY_TYPE' | translate}}</b>
+                <i>{{data.category | categoryName | translate }}</i>
+            </li>
+            <li>
+                <b>{{'CREATE_TIME' | translate}}</b>
+                <i>{{data.date}}</i>
+            </li>
+            <li>
+                <b>{{'LATEST_MODIFY' | translate}}</b>
+                <i>{{data.last_modified}}</i>
+            </li>
+
+            <li>
+                <b>{{'AUTHOR' | translate}}</b>
+                <i>{{data.username}}</i>
+            </li>
+        </ul>
+
+        <div nz-row>
+            <div nz-col nzSpan="23">
+                <markdown *ngIf="data.description as des; else emptyBlock" [data]="des" id="markdown"></markdown>
+            </div>
+
+            <div nz-col nzSpan="1" class="share-bar">
+                <app-share [topic]="data.name" [pictures]="pictures | async"></app-share>
+            </div>
+        </div>
+
+        <div class="operate-btn">
+            <button *ngIf="data.public === 1; else buyBlock" nz-button nzSize="large" nzType="primary" (click)="navigateTo(data)">{{'STRATEGY_COPY' | translate}}</button>
+            <ng-template #buyBlock>
+                <button nz-button (click)="buyStrategy(data)" nzSize="large" nzType="primary">{{'PURCHASE' | translate}}</button>
+            </ng-template>
+        </div>
+    </div>
+
+</nz-spin>
+
+<ng-template #emptyBlock>
+    {{'STRATEGY_NONE_DESCRIPTION' | translate}}
+</ng-template>

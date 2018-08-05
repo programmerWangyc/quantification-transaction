@@ -13,7 +13,7 @@
     <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize | async" [nzShowPagination]="false">
         <thead>
             <tr>
-                <th *ngFor="let item of tableHead" bt-text-center>
+                <th *ngFor="let item of tableHead first as isFirst;" [nzWidth]="isFirst ? '30%' : 'auto'" bt-text-center>
                     <span>{{item | translate}}</span>
                 </th>
             </tr>
