@@ -78,13 +78,6 @@ export class VariableToSelectListPipe implements PipeTransform {
     }
 }
 
-@Pipe({ name: 'latestModifyDes' })
-export class LatestModifyDesPipe implements PipeTransform {
-    transform(value: string): string {
-        return moment(value).fromNow();
-    }
-}
-
 @Pipe({ name: 'expireStatus' })
 export class ExpireStatusPipe implements PipeTransform {
     transform(value: string): string {

@@ -147,8 +147,7 @@ export class PlatformService extends BaseService {
                     return { group, platforms };
 
                 }, { group: '', platforms: [] })
-            )
-            ),
+            )),
             reduce((acc, cur) => [...acc, cur], []),
         );
     }

@@ -15,45 +15,51 @@ import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
 import { ShareComponent } from './share/share.component';
 import { QRCodeModule } from 'angular2-qrcode';
+import { CommentComponent } from './comment/comment.component';
+import { ReplyComponent } from './reply/reply.component';
 
 @NgModule({
     imports: [
         CommonModule,
-        SharedModule,
-        RouterModule,
         QRCodeModule,
+        RouterModule,
+        SharedModule,
     ],
     declarations: [
+        CommentComponent,
         ConfirmComponent,
         CustomSnackBarComponent,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
         PIPES,
+        ReplyComponent,
         RunningLogComponent,
+        ShareComponent,
         SimpleNzConfirmWrapComponent,
         TextCenterDirective,
         TextDirectionDirective,
         VerifyPasswordComponent,
-        ShareComponent,
     ],
 
     entryComponents: [
-        CustomSnackBarComponent,
         ConfirmComponent,
-        VerifyPasswordComponent,
+        CustomSnackBarComponent,
         SimpleNzConfirmWrapComponent,
+        VerifyPasswordComponent,
     ],
     exports: [
+        CommentComponent,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
         PIPES,
+        ReplyComponent,
         RunningLogComponent,
+        ShareComponent,
         SimpleNzConfirmWrapComponent,
         TextCenterDirective,
         TextDirectionDirective,
-        ShareComponent,
     ],
 })
 export class ToolModule { }

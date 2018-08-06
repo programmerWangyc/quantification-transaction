@@ -39,3 +39,11 @@ export enum VariableType {
     ENCRYPT_STRING_TYPE,
     BUTTON_TYPE,
 }
+
+export enum BtCommentType {
+    square = 'square',
+    competition = 'Competition',
+    live = 'live',
+    robot = 'R_',
+    strategy = 'S_',
+}

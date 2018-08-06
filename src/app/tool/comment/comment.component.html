@@ -1,0 +1,65 @@
+<h2>{{'ALL_COMMENT' | translate}}</h2>
+
+<app-reply (reply)="publish.next($event)" [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+<ul id="comment-area">
+    <li *ngFor="let comment of commentList" class="comment">
+        <h4>
+            {{comment.username}}
+            <i>{{comment.created | fromNow}}</i>
+        </h4>
+
+        <p>{{comment.content}}</p>
+
+        <div *ngIf="!!comment.replyGroup.length" class="reply-area">
+            <ul class="mainReply">
+                <li *ngFor="let main of comment.replyGroup">
+                    <b class="reply-user">{{main.username}}</b>
+                    <span>{{main.content}}</span>
+
+                    <p>
+                        {{main.created | fromNow}}
+                        <a (click)="main.openReply = !main.openReply">
+                            <i class="anticon anticon-message"></i>
+                            {{(main.openReply? 'COLLAPSE': 'REPLY') | translate}}
+                        </a>
+                    </p>
+
+                    <app-reply *ngIf="main.openReply" (reply)="onReply($event,main)"></app-reply>
+                </li>
+            </ul>
+
+            <div *ngIf="!!comment.discussGroup.length">
+                <h6 (click)="comment.showDiscuss = !comment.showDiscuss">{{'MORE_REPLY' | translate}}</h6>
+                <ul *ngIf="comment.showDiscuss" class="discuss">
+                    <li *ngFor="let discuss of comment.discussGroup">
+                        <span class="sub-reply-des">
+                            <b>{{discuss.username}}</b>
+                            <span>{{'REPLY' | translate}}</span>
+                            <b class="reply-user">{{discuss.replyUsername}}</b>
+                        </span>
+
+                        <span>{{discuss.content}}</span>
+
+                        <p>
+                            {{discuss.created | fromNow}}
+                            <a (click)="discuss.openReply = !discuss.openReply">
+                                <i class="anticon anticon-message"></i>
+                                {{(discuss.openReply? 'COLLAPSE': 'REPLY') | translate}}
+                            </a>
+                        </p>
+
+                        <app-reply *ngIf="discuss.openReply" (reply)="onReply($event,discuss)"></app-reply>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <a (click)="comment.openReply = !comment.openReply">
+            <i class="anticon anticon-message"></i>
+            {{(comment.openReply? 'COLLAPSE': 'REPLY') | translate}}
+        </a>
+
+        <app-reply *ngIf="comment.openReply" (reply)="onReply($event,comment)"></app-reply>
+    </li>
+</ul>

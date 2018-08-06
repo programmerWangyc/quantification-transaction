@@ -716,5 +716,12 @@
     "STRATEGY_DETAIL": "策略详情",
     "STRATEGY_NONE_DESCRIPTION": "该策略没有任何描述",
     "STRATEGY_COPY": "复制策略",
-    "CHART_DISCOUNT_TIP": "价格优惠"
+    "CHART_DISCOUNT_TIP": "价格优惠",
+
+    "ALL_COMMENT": "全部评论",
+    "REPLY": "回复",
+    "COLLAPSE": "收起",
+    "REVIEW": "评论",
+    "LEAVE_COMMENT": "说点什么吧...",
+    "MORE_REPLY": "更多回复"
 }

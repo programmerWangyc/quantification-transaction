@@ -1,7 +1,6 @@
 import {
     CommandButtonTextPipe,
     ExpireStatusPipe,
-    LatestModifyDesPipe,
     RemoveMd5Pipe,
     StrategyNamePipe,
     TemplateNamePipe,
@@ -17,7 +16,6 @@ import {
 export const PIPES = [
     CommandButtonTextPipe,
     ExpireStatusPipe,
-    LatestModifyDesPipe,
     RemoveMd5Pipe,
     StrategyNamePipe,
     TemplateNamePipe,

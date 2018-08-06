@@ -871,3 +871,33 @@ export interface PaymentArgResponse {
 }
 
 export interface GetPaymentArgResponse extends ResponseUnit<PaymentArgResponse> { }
+
+// ===================================================Comment==============================================
+
+// submit comment
+export interface SubmitCommentResponse extends ResponseUnit<number> { } // reply: reply's id; other 影响的行数；
+
+// comment list
+export interface BtComment {
+    content: string;
+    created: string; // created date string;
+    id: number;
+    is_owner: boolean;
+    username: string;
+}
+
+export interface Reply extends BtComment {
+    reply_id: number;
+    sub_reply_id?: number;
+}
+
+export interface CommentListResponse {
+    all: number;
+    comments: BtComment[];
+    reply: Reply[];
+}
+
+export interface GetCommentListResponse extends ResponseUnit<CommentListResponse> { }
+
+// get qiniu token
+export interface GetQiniuTokenResponse extends ResponseUnit<number> { }

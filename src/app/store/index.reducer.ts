@@ -16,11 +16,13 @@ import * as robot from './robot/robot.reducer';
 import { RouterStateUrl } from './router/router.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
+import * as comment from './comment/comment.reducer';
 
 export interface AppState {
     backtest: backtest.State;
     btNode: btNode.State;
     charge: charge.State;
+    comment: comment.State;
     exchange: exchange.State;
     login: login.State;
     platform: platform.State;
@@ -39,6 +41,7 @@ export const reducers: ActionReducerMap<AppState> = {
     backtest: backtest.reducer,
     btNode: btNode.reducer,
     charge: charge.reducer,
+    comment: comment.reducer,
     exchange: exchange.reducer,
     login: login.reducer,
     platform: platform.reducer,
@@ -334,3 +337,19 @@ export const selectBacktestResults = createSelector(getBacktest, backtest.getBac
 
 // whether backtest tasks all complete
 export const selectIsAllBacktestTasksCompleted = createSelector(getBacktest, backtest.isTasksAllCompleted);
+
+//  ===================================================Comment======================================================
+
+const getComment = (state: AppState) => state.comment;
+
+// comment list
+export const selectCommentListResponse = createSelector(getComment, comment.getCommentListRes);
+
+// submit comment
+export const selectSubmitResponse = createSelector(getComment, comment.getSubmitCommentRes);
+
+// qiniu token
+export const selectQiniuTokenResponse = createSelector(getComment, comment.getQiniuTokenRes);
+
+// request params;
+export const selectCommentRequestParams = createSelector(getComment, comment.getRequestParams);

@@ -19,6 +19,7 @@ import { GetSettingsRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
+import * as CommentActions from '../store/comment/comment.action';
 
 /**
  * @ignore
@@ -245,5 +246,19 @@ export class ProcessService {
 
     processPaymentArg(paramObs: Observable<Request.GetPaymentArgRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new GetPaymentArgRequestAction(params)));
+    }
+
+    //  ===================================================Comment======================================================
+
+    processCommentList(paramsObs: Observable<Request.GetCommentListRequest>): Subscription {
+        return paramsObs.subscribe(params => this.store.dispatch(new CommentActions.GetCommentListRequestAction(params)));
+    }
+
+    processSubmitComment(paramObs: Observable<Request.SubmitCommentRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.SubmitCommentRequestAction(params)));
+    }
+
+    processGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.GetQiniuTokenRequestAction(params)));
     }
 }

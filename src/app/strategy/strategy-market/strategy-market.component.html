@@ -36,7 +36,7 @@
                     <span *ngIf="strategy.public === 1">{{strategy.forked || 0}}</span>
                 </td>
 
-                <td bt-text-center>{{strategy.last_modified | latestModifyDes}}</td>
+                <td bt-text-center>{{strategy.last_modified | fromNow}}</td>
 
                 <td bt-text-center>
                     <!--1: 已公开，2:审核中，3:需要续费-->

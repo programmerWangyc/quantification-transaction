@@ -1,0 +1,13 @@
+.reply {
+    position: relative;
+    i {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        cursor: pointer;
+    }
+    button {
+        margin: 5px 0;
+        float: right;
+    }
+}

@@ -1,0 +1,76 @@
+@import '../../../theme/_variable.theme';
+#comment-area {
+    ul,
+    li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    padding: 0;
+    margin: 20px 0;
+    .comment {
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(200, 200, 200, .3);
+        h4 {
+            i {
+                font-size: 12px;
+                margin-left: 1em;
+                font-weight: 400;
+            }
+        }
+    }
+    .reply-area {
+        background: rgba(200, 200, 200, .1);
+        margin: 0 1em;
+        border-radius: 4px;
+        padding-bottom: 10px;
+        li {
+            padding: 1rem;
+        }
+        h6 {
+            cursor: pointer;
+            position: relative;
+            text-indent: 1em;
+            &:before {
+                content: '';
+                height: 100%;
+                width: 2px;
+                background: $blue;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            &:after {
+                content: '';
+                width: calc(100% - 6rem);
+                height: 1px;
+                background: $gray;
+                opacity: .2;
+                position: absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+            }
+        }
+        .discuss {
+            .sub-reply-des {
+                span {
+                    margin: 0 5px;
+                }
+            }
+        }
+        .reply-user {
+            margin-right: 1em;
+            &:after {
+                content: ':'
+            }
+        }
+        p {
+            margin: 5px 0;
+        }
+        a {
+            color: $gray;
+            margin: 0 1em;
+        }
+    }
+}

@@ -456,7 +456,31 @@ export interface GetPaymentArgRequest {
     chargeAmount: number;
 }
 
+// =================================================Comment===============================================
+
+// comment list
+export interface GetCommentListRequest {
+    topic: string;
+    offset?: number;
+    limit?: number;
+}
+
+// submit comment
+export interface SubmitCommentRequest {
+    topic: number;
+    content: string;
+    replyId: number;
+    subReplyId: number;
+    commentId: number;
+}
+
+// qiniu token
+export interface GetQiniuTokenRequest {
+    name: string;
+}
+
+
 /**
- * 接口总数： 83， 已完成： 41
+ * 接口总数： 83， 已完成： 44
  */
 

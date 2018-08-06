@@ -1,12 +1,12 @@
 
 //setting
- const settings = 'GetSettings';
+const settings = 'GetSettings';
 
- interface GetSettings {
+interface GetSettings {
     name: string;
 }
 
- enum Settings {
+enum Settings {
     about = 'about',
     agreement = 'agreement',
     api = 'api',
@@ -14,50 +14,50 @@
     docker = 'docker',
     brokers = 'brokers',
     javaScript = 'backtest_javascript',
-    index ='index'
+    index = 'index'
 }
 
 //plane list
- const getBBSPlaneList = 'GetBBSPlaneList';
+const getBBSPlaneList = 'GetBBSPlaneList';
 
- interface GetBBSPlaneList {
+interface GetBBSPlaneList {
     list: any[];
 }
 
 // bbs node list
- const getBBSNodeList = 'GetBBSNodeList';
+const getBBSNodeList = 'GetBBSNodeList';
 
- interface GetBBSNodeList {
+interface GetBBSNodeList {
     list: any[];
 }
 
 // topic
- const getBBSTopic = 'GetBBSTopic';
+const getBBSTopic = 'GetBBSTopic';
 
- interface GetBBSTopic {
+interface GetBBSTopic {
     id: number;
 }
 
- const addBBSTopic = 'AddBBSTopic';
+const addBBSTopic = 'AddBBSTopic';
 
- interface AddTopic {
+interface AddTopic {
     topicId: number;
     nodeNumber: number;
     title: string;
     content: string;
 }
 
- const deleteBBSTopic = 'M_Topic';
+const deleteBBSTopic = 'M_Topic';
 
- interface DeleteTopic {
+interface DeleteTopic {
     topicId: number;
     magic1: number;
     magic2: number;
 }
 
- const getBBSTopicListBySlug = 'GetBBSTopicListBySlug';
+const getBBSTopicListBySlug = 'GetBBSTopicListBySlug';
 
- interface GetBBSTopicListBySlug {
+interface GetBBSTopicListBySlug {
     slug: string;
     total: number;
     pageSize: number;
@@ -65,80 +65,80 @@
 }
 
 // qiniu token
- const getQiniuToken = 'GetQiniuToken';
+const getQiniuToken = 'GetQiniuToken';
 
- interface QiniuToken {
+interface QiniuToken {
     name: string;
 }
 
 // lock user
- const LockUser = 'M_User';
+const LockUser = 'M_User';
 
- interface LockUser {
+interface LockUser {
     id: number;
     magic1: number;
     magic2: number;
 }
 
 // compentition list
- const getCompetitionList = 'GetCompetitionList';
+const getCompetitionList = 'GetCompetitionList';
 
- interface GetCompetitionList {
+interface GetCompetitionList {
     startTime: string; // const YY-MM-01 00: 00: 00;
     endTime: string; // const YY-MM-DD 22: 00: 00;
 }
 
 // disable two factor
- const disableTwofactor = 'DisableTwofactor';
+const disableTwofactor = 'DisableTwofactor';
 
- interface DisableTwofactor {
+interface DisableTwofactor {
     token: string;
 }
 
 // robot
- const getPublicRobotList = 'GetPublicRobotList';
+const getPublicRobotList = 'GetPublicRobotList';
 
- interface GetPublicRobotList {
+interface GetPublicRobotList {
     magic1: number;
     magic2: number;
     magic3: number;
 }
 
- const getPublicRobot = 'PublicRobot';
+const getPublicRobot = 'PublicRobot';
 
- interface GetPublicRobot {
+interface GetPublicRobot {
     id: number;
     type: string;
 }
 
- const stopRobot = 'StopRobot';
+const stopRobot = 'StopRobot';
 
- interface StopRobot {
+interface StopRobot {
     id: number;
 }
 
- const restartRobot = 'RestartRobot';
+const restartRobot = 'RestartRobot';
 
- interface RestartRobot {
+interface RestartRobot {
     id: number;
 }
 
- const deleteRobot = 'DeleteRobot';
+const deleteRobot = 'DeleteRobot';
 
- interface DeleteRobot {
+interface DeleteRobot {
     id: number;
     checked: boolean;
 }
 
- const getRobotDetail = 'GetRobotDetail';
+const getRobotDetail = 'GetRobotDetail';
 
- interface GetRobotDetail {
+interface GetRobotDetail {
     id: number;
 }
 
- const modifyRobot = 'ModifyRobot';
+const modifyRobot = 'ModifyRobot';
 
- interface ModifyRobot {
+interface ModifyRobot {
     id: number;
     name: number;
     nodeId: number;
@@ -148,9 +148,9 @@
     magic1: string[];
 }
 
- const getRobotLogs = 'GetRobotLogs';
+const getRobotLogs = 'GetRobotLogs';
 
- interface GetRobotLogs {
+interface GetRobotLogs {
     robotId: number;
     // table Log
     logMinId: number;
@@ -171,192 +171,192 @@
     chartUpdateTime: number;
 }
 
- const subscribeRobot = 'SubscribeRobot';
+const subscribeRobot = 'SubscribeRobot';
 
- interface SubscribeRobot {
+interface SubscribeRobot {
     id: number;
 }
 
- const CommandRobot = 'CommandRobot';
+const CommandRobot = 'CommandRobot';
 
- interface CommandRobot {
+interface CommandRobot {
     id: number;
     command: string;
 }
 
 // login
- const login = 'Login';
+const login = 'Login';
 
- interface Login {
+interface Login {
     username: string;
     password: string; // encoded password;
     magic1: string;
 }
 
- interface CommonDelete {
+interface CommonDelete {
     id: number;
 }
 
 // notify
- const deleteNotify = 'DeleteNotify';
+const deleteNotify = 'DeleteNotify';
 
- interface DeleteNotify extends CommonDelete { }
+interface DeleteNotify extends CommonDelete { }
 
- const getBBSNotify = 'GetBBSNotify';
+const getBBSNotify = 'GetBBSNotify';
 
- interface GetBBSNotify {
+interface GetBBSNotify {
     magic1: number;
     magic2: number;
 }
 
 // message
- const deleteMessage = 'DeleteMessage';
+const deleteMessage = 'DeleteMessage';
 
- interface DeleteMessage extends CommonDelete { }
+interface DeleteMessage extends CommonDelete { }
 
- const deleteAPMMessage = 'DeleteAPMMessage';
+const deleteAPMMessage = 'DeleteAPMMessage';
 
- interface DeleteAPMMessage extends CommonDelete { }
+interface DeleteAPMMessage extends CommonDelete { }
 
 // push queue
- const GetPushQueue = 'getPushQueue';
+const GetPushQueue = 'getPushQueue';
 
- interface GetPushQueue {
+interface GetPushQueue {
     magic1: number;
     magic2: number;
 }
 
 // apm queue
- const getAPMQueue = 'GetAPMQueue'
+const getAPMQueue = 'GetAPMQueue'
 
- interface GetAPMQueue {
+interface GetAPMQueue {
     magic1: number;
     magic2: number;
 }
 
 // google auth key
- const getGoogleAuthKey = 'GetGoogleAuthKey';
+const getGoogleAuthKey = 'GetGoogleAuthKey';
 
- interface GetGoogleAuthKey {
+interface GetGoogleAuthKey {
 
 }
 
- const getBindGoogleAuth = 'BindGoogleAuth';
+const getBindGoogleAuth = 'BindGoogleAuth';
 
- interface GetBindGoogleAuth {
+interface GetBindGoogleAuth {
     code: string;
     key: string;
 }
 
 // shadow member
- const getShadowMember = 'GetShadowMember';
+const getShadowMember = 'GetShadowMember';
 
- interface GetShadowMember {
+interface GetShadowMember {
 
 }
 
- const addShadowMember = 'SaveShadowMember';
+const addShadowMember = 'SaveShadowMember';
 
- interface AddShadowMember {
+interface AddShadowMember {
     memberId: number;
     username: string;
     password: string;
     permissionList: number[];
 }
 
- const deleteShadowMember = 'DeleteShadowMember';
+const deleteShadowMember = 'DeleteShadowMember';
 
- interface DeleteShadowMember {
+interface DeleteShadowMember {
     memberId: number;
 }
 
- const updateShadowMember = 'LockShadowMember';
+const updateShadowMember = 'LockShadowMember';
 
- interface UpdateShadowMember {
+interface UpdateShadowMember {
     memberId: number;
     status: number;
 }
 
 // account
- const getAccount = 'GetAccount';
+const getAccount = 'GetAccount';
 
- interface GetAccount {
+interface GetAccount {
 
 }
 
 // api key list
- const getApiKeyList = 'GetApiKeyList';
+const getApiKeyList = 'GetApiKeyList';
 
- interface GetApiKeyList {
+interface GetApiKeyList {
 
 }
 
 // SNS
- const getUnbindSNS = 'UnbindSNS'
+const getUnbindSNS = 'UnbindSNS'
 
- interface GetUnbindSNS {
+interface GetUnbindSNS {
 
 }
 
 // change nick name
- const getChangeNickName = 'ChangeNickName';
+const getChangeNickName = 'ChangeNickName';
 
- interface getChangeNickName {
+interface getChangeNickName {
     name: string;
 }
 
 // change pass word
 
- const getChangePassword = 'ChangePassword';
+const getChangePassword = 'ChangePassword';
 
- interface getChangePassword {
+interface getChangePassword {
     oldPassword: string;
     newPassword: string;
 }
 
 // api key
 
- const addApiKey = 'CreateApiKey';
+const addApiKey = 'CreateApiKey';
 
- interface AddApiKey {
+interface AddApiKey {
     magic1: string;
     magic2: string;
 }
 
- const updateApiKey = 'LockApiKey';
+const updateApiKey = 'LockApiKey';
 
- interface UpdateApiKey {
+interface UpdateApiKey {
     id: number;
     status: number;
 }
 
- const deleteApiKey = 'DeleteApiKey';
+const deleteApiKey = 'DeleteApiKey';
 
- interface DeleteApiKey extends CommonDelete { }
+interface DeleteApiKey extends CommonDelete { }
 
 // node hash
- const getNodeHash = 'GetNodeHash';
+const getNodeHash = 'GetNodeHash';
 
- interface GetNodeHash {
+interface GetNodeHash {
 
 }
 
 // platform
- const getPlatformDetail = 'GetPlatformDetail';
+const getPlatformDetail = 'GetPlatformDetail';
 
- interface GetPlatformDetail {
+interface GetPlatformDetail {
     platoformId: number;
 }
 
- const getPlatformList = 'GetPlatformList';
+const getPlatformList = 'GetPlatformList';
 
- interface GetPlatformList {
+interface GetPlatformList {
 
 }
 
- const updatePlatform = 'SavePlatform';
+const updatePlatform = 'SavePlatform';
 
- interface UpdatePlatform {
+interface UpdatePlatform {
     platformId: number;
     exchangeId: number;
     dic: string; // json
@@ -364,23 +364,23 @@
     label: string;
 }
 
- const deletePlatform = 'DeletePlatform';
+const deletePlatform = 'DeletePlatform';
 
- interface DeletePlatform {
+interface DeletePlatform {
     platformId: number;
 }
 
 // exchange list
- const getExchangeList = 'GetExchangeList'
+const getExchangeList = 'GetExchangeList'
 
- interface GetExchangeList {
+interface GetExchangeList {
 
 }
 
 // strategy list
- const getStrategyList = 'GetStrategyList';
+const getStrategyList = 'GetStrategyList';
 
- interface GetStrategyList {
+interface GetStrategyList {
     offset: number;
     limit: number;
     strategyType: number;
@@ -388,9 +388,9 @@
     args: number;
 }
 
- const getStrategyListByName = 'GetStrategyListByName';
+const getStrategyListByName = 'GetStrategyListByName';
 
- interface GetStrategyListByName {
+interface GetStrategyListByName {
     count: number;
     pageSize: number;
     magic1: number;
@@ -400,22 +400,22 @@
 }
 
 // node list
- const getNodeList = 'GetNodeList';
+const getNodeList = 'GetNodeList';
 
- interface GetNodeList {
+interface GetNodeList {
 
 }
 
- const deleteNode = 'DeleteNode';
+const deleteNode = 'DeleteNode';
 
- interface DeleteNode {
+interface DeleteNode {
     nodeId: number;
 }
 
 // robot
- const updateRobot = 'SaveRobot';
+const updateRobot = 'SaveRobot';
 
- interface UpdateRobot {
+interface UpdateRobot {
     name: string;
     magic1: string;
     strategyId: number;
@@ -426,15 +426,15 @@
 }
 
 // backtest IO
- const getBacktestIO = 'getBacktestIO';
+const getBacktestIO = 'getBacktestIO';
 
- interface GetBacktestIO {
+interface GetBacktestIO {
     nodeId: number;
     typeId: number;
     dic: string // [] JSON.stringfiy array [ string, uuid ];
 }
 
- enum BacktestDescription {
+enum BacktestDescription {
     deleteTask = 'DelTask',
     getTaskStatus = 'GetTaskStatus',
     getTaskResult = 'GetTaskResult',
@@ -443,23 +443,23 @@
 }
 
 // strategy token
- const opStrategyToken = 'OpStrategyToken'
+const opStrategyToken = 'OpStrategyToken'
 
- interface OpStrategyToken {
+interface OpStrategyToken {
     id: number;
     code: number;
 }
 
 // get strategy detail
- const getStrategyDetail = 'GetStrategyDetail'
+const getStrategyDetail = 'GetStrategyDetail'
 
- interface GetStrategyDetail {
+interface GetStrategyDetail {
     strategyId: number;
 }
 
- const updateStrategy = 'SaveStrategy';
+const updateStrategy = 'SaveStrategy';
 
- interface UpdateStrategy {
+interface UpdateStrategy {
     strategyId: number;
     categoryId: number;
     codeTypeId: number;
@@ -472,72 +472,72 @@
     depends: string;
 }
 
- const shareStrategy = 'ShareStrategy';
+const shareStrategy = 'ShareStrategy';
 
- interface ShareStrategy {
+interface ShareStrategy {
     strategyId: number;
     typeId: number;
 }
 
- const deleteStrategy = 'DeleteStrategy';
+const deleteStrategy = 'DeleteStrategy';
 
- interface DeleteStrategy {
+interface DeleteStrategy {
     strategyId: number;
 }
 
- const getPublicStrategyDetail = 'GetPublicStrategyDetail';
+const getPublicStrategyDetail = 'GetPublicStrategyDetail';
 
- interface GetPublicStrategyDetail {
+interface GetPublicStrategyDetail {
     strategyId: number;
 }
 
 // templates
- const getTemplates = 'GetTemplates';
+const getTemplates = 'GetTemplates';
 
- interface GetTemplates {
+interface GetTemplates {
     ids: number[];
 }
 
 // broadcast
- const setBroadcast = 'SetBroadcast';
+const setBroadcast = 'SetBroadcast';
 
- interface SetBroadcast {
+interface SetBroadcast {
     id: number;
 }
 
- const getBroadcast = 'GetBroadcast';
+const getBroadcast = 'GetBroadcast';
 
- interface GetBroadcast {
+interface GetBroadcast {
     count: number;
 }
 
 // watch dog
- const setRobotWD = 'SetRobotWD';
+const setRobotWD = 'SetRobotWD';
 
- interface SetRobotWD {
+interface SetRobotWD {
     id: number;
     watchDogStatus: number;
 }
 
- const setNodeWD = 'SetNodeWD';
+const setNodeWD = 'SetNodeWD';
 
- interface SetNodeWD {
+interface SetNodeWD {
     id: number;
     watchDogStatus: number;
 }
 
 // verify key
- const verifyKey = 'VerifyKey';
+const verifyKey = 'VerifyKey';
 
- interface VerifyKey {
+interface VerifyKey {
     id: number;
     scode: number;
 }
 
 // get key
- const getGenKey = 'GetGenKey';
+const getGenKey = 'GetGenKey';
 
- interface GetGenKey {
+interface GetGenKey {
     magic1: number;
     id: number;
     days: number;
@@ -545,86 +545,86 @@
 }
 
 // payment
- const getPaymentArg = 'GetPaymentArg';
+const getPaymentArg = 'GetPaymentArg';
 
- interface GetPaymentArg {
+interface GetPaymentArg {
     method: number;
     magic1: number;
     pricingAmount: number;
 }
 
- const getPayOrders = 'GetPayOrders';
+const getPayOrders = 'GetPayOrders';
 
- interface GetPayOrders { }
+interface GetPayOrders { }
 
 // trade
- const getTradeHistory = 'GetTradeHistory';
+const getTradeHistory = 'GetTradeHistory';
 
- interface GetTradeHistory {
+interface GetTradeHistory {
     magic1: number[];
 }
 
- const updateTradeHistory = 'SaveTradeHistory';
+const updateTradeHistory = 'SaveTradeHistory';
 
- interface UpdateTradeHistory {
+interface UpdateTradeHistory {
     id: number;
     expire: string;
     concurrent: number;
 }
 
 // sandbox
- const getSandBoxToken = 'GetSandBoxToken';
+const getSandBoxToken = 'GetSandBoxToken';
 
- interface GetSandBoxToken { }
+interface GetSandBoxToken { }
 
 // Stats
- const getStats = 'GetStats';
+const getStats = 'GetStats';
 
- interface GetStats {
+interface GetStats {
     code: number;
 }
 
 // priority
- const setClusterPriority = 'SetClusterPriority';
+const setClusterPriority = 'SetClusterPriority';
 
- interface SetClusterPriority {
+interface SetClusterPriority {
     magic1: number[];
 }
 
 // password
- const resetPassword = 'ResetPassword';
+const resetPassword = 'ResetPassword';
 
- interface ResetPassword {
+interface ResetPassword {
     email: string;
 }
 
- const SetPassword = 'SetPassword';
+const SetPassword = 'SetPassword';
 
- interface SetPassword {
+interface SetPassword {
     token: string;
     password: string;
 }
 
 // reset two factor
- const resetTwofactor = 'ResetTwofactor';
+const resetTwofactor = 'ResetTwofactor';
 
- interface ResetTwofactor {
+interface ResetTwofactor {
     username: string;
     password: string;
     emmail: string;
 }
 
 // csp report
- const getCSPReport = 'CSPReport';
+const getCSPReport = 'CSPReport';
 
- interface GetCSPReport {
+interface GetCSPReport {
     magic1: string[];
 }
 
 // signup
- const signup = 'Signup';
+const signup = 'Signup';
 
- interface Signup {
+interface Signup {
     username: string;
     email: string;
     password: string; // crypted password.
@@ -633,18 +633,18 @@
 }
 
 // M_Public
- const getM_Public = 'M_Public';
+const getM_Public = 'M_Public';
 
- interface GetM_Public {
+interface GetM_Public {
     id: number;
     magic1: number;
     magic2: number;
 }
 
 // comment
- const submitComment = 'SubmitComment';
+const submitComment = 'SubmitComment';
 
- interface SubmitComment {
+interface SubmitComment {
     topic: number;
     content: string;
     replyId: number;
@@ -652,17 +652,17 @@
     commentId: number;
 }
 
- const GetCommentList = 'GetCommentList';
+const GetCommentList = 'GetCommentList';
 
- interface GetCommentList {
+interface GetCommentList {
     topic: number;
     magic1: string;
     magic2: string;
 }
 
 // verify password
- const verifyPassword = 'VerifyPassword';
+const verifyPassword = 'VerifyPassword';
 
- interface VerifyPassword {
+interface VerifyPassword {
     password: string;
 }

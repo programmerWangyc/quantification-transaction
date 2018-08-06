@@ -1,0 +1,7 @@
+<div class="reply">
+    <textarea [(ngModel)]="content" [placeholder]="'LEAVE_COMMENT' | translate" nz-input [nzAutosize]="size"></textarea>
+
+    <i class="anticon anticon-paper-clip" (click)="uploadFile()"></i>
+
+    <button nz-button (click)="reply.next(content)" nzType="primary">{{buttonText | translate}}</button>
+</div>
