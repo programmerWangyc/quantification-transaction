@@ -1,13 +1,40 @@
+@import '../../../theme/_variable.theme';
+.banner {
+    background: $bcg-nav;
+    border: 1px solid #d9d9d9;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 1em;
+}
+
 .reply {
     position: relative;
-    i {
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        cursor: pointer;
+    textarea {
+        width: 90%;
     }
-    button {
-        margin: 5px 0;
-        float: right;
+    .reply-buttons {
+        width: 10%;
+        & button:first-child {
+            border-bottom: 1px solid $gray;
+        }
+        & button:last-child {
+            border-radius: 0 0 4px 0;
+        }
+        button {
+            height: 50%;
+        }
+    }
+    .button-cover {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 99;
+        width: 10%;
+        height: 100%;
+        text-align: center;
+        font-size: 2em;
+        color: #d9d9d9;
     }
 }

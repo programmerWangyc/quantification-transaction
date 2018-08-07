@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, mapTo } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
 import * as fromReq from '../interfaces/request.interface';
@@ -10,6 +10,8 @@ import * as fromRes from '../interfaces/response.interface';
 import * as fromRoot from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
+import { TipService } from './tip.service';
+import { ConfirmComponent } from '../tool/confirm/confirm.component';
 
 @Injectable()
 export class CommentService extends BaseService {
@@ -18,6 +20,7 @@ export class CommentService extends BaseService {
         private store: Store<fromRoot.AppState>,
         private error: ErrorService,
         private process: ProcessService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -32,10 +35,31 @@ export class CommentService extends BaseService {
     }
 
     /**
-     * Submit comment
+     * Add comment
      */
-    launchSubmitComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
-        return this.process.processSubmitComment(source);
+    launchAddComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
+        return this.process.processAddComment(source);
+    }
+
+    /**
+     * Delete comment
+     */
+    launchDeleteComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
+        return this.process.processDeleteComment(
+            source.pipe(
+                switchMap(request => this.tipService.confirmOperateTip(ConfirmComponent, { message: 'CONFIRM_DELETE_COMMENT', needTranslate: true }).pipe(
+                    this.filterTruth(),
+                    mapTo(request)
+                ))
+            )
+        );
+    }
+
+    /**
+     * Update comment
+     */
+    launchUpdateComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
+        return this.process.processUpdateComment(source);
     }
 
     /**

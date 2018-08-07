@@ -188,7 +188,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
 
             this.chargeShortcut.patchValue(+days);
 
-            this.deadline.patchValue(moment().add(days, 'days').format('YYYY-MM-DD hh:mm:ss'));
+            this.deadline.patchValue(moment().add(days, 'days').format('YYYY-MM-DD HH:mm:ss'));
         });
     }
 
@@ -228,7 +228,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
 
             this.amount.patchValue(total - discount);
 
-            this.deadline.patchValue(moment().add(period, 'days').format('YYYY-MM-DD hh:mm:ss'));
+            this.deadline.patchValue(moment().add(period, 'days').format('YYYY-MM-DD HH:mm:ss'));
         });
     }
 

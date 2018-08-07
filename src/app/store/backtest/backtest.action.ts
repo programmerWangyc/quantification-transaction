@@ -76,8 +76,8 @@ export const backtestCallbackIdMapType: Map<string, string> = new Map([
 
 // backtest io
 /**
- * 后台使用同一个API完成这些动作，这里做了拆分，不同的动作之间除了 type 不同样之外，接口其实
- * 都一样。这么做完全是为了调试时看的更清楚，否则在调试工具里看的都是一个动作 -- EXECUTE_BACKTEST
+ * *后台使用同一个API完成这些动作，这里做了拆分，不同的动作之间除了 type 不同样之外，接口其实
+ * *都一样。这么做完全是为了调试时看的更清楚，否则在调试工具里看的都是一个动作 -- EXECUTE_BACKTEST
  */
 export enum BacktestIOOrder {
     nodeId,

@@ -467,7 +467,7 @@ export interface GetCommentListRequest {
 
 // submit comment
 export interface SubmitCommentRequest {
-    topic: number;
+    topic: string;
     content: string;
     replyId: number;
     subReplyId: number;

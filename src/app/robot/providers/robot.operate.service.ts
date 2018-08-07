@@ -370,7 +370,7 @@ export class RobotOperateService extends BaseService {
                 }
 
                 this.translate.get('ARGUMENT_CONFIG_FILE_TIME')
-                    .subscribe(msg => this.tipService.showTip(msg + moment(result.timestamp).format('YY-MM-DD hh:mm:ss')));
+                    .subscribe(msg => this.tipService.showTip(msg + moment(result.timestamp).format('YY-MM-DD HH:mm:ss')));
             });
         } catch (error) {
             this.tipService.showTip('IMPORT_ARGUMENT_FAIL_TIP');

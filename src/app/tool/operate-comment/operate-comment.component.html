@@ -1,0 +1,8 @@
+<span (mouseenter)="showOperateBtn()" (mouseleave)="hideOperateBtn()">
+    <i>{{comment.created | fromNow}}</i>
+
+    <span *ngIf="showBtn">
+        <a (click)="delete.next(true)" class="delete">{{'DELETE' | translate}}</a>
+        <a (click)="edit.next(true)" class="edit">{{'EDIT' | translate}}</a>
+    </span>
+</span>

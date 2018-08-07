@@ -1,4 +1,6 @@
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Observable } from 'rxjs';
+import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-reply',
@@ -18,28 +20,38 @@ export class ReplyComponent implements OnInit {
     @Input() row = 5;
 
     /**
-     * Emit replay content;
+     * User name;
      */
-    @Output() reply: EventEmitter<string> = new EventEmitter();
+    @Input() username: string;
 
     /**
-     * Emit comment content;
+     * 是否显示标题栏
      */
-    @Output() comment: EventEmitter<string> = new EventEmitter();
+    @Input() showBanner = false;
+
+    /**
+     * Send content
+     */
+    @Output() send: EventEmitter<string> = new EventEmitter();
 
     /**
      * @ignore
      */
-    content = '';
+    @Input() content = '';
 
     /**
      * textarea size
      */
     size = { minRows: 5, maxRows: 20 };
 
-    constructor() { }
+    isLogin: Observable<boolean>;
+
+    constructor(
+        private publicService: PublicService,
+    ) { }
 
     ngOnInit() {
+        this.isLogin = this.publicService.isLogin();
     }
 
     uploadFile() {

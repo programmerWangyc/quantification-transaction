@@ -55,6 +55,16 @@ export class GetCommentListSuccessAction extends GetCommentList implements Actio
 }
 
 // submit comment
+
+/**
+ * *Submit接口被重新拆分，同样拆分的还有backtestIO接口，为了少写解析代码。
+ */
+export enum SubmitCommentCallbackId {
+    add = 'AddComment',
+    update = 'UpdateComment',
+    delete = 'DeleteComment',
+}
+
 enum SubmitCommentOrder {
     topic,
     content,
@@ -76,26 +86,92 @@ class SubmitComment extends ApiAction {
     order = SubmitCommentOrder;
 }
 
-export const SUBMIT_COMMENT = '[Comment] SUBMIT_COMMENT';
+// add comment
+class AddComment extends SubmitComment {
+    callbackId = SubmitCommentCallbackId.add;
+}
 
-export class SubmitCommentRequestAction extends SubmitComment implements Action {
-    readonly type = SUBMIT_COMMENT;
+export const ADD_COMMENT = '[Comment] ADD_COMMENT';
+
+export class AddCommentRequestAction extends AddComment implements Action {
+    readonly type = ADD_COMMENT;
+
 
     constructor(public payload: SubmitCommentRequest) { super(); }
 }
 
-export const SUBMIT_COMMENT_FAIL = '[Comment] SUBMIT_COMMENT_FAIL';
+export const ADD_COMMENT_FAIL = '[Comment] ADD_COMMENT_FAIL';
 
-export class SubmitCommentFailAction extends SubmitComment implements Action {
-    readonly type = SUBMIT_COMMENT_FAIL;
+export class AddCommentFailAction extends AddComment implements Action {
+    readonly type = ADD_COMMENT_FAIL;
 
     constructor(public payload: SubmitCommentResponse) { super(); }
 }
 
-export const SUBMIT_COMMENT_SUCCESS = '[Comment] SUBMIT_COMMENT_SUCCESS';
+export const ADD_COMMENT_SUCCESS = '[Comment] ADD_COMMENT_SUCCESS';
 
-export class SubmitCommentSuccessAction extends SubmitComment implements Action {
-    readonly type = SUBMIT_COMMENT_SUCCESS;
+export class AddCommentSuccessAction extends AddComment implements Action {
+    readonly type = ADD_COMMENT_SUCCESS;
+
+    constructor(public payload: SubmitCommentResponse) { super(); }
+}
+
+// update comment
+class UpdateComment extends SubmitComment {
+    callbackId = SubmitCommentCallbackId.update;
+}
+
+export const UPDATE_COMMENT = '[Comment] UPDATE_COMMENT';
+
+export class UpdateCommentRequestAction extends UpdateComment implements Action {
+    readonly type = UPDATE_COMMENT;
+
+
+    constructor(public payload: SubmitCommentRequest) { super(); }
+}
+
+export const UPDATE_COMMENT_FAIL = '[Comment] UPDATE_COMMENT_FAIL';
+
+export class UpdateCommentFailAction extends UpdateComment implements Action {
+    readonly type = UPDATE_COMMENT_FAIL;
+
+    constructor(public payload: SubmitCommentResponse) { super(); }
+}
+
+export const UPDATE_COMMENT_SUCCESS = '[Comment] UPDATE_COMMENT_SUCCESS';
+
+export class UpdateCommentSuccessAction extends UpdateComment implements Action {
+    readonly type = UPDATE_COMMENT_SUCCESS;
+
+    constructor(public payload: SubmitCommentResponse) { super(); }
+}
+
+// delete comment
+class DeleteComment extends SubmitComment {
+    callbackId = SubmitCommentCallbackId.delete;
+}
+
+export const DELETE_COMMENT = '[Comment] DELETE_COMMENT';
+
+export class DeleteCommentRequestAction extends DeleteComment implements Action {
+    readonly type = DELETE_COMMENT;
+
+
+    constructor(public payload: SubmitCommentRequest) { super(); }
+}
+
+export const DELETE_COMMENT_FAIL = '[Comment] DELETE_COMMENT_FAIL';
+
+export class DeleteCommentFailAction extends DeleteComment implements Action {
+    readonly type = DELETE_COMMENT_FAIL;
+
+    constructor(public payload: SubmitCommentResponse) { super(); }
+}
+
+export const DELETE_COMMENT_SUCCESS = '[Comment] DELETE_COMMENT_SUCCESS';
+
+export class DeleteCommentSuccessAction extends DeleteComment implements Action {
+    readonly type = DELETE_COMMENT_SUCCESS;
 
     constructor(public payload: SubmitCommentResponse) { super(); }
 }
@@ -144,20 +220,30 @@ export class GetQiniuTokenSuccessAction extends GetQiniuToken implements Action 
 export type ApiActions = GetCommentListRequestAction
     | GetCommentListFailAction
     | GetCommentListSuccessAction
-    | SubmitCommentRequestAction
-    | SubmitCommentFailAction
-    | SubmitCommentSuccessAction
+    | AddCommentRequestAction
+    | AddCommentFailAction
+    | AddCommentSuccessAction
+    | DeleteCommentRequestAction
+    | DeleteCommentFailAction
+    | DeleteCommentSuccessAction
     | GetQiniuTokenRequestAction
     | GetQiniuTokenFailAction
-    | GetQiniuTokenSuccessAction;
+    | GetQiniuTokenSuccessAction
+    | UpdateCommentRequestAction
+    | UpdateCommentFailAction
+    | UpdateCommentSuccessAction;
 
 export type Actions = ApiActions;
 
 export const ResponseActions = {
     GetCommentListFailAction,
     GetCommentListSuccessAction,
-    SubmitCommentFailAction,
-    SubmitCommentSuccessAction,
+    AddCommentFailAction,
+    AddCommentSuccessAction,
+    DeleteCommentFailAction,
+    DeleteCommentSuccessAction,
     GetQiniuTokenFailAction,
     GetQiniuTokenSuccessAction,
+    UpdateCommentFailAction,
+    UpdateCommentSuccessAction,
 };

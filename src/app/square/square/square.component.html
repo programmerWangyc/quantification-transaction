@@ -8,4 +8,11 @@
 
 <app-strategy-market></app-strategy-market>
 
-<app-comment [comment]="comment | async"></app-comment>
+<div fxLayoutAlign="space-between center">
+    <h2>{{'ALL_COMMENT' | translate}}</h2>
+    <span>{{total | async}}</span>
+</div>
+
+<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+<app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>

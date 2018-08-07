@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { TextCenterDirective, TextDirectionDirective } from './directives/style.directive';
+import { DIRECTIVES } from './directives/directives.import';
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -17,6 +17,7 @@ import { ShareComponent } from './share/share.component';
 import { QRCodeModule } from 'angular2-qrcode';
 import { CommentComponent } from './comment/comment.component';
 import { ReplyComponent } from './reply/reply.component';
+import { OperateCommentComponent } from './operate-comment/operate-comment.component';
 
 @NgModule({
     imports: [
@@ -29,6 +30,7 @@ import { ReplyComponent } from './reply/reply.component';
         CommentComponent,
         ConfirmComponent,
         CustomSnackBarComponent,
+        DIRECTIVES,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
@@ -37,9 +39,8 @@ import { ReplyComponent } from './reply/reply.component';
         RunningLogComponent,
         ShareComponent,
         SimpleNzConfirmWrapComponent,
-        TextCenterDirective,
-        TextDirectionDirective,
         VerifyPasswordComponent,
+        OperateCommentComponent,
     ],
 
     entryComponents: [
@@ -50,6 +51,7 @@ import { ReplyComponent } from './reply/reply.component';
     ],
     exports: [
         CommentComponent,
+        DIRECTIVES,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
@@ -58,8 +60,6 @@ import { ReplyComponent } from './reply/reply.component';
         RunningLogComponent,
         ShareComponent,
         SimpleNzConfirmWrapComponent,
-        TextCenterDirective,
-        TextDirectionDirective,
     ],
 })
 export class ToolModule { }

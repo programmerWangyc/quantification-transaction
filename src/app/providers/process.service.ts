@@ -254,8 +254,16 @@ export class ProcessService {
         return paramsObs.subscribe(params => this.store.dispatch(new CommentActions.GetCommentListRequestAction(params)));
     }
 
-    processSubmitComment(paramObs: Observable<Request.SubmitCommentRequest>): Subscription {
-        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.SubmitCommentRequestAction(params)));
+    processAddComment(paramObs: Observable<Request.SubmitCommentRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.AddCommentRequestAction(params)));
+    }
+
+    processDeleteComment(paramObs: Observable<Request.SubmitCommentRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.DeleteCommentRequestAction(params)));
+    }
+
+    processUpdateComment(paramObs: Observable<Request.SubmitCommentRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new CommentActions.UpdateCommentRequestAction(params)));
     }
 
     processGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {

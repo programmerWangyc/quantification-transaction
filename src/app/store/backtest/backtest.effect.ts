@@ -38,29 +38,26 @@ export class BacktestEffect extends BaseEffect {
     deleteBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.DELETE_BACKTEST_TASK, backtestActions.ResponseActions, isBacktestFail);
 
     @Effect()
-    stopBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.STOP_BACKTEST_TASK, backtestActions.ResponseActions, isStopBacktestFail)
-        .pipe(
-            tap((action: backtestActions.StopBacktestSuccessAction | backtestActions.StopBacktestFailAction) => !isStopBacktestFail(action.payload) && this.tip.showTip('STOP_BACKTEST_SUCCESS'))
-        );
+    stopBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.STOP_BACKTEST_TASK, backtestActions.ResponseActions, isStopBacktestFail).pipe(
+        tap((action: backtestActions.StopBacktestSuccessAction | backtestActions.StopBacktestFailAction) => !isStopBacktestFail(action.payload) && this.tip.showTip('STOP_BACKTEST_SUCCESS'))
+    );
 
     /**
-     *  在模板依赖被取消后检查回测中的模板代码是否被用户选中，删除不需要的模板
+     * 在模板依赖被取消后检查回测中的模板代码是否被用户选中，删除不需要的模板
      */
     @Effect()
-    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES)
-        .pipe(
-            map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload))
-        );
+    updateCodeContent$: Observable<Action> = this.actions$.ofType(UPDATE_STRATEGY_DEPENDANCE_TEMPLATES).pipe(
+        map((action: UpdateStrategyDependanceTemplatesAction) => new backtestActions.CheckBacktestTemplateCodeAction(action.payload))
+    );
 
 
     @Effect()
-    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent()
-        .pipe(
-            switchMap(onOff => onOff ? this.ws.messages.pipe(
-                filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST))) : empty()
-            ),
-            map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage<string>>msg.result))
-        );
+    serverSendBacktestEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
+        switchMap(onOff => onOff ? this.ws.messages.pipe(
+            filter(msg => msg.event && (msg.event === ServerSendEventType.BACKTEST))) : empty()
+        ),
+        map(msg => new backtestActions.ReceiveServerSendBacktestEventAction(<ServerSendBacktestMessage<string>>msg.result))
+    );
 
     constructor(
         public actions$: Actions,
@@ -72,7 +69,7 @@ export class BacktestEffect extends BaseEffect {
     }
 
     /**
-     *  这个流用来在前端模拟出订阅和取消订阅行为，当用户退出具有回测功能的页面或者将任务停止后时会取消订阅，此时不再处理回测消息。
+     * 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出具有回测功能的页面或者将任务停止后时会取消订阅，此时不再处理回测消息。
      */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
         return this.store.select(selectServerMsgSubscribeState).pipe(
