@@ -19,10 +19,7 @@
         background: rgba(200, 200, 200, .1);
         margin: 0 1em;
         border-radius: 4px;
-        padding-bottom: 10px;
-        li {
-            padding: 1rem;
-        }
+        padding: 10px;
         h6 {
             cursor: pointer;
             position: relative;
@@ -57,16 +54,17 @@
         }
         .reply-user {
             margin-right: 1em;
-            &:after {
-                content: ':'
-            }
         }
         p {
             margin: 5px 0;
         }
         a {
             color: $gray;
-            margin: 0 1em;
+        }
+    }
+    .content {
+        img {
+            max-width: 100%;
         }
     }
 }

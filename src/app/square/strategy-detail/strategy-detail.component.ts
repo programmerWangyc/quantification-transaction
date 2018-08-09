@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Breadcrumb } from '../../interfaces/app.interface';
 import { ActivatedRoute } from '@angular/router';
-import { CommentService } from '../../providers/comment.service';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CommentListResponse } from '../../interfaces/response.interface';
+
 import { BtCommentType } from '../../app.config';
+import { Breadcrumb } from '../../interfaces/app.interface';
+import { CommentListResponse } from '../../interfaces/response.interface';
+import { CommentService } from '../../providers/comment.service';
 
 @Component({
     selector: 'app-strategy-detail',

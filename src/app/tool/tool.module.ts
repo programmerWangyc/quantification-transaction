@@ -2,26 +2,29 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { QRCodeModule } from 'angular2-qrcode';
+import { MarkdownModule } from 'ngx-markdown';
+
 import { SharedModule } from '../shared/shared.module';
+import { CommentComponent } from './comment/comment.component';
 import { ConfirmComponent } from './confirm/confirm.component';
 import { DIRECTIVES } from './directives/directives.import';
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { OperateCommentComponent } from './operate-comment/operate-comment.component';
 import { PIPES } from './pipes/index.pipe';
+import { ReplyComponent } from './reply/reply.component';
 import { RunningLogComponent } from './running-log/running-log.component';
+import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
-import { ShareComponent } from './share/share.component';
-import { QRCodeModule } from 'angular2-qrcode';
-import { CommentComponent } from './comment/comment.component';
-import { ReplyComponent } from './reply/reply.component';
-import { OperateCommentComponent } from './operate-comment/operate-comment.component';
 
 @NgModule({
     imports: [
         CommonModule,
+        MarkdownModule,
         QRCodeModule,
         RouterModule,
         SharedModule,

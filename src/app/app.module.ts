@@ -1,6 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { MatSnackBarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
@@ -15,7 +14,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 import { HomeModule } from './home/home.module';
 import { GLOBAL_SERVICES } from './providers/service.import';
-import { RobotModule } from './robot/robot.module';
 import { SharedModule } from './shared/shared.module';
 import { EFFECTS } from './store/index.effect';
 import { reducers } from './store/index.reducer';
@@ -49,10 +47,8 @@ export function HttpLoaderFactory(http: HttpClient) {
             maxAge: 50,
         }),
         EffectsModule.forRoot(EFFECTS),
-        MatSnackBarModule,
         ToolModule,
         NgZorroAntdModule,
-        RobotModule,
     ],
     providers: [
         Store,

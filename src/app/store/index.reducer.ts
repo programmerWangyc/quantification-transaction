@@ -353,3 +353,6 @@ export const selectQiniuTokenResponse = createSelector(getComment, comment.getQi
 
 // request params;
 export const selectCommentRequestParams = createSelector(getComment, comment.getRequestParams);
+
+// UI state
+export const selectCommentUIState = createSelector(getComment, comment.getUIState);

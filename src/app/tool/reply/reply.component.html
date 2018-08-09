@@ -12,17 +12,27 @@
     <textarea [(ngModel)]="content" [placeholder]="'LEAVE_COMMENT' | translate" nz-input [nzAutosize]="size" [style.borderRadius]="showBanner ? '0 0 0 4px' : '4px 0 0 4px'"></textarea>
 
     <div fxLayout="column" class="reply-buttons" [style.borderRadius]="showBanner ? '0 0 4px 0' : '0 4px 4px 0'">
-        <button nz-button nzType="primary" [style.borderRadius]="showBanner ? '0' : '0 4px 0 0'">
-            <i class="anticon anticon-paper-clip" (click)="uploadFile()"></i>
-            <span>{{'ATTACH_ATTACHMENT' | translate}}</span>
-        </button>
+        <nz-upload [(nzFileList)]="files" nzType="drag" nzMultiple="true" [nzLimit]="limit" [nzBeforeUpload]="beforeUpload" [nzAccept]="allowedContentTypes">
+            <i class="anticon anticon-picture" style="color: #1890ff"></i>
+        </nz-upload>
 
-        <button nz-button nzType="primary" [disabled]="!content" (click)="send.next(content)">
-            <span>{{buttonText | translate}}</span>
+        <button nz-button nzType="primary" [disabled]="!content || (disableReplyBtn | async)" (click)="send.next(content)">
+            {{buttonText | translate}}
         </button>
     </div>
 
     <div *ngIf="!(isLogin | async)" fxLayoutAlign="center center" [nz-tooltip]="'PLEASE_LOGIN' | translate" class="button-cover">
         <i class="anticon anticon-close-circle-o"></i>
     </div>
+
+    <button *ngIf="!!files.length" nz-button [disabled]="uploading$ | async" nzSize="small" nzType="primary" (click)="uploadFile()"
+        class="upload-btn">
+        <i *ngIf="uploading$ | async else elseBlock" class="anticon anticon-spin anticon-loading"></i>
+
+        <ng-template #elseBlock>
+            <i class="anticon anticon-upload"></i>
+        </ng-template>
+
+        {{'UPLOAD' | translate}}
+    </button>
 </div>

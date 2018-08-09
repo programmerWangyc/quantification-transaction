@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, of, Subject, merge } from 'rxjs';
-import { map, mergeMap, takeWhile } from 'rxjs/operators';
+import { map, mergeMap, takeWhile, filter } from 'rxjs/operators';
 
 import { BtCommentType } from '../../app.config';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -58,6 +58,10 @@ export class SquareComponent implements OnInit, OnDestroy {
      */
     reply: Subject<SubmitCommentRequest> = new Subject();
 
+    /**
+     * Public comment success;
+     */
+    isPublishSuccess: Observable<boolean>;
 
     /**
      * @ignore
@@ -90,6 +94,10 @@ export class SquareComponent implements OnInit, OnDestroy {
         );
 
         this.username = this.publicService.getCurrentUser();
+
+        this.isPublishSuccess = this.commentService.isPublishSuccess().pipe(
+            filter(isSuccess => isSuccess)
+        );
     }
 
     /**

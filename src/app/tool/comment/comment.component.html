@@ -5,20 +5,23 @@
             <app-operate-comment [comment]="comment" (delete)="onDelete(comment)" (edit)="comment.openReply = !comment.openReply;"></app-operate-comment>
         </div>
 
-        <p>{{comment.content}}</p>
+        <markdown [data]="comment.content | toMarkdown" class="content"></markdown>
 
         <div *ngIf="!!comment.replyGroup.length" class="reply-area">
             <ul class="mainReply">
                 <li *ngFor="let main of comment.replyGroup">
-                    <b class="reply-user">{{main.username}}</b>
-                    <span>{{main.content}}</span>
 
                     <p>
+                        <b class="reply-user">{{main.username}}</b>
+
+                        <app-operate-comment [comment]="main" (delete)="onDelete(main)" (edit)="main.openReply = !main.openReply"></app-operate-comment>
+
                         <a *ngIf="canReply(main)" (click)="main.openReply = !main.openReply">
                             {{(main.openReply? 'COLLAPSE': 'REPLY') | translate}}
                         </a>
-                        <app-operate-comment [comment]="main" (delete)="onDelete(main)" (edit)="main.openReply = !main.openReply"></app-operate-comment>
                     </p>
+
+                    <markdown [data]="main.content | toMarkdown" class="content"></markdown>
 
                     <app-reply *ngIf="main.openReply && canReply(main)" (send)="onReply($event,main, 1)"></app-reply>
 
@@ -30,25 +33,27 @@
                 <h6 (click)="comment.showDiscuss = !comment.showDiscuss">{{'MORE_REPLY' | translate}}</h6>
                 <ul *ngIf="comment.showDiscuss" class="discuss">
                     <li *ngFor="let discuss of comment.discussGroup">
-                        <span class="sub-reply-des">
-                            <b>{{discuss.username}}</b>
-                            <span>{{'REPLY' | translate}}</span>
-                            <b class="reply-user">{{discuss.replyUsername}}</b>
-                        </span>
-
-                        <span>{{discuss.content}}</span>
 
                         <p>
+                            <span class="sub-reply-des">
+                                <b>{{discuss.username}}</b>
+                                <span>{{'REPLY' | translate}}</span>
+                                <b class="reply-user">{{discuss.replyUsername}}</b>
+                            </span>
+
+                            <app-operate-comment [comment]="discuss" (delete)="onDelete(discuss)" (edit)="discuss.openReply = !discuss.openReply"></app-operate-comment>
+
                             <a *ngIf="canReply(discuss)" (click)="discuss.openReply = !discuss.openReply">
                                 {{(discuss.openReply? 'COLLAPSE': 'REPLY') | translate}}
                             </a>
-
-                            <app-operate-comment [comment]="discuss" (delete)="onDelete(discuss)" (edit)="discuss.openReply = !discuss.openReply"></app-operate-comment>
                         </p>
+
+                        <markdown [data]="discuss.content | toMarkdown" class="content"></markdown>
 
                         <app-reply *ngIf="discuss.openReply && canReply(discuss)" (send)="onReply($event,discuss, 1)"></app-reply>
 
-                        <app-reply *ngIf="discuss.openReply && !canReply(discuss)" [content]="discuss.content" (send)="onUpdate($event, discuss)" [buttonText]="'UPDATE' | translate"></app-reply>
+                        <app-reply *ngIf="discuss.openReply && !canReply(discuss)" [content]="discuss.content" (send)="onUpdate($event, discuss)"
+                            [buttonText]="'UPDATE' | translate"></app-reply>
                     </li>
                 </ul>
             </div>
@@ -61,7 +66,8 @@
 
         <app-reply *ngIf="comment.openReply && canReply(comment)" (send)="onReply($event,comment, 0)"></app-reply>
 
-        <app-reply *ngIf="comment.openReply && !canReply(comment)" [content]="comment.content" (send)="onUpdate($event, comment)" [buttonText]="'UPDATE' | translate"></app-reply>
+        <app-reply *ngIf="comment.openReply && !canReply(comment)" [content]="comment.content" (send)="onUpdate($event, comment)"
+            [buttonText]="'UPDATE' | translate"></app-reply>
 
     </li>
 </ul>

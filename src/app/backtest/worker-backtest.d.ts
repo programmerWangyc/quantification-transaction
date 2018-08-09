@@ -37,4 +37,5 @@ declare namespace WorkerBacktest {
 }
 
 export = WorkerBacktest;
+
 export as namespace WorkerBacktest;

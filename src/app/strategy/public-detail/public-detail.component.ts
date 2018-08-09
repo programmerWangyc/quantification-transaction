@@ -9,6 +9,7 @@ import { PublicStrategyDetail } from '../../interfaces/response.interface';
 import { StrategyService } from '../providers/strategy.service';
 import { StrategyRenewalComponent } from '../strategy-renewal/strategy-renewal.component';
 import { Path } from '../../app.config';
+import { pictureUrlReg } from '../../validators/validators';
 
 @Component({
     selector: 'app-public-detail',
@@ -34,7 +35,7 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
     isLoading: Observable<boolean>;
 
     /**
-     * 分享时的图片；
+     * 分享时发送给第三方的图片；
      */
     pictures: Observable<string[]>;
 
@@ -109,14 +110,12 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
      * get all pictures;
      */
     private getAllPictures(source: string): string[] {
-        const reg = /http[s]?:\/{2}.*\.(jpg|png)/g;
-
         let result = [];
 
         const urls = [];
 
         while (true) {
-            result = reg.exec(source);
+            result = pictureUrlReg.exec(source);
 
             if (!!result) {
                 urls.push(result[0]);

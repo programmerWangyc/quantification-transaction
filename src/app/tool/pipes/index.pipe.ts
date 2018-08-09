@@ -1,4 +1,4 @@
-import { BytesPipe, FromJSONPipe, FromNowPipe, OriginDataPipe, SafeHtmlPipe } from './common.pipe';
+import { BytesPipe, FromJSONPipe, FromNowPipe, OriginDataPipe, SafeHtmlPipe, ToMarkdownPipe } from './common.pipe';
 import {
     DirectionTypePipe, Eid2StringPipe, ExtraBcgColorPickerPipe, ExtraColorPickerPipe, ExtraContentPipe, LogPricePipe,
     LogTypePipe, ShowExtraIconPipe
@@ -14,6 +14,7 @@ export const PIPES = [
     DirectionTypePipe,
     LogTypePipe,
     LogPricePipe,
+    ToMarkdownPipe,
     ExtraContentPipe,
     ShowExtraIconPipe,
     ExtraColorPickerPipe,

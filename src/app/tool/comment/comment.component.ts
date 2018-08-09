@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnDestroy, Output, ViewEncapsulation } from '@angular/core';
 
 import { from, Subject, zip } from 'rxjs';
 import { groupBy, mergeMap, partition, reduce, takeWhile } from 'rxjs/operators';
@@ -33,6 +33,7 @@ export enum replyType {
     selector: 'app-comment',
     templateUrl: './comment.component.html',
     styleUrls: ['./comment.component.scss'],
+    encapsulation: ViewEncapsulation.None,
 })
 export class CommentComponent implements OnInit, OnDestroy {
 
@@ -144,7 +145,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * @ignore
+     * Reply comment
      */
     onReply(content: string, comment: CommentContent, type: number): void {
         if (type === replyType.replyMain) {
@@ -157,14 +158,14 @@ export class CommentComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * delete comment
+     * Delete comment
      */
     onDelete(comment: CommentContent): void {
         this.delete.next({ topic: '', content: '', commentId: comment.id, replyId: -1, subReplyId: -1 });
     }
 
     /**
-     * @ignore
+     * Update comment
      */
     onUpdate(content: string, comment: CommentContent): void {
         this.update.next({ topic: '', content: content, commentId: comment.id, replyId: comment.id, subReplyId: -1 });

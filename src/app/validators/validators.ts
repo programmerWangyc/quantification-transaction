@@ -67,3 +67,5 @@ export const selectTypeValueFormat = /^([^\|]+\|)+([^\|]+)$/;
 export function selectTypeValueValidator(input: AbstractControl): ValidatorResult {
     return selectTypeValueFormat.test(input.value) ? null : { selectTypeValueFormat: 'SELECT_TYPE_VALUE_FORMAT_ERROR' };
 }
+
+export const pictureUrlReg = /http[s]?:\/{2}.*?\.(jpg|png|gif)/g;

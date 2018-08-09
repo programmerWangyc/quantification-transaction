@@ -11,19 +11,17 @@
 
 .reply {
     position: relative;
-    textarea {
-        width: 90%;
-    }
     .reply-buttons {
         width: 10%;
-        & button:first-child {
-            border-bottom: 1px solid $gray;
-        }
         & button:last-child {
             border-radius: 0 0 4px 0;
         }
+        nz-upload,
         button {
             height: 50%;
+        }
+        .ant-upload-drag {
+            border-radius: 0 4px 0 0;
         }
     }
     .button-cover {
@@ -36,5 +34,41 @@
         text-align: center;
         font-size: 2em;
         color: #d9d9d9;
+    }
+    nz-upload-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        .anticon-cross {
+            right: 0;
+        }
+    }
+    .upload-btn {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        width: 9%;
+    }
+}
+
+.upload {
+    background: #d9d9d9;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    ul {
+        padding: 5px 0;
+        list-style: none;
+        width: 100%;
+        li {
+            padding: 5px;
+            width: 50%;
+            i {
+                margin: 0 0 0 5px;
+                font-size: 14px;
+            }
+        }
     }
 }

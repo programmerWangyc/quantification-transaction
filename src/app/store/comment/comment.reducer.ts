@@ -7,34 +7,44 @@ import {
 } from '../../interfaces/response.interface';
 import * as actions from './comment.action';
 
+export interface UIState {
+    loading: boolean;
+}
+
 export interface RequestParams {
-    commentList: GetCommentListRequest;
     addComment: SubmitCommentRequest;
+    commentList: GetCommentListRequest;
     deleteComment: SubmitCommentRequest;
-    updateComment: SubmitCommentRequest;
     qiniuToken: GetQiniuTokenRequest;
+    updateComment: SubmitCommentRequest;
 }
 
 export interface State {
+    UIState: UIState;
     commentListRes: GetCommentListResponse;
-    submitCommentRes: SubmitCommentResponse;
     qiniuTokenRes: GetQiniuTokenResponse;
     requestParams: RequestParams;
+    submitCommentRes: SubmitCommentResponse;
 }
 
+const initialUIState: UIState = {
+    loading: false,
+};
+
 const initialRequestParams: RequestParams = {
-    commentList: null,
     addComment: null,
+    commentList: null,
     deleteComment: null,
-    updateComment: null,
     qiniuToken: null,
+    updateComment: null,
 };
 
 const initialState: State = {
+    UIState: initialUIState,
     commentListRes: null,
-    submitCommentRes: null,
     qiniuTokenRes: null,
     requestParams: initialRequestParams,
+    submitCommentRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -49,41 +59,41 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // add comment
         case actions.ADD_COMMENT:
-            return { ...state, requestParams: { ...state.requestParams, addComment: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, addComment: action.payload }, UIState: { loading: true } };
 
         case actions.ADD_COMMENT_FAIL:
-            return { ...state, submitCommentRes: action.payload };
+            return { ...state, submitCommentRes: action.payload, UIState: { loading: false } };
 
         case actions.ADD_COMMENT_SUCCESS: {
             const result = addComment(state.requestParams.addComment, state.commentListRes.result, action.payload.result);
 
-            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result } };
+            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result }, UIState: { loading: false } };
         }
 
         // delete comment
         case actions.DELETE_COMMENT:
-            return { ...state, requestParams: { ...state.requestParams, deleteComment: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, deleteComment: action.payload }, UIState: { loading: true } };
 
         case actions.DELETE_COMMENT_FAIL:
-            return { ...state, submitCommentRes: action.payload };
+            return { ...state, submitCommentRes: action.payload, UIState: { loading: false } };
 
         case actions.DELETE_COMMENT_SUCCESS: {
             const result = deleteComment(state.requestParams.deleteComment, state.commentListRes.result);
 
-            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result } };
+            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result }, UIState: { loading: false } };
         }
 
         // update comment
         case actions.UPDATE_COMMENT:
-            return { ...state, requestParams: { ...state.requestParams, updateComment: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, updateComment: action.payload }, UIState: { loading: true } };
 
         case actions.UPDATE_COMMENT_FAIL:
-            return { ...state, submitCommentRes: action.payload };
+            return { ...state, submitCommentRes: action.payload, UIState: { loading: false } };
 
         case actions.UPDATE_COMMENT_SUCCESS: {
             const result = updateComment(state.requestParams.updateComment, state.commentListRes.result);
 
-            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result } };
+            return { ...state, submitCommentRes: action.payload, commentListRes: { ...state.commentListRes, result }, UIState: { loading: false } };
         }
 
         // qiniu token
@@ -93,6 +103,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_QINIU_TOKEN_FAIL:
         case actions.GET_QINIU_TOKEN_SUCCESS:
             return { ...state, qiniuTokenRes: action.payload };
+
+        // =======================================================Local action==========================================
+
+        case actions.CLEAR_QINIU_TOKEN:
+            return { ...state, qiniuTokenRes: null };
 
         default:
             return state;
@@ -164,3 +179,5 @@ export const getSubmitCommentRes = (state: State) => state.submitCommentRes;
 export const getQiniuTokenRes = (state: State) => state.qiniuTokenRes;
 
 export const getRequestParams = (state: State) => state.requestParams;
+
+export const getUIState = (state: State) => state.UIState;

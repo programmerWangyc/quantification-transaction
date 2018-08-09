@@ -4,6 +4,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { isBoolean, isNumber, isObject, isString } from 'lodash';
 import * as moment from 'moment';
 
+import { pictureUrlReg } from '../../validators/validators';
+
 @Pipe({ name: 'bytes' })
 export class BytesPipe implements PipeTransform {
     transform(input: number, precision: number = 2): string | number {
@@ -57,5 +59,26 @@ export class SafeHtmlPipe implements PipeTransform {
 export class FromNowPipe implements PipeTransform {
     transform(value: string): string {
         return moment(value).fromNow();
+    }
+}
+
+@Pipe({ name: 'toMarkdown' })
+export class ToMarkdownPipe implements PipeTransform {
+    transform(value: string): string {
+        let result = null;
+
+        while (true) {
+            result = pictureUrlReg.exec(value);
+
+            if (!!result) {
+                const [str] = result;
+
+                value = value.replace(str, `![image](${str})`);
+            } else {
+                break;
+            }
+        }
+
+        return value;
     }
 }

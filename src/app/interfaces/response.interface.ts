@@ -900,4 +900,4 @@ export interface CommentListResponse {
 export interface GetCommentListResponse extends ResponseUnit<CommentListResponse> { }
 
 // get qiniu token
-export interface GetQiniuTokenResponse extends ResponseUnit<number> { }
+export interface GetQiniuTokenResponse extends ResponseUnit<string> { }

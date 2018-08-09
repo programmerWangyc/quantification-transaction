@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { Observable, Subscription } from 'rxjs';
-import { map, switchMap, mapTo } from 'rxjs/operators';
+import { UploadFile } from 'ng-zorro-antd';
+import * as qiniu from 'qiniu-js';
+import { Observable, Subscription, zip } from 'rxjs';
+import { filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
 import * as fromReq from '../interfaces/request.interface';
 import * as fromRes from '../interfaces/response.interface';
+import { ClearQiniuTokenAction } from '../store/comment/comment.action';
+import { RequestParams } from '../store/comment/comment.reducer';
 import * as fromRoot from '../store/index.reducer';
+import { ConfirmComponent } from '../tool/confirm/confirm.component';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { TipService } from './tip.service';
-import { ConfirmComponent } from '../tool/confirm/confirm.component';
 
 @Injectable()
 export class CommentService extends BaseService {
@@ -69,6 +73,23 @@ export class CommentService extends BaseService {
         return this.process.processGetQiniuToken(source);
     }
 
+    /**
+     * Upload file to qiniu server;
+     * @param fileObs File flow to be uploaded;
+     * @returns index文件上传时的索引，方便映射到上传文上；
+     */
+    uploadImage(fileObs: Observable<UploadFile>): Observable<{ index: number; obs: Qiniu.Observable }> {
+        return zip(
+            fileObs,
+            this.getQiniuTokenResponse().pipe(
+                this.filterTruth(),
+                map(res => res.result)
+            )
+        ).pipe(
+            map(([file, token], index) => ({ index, obs: qiniu.upload(file, file.name, token, {}, {}) }))
+        );
+    }
+
     //  =======================================================Date acquisition=======================================================
 
     /**
@@ -119,7 +140,48 @@ export class CommentService extends BaseService {
         );
     }
 
+    /**
+     * Get comment related request;
+     */
+    private getRequestParams(): Observable<RequestParams> {
+        return this.store.pipe(
+            select(fromRoot.selectCommentRequestParams)
+        );
+    }
+
+    /**
+     * Wether publish comment success
+     */
+    isPublishSuccess(): Observable<boolean> {
+        return this.getSubmitCommentResult().pipe(
+            withLatestFrom(
+                this.getRequestParams().pipe(
+                    map(state => state.addComment),
+                    filter(request => !!request && request.commentId === -1)
+                ),
+                (result, _) => !!result
+            )
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    isLoading(): Observable<boolean> {
+        return this.store.pipe(
+            select(fromRoot.selectCommentUIState),
+            map(res => res.loading)
+        );
+    }
+
     //  =======================================================Local state change=======================================================
+
+    /**
+     * clear qiniu token
+     */
+    clearQiniuToken(): void {
+        this.store.dispatch(new ClearQiniuTokenAction());
+    }
 
     //  =======================================================Error Handle=======================================================
 

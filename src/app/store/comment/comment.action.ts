@@ -215,6 +215,12 @@ export class GetQiniuTokenSuccessAction extends GetQiniuToken implements Action 
 
 //  ===========================================Local action===================================
 
+export const CLEAR_QINIU_TOKEN = '[Comment] CLEAR_QINIU_TOKEN';
+
+export class ClearQiniuTokenAction implements Action {
+    readonly type = CLEAR_QINIU_TOKEN;
+}
+
 //  none local action
 
 export type ApiActions = GetCommentListRequestAction
@@ -233,7 +239,8 @@ export type ApiActions = GetCommentListRequestAction
     | UpdateCommentFailAction
     | UpdateCommentSuccessAction;
 
-export type Actions = ApiActions;
+export type Actions = ApiActions
+    | ClearQiniuTokenAction;
 
 export const ResponseActions = {
     GetCommentListFailAction,
