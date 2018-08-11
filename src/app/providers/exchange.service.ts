@@ -4,8 +4,8 @@ import { Observable, of as observableOf, Subscription } from 'rxjs';
 
 import { BaseService } from '../base/base.service';
 import { Exchange, GetExchangeListResponse } from '../interfaces/response.interface';
-import { ErrorService } from '../providers/error.service';
-import { ProcessService } from '../providers/process.service';
+import { ErrorService } from './error.service';
+import { ProcessService } from './process.service';
 import * as fromRoot from '../store/index.reducer';
 import { map } from 'rxjs/operators';
 import { isEmpty } from 'lodash';

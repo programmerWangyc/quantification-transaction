@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 
 import { includes, isEmpty } from 'lodash';
 import * as moment from 'moment';
@@ -34,18 +34,30 @@ export class RobotService extends BaseService {
 
     //  =======================================================Serve Request=======================================================
 
+    /**
+     * @ignore
+     */
     launchRobotList(data: Observable<fromReq.GetRobotListRequest>): Subscription {
         return this.process.processRobotList(data);
     }
 
+    /**
+     * @ignore
+     */
     launchRobotDetail(data: Observable<fromReq.GetRobotDetailRequest>) {
         return this.process.processRobotDetail(data);
     }
 
+    /**
+     * @ignore
+     */
     launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>, allowSeparateRequest = true): Subscription {
         return this.process.processSubscribeRobot(data, allowSeparateRequest);
     }
 
+    /**
+     * @ignore
+     */
     launchCreateRobot(source: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
             source.pipe(
@@ -54,101 +66,155 @@ export class RobotService extends BaseService {
                         map(sure => sure ? data : null)
                     ) : observableOf(data))
                 )),
-                filter(v => !!v)
+                this.filterTruth()
             )
         );
+    }
+
+    /**
+     * @ignore
+     */
+    launchPublicRobotList(source: Observable<fromReq.GetPublicRobotListRequest>): Subscription {
+        return this.process.processPublicRobotList(source);
     }
 
     //  =======================================================Date Acquisition=======================================================
 
     // robot list
+    /**
+     * @ignore
+     */
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
-        return this.store.select(fromRoot.selectRobotListData)
-            .pipe(
-                filter(this.isTruth)
-            );
+        return this.store.select(fromRoot.selectRobotListData).pipe(
+            this.filterTruth()
+        );
     }
 
+    /**
+     * @ignore
+     */
     getRobotTotal(): Observable<number> {
-        return this.getRobotListResponse()
-            .pipe(
-                map(res => res.all)
-            );
+        return this.getRobotListResponse().pipe(
+            map(res => res.all)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getRobotConcurrence(): Observable<number> {
-        return this.getRobotListResponse()
-            .pipe(
-                map(res => res.concurrent)
-            );
+        return this.getRobotListResponse().pipe(
+            map(res => res.concurrent)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getRobots(): Observable<fromRes.Robot[]> {
-        return this.getRobotListResponse()
-            .pipe(
-                map(res => res.robots)
-            );
+        return this.getRobotListResponse().pipe(
+            map(res => res.robots)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getRobotListResState(): Observable<fromRes.ResponseState> {
-        return this.store.select(fromRoot.selectRobotListResState)
-            .pipe(
-                filter(this.isTruth)
-            );
+        return this.store.pipe(
+            select(fromRoot.selectRobotListResState),
+            this.filterTruth()
+        );
     }
 
     getRobotCountByStatus(predicate: (robot: fromRes.Robot) => boolean): Observable<fromRes.Robot[]> {
-        return this.getRobots()
-            .pipe(
-                map(robots => robots.filter(predicate))
-            );
+        return this.getRobots().pipe(
+            map(robots => robots.filter(predicate))
+        );
     }
 
     getRobotDeadLine(): Observable<string> {
-        return this.getRobotCountByStatus(this.isNormalStatus)
-            .pipe(
-                withLatestFrom(this.pubService.getBalance()),
-                map(([robots, balance]) => {
-                    const now = parseInt(new Date().getTime() / 10000 + '', 10) * 10000;
+        return this.getRobotCountByStatus(this.isNormalStatus).pipe(
+            withLatestFrom(this.pubService.getBalance()),
+            map(([robots, balance]) => {
+                const now = parseInt(new Date().getTime() / 10000 + '', 10) * 10000;
 
-                    const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
+                const remain = robots.reduce((acc, cur) => acc + (cur.charge_time * 1000 - now), 0);
 
-                    const count = Math.max(1, robots.length);
+                const count = Math.max(1, robots.length);
 
-                    const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '', 10);
+                const remainTime = parseInt(remain + (balance / 1e8 / 0.125) * 3600000 / count + '', 10);
 
-                    return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
-                })
-            );
+                return moment(now + remainTime).format('YYYY-MM-DD HH:mm:ss');
+            })
+        );
     }
 
+    /**
+     * 总收益
+     */
     getGrossProfit(): Observable<number> {
-        return this.getRobots()
-            .pipe(
-                map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0))
-            );
+        return this.getRobots().pipe(
+            map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0))
+        );
     }
+
+    // public robot list
+    /**
+     * @ignore
+     */
+    private getPublicRobotListResponse(): Observable<fromRes.GetPublicRobotListResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectPublicRobotListResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getPublicRobotList(): Observable<fromRes.PublicRobot[]> {
+        return this.getPublicRobotListResponse().pipe(
+            map(res => res.result.robots)
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getPublicRobotTotal(): Observable<number> {
+        return this.getPublicRobotListResponse().pipe(
+            map(res => res.result.all)
+        );
+    }
+
 
     // robot detail
+    /**
+     * @ignore
+     */
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
-        return this.store.select(fromRoot.selectRobotDetailResponse)
-            .pipe(
-                filter(this.isTruth)
-            );
+        return this.store.select(fromRoot.selectRobotDetailResponse).pipe(
+            filter(this.isTruth)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getRobotDetail(): Observable<fromRes.RobotDetail> {
-        return this.getRobotDetailResponse()
-            .pipe(
-                map(res => res.result.robot)
-            );
+        return this.getRobotDetailResponse().pipe(
+            map(res => res.result.robot)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getCurrentRobotId(): Observable<number> {
-        return this.getRobotDetail()
-            .pipe(
-                map(robot => robot.id)
-            );
+        return this.getRobotDetail().pipe(
+            map(robot => robot.id)
+        );
     }
 
     getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
@@ -157,84 +223,99 @@ export class RobotService extends BaseService {
                 const [kLinePeriod, exchangeIds, stocks] = JSON.parse(detail.strategy_exchange_pairs);
 
                 return { kLinePeriod, exchangeIds, stocks };
-            }));
-    }
-
-    canChangePlatform(): Observable<boolean> {
-        return this.getRobotStrategyExchangePair()
-            .pipe(
-                map(pairs => pairs.exchangeIds.some(id => id > -10)),
-                tap(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
-            );
-    }
-
-    // subscribe robot
-    private getSubscribeRobotResponse(): Observable<fromRes.SubscribeRobotResponse> {
-        return this.store.select(fromRoot.selectSubscribeRobotResponse)
-            .pipe(
-                filter(this.isTruth),
+            })
         );
     }
 
+    /**
+     * @ignore
+     */
+    canChangePlatform(): Observable<boolean> {
+        return this.getRobotStrategyExchangePair().pipe(
+            map(pairs => pairs.exchangeIds.some(id => id > -10)),
+            tap(canChange => !canChange && this.tipService.showTip('ROBOT_CREATED_BY_API_TIP'))
+        );
+    }
+
+    // subscribe robot
+    /**
+     * @ignore
+     */
+    private getSubscribeRobotResponse(): Observable<fromRes.SubscribeRobotResponse> {
+        return this.store.select(fromRoot.selectSubscribeRobotResponse).pipe(
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
     isSubscribeRobotSuccess(): Observable<boolean> {
-        return this.getSubscribeRobotResponse()
-            .pipe(
-                map(res => res.result)
-            );
+        return this.getSubscribeRobotResponse().pipe(
+            map(res => res.result)
+        );
     }
 
     // server send message
+    /**
+     * @ignore
+     */
     private getServerSendRobotMessage(): Observable<fromRes.ServerSendRobotMessage> {
-        return this.store.select(fromRoot.selectServerSendRobotMessage)
-            .pipe(
-                filter(this.isTruth)
-            );
+        return this.store.select(fromRoot.selectServerSendRobotMessage).pipe(
+            filter(this.isTruth)
+        );
     }
 
+    /**
+     * @ignore
+     */
     getServerSendRobotMessageType(msgType: number): Observable<fromRes.ServerSendRobotMessage> {
-        return this.getServerSendRobotMessage()
-            .pipe(
-                filter(msg => !!(msg.flags & msgType))
-            );
+        return this.getServerSendRobotMessage().pipe(
+            filter(msg => !!(msg.flags & msgType))
+        );
     }
 
     getRobotSummary(data: Observable<string>): Observable<any[]> {
-        return data
-            .pipe(
-                filter(summary => !isEmpty(summary)),
-                mergeMap(summary => {
-                    const ary = summary.split('\n');
+        return data.pipe(
+            filter(summary => !isEmpty(summary)),
+            mergeMap(summary => {
+                const ary = summary.split('\n');
 
-                    return observableFrom(ary)
-                        .pipe(
-                            map(res => this.getSummary(res.trim())),
-                            reduce((acc, cur) => [...acc, cur], []),
-                    );
-                })
-            );
+                return observableFrom(ary).pipe(
+                    map(res => this.getSummary(res.trim())),
+                    reduce((acc, cur) => [...acc, cur], []),
+                );
+            })
+        );
     }
 
     //  =======================================================Short cart method==================================================
 
+    /**
+     * @ignore
+     */
     monitorServerSendRobotStatus(): Subscription {
-        const param = this.getServerSendRobotMessage()
-            .pipe(
-                filter(data => data.status && this.isOverStatus(data)),
-                switchMap(data => this.getRobotDetail()
-                    .pipe(
-                        map(({ id }) => ({ id })),
-                        filter(({ id }) => id === data.id)
-                    )
-                )
-            );
+        const param = this.getServerSendRobotMessage().pipe(
+            filter(data => data.status && this.isOverStatus(data)),
+            switchMap(data => this.getRobotDetail().pipe(
+                map(({ id }) => ({ id })),
+                filter(({ id }) => id === data.id)
+            ))
+        );
 
         return this.launchRobotDetail(param);
     }
 
+    /**
+     * 结束状态
+     */
     isOverStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
         return includes([fromRes.RobotStatus.COMPLETE, fromRes.RobotStatus.STOPPED, fromRes.RobotStatus.ERROR], robot.status);
     }
 
+    /**
+     * 正常状态
+     */
     isNormalStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
         return includes([fromRes.RobotStatus.QUEUEING, fromRes.RobotStatus.RUNNING, fromRes.RobotStatus.STOPPING], robot.status);
     }
@@ -263,32 +344,57 @@ export class RobotService extends BaseService {
 
     //  =======================================================Local state modify==================================================
 
+    /**
+     * 获取loading的状态；
+     * @param type loading type
+     */
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState)
-            .pipe(
-                map(state => type ? state[type] : state.loading)
-            );
+        return this.store.select(fromRoot.selectRobotUiState).pipe(
+            map(state => type ? state[type] : state.loading)
+        );
     }
 
+    /**
+     * @ignore
+     */
     resetRobotDetail(): void {
         this.store.dispatch(new ResetRobotDetailAction());
     }
 
+    /**
+     * @ignore
+     */
     resetRobotState(): void {
         this.store.dispatch(new ResetRobotStateAction());
     }
 
     //  =======================================================Error Handle=======================================================
 
+    /**
+     * @ignore
+     */
     handleRobotListError(): Subscription {
         return this.error.handleResponseError(this.getRobotListResState());
     }
 
+    /**
+     * @ignore
+     */
     handleRobotDetailError(): Subscription {
         return this.error.handleResponseError(this.getRobotDetailResponse());
     }
 
+    /**
+     * @ignore
+     */
     handleSubscribeRobotError(): Subscription {
         return this.error.handleResponseError(this.getSubscribeRobotResponse());
+    }
+
+    /**
+     * @ignore
+     */
+    handlePublicRobotListError(): Subscription {
+        return this.error.handleResponseError(this.getPublicRobotListResponse());
     }
 }

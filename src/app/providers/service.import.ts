@@ -11,12 +11,10 @@ import { TipService } from './tip.service';
 import { UtilService } from './util.service';
 import { WebsocketService } from './websocket.service';
 import { ExchangeService } from './exchange.service';
-import { CommentService } from './comment.service';
 
 export const GLOBAL_SERVICES = [
     BtNodeService,
     ChartService,
-    CommentService,
     ConstantService,
     EncryptService,
     ErrorService,

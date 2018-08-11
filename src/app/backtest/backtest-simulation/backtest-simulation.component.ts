@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map, startWith, switchMapTo } from 'rxjs/operators';
 
-import { ExchangeOptionsComponent } from '../../backtest/exchange-options/exchange-options.component';
-import { BacktestConstantService } from '../../backtest/providers/backtest.constant.service';
-import { BacktestService } from '../../backtest/providers/backtest.service';
+import { ExchangeOptionsComponent } from '../exchange-options/exchange-options.component';
+import { BacktestConstantService } from '../providers/backtest.constant.service';
+import { BacktestService } from '../providers/backtest.service';
 import { BaseComponent } from '../../base/base.component';
 import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';

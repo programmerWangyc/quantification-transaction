@@ -11,10 +11,10 @@ import { CategoryType, GetStrategyListByNameRequest } from '../../interfaces/req
 import { StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { UtilService } from '../../providers/util.service';
-import { Category, StrategyConstantService } from '../providers/strategy.constant.service';
-import { StrategyService } from '../providers/strategy.service';
-import { StrategyRenewalComponent } from '../strategy-renewal/strategy-renewal.component';
-import { StrategyVisibilityType } from '../strategy.config';
+import { StrategyVisibilityType } from '../../strategy/strategy.config';
+import { Category, StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
+import { StrategyService } from '../../strategy/providers/strategy.service';
+import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 
 @Component({
     selector: 'app-strategy-market',

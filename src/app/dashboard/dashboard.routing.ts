@@ -5,7 +5,6 @@ import { AgentComponent } from './agent/agent.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
-import { FactComponent } from './fact/fact.component';
 import { StrategyGuard, RobotGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
@@ -23,6 +22,7 @@ import { ExchangeComponent } from './exchange/exchange.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { StrategyDetailComponent } from '../square/strategy-detail/strategy-detail.component';
+import { FactComponent } from '../fact/fact/fact.component';
 
 const routs: Routes = [
     {

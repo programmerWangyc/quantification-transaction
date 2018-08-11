@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { MarkdownModule } from 'ngx-markdown';
 
 import { SharedModule } from '../shared/shared.module';
-import { ToolModule } from '../tool/tool.module';
 import { AddArgComponent } from './add-arg/add-arg.component';
 import { AlternationPreviewComponent } from './alternation-preview/alternation-preview.component';
 import { ArgListComponent } from './arg-list/arg-list.component';
@@ -23,7 +22,6 @@ import { StrategyCodemirrorComponent } from './strategy-codemirror/strategy-code
 import { StrategyDependanceComponent } from './strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from './strategy-des/strategy-des.component';
 import { StrategyListComponent } from './strategy-list/strategy-list.component';
-import { StrategyMarketComponent } from './strategy-market/strategy-market.component';
 import { StrategyOverviewComponent } from './strategy-overview/strategy-overview.component';
 import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
@@ -33,58 +31,55 @@ import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component
     imports: [
         CommonModule,
         SharedModule,
-        ToolModule,
         MarkdownModule.forRoot(),
         RouterModule,
     ],
     declarations: [
-        StrategyArgComponent,
+        AddArgComponent,
+        AlternationPreviewComponent,
+        ArgListComponent,
         DIRECTIVES,
+        GenKeyPanelComponent,
+        InnerShareConfirmComponent,
         PIPES,
+        PublicDetailComponent,
+        ShareConfirmComponent,
+        StrategyArgComponent,
+        StrategyCodemirrorComponent,
+        StrategyDependanceComponent,
+        StrategyDesComponent,
         StrategyListComponent,
         StrategyOverviewComponent,
-        ShareConfirmComponent,
-        InnerShareConfirmComponent,
-        GenKeyPanelComponent,
-        VerifyGenKeyComponent,
-        StrategyRenewalComponent,
-        StrategyDesComponent,
         StrategyRemoteEditComponent,
-        StrategyCodemirrorComponent,
-        AddArgComponent,
-        ArgListComponent,
-        StrategyDependanceComponent,
-        AlternationPreviewComponent,
-        StrategyMarketComponent,
-        PublicDetailComponent,
+        StrategyRenewalComponent,
+        VerifyGenKeyComponent,
     ],
     providers: [
-        StrategyService,
-        StrategyOperateService,
         StrategyConstantService,
+        StrategyOperateService,
+        StrategyService,
     ],
     entryComponents: [
-        ShareConfirmComponent,
-        InnerShareConfirmComponent,
         GenKeyPanelComponent,
+        InnerShareConfirmComponent,
+        ShareConfirmComponent,
         StrategyRenewalComponent,
     ],
     exports: [
-        StrategyArgComponent,
+        AddArgComponent,
+        AlternationPreviewComponent,
+        ArgListComponent,
         DIRECTIVES,
         PIPES,
+        PublicDetailComponent,
+        StrategyArgComponent,
+        StrategyCodemirrorComponent,
+        StrategyDependanceComponent,
+        StrategyDesComponent,
         StrategyListComponent,
         StrategyOverviewComponent,
-        VerifyGenKeyComponent,
-        StrategyDesComponent,
         StrategyRemoteEditComponent,
-        StrategyCodemirrorComponent,
-        AddArgComponent,
-        ArgListComponent,
-        StrategyDependanceComponent,
-        AlternationPreviewComponent,
-        StrategyMarketComponent,
-        PublicDetailComponent,
+        VerifyGenKeyComponent,
     ],
 })
 export class StrategyModule { }

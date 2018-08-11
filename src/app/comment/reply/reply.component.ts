@@ -7,7 +7,7 @@ import { UploadFile } from 'ng-zorro-antd';
 import { from, merge, Observable, Subject } from 'rxjs';
 import { delay, map, timeout } from 'rxjs/operators';
 
-import { CommentService } from '../../providers/comment.service';
+import { CommentService } from '../providers/comment.service';
 import { PublicService } from '../../providers/public.service';
 import { TipService } from '../../providers/tip.service';
 

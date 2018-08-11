@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatListModule } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
-import { ToolModule } from '../tool/tool.module';
 import { ContactComponent } from './contact/contact.component';
 import { DetailComponent } from './detail/detail.component';
 import { EntranceComponent } from './entrance/entrance.component';
@@ -16,7 +16,7 @@ import { SundryComponent } from './sundry/sundry.component';
     imports: [
         CommonModule,
         SharedModule,
-        ToolModule,
+        MatListModule,
     ],
     declarations: [
         ContactComponent,

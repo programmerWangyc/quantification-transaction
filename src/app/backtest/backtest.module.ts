@@ -5,7 +5,6 @@ import { ChartModule } from 'angular2-highcharts';
 import { RobotModule } from '../robot/robot.module';
 import { SharedModule } from '../shared/shared.module';
 import { StrategyModule } from '../strategy/strategy.module';
-import { ToolModule } from '../tool/tool.module';
 import { AccountInfoComponent } from './account-info/account-info.component';
 import { AdvancedOptionsComponent } from './advanced-options/advanced-options.component';
 import { ArgOptimizerComponent } from './arg-optimizer/arg-optimizer.component';
@@ -34,7 +33,6 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
     imports: [
         CommonModule,
         SharedModule,
-        ToolModule,
         RobotModule,
         StrategyModule,
         ChartModule.forRoot(

@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { isString, last } from 'lodash';
 
 import { ConstantService } from '../../providers/constant.service';
-import { LogTypes } from '../../tool/tool.config';
+import { LogTypes } from '../tool.config';
 
 @Pipe({ name: 'eid2String' })
 export class Eid2StringPipe implements PipeTransform {
@@ -86,6 +86,8 @@ export class ExtraContentPipe implements PipeTransform {
     colorInfoRegExp = /#[0-9A-Za-z]{6,12}$/gi;
 
     transform(source: string): string {
+        if (!isString(source)) return source;
+
         if (last(source) === '@') {
             source = source.substring(0, source.length - 1).trim();
         }
@@ -132,6 +134,8 @@ function getColorInfo(source: string): string {
 })
 export class ExtraColorPickerPipe implements PipeTransform {
     transform(source: string): string {
+        if (!isString(source)) return source;
+
         const info = getColorInfo(source);
 
         return !!info ? info.slice(0, 7) : 'inherit';

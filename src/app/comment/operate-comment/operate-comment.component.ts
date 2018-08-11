@@ -27,7 +27,6 @@ export class OperateCommentComponent implements OnInit {
      */
     @Output() edit: EventEmitter<any> = new EventEmitter();
 
-
     /**
      * 当前用户
      */

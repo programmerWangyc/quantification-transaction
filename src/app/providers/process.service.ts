@@ -69,6 +69,10 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetRobotListRequestAction(params)));
     }
 
+    processPublicRobotList(paramObs: Observable<Request.GetPublicRobotListRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetPublicRobotListRequestAction(params)));
+    }
+
     processPublicRobot(paramObs: Observable<Request.PublicRobotRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new RobotActions.PublicRobotRequestAction(params)));
     }

@@ -71,6 +71,13 @@ export interface GetRobotListRequest {
     status: number; // 机器人的状态
 }
 
+// public robot list
+export interface GetPublicRobotListRequest {
+    offset: number;
+    limit: number;
+    status: number; // -1: all status;
+}
+
 // public robot
 export interface PublicRobotRequest {
     id: number;
@@ -481,6 +488,6 @@ export interface GetQiniuTokenRequest {
 
 
 /**
- * 接口总数： 83， 已完成： 44
+ * 接口总数： 83， 已完成： 45
  */
 

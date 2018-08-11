@@ -19,11 +19,17 @@ import { AppState, selectRobotRequestParameters } from '../index.reducer';
 import * as platformActions from '../platform/platform.action';
 import * as robotActions from './robot.action';
 
+/**
+ * @ignore
+ */
 @Injectable()
 export class RobotEffect extends BaseEffect {
 
     @Effect()
     robotList$: Observable<ResponseAction> = this.getResponseAction(robotActions.GET_ROBOT_LIST, robotActions.ResponseActions);
+
+    @Effect()
+    publicRobotList$: Observable<ResponseAction> = this.getResponseAction(robotActions.GET_PUBLIC_ROBOT_LIST, robotActions.ResponseActions);
 
     @Effect()
     publishRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.PUBLIC_ROBOT, robotActions.ResponseActions);

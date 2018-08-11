@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { BtCommentType } from '../../app.config';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { CommentListResponse } from '../../interfaces/response.interface';
-import { CommentService } from '../../providers/comment.service';
+import { CommentService } from '../../comment/providers/comment.service';
 
 @Component({
     selector: 'app-strategy-detail',

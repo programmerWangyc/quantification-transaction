@@ -4,12 +4,12 @@ import { VariableOverview } from '../../interfaces/app.interface';
 import {
     CommandRobotRequest, DeleteRobotRequest, GetRobotDetailRequest, GetRobotListRequest, GetRobotLogsRequest,
     ModifyRobotRequest, PluginRunRequest, PublicRobotRequest, RestartRobotRequest, SaveRobotRequest, SetWDRequest,
-    StopRobotRequest, SubscribeRobotRequest, WsRequest
+    StopRobotRequest, SubscribeRobotRequest, WsRequest, GetPublicRobotListRequest
 } from '../../interfaces/request.interface';
 import {
     CommandRobotResponse, DeleteRobotResponse, GetRobotDetailResponse, GetRobotListResponse, GetRobotLogsResponse,
     ModifyRobotResponse, PluginRunResponse, PublicRobotResponse, RestartRobotResponse, SaveRobotResponse,
-    ServerSendRobotMessage, StopRobotResponse, SubscribeRobotResponse
+    ServerSendRobotMessage, StopRobotResponse, SubscribeRobotResponse, GetPublicRobotListResponse
 } from '../../interfaces/response.interface';
 import { ImportedArg } from '../../robot/robot.interface';
 import { ApiAction } from '../base.action';
@@ -24,9 +24,9 @@ export class ReceiveServerSendRobotEventAction implements Action {
     constructor(public payload: ServerSendRobotMessage) { }
 }
 
-// =====================================================Robot list=========================================
+// =====================================================Robot list=================================================
 
-export enum RobotListOrder {
+enum RobotListOrder {
     start,
     limit,
     status,
@@ -71,9 +71,56 @@ export class GetRobotListSuccessAction extends GetRobotListAction implements Act
     constructor(public payload: GetRobotListResponse) { super(); }
 }
 
+// =====================================================Public Robot list=================================================
+
+enum PublicRobotListOrder {
+    offset,
+    limit,
+    status,
+    length,
+}
+
+class GetPublicRobotListAction extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    command = 'GetPublicRobotList';
+
+    order = PublicRobotListOrder;
+
+    constructor() { super(); }
+}
+
+export const GET_PUBLIC_ROBOT_LIST = '[Robot] GET_PUBLIC_ROBOT_LIST';
+
+export class GetPublicRobotListRequestAction extends GetPublicRobotListAction implements Action {
+    readonly type = GET_PUBLIC_ROBOT_LIST;
+
+    public allowSeparateRequest = true;
+
+    constructor(public payload: GetPublicRobotListRequest) { super(); }
+}
+
+export const GET_PUBLIC_ROBOT_LIST_FAIL = '[Robot] GET_PUBLIC_ROBOT_LIST_FAIL';
+
+export class GetPublicRobotListFailAction extends GetPublicRobotListAction implements Action {
+    readonly type = GET_PUBLIC_ROBOT_LIST_FAIL;
+
+    constructor(public payload: GetPublicRobotListResponse) { super(); }
+}
+
+export const GET_PUBLIC_ROBOT_LIST_SUCCESS = '[Robot] GET_PUBLIC_ROBOT_LIST_SUCCESS';
+
+export class GetPublicRobotListSuccessAction extends GetPublicRobotListAction implements Action {
+    readonly type = GET_PUBLIC_ROBOT_LIST_SUCCESS;
+
+    constructor(public payload: GetPublicRobotListResponse) { super(); }
+}
+
 // =====================================================Public robot=========================================
 
-export enum PublicRobotOrder {
+enum PublicRobotOrder {
     id,
     type,
     length,
@@ -199,7 +246,7 @@ export class SubscribeRobotSuccessAction extends SubscribeRobotAction implements
 
 // =====================================================Robot logs=========================================
 
-export enum RobotLogsOrder {
+enum RobotLogsOrder {
     robotId,
     logMinId,
     logMaxId,
@@ -336,7 +383,7 @@ export class StopRobotSuccessAction extends StopRobotAction implements Action {
 
 // ======================================================Modify robot=========================================
 
-export enum ModifyRobotOrder {
+enum ModifyRobotOrder {
     id,
     name,
     nodeId,
@@ -387,7 +434,7 @@ export class ModifyRobotSuccessAction extends ModifyRobotAction implements Actio
 
 // ======================================================Command robot=========================================
 
-export enum CommandRobotOrder {
+enum CommandRobotOrder {
     id,
     command,
     length,
@@ -433,7 +480,7 @@ export class CommandRobotSuccessAction extends CommandRobotAction implements Act
 
 // ======================================================Delete robot=========================================
 
-export enum DeleteRobotOrder {
+enum DeleteRobotOrder {
     id,
     checked,
     length,
@@ -479,7 +526,7 @@ export class DeleteRobotSuccessAction extends DeleteRobotAction implements Actio
 
 // ======================================================Create robot=========================================
 
-export enum SaveRobotOrder {
+enum SaveRobotOrder {
     name,
     args,
     strategyId,
@@ -668,6 +715,9 @@ export type ApiActions = GetRobotListRequestAction
     | DeleteRobotFailAction
     | DeleteRobotRequestAction
     | DeleteRobotSuccessAction
+    | GetPublicRobotListRequestAction
+    | GetPublicRobotListFailAction
+    | GetPublicRobotListSuccessAction
     | GetRobotDetailFailAction
     | GetRobotDetailRequestAction
     | GetRobotDetailSuccessAction
@@ -717,6 +767,8 @@ export const ResponseActions = {
     CommandRobotSuccessAction,
     DeleteRobotFailAction,
     DeleteRobotSuccessAction,
+    GetPublicRobotListFailAction,
+    GetPublicRobotListSuccessAction,
     GetRobotDetailFailAction,
     GetRobotDetailSuccessAction,
     GetRobotListFailAction,

@@ -116,6 +116,9 @@ const getRobotState = (state: AppState) => state.robot;
 export const selectRobotListResState = createSelector(getRobotState, robot.getRobotListResState);
 export const selectRobotListData = createSelector(getRobotState, robot.getRobotData);
 
+// public robot list
+export const selectPublicRobotListResponse = createSelector(getRobotState, robot.getPublicRobotListRes);
+
 // publish robot
 export const selectPublicRobotResponse = createSelector(getRobotState, robot.getPublicRobotRes);
 

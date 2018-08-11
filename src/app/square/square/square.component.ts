@@ -8,29 +8,10 @@ import { BtCommentType } from '../../app.config';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { SubmitCommentRequest } from '../../interfaces/request.interface';
 import { CommentListResponse } from '../../interfaces/response.interface';
-import { CommentService } from '../../providers/comment.service';
+import { CommentService } from '../../comment/providers/comment.service';
 import { PublicService } from '../../providers/public.service';
 
-@Component({
-    selector: 'app-square',
-    templateUrl: './square.component.html',
-    styleUrls: ['./square.component.scss'],
-})
-export class SquareComponent implements OnInit, OnDestroy {
-    /**
-     * @ignore
-     */
-    paths: Breadcrumb[] = [{ name: 'STRATEGY_SQUARE' }];
-
-    /**
-     * comments
-     */
-    comment: Observable<CommentListResponse>;
-
-    /**
-     * Current user
-     */
-    username: Observable<string>;
+export class CommentBaseComponent {
 
     /**
      * comment total;
@@ -43,10 +24,24 @@ export class SquareComponent implements OnInit, OnDestroy {
     publish: Subject<string> = new Subject();
 
     /**
+     * Current user
+     */
+    username: Observable<string>;
+
+    /**
+     * Public comment success;
+     */
+    isPublishSuccess: Observable<boolean>;
+
+    /**
+     * comments
+     */
+    comment: Observable<CommentListResponse>;
+
+    /**
      * delete comment
      */
     delete: Subject<SubmitCommentRequest> = new Subject();
-
 
     /**
      * update comment;
@@ -58,35 +53,50 @@ export class SquareComponent implements OnInit, OnDestroy {
      */
     reply: Subject<SubmitCommentRequest> = new Subject();
 
-    /**
-     * Public comment success;
-     */
-    isPublishSuccess: Observable<boolean>;
-
-    /**
-     * @ignore
-     */
-    isAlive = true;
-
     constructor(
-        private publicService: PublicService,
-        private commentService: CommentService,
-        private translate: TranslateService,
+        public publicService: PublicService,
+        public commentService: CommentService,
+        public translate: TranslateService,
     ) { }
 
     /**
      * @ignore
      */
-    ngOnInit() {
-        this.initialModel();
+    launch(topic: string, keepAlive: () => boolean): void {
+        this.commentService.launchCommentList(of({ topic, offset: -1, limit: -1 }));
 
-        this.launch();
+        this.commentService.launchAddComment(
+            merge(
+                this.publish.pipe(
+                    map(content => ({ topic, content, replyId: -1, subReplyId: -1, commentId: -1 }))
+                ),
+                this.reply.pipe(
+                    map(request => ({ ...request, topic: BtCommentType.square }))
+                )
+            ).pipe(
+                takeWhile(keepAlive)
+            )
+        );
+
+        this.commentService.launchDeleteComment(
+            this.delete.pipe(
+                takeWhile(keepAlive),
+                map(request => ({ ...request, topic: BtCommentType.square }))
+            )
+        );
+
+        this.commentService.launchUpdateComment(
+            this.update.pipe(
+                takeWhile(keepAlive),
+                map(request => ({ ...request, topic: BtCommentType.square }))
+            )
+        );
     }
 
     /**
      * @ignore
      */
-    initialModel() {
+    initialModel(): void {
         this.comment = this.commentService.getCommentList();
 
         this.total = this.comment.pipe(
@@ -99,39 +109,39 @@ export class SquareComponent implements OnInit, OnDestroy {
             filter(isSuccess => isSuccess)
         );
     }
+}
+
+@Component({
+    selector: 'app-square',
+    templateUrl: './square.component.html',
+    styleUrls: ['./square.component.scss'],
+})
+export class SquareComponent extends CommentBaseComponent implements OnInit, OnDestroy {
+    /**
+     * @ignore
+     */
+    paths: Breadcrumb[] = [{ name: 'STRATEGY_SQUARE' }];
 
     /**
      * @ignore
      */
-    launch() {
-        this.commentService.launchCommentList(of({ topic: BtCommentType.square, offset: -1, limit: -1 }));
+    isAlive = true;
 
-        this.commentService.launchAddComment(
-            merge(
-                this.publish.pipe(
-                    map(content => ({ topic: BtCommentType.square, content, replyId: -1, subReplyId: -1, commentId: -1 }))
-                ),
-                this.reply.pipe(
-                    map(request => ({ ...request, topic: BtCommentType.square }))
-                )
-            ).pipe(
-                takeWhile(() => this.isAlive)
-            )
-        );
+    constructor(
+        public publicService: PublicService,
+        public commentService: CommentService,
+        public translate: TranslateService,
+    ) {
+        super(publicService, commentService, translate);
+    }
 
-        this.commentService.launchDeleteComment(
-            this.delete.pipe(
-                takeWhile(() => this.isAlive),
-                map(request => ({ ...request, topic: BtCommentType.square }))
-            )
-        );
+    /**
+     * @ignore
+     */
+    ngOnInit() {
+        this.initialModel();
 
-        this.commentService.launchUpdateComment(
-            this.update.pipe(
-                takeWhile(() => this.isAlive),
-                map(request => ({ ...request, topic: BtCommentType.square }))
-            )
-        );
+        this.launch(BtCommentType.square, () => this.isAlive);
     }
 
     /**

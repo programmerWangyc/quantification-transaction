@@ -7,7 +7,6 @@ import { ChartModule } from 'angular2-highcharts';
 import { ChargeModule } from '../charge/charge.module';
 import { SharedModule } from '../shared/shared.module';
 import { StrategyModule } from '../strategy/strategy.module';
-import { ToolModule } from '../tool/tool.module';
 import { CreateRobotComponent } from './create-robot/create-robot.component';
 import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
@@ -31,7 +30,6 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
     imports: [
         CommonModule,
         SharedModule,
-        ToolModule,
         RouterModule,
         ChartModule.forRoot(
             require('highcharts/highstock')

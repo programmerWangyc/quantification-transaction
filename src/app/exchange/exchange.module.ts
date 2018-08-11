@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
-import { ToolModule } from '../tool/tool.module';
 import { CreateExchangeComponent } from './create-exchange/create-exchange.component';
 import { ExchangeListComponent } from './exchange-list/exchange-list.component';
 import { ExchangeSelectComponent } from './exchange-select/exchange-select.component';
@@ -16,7 +15,6 @@ import { ExchangeFormComponent } from './exchange-form/exchange-form.component';
     imports: [
         CommonModule,
         SharedModule,
-        ToolModule,
         RouterModule,
     ],
     declarations: [

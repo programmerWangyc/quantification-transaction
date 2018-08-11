@@ -1,0 +1,80 @@
+<nz-table #nestedTable [nzData]="robots" [nzPageSize]="50">
+    <thead>
+        <tr>
+            <th nzWidth="5%" nzShowExpand></th>
+            <th nzWidth="15%">{{'NAME' | translate}}</th>
+            <th nzWidth="30%">{{'STRATEGY_NAME' | translate}}</th>
+            <th nzWidth="10%">{{'PROFIT' | translate}}</th>
+            <th nzWidth="15%">{{'USER' | translate}}</th>
+            <th nzWidth="15%">{{'CREATE_DATE' | translate}}</th>
+            <th nzWidth="10%">{{'OPERATE' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--不要循环结构-->
+        <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+            <tr>
+                <ng-container>
+                    <td *ngIf="!!data.summary else emptyBlock" nzShowExpand [(nzExpand)]="data.expand"></td>
+                    <ng-template #emptyBlock>
+                        <td></td>
+                    </ng-template>
+                </ng-container>
+                <td>{{data.name}}</td>
+                <td>{{data.strategy_name}}</td>
+                <td>{{data.profit | number: '1.2-4'}}</td>
+                <td>{{data.username}}</td>
+                <td>{{data.date}}</td>
+                <td>
+                    <a>{{'ONLOOKERS' | translate}}</a>
+                </td>
+            </tr>
+            <tr *ngIf="!!data.summary && data.expand">
+                <td></td>
+                <td colspan="6">
+                    <!-- <div>
+                        <ng-container *ngIf="data.summary.titleImages as images">
+                            <img *ngFor="let img of images" [src]="img">
+                        </ng-container>
+                        <h4 *ngIf="data.summary.title as title">{{title}}</h4>
+                    </div> -->
+                    <app-robot-subtitle [summary]="data.summary"></app-robot-subtitle>
+
+                    <!-- <nz-tabset>
+                        <nz-tab *ngFor="let table of data.summary.tables" [nzTitle]="table.title">
+                            <nz-table [nzData]="table.rows" nzSize="middle" [nzShowPagination]="false">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let col of table.cols">{{col}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of table.rows">
+                                        <td *ngFor="let item of row">
+                                            <ng-container *ngIf="isImage(item) else normalContent">
+                                                <span [innerHTML]="item | summaryInfo | safeHtml"></span>
+                                            </ng-container>
+
+                                            <ng-template #normalContent>
+                                                <span [ngStyle]="{color: item | extraColorPicker}">{{item | extraContent | pluckContent}}</span>
+                                            </ng-template>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </nz-tab>
+                    </nz-tabset> -->
+                    <app-robot-inner-table [summary]="data.summary"></app-robot-inner-table>
+
+                    <!-- <div *ngIf="data.summary.info" class="info">
+                        <p>{{data.summary.info}}</p>
+                        <ng-container *ngIf="data.summary.infoImages as images">
+                            <img *ngFor="let image of images" [src]="image">
+                        </ng-container>
+                    </div> -->
+                    <app-robot-info [summary]="data.summary"></app-robot-info>
+                </td>
+            </tr>
+        </ng-template>
+    </tbody>
+</nz-table>

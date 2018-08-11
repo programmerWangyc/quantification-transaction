@@ -17,7 +17,6 @@ import { GLOBAL_SERVICES } from './providers/service.import';
 import { SharedModule } from './shared/shared.module';
 import { EFFECTS } from './store/index.effect';
 import { reducers } from './store/index.reducer';
-import { ToolModule } from './tool/tool.module';
 
 // Use AoT, so we need a exported factory function for compiler.
 export function HttpLoaderFactory(http: HttpClient) {
@@ -47,7 +46,6 @@ export function HttpLoaderFactory(http: HttpClient) {
             maxAge: 50,
         }),
         EffectsModule.forRoot(EFFECTS),
-        ToolModule,
         NgZorroAntdModule,
     ],
     providers: [

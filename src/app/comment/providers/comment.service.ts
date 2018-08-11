@@ -6,16 +6,16 @@ import * as qiniu from 'qiniu-js';
 import { Observable, Subscription, zip } from 'rxjs';
 import { filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { BaseService } from '../base/base.service';
-import * as fromReq from '../interfaces/request.interface';
-import * as fromRes from '../interfaces/response.interface';
-import { ClearQiniuTokenAction } from '../store/comment/comment.action';
-import { RequestParams } from '../store/comment/comment.reducer';
-import * as fromRoot from '../store/index.reducer';
-import { ConfirmComponent } from '../tool/confirm/confirm.component';
-import { ErrorService } from './error.service';
-import { ProcessService } from './process.service';
-import { TipService } from './tip.service';
+import { BaseService } from '../../base/base.service';
+import * as fromReq from '../../interfaces/request.interface';
+import * as fromRes from '../../interfaces/response.interface';
+import { ClearQiniuTokenAction } from '../../store/comment/comment.action';
+import { RequestParams } from '../../store/comment/comment.reducer';
+import * as fromRoot from '../../store/index.reducer';
+import { ConfirmComponent } from '../../tool/confirm/confirm.component';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import { TipService } from '../../providers/tip.service';
 
 @Injectable()
 export class CommentService extends BaseService {

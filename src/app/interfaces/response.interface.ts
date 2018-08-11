@@ -188,8 +188,8 @@ export interface Robot {
     strategy_id: number;
     strategy_isowner: boolean;
     strategy_name: string;
+    summary?: string;
     wd: number;
-    summary?: string; // !FIXME: 这个字段从接口上看目前还没有发现， 但从代码上看貌似有, 待确定。
 }
 
 export enum RobotStatus {
@@ -213,6 +213,39 @@ export interface RobotListResponse {
 }
 
 export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { }
+
+
+// public robot list
+export interface PublicRobotSummaryTable {
+    type: string;
+    title: string;
+    cols: string[];
+    rows: any[];
+}
+
+export interface PublicRobot {
+   date: string;
+   id: number;
+   is_sandbox: number;
+   name: string;
+   profit: number;
+   public: number;
+   refresh: number;
+   start_time: string;
+   status: number;
+   strategy_category: number;
+   strategy_id: number;
+   strategy_name: string;
+   summary?: string; // JSON type string; wrap in ``, 在store中被解析;
+   username: string;
+}
+
+export interface PublicRobotListResponse {
+    all: number;
+    robots: PublicRobot[];
+}
+
+export interface GetPublicRobotListResponse extends ResponseUnit<PublicRobotListResponse> { }
 
 // public robot
 export interface PublicRobotResponse extends ResponseUnit<boolean> { }

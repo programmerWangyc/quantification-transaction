@@ -2,14 +2,15 @@ import { cloneDeep, partition } from 'lodash';
 
 import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
 import {
-    CommandRobotRequest, DeleteRobotRequest, GetRobotDetailRequest, GetRobotLogsRequest, ModifyRobotRequest,
-    PluginRunRequest, PublicRobotRequest, RestartRobotRequest, SaveRobotRequest, StopRobotRequest, SubscribeRobotRequest
+    CommandRobotRequest, DeleteRobotRequest, GetPublicRobotListRequest, GetRobotDetailRequest, GetRobotLogsRequest,
+    ModifyRobotRequest, PluginRunRequest, PublicRobotRequest, RestartRobotRequest, SaveRobotRequest, StopRobotRequest,
+    SubscribeRobotRequest
 } from '../../interfaces/request.interface';
 import {
-    CommandRobotResponse, DeleteRobotResponse, GetRobotDetailResponse, GetRobotLogsResponse, LogOverview,
-    ModifyRobotResponse, PluginRunResponse, ProfitLog, PublicRobotResponse, ResponseState, RestartRobotResponse,
-    RobotListResponse, RunningLog, SaveRobotResponse, SemanticsLogsOverview, ServerSendRobotMessage, StopRobotResponse,
-    StrategyLog, SubscribeRobotResponse
+    CommandRobotResponse, DeleteRobotResponse, GetPublicRobotListResponse, GetRobotDetailResponse, GetRobotLogsResponse,
+    LogOverview, ModifyRobotResponse, PluginRunResponse, ProfitLog, PublicRobotResponse, ResponseState,
+    RestartRobotResponse, RobotListResponse, RunningLog, SaveRobotResponse, SemanticsLogsOverview,
+    ServerSendRobotMessage, StopRobotResponse, StrategyLog, SubscribeRobotResponse
 } from '../../interfaces/response.interface';
 import {
     COMMAND_PREFIX, ENCRYPT_PREFIX, LIST_PREFIX, VALUE_OF_BUTTON_TYPE_ARG
@@ -34,70 +35,74 @@ export enum RobotOperateType {
 }
 
 interface RequestParams {
-    publicRobot: PublicRobotRequest;
-    robotDetail: GetRobotDetailRequest; //
-    subscribeRobot: SubscribeRobotRequest; //
-    robotLogs: GetRobotLogsRequest; //
-    isSyncLogs: boolean;
-    restartRobot: RestartRobotRequest;
-    stopRobot: StopRobotRequest;
-    modifyRobot: ModifyRobotRequest;
     commandRobot: CommandRobotRequest;
     deleteRobot: DeleteRobotRequest;
-    saveRobot: SaveRobotRequest;
+    isSyncLogs: boolean;
+    modifyRobot: ModifyRobotRequest;
     pluginRun: PluginRunRequest;
+    publicRobotList: GetPublicRobotListRequest;
+    publicRobot: PublicRobotRequest;
+    restartRobot: RestartRobotRequest;
+    robotDetail: GetRobotDetailRequest;
+    robotLogs: GetRobotLogsRequest;
+    saveRobot: SaveRobotRequest;
+    stopRobot: StopRobotRequest;
+    subscribeRobot: SubscribeRobotRequest;
 }
 
 interface DefaultParams {
-    robotLogs: GetRobotLogsRequest;
     PROFIT_MAX_POINTS: number;
     STRATEGY_MAX_POINTS: number;
+    robotLogs: GetRobotLogsRequest;
 }
 
 interface RobotArgs {
-    strategyArgs: VariableOverview[];
     commandArgs: VariableOverview[];
+    strategyArgs: VariableOverview[];
     templateArgs: TemplateVariableOverview[];
 }
 
 export const OPERATE_ROBOT_LOADING_TAIL = 'RobotLoading';
 
 interface UIState {
-    currentRunningLogPage: number;
     currentProfitChartPage: number;
+    currentRunningLogPage: number;
     currentStrategyChartPage: number;
+    debugLoading: boolean;
     loading: boolean;
     logsLoading: boolean;
     publicRobotLoading: boolean;
-    stopRobotLoading: boolean;
     restartRobotLoading: boolean;
-    debugLoading: boolean;
+    stopRobotLoading: boolean;
+}
+
+export interface MonitoringSound {
+    isMonitorOpen: boolean;
+    logTypes: number[];
 }
 
 export interface State {
-    robotListResState: ResponseState;
-    robotList: RobotListResponse;
-    requestParams: RequestParams;
-    publicRobotRes: PublicRobotResponse;
-    robotDetailRes: GetRobotDetailResponse;
-    subscribeDetailRes: SubscribeRobotResponse;
-    robotLogsRes: GetRobotLogsResponse;
-    restartRobotRes: RestartRobotResponse;
-    stopRobotRes: StopRobotResponse;
-    deleteRobotRes: DeleteRobotResponse;
-    robotArgs: RobotArgs; // created by 'strategy_args' and 'templates' field belongs to robot detail response;
-    modifyRobotConfigRes: ModifyRobotResponse;
+    UIState: UIState;
     commandRobotRes: CommandRobotResponse;
     defaultParams: DefaultParams;
-    monitoringSound: {
-        isMonitorOpen: boolean;
-        logTypes: number[];
-    };
-    uiState: UIState;
-    serverMessage: ServerSendRobotMessage;
-    syncRobotLogsRes: GetRobotLogsResponse;
-    saveRobotRes: SaveRobotResponse;
+    deleteRobotRes: DeleteRobotResponse;
+    modifyRobotConfigRes: ModifyRobotResponse;
+    monitoringSound: MonitoringSound;
     pluginRunRes: PluginRunResponse;
+    publicRobotListRes: GetPublicRobotListResponse;
+    publicRobotRes: PublicRobotResponse;
+    requestParams: RequestParams;
+    restartRobotRes: RestartRobotResponse;
+    robotArgs: RobotArgs; // created by 'strategy_args' and 'templates' field belongs to robot detail response;
+    robotDetailRes: GetRobotDetailResponse;
+    robotList: RobotListResponse;
+    robotListResState: ResponseState;
+    robotLogsRes: GetRobotLogsResponse;
+    saveRobotRes: SaveRobotResponse;
+    serverMessage: ServerSendRobotMessage;
+    stopRobotRes: StopRobotResponse;
+    subscribeDetailRes: SubscribeRobotResponse;
+    syncRobotLogsRes: GetRobotLogsResponse;
 }
 
 const robotLogsDefaultParams = {
@@ -127,40 +132,45 @@ const initialDefaultParams: DefaultParams = {
     STRATEGY_MAX_POINTS: 1000,
 };
 
+const initialMonitoringSound: MonitoringSound = {
+    isMonitorOpen: false,
+    logTypes: [],
+};
+
+const initialUIState: UIState = {
+    currentProfitChartPage: 0,
+    currentRunningLogPage: 0,
+    currentStrategyChartPage: 0,
+    debugLoading: false,
+    loading: false,
+    logsLoading: false,
+    publicRobotLoading: false,
+    restartRobotLoading: false,
+    stopRobotLoading: false,
+};
+
 const initialState: State = {
-    robotListResState: null,
-    robotList: null,
-    requestParams: null,
-    publicRobotRes: null,
-    robotDetailRes: null,
-    subscribeDetailRes: null,
-    robotLogsRes: null,
-    restartRobotRes: null,
-    stopRobotRes: null,
-    deleteRobotRes: null,
-    robotArgs: null,
-    modifyRobotConfigRes: null,
+    UIState: initialUIState,
     commandRobotRes: null,
     defaultParams: initialDefaultParams,
-    monitoringSound: {
-        isMonitorOpen: false,
-        logTypes: [],
-    },
-    uiState: {
-        currentRunningLogPage: 0,
-        currentProfitChartPage: 0,
-        currentStrategyChartPage: 0,
-        loading: false,
-        logsLoading: false,
-        publicRobotLoading: false,
-        stopRobotLoading: false,
-        restartRobotLoading: false,
-        debugLoading: false,
-    },
-    serverMessage: null,
-    syncRobotLogsRes: null,
-    saveRobotRes: null,
+    deleteRobotRes: null,
+    modifyRobotConfigRes: null,
+    monitoringSound: initialMonitoringSound,
     pluginRunRes: null,
+    publicRobotListRes: null,
+    publicRobotRes: null,
+    requestParams: null,
+    restartRobotRes: null,
+    robotArgs: null,
+    robotDetailRes: null,
+    robotList: null,
+    robotListResState: null,
+    robotLogsRes: null,
+    saveRobotRes: null,
+    serverMessage: null,
+    stopRobotRes: null,
+    subscribeDetailRes: null,
+    syncRobotLogsRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -172,6 +182,17 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_ROBOT_LIST_SUCCESS:
             return { ...state, robotListResState: { error: action.payload.error, action: action.payload.action }, robotList: action.payload.result };
 
+        // public robot list
+        case actions.GET_PUBLIC_ROBOT_LIST:
+            return { ...state, UIState: { ...state.UIState, loading: true }, requestParams: { ...state.requestParams, publicRobotList: action.payload } };
+
+        case actions.GET_PUBLIC_ROBOT_LIST_FAIL:
+            return { ...state, publicRobotListRes: action.payload, UIState: { ...state.UIState, loading: false } };
+
+        case actions.GET_PUBLIC_ROBOT_LIST_SUCCESS:
+            // return { ...state, publicRobotListRes: optimizePublicRobotList(action.payload), UIState: { ...state.UIState, loading: false } };
+            return { ...state, publicRobotListRes: action.payload, UIState: { ...state.UIState, loading: false } };
+
         // public robot
         case actions.PUBLIC_ROBOT:
             return {
@@ -180,11 +201,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     ...state.requestParams,
                     publicRobot: action.payload,
                 },
-                uiState: { ...state.uiState, publicRobotLoading: true },
+                UIState: { ...state.UIState, publicRobotLoading: true },
             };
 
         case actions.PUBLIC_ROBOT_FAIL:
-            return { ...state, publicRobotRes: action.payload, uiState: { ...state.uiState, publicRobotLoading: false } };
+            return { ...state, publicRobotRes: action.payload, UIState: { ...state.UIState, publicRobotLoading: false } };
 
         case actions.PUBLIC_ROBOT_SUCCESS: {
             const { id, type } = state.requestParams.publicRobot;
@@ -195,18 +216,18 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = { ...state.robotList };
 
-            return { ...state, publicRobotRes: action.payload, robotList, uiState: { ...state.uiState, publicRobotLoading: false } };
+            return { ...state, publicRobotRes: action.payload, robotList, UIState: { ...state.UIState, publicRobotLoading: false } };
         }
 
         // robot detail
         case actions.GET_ROBOT_DETAIL: {
             const requestParams = { ...state.requestParams, robotDetail: action.payload };
 
-            return { ...state, requestParams, uiState: { ...state.uiState, loading: true } };
+            return { ...state, requestParams, UIState: { ...state.UIState, loading: true } };
         }
 
         case actions.GET_ROBOT_DETAIL_FAIL:
-            return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null }, uiState: { ...state.uiState, loading: false } };
+            return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null }, UIState: { ...state.UIState, loading: false } };
 
         case actions.GET_ROBOT_DETAIL_SUCCESS: {
             const { strategy_args, templates } = action.payload.result.robot;
@@ -228,8 +249,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
                         return { id, name, category, variables };
                     }),
                 },
-                uiState: {
-                    ...state.uiState,
+                UIState: {
+                    ...state.UIState,
                     loading: false,
                 },
             };
@@ -255,7 +276,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             } else {
                 const requestParams = { ...state.requestParams, robotLogs: action.payload, isSyncLogs: false };
 
-                return { ...state, uiState: { ...state.uiState, logsLoading: true }, requestParams };
+                return { ...state, UIState: { ...state.UIState, logsLoading: true }, requestParams };
             }
         }
 
@@ -263,7 +284,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             if (state.requestParams.isSyncLogs) {
                 return { ...state, syncRobotLogsRes: action.payload };
             } else {
-                return { ...state, uiState: { ...state.uiState, logsLoading: false }, robotLogsRes: action.payload };
+                return { ...state, UIState: { ...state.UIState, logsLoading: false }, robotLogsRes: action.payload };
             }
         }
 
@@ -287,16 +308,16 @@ export function reducer(state = initialState, action: actions.Actions): State {
             if (state.requestParams.isSyncLogs) {
                 return { ...state, syncRobotLogsRes: action.payload, robotDetailRes, robotList };
             } else {
-                return { ...state, uiState: { ...state.uiState, logsLoading: false }, robotLogsRes: action.payload, robotDetailRes, robotList };
+                return { ...state, UIState: { ...state.UIState, logsLoading: false }, robotLogsRes: action.payload, robotDetailRes, robotList };
             }
         }
 
         // restart robot
         case actions.RESTART_ROBOT:
-            return { ...state, uiState: { ...state.uiState, restartRobotLoading: true }, requestParams: { ...state.requestParams, restartRobot: { ...action.payload } } };
+            return { ...state, UIState: { ...state.UIState, restartRobotLoading: true }, requestParams: { ...state.requestParams, restartRobot: { ...action.payload } } };
 
         case actions.RESTART_ROBOT_FAIL:
-            return { ...state, uiState: { ...state.uiState, restartRobotLoading: false }, restartRobotRes: action.payload };
+            return { ...state, UIState: { ...state.UIState, restartRobotLoading: false }, restartRobotRes: action.payload };
 
         case actions.RESTART_ROBOT_SUCCESS: {
             const status = <number>action.payload.result;
@@ -309,15 +330,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            return { ...state, uiState: { ...state.uiState, restartRobotLoading: false }, restartRobotRes: action.payload, robotDetailRes, robotList };
+            return { ...state, UIState: { ...state.UIState, restartRobotLoading: false }, restartRobotRes: action.payload, robotDetailRes, robotList };
         }
 
         // stop robot
         case actions.STOP_ROBOT:
-            return { ...state, uiState: { ...state.uiState, stopRobotLoading: true }, requestParams: { ...state.requestParams, stopRobot: { ...action.payload } } };
+            return { ...state, UIState: { ...state.UIState, stopRobotLoading: true }, requestParams: { ...state.requestParams, stopRobot: { ...action.payload } } };
 
         case actions.STOP_ROBOT_FAIL:
-            return { ...state, uiState: { ...state.uiState, stopRobotLoading: false }, stopRobotRes: action.payload };
+            return { ...state, UIState: { ...state.UIState, stopRobotLoading: false }, stopRobotRes: action.payload };
 
         case actions.STOP_ROBOT_SUCCESS: {
             const status = <number>action.payload.result;
@@ -330,7 +351,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             const robotList = updateRobotListRes(state.robotList, keyNames, latestInfo);
 
-            return { ...state, uiState: { ...state.uiState, stopRobotLoading: false }, stopRobotRes: action.payload, robotDetailRes, robotList };
+            return { ...state, UIState: { ...state.UIState, stopRobotLoading: false }, stopRobotRes: action.payload, robotDetailRes, robotList };
         }
 
         // modify robot config
@@ -374,11 +395,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // run plugin
         case actions.RUN_PLUGIN:
-            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload }, uiState: { ...state.uiState, debugLoading: true } };
+            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload }, UIState: { ...state.UIState, debugLoading: true } };
 
         case actions.RUN_PLUGIN_FAIL:
         case actions.RUN_PLUGIN_SUCCESS:
-            return { ...state, pluginRunRes: action.payload, uiState: { ...state.uiState, debugLoading: false } };
+            return { ...state, pluginRunRes: action.payload, UIState: { ...state.UIState, debugLoading: false } };
 
         // ==============================================Local action=====================================================
 
@@ -424,13 +445,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // ui state
         case actions.CHANGE_LOG_PAGE:
-            return { ...state, uiState: { ...state.uiState, currentRunningLogPage: action.payload } };
+            return { ...state, UIState: { ...state.UIState, currentRunningLogPage: action.payload } };
 
         case actions.CHANGE_PROFIT_CHART_PAGE:
-            return { ...state, uiState: { ...state.uiState, currentProfitChartPage: action.payload } };
+            return { ...state, UIState: { ...state.UIState, currentProfitChartPage: action.payload } };
 
         case actions.CHANGE_STRATEGY_CHART_PAGE:
-            return { ...state, uiState: { ...state.uiState, currentStrategyChartPage: action.payload } };
+            return { ...state, UIState: { ...state.UIState, currentStrategyChartPage: action.payload } };
 
         // update robot watch dog state
         case actions.UPDATE_ROBOT_WATCH_DOG_STATE: {
@@ -475,7 +496,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 }
 
 /**
- *  Update robot arguments;
+ * Update robot arguments;
  */
 function updateArg(args: VariableOverview[], target: VariableOverview | ImportedArg): VariableOverview[] {
     const index = args.findIndex(item => item.variableName === target.variableName);
@@ -488,7 +509,7 @@ function updateArg(args: VariableOverview[], target: VariableOverview | Imported
 }
 
 /**
- *  Update robot template arguments;
+ * Update robot template arguments;
  */
 function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverview | ImportedArg, templateFlag: string | number): TemplateVariableOverview[] {
     const target = args.find(item => item.name === templateFlag || item.id === templateFlag);
@@ -499,9 +520,8 @@ function updateTemplateArg(args: TemplateVariableOverview[], data: VariableOverv
 }
 
 /**
- * @function createScriptArgs;
+ * This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
  * @param args Strategy args or template args;
- *  This method used for translate the JSON type args to dictionary type, and finally flatten the two-dimensional array.
  */
 export function createScriptArgs(args: (string | number)[][]): VariableOverview[] {
     return args.map(ary => {
@@ -514,7 +534,7 @@ export function createScriptArgs(args: (string | number)[][]): VariableOverview[
 }
 
 /**
- *  Converting data structure from array to dictionary;
+ * Converting data structure from array to dictionary;
  */
 export function completionParams(arg: (string | number)[]): VariableOverview {
     if (arg.length === 3) {
@@ -543,7 +563,7 @@ export function completionParams(arg: (string | number)[]): VariableOverview {
 }
 
 /**
- *  Digitized parameter types;
+ * Digitized parameter types;
  */
 function getArgId(value: string | boolean | number): number {
     if (value === null) return 2;
@@ -571,18 +591,18 @@ function getArgId(value: string | boolean | number): number {
 /**
  * Delete characters that has a special meaning in the name of the variable name;
  * @deprecated
- *  function updateVariableName(arg: VariableOverview): VariableOverview {
- *      let { variableName } = arg;
- *      if (variableName.indexOf(COMMAND_PREFIX) === 0) {
- *          variableName = variableName.split(COMMAND_PREFIX)[1];
- *      } else {
- *      }
- *      return { ...arg, variableName };
- *  }
+ * function updateVariableName(arg: VariableOverview): VariableOverview {
+ *     let { variableName } = arg;
+ *     if (variableName.indexOf(COMMAND_PREFIX) === 0) {
+ *         variableName = variableName.split(COMMAND_PREFIX)[1];
+ *     } else {
+ *     }
+ *     return { ...arg, variableName };
+ * }
  */
 
 /**
- *  Extract log information from source data and store them in some custom field.
+ * Extract log information from source data and store them in some custom field.
  */
 function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
     const [run, profit, strategy] = source;
@@ -601,7 +621,7 @@ function pickUpLogs(source: LogOverview[]): SemanticsLogsOverview {
 }
 
 /**
- *  Modify the default log parameters which used for send request to serve.
+ * Modify the default log parameters which used for send request to serve.
  */
 function modifyDefaultParams(data: DefaultParams, payload: Map<string[], any>): DefaultParams {
     const result = cloneDeep(data);
@@ -622,7 +642,7 @@ function modifyDefaultParams(data: DefaultParams, payload: Map<string[], any>): 
 }
 
 /**
- *  Extract field information that needs to be updated from the message sent by the server;
+ * Extract field information that needs to be updated from the message sent by the server;
  */
 function getKeyNameNeedUpdate(flag: number): string[] {
     const flagMap = [
@@ -638,7 +658,7 @@ function getKeyNameNeedUpdate(flag: number): string[] {
 }
 
 /**
- *  Update robot detail field when serve send message arrived.
+ * Update robot detail field when serve send message arrived.
  */
 function updateRobotDetailRes(data: GetRobotDetailResponse, keys: string[], source: LatestRobotInfo): GetRobotDetailResponse {
     if (data === null) return null;
@@ -655,7 +675,7 @@ function updateRobotDetailRes(data: GetRobotDetailResponse, keys: string[], sour
 }
 
 /**
- *  Update robot field that in robot list when serve send message arrived.
+ * Update robot field that in robot list when serve send message arrived.
  */
 function updateRobotListRes(data: RobotListResponse, keys: string[], source: LatestRobotInfo): RobotListResponse {
     if (!data) return data; // 避免直接从URL上访问机器人页面时，会报 can't read property 'all' of null 错误。
@@ -672,7 +692,6 @@ function updateRobotListRes(data: RobotListResponse, keys: string[], source: Lat
 
     return { all, concurrent, robots: cloneDeep(robots) };
 }
-
 
 export const getRobotListResState = (state: State) => state.robotListResState;
 
@@ -700,7 +719,7 @@ export const getDefaultParams = (state: State) => state.defaultParams;
 
 export const getMonitoringSound = (state: State) => state.monitoringSound;
 
-export const getUIState = (state: State) => state.uiState;
+export const getUIState = (state: State) => state.UIState;
 
 export const getServerSendMessage = (state: State) => state.serverMessage;
 
@@ -713,3 +732,5 @@ export const getDeleteRobotRes = (state: State) => state.deleteRobotRes;
 export const getSaveRobotRes = (state: State) => state.saveRobotRes;
 
 export const getPluginRunRes = (state: State) => state.pluginRunRes;
+
+export const getPublicRobotListRes = (state: State) => state.publicRobotListRes;
