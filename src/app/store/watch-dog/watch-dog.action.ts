@@ -30,8 +30,6 @@ export const SET_ROBOT_WATCH_DOG = '[WatchDog] SET_ROBOT_WATCH_DOG';
 export class SetWDRequestAction extends SetRobotWDAction implements Action {
     readonly type = SET_ROBOT_WATCH_DOG;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: SetWDRequest) { super(); }
 }
 

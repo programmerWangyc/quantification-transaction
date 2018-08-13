@@ -23,30 +23,64 @@ import { RobotService } from '../providers/robot.service';
 })
 export class RobotOverviewComponent extends FoldableBusinessComponent implements BaseComponent {
 
+    /**
+     * @ignore
+     */
     robot: Observable<RobotDetail>;
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
-    statusBtnText: Observable<string>;
-
+    /**
+     * Restart robot flow;
+     */
     restart$: Subject<RobotDetail> = new Subject();
 
+    /**
+     * Stop robot flow;
+     */
     stop$: Subject<RobotDetail> = new Subject();
 
+    /**
+     * Watch dog toggle flow;
+     */
     watchDog$: Subject<RobotDetail> = new Subject();
 
+    /**
+     * Operate button text. Difference during each processing;
+     */
     operateBtnText: Observable<string>;
 
+    /**
+     * Watch dog button text;
+     */
     watchDogBtnText: Observable<string>;
 
+    /**
+     * Stopping state;
+     */
     isStopLoading: Observable<boolean>;
 
+    /**
+     * Restarting state;
+     */
     isRestartLoading: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
     statusTip: Observable<string>;
 
+    /**
+     * @ignore
+     */
     isFold = false;
 
+    /**
+     * @ignore
+     */
     buttonSize = 'small';
 
     constructor(
@@ -59,12 +93,18 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
         super(render, eleRef);
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.launch();
 
         this.initialModel();
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
             .add(this.robotOperate.launchStopRobot(this.stop$))
@@ -74,6 +114,9 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
             .add(this.watchDogService.handleSetWatchDogError());
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.robot = this.robotService.getRobotDetail();
 
@@ -88,6 +131,9 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
         this.statusTip = this.robotOperate.getRobotStatusTip();
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
 

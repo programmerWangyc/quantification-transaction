@@ -12,7 +12,7 @@
                 <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
             </td>
             <td>
-                <a [routerLink]="['../', 'strategy', robot.strategy_id, robot.strategy_name]">{{robot.strategy_name}}</a>
+                <a [routerLink]="['../', 'strategy', 'edit', robot.strategy_id]">{{robot.strategy_name}}</a>
             </td>
             <td>{{robot.status | robotStatus | translate}}</td>
             <td>{{robot.profit | number: '1.0-5'}}</td>

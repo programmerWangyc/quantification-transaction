@@ -24,8 +24,6 @@ export const VERIFY_PASSWORD = '[Auth] VERIFY_PASSWORD';
 export class VerifyPasswordRequestAction extends VerifyPasswordAction implements Action {
     readonly type = VERIFY_PASSWORD;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: VerifyPasswordRequest) { super(); }
 }
 

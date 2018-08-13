@@ -197,6 +197,8 @@
     "ALL_TYPES": "全部种类",
     "LANGUAGE": "语言",
     "OTHER": "其它",
+    "ACTUAL_QUOTATION": "实盘",
+    "SIMULATE_QUOTATION": "模拟盘",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",

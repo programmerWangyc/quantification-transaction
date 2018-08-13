@@ -216,13 +216,6 @@ export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { 
 
 
 // public robot list
-export interface PublicRobotSummaryTable {
-    type: string;
-    title: string;
-    cols: string[];
-    rows: any[];
-}
-
 export interface PublicRobot {
    date: string;
    id: number;
@@ -301,7 +294,7 @@ export interface RobotDetail {
     strategy_id: number;
     strategy_last_modified: string;
     strategy_name: string;
-    templates: RobotTemplate[]; //
+    templates?: RobotTemplate[]; //
     username: string;
     wd: number;
     summary?: string;

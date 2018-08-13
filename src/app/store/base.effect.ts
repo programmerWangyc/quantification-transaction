@@ -3,7 +3,7 @@ import { Actions } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 
 import { from as observableFrom, Observable, of as observableOf, zip } from 'rxjs';
-import { catchError, filter, map, mapTo, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, map, mapTo, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import { WsRequest } from '../interfaces/request.interface';
 import { ResponseBody, ResponseItem, ResponseUnit } from '../interfaces/response.interface';
@@ -55,7 +55,6 @@ export class BaseEffect {
      */
     protected getResponseAction(actionName: string, actionModule: object, resultFail = isFail): Observable<ResponseAction> {
         return this.actions$.ofType(actionName).pipe(
-            filter((action: ApiActions) => action.allowSeparate()),
             switchMap((action: ApiActions) => this.ws
                 .send(action.getParams(action.payload)).pipe(
                     takeUntil(this.actions$.ofType(actionName)),

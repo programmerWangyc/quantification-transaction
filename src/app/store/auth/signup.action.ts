@@ -33,8 +33,6 @@ export const SIGNUP = '[Signup] SIGNUP';
 export class SignupRequestAction extends SignupAction implements Action {
     readonly type = SIGNUP;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: SignupRequest) { super(); }
 }
 

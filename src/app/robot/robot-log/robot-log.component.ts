@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { includes } from 'lodash';
@@ -32,35 +32,75 @@ const soundTypes: string[] = [
 })
 export class RobotLogComponent extends BaseComponent {
 
-    @Input() allowSeparateRequest = true;
-
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * Running logs;
+     */
     logs: Observable<RunningLog[]>;
 
+    /**
+     * @ignore
+     */
     logTotal: Observable<number>;
 
+    /**
+     * @ignore
+     */
     pageSize: Observable<number>;
 
+    /**
+     * @ignore
+     */
     pageSizeSelectorValues = PAGE_SIZE_SELECT_VALUES;
 
+    /**
+     * Statistics label
+     */
     statistics: Observable<string>;
 
+    /**
+     * @ignore
+     */
     soundTypes = soundTypes;
 
+    /**
+     * 选择过滤的日志类型
+     */
     search$: Subject<number[]> = new Subject();
 
+    /**
+     * @ignore
+     */
     refresh$: Subject<boolean> = new Subject();
 
+    /**
+     * @ignore
+     */
     isLoading: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
     isSoundOpen = false;
 
-    // !FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功;
+    /**
+     * !FIXME: ng-zorro框架的问题，只有string[]的才能赋值成功;
+     * @ignore
+     */
     monitoringSoundTypes: string[] = [...soundTypes];
 
+    /**
+     * @ignore
+     */
     currentPage = 1;
 
+    /**
+     * @ignore
+     */
     sync$$: Subscription;
 
     constructor(
@@ -73,6 +113,9 @@ export class RobotLogComponent extends BaseComponent {
         super();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
@@ -83,35 +126,39 @@ export class RobotLogComponent extends BaseComponent {
         this.updateSoundState(this.isSoundOpen);
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.logs = combineLatest(
             this.robotLog.getSemanticsRobotRunningLogs(),
             this.search$
-        )
-            .pipe(
-                map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
-                startWith([])
-            );
+        ).pipe(
+            map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
+            startWith([])
+        );
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.runningLog);
 
-        this.pageSize = this.robotLog.getRobotLogDefaultParams()
-            .pipe(
-                map(params => params.logLimit),
-                startWith(20)
-            );
+        this.pageSize = this.robotLog.getRobotLogDefaultParams().pipe(
+            map(params => params.logLimit),
+            startWith(20)
+        );
 
         this.statistics = this.utilService.getPaginationStatistics(this.logTotal, this.pageSize);
 
         this.isLoading = this.robotService.isLoading('logsLoading');
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(
-            map(robotId => ({ robotId }))), this.allowSeparateRequest
-        )
+            map(robotId => ({ robotId }))
+        ))
             .add(this.robotLog.launchRobotLogs(
                 combineLatest(
                     id,
@@ -136,29 +183,49 @@ export class RobotLogComponent extends BaseComponent {
         this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
     }
 
+    /**
+     * Modify params state in store;
+     * @param size Page size;
+     */
     onPageSizeChange(size: number): void {
         // Second params comes from the reducer data structure ,indicates the path of the target data which would be changed.
         this.robotLog.modifyDefaultParam(size, ['robotLogs', 'logLimit']);
     }
 
+    /**
+     * Update monitor type to store;
+     */
     updateMonitoringTypes(types: string[]): void {
         this.robotLog.updateMonitoringSoundTypes(types.map(item => LogTypes[item]));
     }
 
+    /**
+     * @ignore
+     */
     playAudio() {
         const src = '../../../assets/audio/tip_1.mp3';
 
         this.tipService.playAudio(src);
     }
 
+    /**
+     * Toggle sound state
+     * @param state Open or close;
+     */
     updateSoundState(state: boolean) {
         this.robotLog.updateMonitorSoundState(state);
     }
 
+    /**
+     * @ignore
+     */
     changePage(page) {
         this.robotLog.changeLogPage(page);
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
 

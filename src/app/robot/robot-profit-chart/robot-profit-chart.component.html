@@ -1,4 +1,4 @@
-<nz-card *ngIf="isShow | async" [nzTitle]="'PROFIT_CURVE' | translate" [nzExtra]="extra">
+<nz-card *ngIf="hasProfitLogs | async" [nzTitle]="'PROFIT_CURVE' | translate" [nzExtra]="extra">
     <!--!FIXME: ignore this error-->
     <chart type="StockChart" [options]="options | async" (load)="chart$.next($event.context)" class="chart"></chart>
 

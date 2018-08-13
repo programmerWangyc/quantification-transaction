@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { isString } from 'lodash';
-import { Observable, zip } from 'rxjs';
+import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import {
@@ -14,9 +14,7 @@ import { WebsocketService } from '../../providers/websocket.service';
 import { ServerSendRobotEventType } from '../../robot/robot.config';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
-import * as btNodeActions from '../bt-node/bt-node.action';
 import { AppState, selectRobotRequestParameters } from '../index.reducer';
-import * as platformActions from '../platform/platform.action';
 import * as robotActions from './robot.action';
 
 /**
@@ -34,17 +32,8 @@ export class RobotEffect extends BaseEffect {
     @Effect()
     publishRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.PUBLIC_ROBOT, robotActions.ResponseActions);
 
-    /**
-     * !FIXME: 修复这个动作；删除整个应用下的allowSeparateRequest 参数;
-     */
     @Effect()
-    robotDetail$: Observable<ResponseAction> = this.getMultiResponseActions(
-        zip(
-            this.actions$.ofType(robotActions.GET_ROBOT_DETAIL),
-            ...this.getOtherObsOfRobotDetail()
-        ),
-        { ...robotActions.ResponseActions, ...btNodeActions.ResponseActions, ...platformActions.ResponseActions }
-    );
+    robotDetail$: Observable<ResponseAction> = this.getResponseAction(robotActions.GET_ROBOT_DETAIL, robotActions.ResponseActions);
 
     @Effect()
     subscribeRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SUBSCRIBE_ROBOT, robotActions.ResponseActions);
@@ -59,10 +48,9 @@ export class RobotEffect extends BaseEffect {
     stopRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.STOP_ROBOT, robotActions.ResponseActions);
 
     @Effect()
-    modifyRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.MODIFY_ROBOT, robotActions.ResponseActions)
-        .pipe(
-            tap(action => !(<robotActions.ModifyRobotFailAction>action).payload.error && this.tip.showTip('ROBOT_CONFIG_UPDATE_SUCCESS'))
-        );
+    modifyRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.MODIFY_ROBOT, robotActions.ResponseActions).pipe(
+        tap(action => !(<robotActions.ModifyRobotFailAction>action).payload.error && this.tip.showTip('ROBOT_CONFIG_UPDATE_SUCCESS'))
+    );
 
     @Effect()
     commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail).pipe(
@@ -107,19 +95,6 @@ export class RobotEffect extends BaseEffect {
         public store: Store<AppState>,
     ) {
         super(ws, actions$);
-    }
-
-    getOtherObsOfRobotDetail(): Observable<Action>[] {
-        return [
-            this.actions$.ofType(robotActions.SUBSCRIBE_ROBOT).pipe(
-                filter((action: robotActions.SubscribeRobotRequestAction) => action.payload.id !== 0)
-            ),
-            this.actions$.ofType(robotActions.GET_ROBOT_LOGS).pipe(
-                filter((action: robotActions.GetRobotLogsRequestAction) => !action.allowSeparateRequest)
-            ),
-            this.actions$.ofType(btNodeActions.GET_NODE_LIST),
-            this.actions$.ofType(platformActions.GET_PLATFORM_LIST),
-        ];
     }
 
     /**

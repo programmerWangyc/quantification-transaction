@@ -87,12 +87,14 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
                 robotName: robot.name,
                 kLinePeriod: JSON.parse(robot.strategy_exchange_pairs)[0],
             }))
-            .add(this.platformService.getPlatformList().subscribe(list => this.platforms = list))
-            .add(this.robotOperate.launchUpdateRobotConfig(this.modify$
-                .pipe(
-                    map(formValue => this.createModifyParams(formValue))
-                )
-            ));
+            .add(this.agents.subscribe(list => list.length && this.agent.patchValue(list[0].id)))
+            .add(this.platformService.getPlatformList().subscribe(list => {
+                this.platforms = list;
+                this.platform.patchValue(this.platforms[0].id);
+            }))
+            .add(this.robotOperate.launchUpdateRobotConfig(this.modify$.pipe(
+                map(formValue => this.createModifyParams(formValue))
+            )));
     }
 
     initialModel() {
@@ -100,19 +102,17 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
 
         this.strategyArgs = this.robotOperate.getRobotStrategyArgs();
 
-        this.hasStrategyArg = this.strategyArgs
-            .pipe(
-                map(args => !!args.length)
-            );
+        this.hasStrategyArg = this.strategyArgs.pipe(
+            map(args => !!args.length)
+        );
 
         this.templateArgs = this.robotOperate.getRobotTemplateArgs();
 
         this.hasArgs = this.robotOperate.hasArgs();
 
-        this.warningMessage = this.robotOperate.getRobotConfigMessage()
-            .pipe(
-                map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg))
-            );
+        this.warningMessage = this.robotOperate.getRobotConfigMessage().pipe(
+            map(msg => this.domSanitizer.bypassSecurityTrustHtml(msg))
+        );
     }
 
     initialForm() {
@@ -180,9 +180,8 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
     }
 
     get selectedPlatform(): Observable<Platform> {
-        return this.platformService.getPlatformList()
-            .pipe(
-                map(list => list.find(item => item.id === this.platform.value))
-            );
+        return this.platformService.getPlatformList().pipe(
+            map(list => list.find(item => item.id === this.platform.value))
+        );
     }
 }

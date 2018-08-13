@@ -50,8 +50,6 @@ export const GET_ROBOT_LIST = '[Robot] GET_ROBOT_LIST';
 export class GetRobotListRequestAction extends GetRobotListAction implements Action {
     readonly type = GET_ROBOT_LIST;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: GetRobotListRequest) { super(); }
 }
 
@@ -97,8 +95,6 @@ export const GET_PUBLIC_ROBOT_LIST = '[Robot] GET_PUBLIC_ROBOT_LIST';
 export class GetPublicRobotListRequestAction extends GetPublicRobotListAction implements Action {
     readonly type = GET_PUBLIC_ROBOT_LIST;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: GetPublicRobotListRequest) { super(); }
 }
 
@@ -143,8 +139,6 @@ export const PUBLIC_ROBOT = '[Robot] PUBLISH_ROBOT';
 export class PublicRobotRequestAction extends PublicRobotAction implements Action {
     readonly type = PUBLIC_ROBOT;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: PublicRobotRequest) { super(); }
 }
 
@@ -182,8 +176,6 @@ export const GET_ROBOT_DETAIL = '[Robot] GET_ROBOT_DETAIL';
 
 export class GetRobotDetailRequestAction extends GetRobotDetailAction implements Action {
     readonly type = GET_ROBOT_DETAIL;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: GetRobotDetailRequest) { super(); }
 }
@@ -223,9 +215,7 @@ export const SUBSCRIBE_ROBOT = '[Robot] SUBSCRIBE_ROBOT';
 export class SubscribeRobotRequestAction extends SubscribeRobotAction implements Action {
     readonly type = SUBSCRIBE_ROBOT;
 
-    // allowSeparateRequest = true;
-
-    constructor(public payload: SubscribeRobotRequest, public allowSeparateRequest: boolean) { super(); }
+    constructor(public payload: SubscribeRobotRequest) { super(); }
 }
 
 export const SUBSCRIBE_ROBOT_FAIL = '[Robot] SUBSCRIBE_ROBOT_FAIL';
@@ -282,7 +272,7 @@ export const GET_ROBOT_LOGS = '[Robot] GET_ROBOT_LOGS';
 export class GetRobotLogsRequestAction extends GetRobotLogsAction implements Action {
     readonly type = GET_ROBOT_LOGS;
 
-    constructor(public payload: GetRobotLogsRequest, public allowSeparateRequest: boolean, public isSyncAction = false) { super(); }
+    constructor(public payload: GetRobotLogsRequest, public isSyncAction = false) { super(); }
 }
 
 export const GET_ROBOT_LOGS_FAIL = '[Robot] GET_ROBOT_LOGS_FAIL';
@@ -319,8 +309,6 @@ export const RESTART_ROBOT = '[Robot] RESTART_ROBOT';
 
 export class RestartRobotRequestAction extends RestartRobotAction implements Action {
     readonly type = RESTART_ROBOT;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: RestartRobotRequest) { super(); }
 }
@@ -359,8 +347,6 @@ export const STOP_ROBOT = '[Robot] STOP_ROBOT';
 
 export class StopRobotRequestAction extends StopRobotAction implements Action {
     readonly type = STOP_ROBOT;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: StopRobotRequest) { super(); }
 }
@@ -411,8 +397,6 @@ export const MODIFY_ROBOT = '[Robot] MODIFY_ROBOT';
 export class ModifyRobotRequestAction extends ModifyRobotAction implements Action {
     readonly type = MODIFY_ROBOT;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: ModifyRobotRequest) { super(); }
 }
 
@@ -457,8 +441,6 @@ export const COMMAND_ROBOT = '[Robot] COMMAND_ROBOT';
 export class CommandRobotRequestAction extends CommandRobotAction implements Action {
     readonly type = COMMAND_ROBOT;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: CommandRobotRequest) { super(); }
 }
 
@@ -502,8 +484,6 @@ export const DELETE_ROBOT = '[Robot] DELETE_ROBOT';
 
 export class DeleteRobotRequestAction extends DeleteRobotAction implements Action {
     readonly type = DELETE_ROBOT;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: DeleteRobotRequest) { super(); }
 }
@@ -554,8 +534,6 @@ export const SAVE_ROBOT = '[Robot] SAVE_ROBOT';
 export class SaveRobotRequestAction extends SaveRobotAction implements Action {
     readonly type = SAVE_ROBOT;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: SaveRobotRequest) { super(); }
 }
 
@@ -597,8 +575,6 @@ export const RUN_PLUGIN = '[Robot] RUN_PLUGIN';
 
 export class PluginRunRequestAction extends PluginRunAction implements Action {
     readonly type = RUN_PLUGIN;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: PluginRunRequest) { super(); }
 }

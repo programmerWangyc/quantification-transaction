@@ -15,22 +15,49 @@ import { SemanticsLog } from '../robot.config';
 })
 export class RobotProfitChartComponent extends FoldableBusinessComponent implements BaseComponent {
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * @ignore
+     */
     isFold = false;
 
+    /**
+     * Highstock chart options;
+     */
     options: Observable<Highstock.Options>;
 
+    /**
+     * Statistics label;
+     */
     statistics: Observable<string>;
 
+    /**
+     * Chart instances flow, comes from chart component;
+     */
     chart$: Subject<Highstock.ChartObject> = new Subject();
 
-    isShow: Observable<boolean>;
+    /**
+     * Whether has profit logs
+     */
+    hasProfitLogs: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
     currentPage = 1;
 
+    /**
+     * @ignore
+     */
     logTotal: Observable<number>;
 
+    /**
+     * @ignore
+     */
     pageSize: Observable<number>;
 
     constructor(
@@ -42,18 +69,24 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
         super(render, eleRef);
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
         this.options = this.robotLog.getProfitChartOptions();
 
         this.statistics = this.robotLog.getProfitChartStatistics();
 
-        this.isShow = this.robotLog.hasProfitLogs();
+        this.hasProfitLogs = this.robotLog.hasProfitLogs();
 
         this.logTotal = this.robotLog.getLogsTotal(SemanticsLog.profitLog);
 
@@ -62,22 +95,29 @@ export class RobotProfitChartComponent extends FoldableBusinessComponent impleme
         );
     }
 
+    /**
+     * @ignore
+     */
     launch() {
         const id = this.route.paramMap.pipe(map(param => +param.get('id')));
 
         this.subscription$$ = this.robotLog.addProfitPoints(this.chart$)
-            .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset()
-                .pipe(
-                    withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })),
-                    skip(1)
-                )
-            ));
+            .add(this.robotLog.launchRobotLogs(this.robotLog.getProfitOffset().pipe(
+                withLatestFrom(id, (profitOffset, robotId) => ({ profitOffset, robotId })),
+                skip(1)
+            )));
     }
 
+    /**
+     * Go to other page;
+     */
     changePage(page) {
         this.robotLog.changeProfitChartPage(page);
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$ && this.subscription$$.unsubscribe();
     }

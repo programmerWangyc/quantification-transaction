@@ -23,6 +23,7 @@ import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { StrategyDetailComponent } from '../square/strategy-detail/strategy-detail.component';
 import { FactComponent } from '../fact/fact/fact.component';
+import { FactRobotComponent } from '../fact/fact-robot/fact-robot.component';
 
 const routs: Routes = [
     {
@@ -56,13 +57,18 @@ const routs: Routes = [
             { path: 'exchange/add', component: ExchangeAddComponent },
             { path: 'exchange/edit/:id', component: ExchangeEditComponent },
 
-            // { path: Path.exchange, component: ExchangeComponent },
+            // square
             { path: 'square', component: SquareComponent },
             { path: 'square/strategy/:id', component: StrategyDetailComponent },
 
+            // fact
+            { path: 'fact', component: FactComponent },
+            { path: 'fact/:id/:name', component: FactRobotComponent },
+
             { path: 'community', component: CommunityComponent },
             { path: 'doc', component: DocComponent },
-            { path: 'fact', component: FactComponent },
+
+
             { path: '', redirectTo: 'robot', pathMatch: 'full' },
             // { path: '', redirectTo: Path.robot, pathMatch: 'full' },
         ],

@@ -1,0 +1,54 @@
+<nz-card *ngIf="robot" [nzExtra]="extra" [nzTitle]="'ROBOT_OVERVIEW' | translate">
+    <nz-row [nzGutter]="16">
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'NAME' | translate}}:</h6>
+            <span>{{robot.name}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" fxLayout="row" class="row">
+            <h6 fxFlexAlign="center">{{'STRATEGY' | translate}}:</h6>
+            <div>
+                <p>{{'NAME' | translate}}</p>
+                <span>{{robot.strategy_name}}</span>
+            </div>
+            <div>
+                <p>{{'LATEST_UPDATE' | translate}}</p>
+                <span>{{robot.strategy_last_modified}}</span>
+            </div>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'CREATE_TIME' | translate}}:</h6>
+            <span>{{robot.start_time}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" fxLayout="row" class="row">
+            <h6 fxFlexAlign="center">{{'LATEST_RUN' | translate}}:</h6>
+            <div>
+                <p>{{'START_TIME' | translate}}</p>
+                <span>{{robot.start_time}}</span>
+            </div>
+            <div>
+                <p>{{'END_TIME' | translate}}</p>
+                <span>{{robot.end_time}}</span>
+            </div>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'K_LINE_PERIOD' | translate}}:</h6>
+            <span>{{robot.strategy_exchange_pairs | fromJSON | kLinePeriod | translate}}</span>
+        </nz-col>
+
+        <nz-col [nzSpan]="10" class="row">
+            <h6>{{'EXCHANGE_PLATFORM' | translate}}:</h6>
+            <span fxLayout="column start">
+                <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock">{{pair.platform}}/{{pair.stock}}</span>
+            </span>
+        </nz-col>
+
+    </nz-row>
+</nz-card>
+
+<ng-template #extra>
+    <a (click)="toggle()">{{(isFold ? 'UNFOLD' : 'FOLD') | translate}}</a>
+</ng-template>

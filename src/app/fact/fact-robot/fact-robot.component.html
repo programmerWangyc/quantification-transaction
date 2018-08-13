@@ -1,0 +1,36 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
+
+    <div class="part">
+        <app-fact-robot-overview [robot]="robot | async"></app-fact-robot-overview>
+    </div>
+
+    <div class="part">
+        <app-robot-status></app-robot-status>
+    </div>
+
+    <div class="part">
+        <app-robot-profit-chart></app-robot-profit-chart>
+    </div>
+
+    <div class="part">
+        <app-robot-strategy-chart></app-robot-strategy-chart>
+    </div>
+
+    <div class="part">
+        <app-robot-log></app-robot-log>
+    </div>
+
+    <div class="part">
+        <div fxLayoutAlign="space-between center">
+            <h2>{{'ALL_COMMENT' | translate}}</h2>
+            <span>{{total | async}}</span>
+        </div>
+
+        <app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+            [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+        <app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
+    </div>
+</nz-spin>

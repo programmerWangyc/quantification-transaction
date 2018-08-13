@@ -24,7 +24,7 @@ export const GET_NODE_LIST = '[Node] GET_NODE_LIST';
 export class GetNodeListRequestAction extends GetNodeListAction implements Action {
     readonly type = GET_NODE_LIST;
 
-    constructor(public payload = {}, public allowSeparateRequest = false) { super(); }
+    constructor(public payload = {}) { super(); }
 }
 
 export const GET_NODE_LIST_FAIL = '[Node] GET_NODE_LIST_FAIL';
@@ -52,8 +52,6 @@ class DeleteNodeAction extends ApiAction {
     command = 'DeleteNode';
 
     order = null;
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }
@@ -91,8 +89,6 @@ class GetNodeHashAction extends ApiAction {
     command = 'GetNodeHash';
 
     order = null;
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }

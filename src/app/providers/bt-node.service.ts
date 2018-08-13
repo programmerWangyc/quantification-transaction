@@ -38,8 +38,8 @@ export class BtNodeService extends BaseService {
     /**
      * Request node list from server.
      */
-    launchGetNodeList(data: Observable<any>, allowSeparateRequest?: boolean): Subscription {
-        return this.process.processGetNodeList(data, allowSeparateRequest);
+    launchGetNodeList(data: Observable<any>): Subscription {
+        return this.process.processGetNodeList(data);
     }
 
     /**

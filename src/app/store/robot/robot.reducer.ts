@@ -232,7 +232,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_ROBOT_DETAIL_SUCCESS: {
             const { strategy_args, templates } = action.payload.result.robot;
 
-            const [strategyArgs, commandArgs] = partition(createScriptArgs(JSON.parse(strategy_args)), arg => arg.variableName.indexOf(COMMAND_PREFIX) < 0);
+            const [strategyArgs, commandArgs] = partition(createScriptArgs(JSON.parse(strategy_args || '[]')), arg => arg.variableName.indexOf(COMMAND_PREFIX) < 0);
 
             return {
                 ...state,
@@ -241,10 +241,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
                     ...state.robotArgs,
                     strategyArgs,
                     commandArgs,
-                    templateArgs: templates.map(template => {
+                    templateArgs: (templates || []).map(template => {
                         const { id, name, category } = template;
 
-                        const variables = createScriptArgs(JSON.parse(template.args));
+                        const variables = createScriptArgs(JSON.parse(template.args || '[]'));
 
                         return { id, name, category, variables };
                     }),

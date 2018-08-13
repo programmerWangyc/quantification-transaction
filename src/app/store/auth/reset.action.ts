@@ -24,8 +24,6 @@ export const RESET_PASSWORD = '[Auth] RESET_PASSWORD';
 export class ResetPasswordRequestAction extends ResetPasswordAction implements Action {
     readonly type = RESET_PASSWORD;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: ResetPasswordRequest) { super(); }
 }
 

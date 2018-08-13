@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { zip } from 'lodash';
+
+import { isObject, zip, isString } from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -69,5 +70,28 @@ export class RobotOperateBtnTextPipe implements PipeTransform {
 
             return this.constantService.getRobotOperateBtnText(loading, btnTexts);
         }));
+    }
+}
+
+@Pipe({ name: 'summaryInfo' })
+export class SummaryInfoPipe implements PipeTransform {
+    transform(value: string): any {
+        if (isString(value)) {
+            return `<img src="${value.substring(0, value.length - 1)}" style="max-width: 200px;">`;
+        } else {
+            return value;
+        }
+    }
+}
+
+@Pipe({ name: 'pluckContent' })
+export class PluckContentPipe implements PipeTransform {
+    transform(value: any): any {
+
+        if (isObject(value)) {
+            return value.name;
+        } else {
+            return value;
+        }
     }
 }

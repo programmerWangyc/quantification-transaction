@@ -39,8 +39,6 @@ export const GET_STRATEGY_LIST = '[Strategy] GET_STRATEGY_LIST';
 export class GetStrategyListRequestAction extends GetStrategyList implements Action {
     readonly type = GET_STRATEGY_LIST;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: GetStrategyListRequest) { super(); }
 }
 
@@ -75,8 +73,6 @@ class ShareStrategyAction extends ApiAction {
     order = ShareStrategyOrder;
 
     command = 'ShareStrategy';
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }
@@ -123,8 +119,6 @@ class GenKeyAction extends ApiAction {
 
     command = 'GenKey';
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -166,8 +160,6 @@ class VerifyKeyAction extends ApiAction {
 
     command = 'VerifyKey';
 
-    allowSeparateRequest = true;
-
     order = VerifyKeyOrder;
 
     constructor() { super(); }
@@ -206,8 +198,6 @@ class DeleteStrategyAction extends ApiAction {
     command = 'DeleteStrategy';
 
     order = null;
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }
@@ -251,8 +241,6 @@ class OpStrategyTokenAction extends ApiAction {
     isSingleParams = false;
 
     noneParams = false;
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }
@@ -299,8 +287,6 @@ export const GET_STRATEGY_DETAIL = '[Strategy] GET_STRATEGY_DETAIL';
 export class GetStrategyDetailRequestAction extends GetStrategyDetailAction implements Action {
     readonly type = GET_STRATEGY_DETAIL;
 
-    allowSeparateRequest = true;
-
     constructor(public payload: GetStrategyDetailRequest) { super(); }
 }
 
@@ -329,8 +315,6 @@ class GetPublicStrategyDetailAction extends ApiAction {
     command = 'GetPublicStrategyDetail';
 
     order = null;
-
-    allowSeparateRequest = true;
 }
 
 export const GET_PUBLIC_STRATEGY_DETAIL = '[Strategy] GET_PUBLIC_STRATEGY_DETAIL';
@@ -381,8 +365,6 @@ class SaveStrategyAction extends ApiAction {
 
     order = SaveStrategyOrder;
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -429,8 +411,6 @@ export class GetStrategyListByName extends ApiAction {
     order = StrategyListByNameOrder;
 
     command = 'GetStrategyListByName';
-
-    allowSeparateRequest = true;
 }
 
 export const GET_STRATEGY_LIST_BY_NAME = '[Strategy] GET_STRATEGY_LIST_BY_NAME';

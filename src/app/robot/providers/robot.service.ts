@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 
-import { includes, isEmpty } from 'lodash';
+import { includes } from 'lodash';
 import * as moment from 'moment';
-import { from as observableFrom, Observable, of as observableOf, Subscription } from 'rxjs';
-import { filter, map, mergeMap, reduce, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of as observableOf, Subscription } from 'rxjs';
+import { filter, map, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
@@ -51,8 +51,8 @@ export class RobotService extends BaseService {
     /**
      * @ignore
      */
-    launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>, allowSeparateRequest = true): Subscription {
-        return this.process.processSubscribeRobot(data, allowSeparateRequest);
+    launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>): Subscription {
+        return this.process.processSubscribeRobot(data);
     }
 
     /**
@@ -275,20 +275,6 @@ export class RobotService extends BaseService {
         );
     }
 
-    getRobotSummary(data: Observable<string>): Observable<any[]> {
-        return data.pipe(
-            filter(summary => !isEmpty(summary)),
-            mergeMap(summary => {
-                const ary = summary.split('\n');
-
-                return observableFrom(ary).pipe(
-                    map(res => this.getSummary(res.trim())),
-                    reduce((acc, cur) => [...acc, cur], []),
-                );
-            })
-        );
-    }
-
     //  =======================================================Short cart method==================================================
 
     /**
@@ -318,28 +304,6 @@ export class RobotService extends BaseService {
      */
     isNormalStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
         return includes([fromRes.RobotStatus.QUEUEING, fromRes.RobotStatus.RUNNING, fromRes.RobotStatus.STOPPING], robot.status);
-    }
-
-    private getSummary(source: string): any {
-        const regRes = /^`(.*)`$/.exec(source);
-
-        if (!regRes) return source;
-
-        const [, content] = regRes;
-
-        const reg = /^\[.+\]$|^\{.+\}$/;
-
-        if (reg.test(content)) {
-            try {
-                const res = JSON.parse(content);
-
-                return res;
-            } catch (e) {
-                return e.toString();
-            }
-        } else {
-            return content;
-        }
     }
 
     //  =======================================================Local state modify==================================================

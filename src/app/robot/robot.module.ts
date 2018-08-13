@@ -10,7 +10,7 @@ import { StrategyModule } from '../strategy/strategy.module';
 import { CreateRobotComponent } from './create-robot/create-robot.component';
 import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
 import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
-import { PIPES } from './pipes/index.pipes';
+import { PIPES } from './pipes/index.pipe';
 import { RobotConstantService } from './providers/robot.constant.service';
 import { RobotLogService } from './providers/robot.log.service';
 import { RobotOperateService } from './providers/robot.operate.service';
@@ -23,7 +23,7 @@ import { RobotListComponent } from './robot-list/robot-list.component';
 import { RobotLogComponent } from './robot-log/robot-log.component';
 import { RobotOverviewComponent } from './robot-overview/robot-overview.component';
 import { RobotProfitChartComponent } from './robot-profit-chart/robot-profit-chart.component';
-import { RobotStatusComponent } from './robot-status/robot-status.component';
+import { RobotStatusComponent, RobotSubtitleComponent, RobotInnerTableComponent, RobotInfoComponent } from './robot-status/robot-status.component';
 import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strategy-chart.component';
 
 @NgModule({
@@ -43,15 +43,18 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         ExchangePairComponent,
         PIPES,
         RobotCommandComponent,
-        RobotListComponent,
         RobotConfigComponent,
+        RobotDebuggerComponent,
+        RobotDurationComponent,
+        RobotInfoComponent,
+        RobotInnerTableComponent,
+        RobotListComponent,
         RobotLogComponent,
         RobotOverviewComponent,
         RobotProfitChartComponent,
         RobotStatusComponent,
         RobotStrategyChartComponent,
-        RobotDurationComponent,
-        RobotDebuggerComponent,
+        RobotSubtitleComponent,
     ],
 
     entryComponents: [
@@ -71,15 +74,18 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
         ExchangePairComponent,
         PIPES,
         RobotCommandComponent,
-        RobotListComponent,
         RobotConfigComponent,
+        RobotDebuggerComponent,
+        RobotDurationComponent,
+        RobotInfoComponent,
+        RobotInnerTableComponent,
+        RobotListComponent,
         RobotLogComponent,
         RobotOverviewComponent,
         RobotProfitChartComponent,
         RobotStatusComponent,
         RobotStrategyChartComponent,
-        RobotDurationComponent,
-        RobotDebuggerComponent,
+        RobotSubtitleComponent,
     ],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA,

@@ -346,7 +346,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
                 // 只获取属于模板类库的策略
                 .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg })))
 
-                .add(this.nodeService.launchGetNodeList(of(true), true));
+                .add(this.nodeService.launchGetNodeList(of(true)));
         }
     }
 

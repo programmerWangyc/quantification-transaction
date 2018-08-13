@@ -16,8 +16,6 @@ export class GetPlatformListAction extends ApiAction {
 
     noneParams = true;
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -55,8 +53,6 @@ class DeletePlatformAction extends ApiAction {
 
     command = 'DeletePlatform';
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -91,8 +87,6 @@ class GetPlatformDetailAction extends ApiAction {
     noneParams = false;
 
     order = null;
-
-    allowSeparateRequest = true;
 
     command = 'GetPlatformDetail';
 
@@ -142,8 +136,6 @@ class SavePlatformAction extends ApiAction {
     order = SavePlatformOrder;
 
     command = 'SavePlatform';
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }

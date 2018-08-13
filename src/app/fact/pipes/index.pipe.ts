@@ -1,7 +1,4 @@
-import { SummaryInfoPipe, PluckContentPipe } from './common.pipe';
-
-export const PIPES = [
-    SummaryInfoPipe,
-    PluckContentPipe,
-];
-
+/**
+ * none pipes
+ */
+export const PIPES = [];

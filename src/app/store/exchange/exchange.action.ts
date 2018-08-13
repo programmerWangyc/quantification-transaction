@@ -15,8 +15,6 @@ export class GetExchangeListAction extends ApiAction {
 
     noneParams = true;
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 

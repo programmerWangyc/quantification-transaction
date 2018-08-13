@@ -181,6 +181,9 @@ export class PublicService extends BaseService {
 
     //  =======================================================Config operate=======================================================
 
+    /**
+     * 应用的整个生命周期内都会监听，每个响应回来时都会检查公共信息。
+     */
     updateInformation(): Subscription {
         return this.updateToken().add(this.updateCurrentUser());
     }
@@ -254,18 +257,22 @@ export class PublicService extends BaseService {
         this.refUser$$.next(user);
     }
 
+    /**
+     * @ignore
+     */
     private updateToken(): Subscription {
         return this.getToken().pipe(
             distinctUntilChanged()
-        )
-            .subscribe(token => localStorage.setItem(LocalStorageKey.token, token || ''));
+        ).subscribe(token => localStorage.setItem(LocalStorageKey.token, token || ''));
     }
 
+    /**
+     * @ignore
+     */
     private updateCurrentUser(): Subscription {
         return this.getCurrentUser().pipe(
             distinctUntilChanged()
-        )
-            .subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
+        ).subscribe(username => localStorage.setItem(LocalStorageKey.username, username || ''));
     }
 
     //  =======================================================Local state change=======================================================

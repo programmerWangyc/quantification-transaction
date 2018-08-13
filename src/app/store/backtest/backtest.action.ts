@@ -28,8 +28,6 @@ class GetTemplatesAction extends ApiAction {
 
     command = 'GetTemplates';
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -94,8 +92,6 @@ class BacktestIOAction extends ApiAction {
     command = BacktestOperateCallbackId.backtest;
 
     order = BacktestIOOrder;
-
-    allowSeparateRequest = true;
 
     constructor() { super(); }
 }

@@ -1,23 +1,9 @@
-<nz-card *ngIf="hasStatusInfo | async" [nzTitle]="'STATUS_INFORMATION' | translate">
+<nz-card *ngIf="summary | async as data" [nzTitle]="'STATUS_INFORMATION' | translate">
+    <app-robot-subtitle [summary]="data"></app-robot-subtitle>
 
-    <nz-tabset *ngIf="hasTabs | async">
-        <nz-tab *ngFor="let tab of tabs | async" [nzTitle]="tab.title">
-            <nz-table #nzTable [nzData]="tab" [nzPageSize]="20" [nzShowPagination]="false">
-                <thead>
-                    <tr>
-                        <th *ngFor="let col of tab.cols">{{col}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let row of tab.rows">
-                        <td *ngFor="let item of row">{{item | originData}}</td>
-                    </tr>
-                </tbody>
-            </nz-table>
-        </nz-tab>
-    </nz-tabset>
+    <app-robot-inner-table [summary]="data"></app-robot-inner-table>
 
-    <p *ngFor="let label of labels | async">{{label}}</p>
+    <app-robot-info [summary]="data"></app-robot-info>
 </nz-card>
 
 <ng-template #extra>

@@ -34,8 +34,6 @@ export class SettingsAction extends ApiAction {
 
     noneParams = false;
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 

@@ -28,6 +28,10 @@ export const filterTypes: FilterType[] = [
     styleUrls: ['./running-log.component.scss'],
 })
 export class RunningLogComponent implements OnInit {
+
+    /**
+     * @ignore
+     */
     filterTypes = [];
 
     /**
@@ -40,18 +44,39 @@ export class RunningLogComponent implements OnInit {
      */
     currentPage = 1;
 
+    /**
+     * Logs data;
+     */
     @Input() logs: RunningLog[];
 
+    /**
+     * Statistic description;
+     */
     @Input() statistics: string;
 
+    /**
+     * @ignore
+     */
     @Input() logTotal: number;
 
+    /**
+     * @ignore
+     */
     @Input() pageSize: number;
 
+    /**
+     * @ignore
+     */
     @Output() pageChange: EventEmitter<number> = new EventEmitter();
 
+    /**
+     * 选择过滤的日志类型
+     */
     @Output() search: EventEmitter<number[]> = new EventEmitter();
 
+    /**
+     * @ignore
+     */
     @Output() pageSizeChange: EventEmitter<number> = new EventEmitter();
 
     constructor(private translate: TranslateService) {
@@ -63,6 +88,9 @@ export class RunningLogComponent implements OnInit {
         ).subscribe(types => this.filterTypes = types);
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.search.next([]);
     }

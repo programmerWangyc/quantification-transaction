@@ -62,7 +62,7 @@ export class CommentBaseComponent {
     /**
      * @ignore
      */
-    launch(topic: string, keepAlive: () => boolean): void {
+    protected launch(topic: string, keepAlive: () => boolean): void {
         this.commentService.launchCommentList(of({ topic, offset: -1, limit: -1 }));
 
         this.commentService.launchAddComment(
@@ -96,7 +96,7 @@ export class CommentBaseComponent {
     /**
      * @ignore
      */
-    initialModel(): void {
+    protected initialModel(): void {
         this.comment = this.commentService.getCommentList();
 
         this.total = this.comment.pipe(

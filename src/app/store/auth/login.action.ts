@@ -41,8 +41,6 @@ export const LOGIN = '[Login] LOGIN';
 export class LoginRequestAction extends LoginAction implements Action {
     readonly type = LOGIN;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: LoginRequest) { super(); }
 }
 

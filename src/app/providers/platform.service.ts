@@ -69,7 +69,6 @@ export class PlatformService extends BaseService {
     /**
      * 请求 platform list;
      * @param data command to request platform list;
-     * @param allowSeparateRequest 是否允单独发起请求
      */
     launchGetPlatformList(data: Observable<any>): Subscription {
         return this.process.processGetPlatformList(data);

@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
 import { startWith } from 'rxjs/internal/operators/startWith';
 
 import { BaseComponent } from '../../base/base.component';
-import { GetRobotListRequest } from '../../interfaces/request.interface';
 import { Robot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
@@ -17,28 +16,60 @@ import { RobotService } from '../providers/robot.service';
     styleUrls: ['./robot-list.component.scss'],
 })
 export class RobotListComponent extends BaseComponent {
+
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * Source data
+     */
     data: Observable<Robot[]>;
 
+    /**
+     * @ignore
+     */
     tableHead: string[] = ['NAME', 'STRATEGY', 'STATUS', 'PROFIT', 'PUBLISH', 'CREATE_DATE', 'OPERATE'];
 
+    /**
+     * 公开机器人
+     */
     publicRobot$: Subject<Robot> = new Subject();
 
-    robotList$: Subject<GetRobotListRequest> = new Subject();
-
+    /**
+     * @ignore
+     */
     isLoading: Observable<boolean>;
 
+    /**
+     * 当前公开的机器人
+     */
     currentPublicRobot: Robot;
 
+    /**
+     * @ignore
+     */
     restartRobot$: Subject<Robot> = new Subject();
 
+    /**
+     * @ignore
+     */
     stopRobot$: Subject<Robot> = new Subject();
 
+    /**
+     * @ignore
+     */
     deleteRobot$: Subject<Robot> = new Subject();
 
+    /**
+     * @ignore
+     */
     setRobotWD$: Subject<Robot> = new Subject();
 
+    /**
+     * @ignore
+     */
     isSubAccount: Observable<boolean>;
 
     constructor(
@@ -50,28 +81,33 @@ export class RobotListComponent extends BaseComponent {
         super();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
-
-        this.robotList$.next({ start: -1, limit: -1, status: -1 });
     }
 
+    /**
+     * @ignore
+     */
     initialModel() {
-        this.data = this.robotService.getRobots()
-            .pipe(
-                startWith([])
-            );
+        this.data = this.robotService.getRobots().pipe(
+            startWith([])
+        );
 
         this.isLoading = this.robotOperate.getPublicRobotLoadingState();
 
         this.isSubAccount = this.pubService.isSubAccount();
     }
 
+    /**
+     * @ignore
+     */
     launch() {
-        this.subscription$$ = this.robotService.launchRobotList(this.robotList$)
-            .add(this.robotOperate.handlePublicRobotError())
+        this.subscription$$ = this.robotOperate.handlePublicRobotError()
             .add(this.robotService.handleRobotListError())
             .add(this.robotOperate.handleRobotRestartError())
             .add(this.robotOperate.handleDeleteRobotError())
@@ -84,9 +120,13 @@ export class RobotListComponent extends BaseComponent {
             .add(this.robotOperate.launchDeleteRobot(this.deleteRobot$))
             .add(this.robotOperate.monitorDeleteRobotResult())
             .add(this.watchDogService.launchSetWatchDog(this.setRobotWD$))
-            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()));
+            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()))
+            .add(this.robotService.launchRobotList(of({ start: -1, limit: -1, status: -1 })));
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.robotOperate.resetRobotOperate();
 

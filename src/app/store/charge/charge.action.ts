@@ -35,8 +35,6 @@ export const GET_PAY_ORDERS = '[Charge] GET_PAY_ORDERS';
 export class GetPayOrdersRequestAction extends GetPayOrders implements Action {
     readonly type = GET_PAY_ORDERS;
 
-    allowSeparateRequest = true;
-
     constructor(public payload = null) { super(); }
 }
 
@@ -80,8 +78,6 @@ export const GET_PAYMENT_ARG = '[Charge] GET_PAYMENT_ARG';
 
 export class GetPaymentArgRequestAction extends GetPaymentArg implements Action {
     readonly type = GET_PAYMENT_ARG;
-
-    allowSeparateRequest = true;
 
     constructor(public payload: GetPaymentArgRequest) { super(); }
 }

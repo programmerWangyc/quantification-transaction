@@ -91,7 +91,7 @@ export class AgentListComponent extends BaseComponent {
                 map(res => JSON.parse(res) as DockerSetting),
                 map(({ version }) => version)
             ).subscribe(version => this.latestVersion = version))
-            .add(this.nodeService.launchGetNodeList(of(true), true));
+            .add(this.nodeService.launchGetNodeList(of(true)));
     }
 
     /**

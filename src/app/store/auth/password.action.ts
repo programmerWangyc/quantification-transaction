@@ -30,8 +30,6 @@ export const SET_PASSWORD = '[Auth] SET_PASSWORD';
 export class SetPasswordRequestAction extends SetPasswordAction implements Action {
     readonly type = SET_PASSWORD;
 
-    public allowSeparateRequest = true;
-
     constructor(public payload: SetPasswordRequest) { super(); }
 }
 

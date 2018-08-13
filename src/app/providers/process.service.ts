@@ -81,12 +81,12 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetRobotDetailRequestAction(params)));
     }
 
-    processSubscribeRobot(paramObs: Observable<Request.SubscribeRobotRequest>, allowSeparateRequest: boolean): Subscription {
-        return paramObs.subscribe(params => this.store.dispatch(new RobotActions.SubscribeRobotRequestAction(params, allowSeparateRequest)));
+    processSubscribeRobot(paramObs: Observable<Request.SubscribeRobotRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new RobotActions.SubscribeRobotRequestAction(params)));
     }
 
-    processRobotLogs(paramObs: Observable<Request.GetRobotLogsRequest>, allSeparateRequest: boolean, isSyncAction): Subscription {
-        return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetRobotLogsRequestAction(params, allSeparateRequest, isSyncAction)));
+    processRobotLogs(paramObs: Observable<Request.GetRobotLogsRequest>, isSyncAction): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetRobotLogsRequestAction(params, isSyncAction)));
     }
 
     processRestartRobot(paramObs: Observable<Request.RestartRobotRequest>): Subscription {
@@ -119,8 +119,8 @@ export class ProcessService {
 
     //  ===================================================Agent ===================================================
 
-    processGetNodeList(paramObs: Observable<Request.GetNodeListRequest>, allowSeparateRequest = false): Subscription {
-        return paramObs.subscribe(_ => this.store.dispatch(new BtNode.GetNodeListRequestAction(null, allowSeparateRequest)));
+    processGetNodeList(paramObs: Observable<Request.GetNodeListRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new BtNode.GetNodeListRequestAction(null)));
     }
 
     processDeleteNode(paramObs: Observable<Request.DeleteNodeRequest>): Subscription {

@@ -25,8 +25,6 @@ class GetCommentList extends ApiAction {
 
     noneParams = false;
 
-    allowSeparateRequest = true;
-
     constructor() { super(); }
 }
 
@@ -80,8 +78,6 @@ class SubmitComment extends ApiAction {
     command = 'SubmitComment';
 
     noneParams = false;
-
-    allowSeparateRequest = true;
 
     order = SubmitCommentOrder;
 }
@@ -183,8 +179,6 @@ export class GetQiniuToken extends ApiAction {
     command = 'GetQiniuToken';
 
     noneParams = false;
-
-    allowSeparateRequest = true;
 
     order = null;
 }

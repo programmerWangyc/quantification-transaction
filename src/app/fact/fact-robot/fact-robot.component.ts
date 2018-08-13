@@ -1,22 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+
+import { Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, mapTo, mergeMapTo } from 'rxjs/operators';
 
-import { BaseComponent } from '../../base/base.component';
+import { CommentService } from '../../comment/providers/comment.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
+import { RobotDetail } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
 import { PublicService } from '../../providers/public.service';
 import { RobotService } from '../../robot/providers/robot.service';
-
+import { CommentBaseComponent } from '../../square/square/square.component';
+import { BtCommentType } from '../../app.config';
 
 @Component({
-    selector: 'app-robot-detail',
-    templateUrl: './robot-detail.component.html',
-    styleUrls: ['./robot-detail.component.scss'],
+    selector: 'app-fact-robot',
+    templateUrl: './fact-robot.component.html',
+    styleUrls: ['./fact-robot.component.scss'],
 })
-export class RobotDetailComponent extends BaseComponent {
+export class FactRobotComponent extends CommentBaseComponent implements OnInit {
 
     /**
      * @ignore
@@ -31,42 +35,62 @@ export class RobotDetailComponent extends BaseComponent {
     /**
      * @ignore
      */
+    robot: Observable<RobotDetail>;
+
+    /**
+     * @ignore
+     */
     isLoading: Observable<boolean>;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     constructor(
         private robotService: RobotService,
         private activatedRoute: ActivatedRoute,
-        private publicService: PublicService,
+        public publicService: PublicService,
         private btNodeService: BtNodeService,
         private platformService: PlatformService,
+        public commentService: CommentService,
+        public translate: TranslateService,
     ) {
-        super();
+        super(publicService, commentService, translate);
     }
 
     /**
      * @ignore
      */
     ngOnInit() {
+        const id = this.activatedRoute.snapshot.paramMap.get('id');
+
         this.initialModel();
 
-        this.launch();
+        this.launch(BtCommentType.robot + id, () => this.isAlive);
+
+        this.privateInitialModel();
+
+        this.privateLaunch();
     }
 
     /**
      * @ignore
      */
-    initialModel() {
+    private privateInitialModel() {
         const name = this.activatedRoute.snapshot.paramMap.get('name');
 
-        this.paths = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name }];
+        this.paths = [{ name: 'FACT_FINDER', path: '../../' }, { name }];
 
         this.isLoading = this.robotService.isLoading();
+
+        this.robot = this.robotService.getRobotDetail();
     }
 
     /**
      * @ignore
      */
-    launch() {
+    private privateLaunch() {
         const idObs = this.activatedRoute.paramMap.pipe(
             map(param => +param.get('id'))
         );
@@ -85,12 +109,9 @@ export class RobotDetailComponent extends BaseComponent {
         );
 
         this.subscription$$ = this.robotService.launchRobotDetail(requestById)
-            .add(this.robotService.monitorServerSendRobotStatus())
-            .add(this.robotService.launchSubscribeRobot(requestById))
             .add(this.btNodeService.launchGetNodeList(isMain))
             .add(this.platformService.launchGetPlatformList(isMain))
             .add(this.robotService.handleRobotDetailError())
-            .add(this.robotService.handleSubscribeRobotError())
             .add(this.btNodeService.handleNodeListError())
             .add(this.platformService.handlePlatformListError());
     }
@@ -99,8 +120,8 @@ export class RobotDetailComponent extends BaseComponent {
      * @ignore
      */
     ngOnDestroy() {
-        this.robotService.launchSubscribeRobot(of({ id: 0 }));
-
         this.subscription$$.unsubscribe();
+
+        this.isAlive = false;
     }
 }

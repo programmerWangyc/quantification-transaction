@@ -44,14 +44,14 @@ export class RobotLogService extends BaseService {
     //  =======================================================Serve Request=======================================================
 
     /**
-     *   Launch get robot logs request.
+     * Launch get robot logs request.
      * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
      * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
      * 前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点是会导致再一次的刷新。
      * 第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
      * 最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
      */
-    launchRobotLogs(data: Observable<{ [key: string]: number }>, allowSeparateRequest = true, isSyncAction = false /* indicate the action is  sync action or not */): Subscription {
+    launchRobotLogs(data: Observable<{ [key: string]: number }>, isSyncAction = false /* indicate the action is  sync action or not */): Subscription {
         return this.process.processRobotLogs(
             data.pipe(
                 withLatestFrom(
@@ -62,7 +62,6 @@ export class RobotLogService extends BaseService {
                     (newParams, defaultParams, perviousParams) => ({ ...defaultParams, ...perviousParams, ...newParams })
                 )
             ),
-            allowSeparateRequest,
             isSyncAction
         );
     }
@@ -107,7 +106,6 @@ export class RobotLogService extends BaseService {
         return this.launchRobotLogs(syncNotify.pipe(
             switchMapTo(newLogParam)
         ),
-            true,
             true
         );
     }
