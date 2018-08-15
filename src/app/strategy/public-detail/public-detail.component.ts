@@ -5,11 +5,11 @@ import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { filter, map, startWith, takeWhile } from 'rxjs/operators';
 
+import { Path } from '../../app.config';
 import { PublicStrategyDetail } from '../../interfaces/response.interface';
+import { UtilService } from '../../providers/util.service';
 import { StrategyService } from '../providers/strategy.service';
 import { StrategyRenewalComponent } from '../strategy-renewal/strategy-renewal.component';
-import { Path } from '../../app.config';
-import { pictureUrlReg } from '../../validators/validators';
 
 @Component({
     selector: 'app-public-detail',
@@ -44,6 +44,7 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private nzModal: NzModalService,
+        private util: UtilService,
     ) {
     }
 
@@ -67,7 +68,7 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
         this.pictures = this.detail.pipe(
             map(data => data.description),
             filter(des => !!des && des.includes('image')),
-            map(source => this.getAllPictures(source)),
+            map(source => this.util.pluckPictures(source)),
             startWith([])
         );
     }
@@ -104,27 +105,6 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
                 nzFooter: null,
             });
         }
-    }
-
-    /**
-     * get all pictures;
-     */
-    private getAllPictures(source: string): string[] {
-        let result = [];
-
-        const urls = [];
-
-        while (true) {
-            result = pictureUrlReg.exec(source);
-
-            if (!!result) {
-                urls.push(result[0]);
-            } else {
-                break;
-            }
-        }
-
-        return urls;
     }
 
     /**

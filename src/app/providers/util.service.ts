@@ -10,6 +10,7 @@ import { distinctUntilChanged, groupBy, map, mergeMap, reduce, switchMap } from 
 import { ChartSize } from '../interfaces/app.interface';
 import { RunningLog } from '../interfaces/response.interface';
 import { BaseService } from '../base/base.service';
+import { pictureUrlReg } from '../validators/validators';
 
 export interface GroupedList<T> {
     groupName: string;
@@ -123,7 +124,7 @@ export class UtilService extends BaseService {
     }
 
     /**
-     * 执行操作之前的确认
+     * 确认是否要执行高危操作
      */
     guardRiskOperate(message: string, options: { [key: string]: any }): Observable<boolean> {
         return this.translate.get(message, options).pipe(
@@ -138,5 +139,28 @@ export class UtilService extends BaseService {
                 );
             })
         );
+    }
+
+    /**
+     * 提取符中的图片信息
+     * @param source 原始字符串
+     * @returns 数据中包含的图片url
+     */
+    pluckPictures(source: string): string[] {
+        let result = [];
+
+        const urls = [];
+
+        while (true) {
+            result = pictureUrlReg.exec(source);
+
+            if (!!result) {
+                urls.push(result[0]);
+            } else {
+                break;
+            }
+        }
+
+        return urls;
     }
 }

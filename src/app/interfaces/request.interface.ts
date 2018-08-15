@@ -502,11 +502,16 @@ export interface GetBBSTopicListBySlugRequest {
     keyword: string;
 }
 
+// bbs topic by id
+export interface GetBBSTopicRequest {
+    id: number;
+}
+
 // ============================================Simulation==================================================
 
 // sandbox token
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 49
+ * 接口总数： 83， 已完成： 50
  */

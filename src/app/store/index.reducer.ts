@@ -382,6 +382,12 @@ export const selectBBSTopicListBySlugResponse = createSelector(getBBSState, bbs.
 // request params
 export const selectBBSRequestParams = createSelector(getBBSState, bbs.getRequestParams);
 
+// topic by id
+export const selectBBSTopicByIdResponse = createSelector(getBBSState, bbs.getTopicByIdRes);
+
+// ui state
+export const selectBBSUiState = createSelector(getBBSState, bbs.getUIState);
+
 //  ===================================================Simulation======================================================
 
 const getSimulation = (state: AppState) => state.simulation;

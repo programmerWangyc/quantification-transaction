@@ -7,23 +7,23 @@
             </ng-template>
 
             <ng-template #dateAction>
-                <i class="anticon anticon-clock-circle-o" style="margin-right: 8px;"></i>
+                <i class="anticon anticon-clock-circle-o"></i>
                 {{item.created}}
             </ng-template>
 
             <ng-template #replyAction>
-                <i class="anticon anticon-message" style="margin-right: 8px;"></i>
+                <i class="anticon anticon-message"></i>
                 {{item.reply_count}}
             </ng-template>
 
             <ng-template #hitAction>
-                <i class="anticon anticon-eye-o" style="margin-right: 8px;"></i>
+                <i class="anticon anticon-eye-o"></i>
                 {{item.hits}}
             </ng-template>
 
             <nz-list-item-meta [nzTitle]="nzTitle">
                 <ng-template #nzTitle>
-                    <a>{{item.title}}</a>
+                    <a [routerLink]="['./', item.id, item.title]">{{item.title}}</a>
                 </ng-template>
             </nz-list-item-meta>
 

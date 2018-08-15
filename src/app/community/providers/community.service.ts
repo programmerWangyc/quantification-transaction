@@ -10,6 +10,7 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
+import { ResetBBSTopicAction } from '../../store/bbs/bbs.action';
 
 @Injectable()
 export class CommunityService extends BaseService {
@@ -42,6 +43,13 @@ export class CommunityService extends BaseService {
      */
     launchBBSTopicListBySlug(obs: Observable<fromReq.GetBBSTopicListBySlugRequest>): Subscription {
         return this.process.processBBSTopicListBySlug(obs);
+    }
+
+    /**
+     * @ignore
+     */
+    launchBBSTopicById(obs: Observable<fromReq.GetBBSTopicRequest>): Subscription {
+        return this.process.processBBSTopicById(obs);
     }
 
     //  =======================================================Date acquisition=======================================================
@@ -112,9 +120,45 @@ export class CommunityService extends BaseService {
         );
     }
 
+    /**
+     * @ignore
+     */
+    private getBBSTopicByIdResponse(): Observable<fromRes.GetBBSTopicResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectBBSTopicByIdResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getBBSTopic(): Observable<fromRes.BBSTopicById> {
+        return this.getBBSTopicByIdResponse().pipe(
+            map(res => res.result)
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    isLoading(): Observable<boolean> {
+        return this.store.pipe(
+            select(fromRoot.selectBBSUiState),
+            map(state => state.loading)
+        );
+    }
+
     //  =======================================================Shortcut methods=======================================================
 
     //  =======================================================Local state change=======================================================
+
+    /**
+     * @ignore
+     */
+    resetTopicState(): void {
+        this.store.dispatch(new ResetBBSTopicAction());
+    }
 
     //  =======================================================Error handler=======================================================
 
@@ -141,6 +185,15 @@ export class CommunityService extends BaseService {
      */
     handleBBSTopicListBySlugError(keepAlive: () => boolean): Subscription {
         return this.error.handleResponseError(this.getBBSTopicListBySlugResponse().pipe(
+            takeWhile(keepAlive)
+        ));
+    }
+
+    /**
+     * @ignore
+     */
+    handleBBSTopicByIdResponse(keepAlive: () => boolean): Subscription {
+        return this.error.handleResponseError(this.getBBSTopicByIdResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

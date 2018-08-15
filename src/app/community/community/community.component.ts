@@ -74,6 +74,11 @@ export class CommunityComponent implements OnInit {
     /**
      * @ignore
      */
+    loading: Observable<boolean>;
+
+    /**
+     * @ignore
+     */
     isAlive = true;
 
     constructor(
@@ -105,6 +110,8 @@ export class CommunityComponent implements OnInit {
         this.pageSizes = this.constant.PAGE_SIZE_SELECT_VALUES;
 
         this.limit = this.pageSizes[0];
+
+        this.loading = this.bbs.isLoading();
     }
 
     /**

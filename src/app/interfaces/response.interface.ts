@@ -978,6 +978,15 @@ export interface BBSTopicListBySlugResponse {
 
 export interface GetBBSTopicListBySlugResponse extends ResponseUnit<BBSTopicListBySlugResponse> { }
 
+// bbs topic by id
+export interface BBSTopicById extends BBSTopic {
+    content: string;
+    is_owner: boolean;
+    md5: string;
+    node_name: string;
+}
+export interface GetBBSTopicResponse extends ResponseUnit<BBSTopicById> { }
+
 // ========================================Simulation======================================================
 
 // sandbox token

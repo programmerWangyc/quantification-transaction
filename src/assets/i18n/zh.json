@@ -745,5 +745,6 @@
     "IMAGE_TOKEN_ERROR_OR_TIMEOUT": "获取图片token时发生错误或超时。",
 
     "CREATE_TOPIC": "创建主题",
-    "SEARCH_TOPIC": "搜索主题"
+    "SEARCH_TOPIC": "搜索主题",
+    "CLICK": "点击"
 }

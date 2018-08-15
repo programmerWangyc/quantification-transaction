@@ -20,6 +20,9 @@ export class BBSEffect extends BaseEffect {
     @Effect()
     topicListBySlug$: Observable<ResponseAction> = this.getResponseAction(bbsActions.GET_BBS_TOPIC_LIST_BY_SLUG, bbsActions.ResponseActions);
 
+    @Effect()
+    topicById$: Observable<ResponseAction> = this.getResponseAction(bbsActions.GET_BBS_TOPIC_BY_ID, bbsActions.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,

@@ -15,9 +15,11 @@
     </nz-input-group>
 </div>
 
-<app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
+<nz-spin [nzSpinning]="loading | async" [nzTip]="'LOADING' | translate">
+    <app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
+</nz-spin>
 
 <div fxLayoutAlign="end center" id="bbs-pagination">
-    <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true" [nzPageSizeOptions]="pageSizes" [(nzPageSize)]="limit"
-        (nzPageSizeChange)="limit$.next($event)" (nzPageIndexChange)="page$.next($event)"></nz-pagination>
+    <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true" [nzPageSizeOptions]="pageSizes"
+        [(nzPageSize)]="limit" (nzPageSizeChange)="limit$.next($event)" (nzPageIndexChange)="page$.next($event)" [nzHideOnSinglePage]="true"></nz-pagination>
 </div>

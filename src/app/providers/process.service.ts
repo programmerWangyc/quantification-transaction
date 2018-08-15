@@ -290,6 +290,10 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSTopicListBySlugRequestAction(params)));
     }
 
+    processBBSTopicById(paramObs: Observable<Request.GetBBSTopicRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSTopicRequestAction(params)));
+    }
+
     //  ===================================================Simulation======================================================
 
     processSandboxToken(paramObs: Observable<any>): Subscription {

@@ -1,0 +1,43 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div>
+    <ul fxLayout="row-reverse">
+        <li class="subtitle">
+            <b>{{'CLICK' | translate}}</b>
+            <i>{{topic.hits}}</i>
+        </li>
+        <li class="subtitle">
+            <b>{{'CREATE_TIME' | translate}}</b>
+            <i>{{topic.created}}</i>
+        </li>
+        <li class="subtitle">
+            <b>{{'LATEST_MODIFY' | translate}}</b>
+            <i>{{topic.updated}}</i>
+        </li>
+
+        <li class="subtitle">
+            <b>{{'AUTHOR' | translate}}</b>
+            <i>{{topic.author}}</i>
+        </li>
+    </ul>
+
+    <div *ngIf="topic" nz-row>
+        <div nz-col nzSpan="23">
+            <markdown [data]="topic.content | toMarkdown" class="content"></markdown>
+        </div>
+
+        <div nz-col nzSpan="1" class="share-bar">
+            <app-share [topic]="topic.title" [pictures]="pictures"></app-share>
+        </div>
+    </div>
+</div>
+
+<div fxLayoutAlign="space-between center">
+    <h2>{{'ALL_COMMENT' | translate}}</h2>
+    <span>{{total | async}}</span>
+</div>
+
+<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+    [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+<app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>

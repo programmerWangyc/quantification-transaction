@@ -1,20 +1,20 @@
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
     <div *ngIf="detail | async as data;">
         <ul fxLayout="row-reverse">
-            <li>
+            <li class="subtitle">
                 <b>{{'STRATEGY_TYPE' | translate}}</b>
                 <i>{{data.category | categoryName | translate }}</i>
             </li>
-            <li>
+            <li class="subtitle">
                 <b>{{'CREATE_TIME' | translate}}</b>
                 <i>{{data.date}}</i>
             </li>
-            <li>
+            <li class="subtitle">
                 <b>{{'LATEST_MODIFY' | translate}}</b>
                 <i>{{data.last_modified}}</i>
             </li>
 
-            <li>
+            <li class="subtitle">
                 <b>{{'AUTHOR' | translate}}</b>
                 <i>{{data.username}}</i>
             </li>
@@ -22,7 +22,7 @@
 
         <div nz-row>
             <div nz-col nzSpan="23">
-                <markdown *ngIf="data.description as des; else emptyBlock" [data]="des" id="markdown"></markdown>
+                <markdown *ngIf="data.description as des; else emptyBlock" [data]="des" class="content"></markdown>
             </div>
 
             <div nz-col nzSpan="1" class="share-bar">

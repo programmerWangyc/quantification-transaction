@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 
-import { GetBBSPlaneListRequest, GetBBSNodeListRequest, GetBBSTopicListBySlugRequest } from '../../interfaces/request.interface';
-import { GetBBSNodeListResponse, GetBBSTopicListBySlugResponse, GetBBSPlaneListResponse } from '../../interfaces/response.interface';
+import { GetBBSPlaneListRequest, GetBBSNodeListRequest, GetBBSTopicListBySlugRequest, GetBBSTopicRequest } from '../../interfaces/request.interface';
+import { GetBBSNodeListResponse, GetBBSTopicListBySlugResponse, GetBBSPlaneListResponse, GetBBSTopicResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
@@ -118,7 +118,49 @@ export class GetBBSTopicListBySlugSuccessAction extends GetBBSTopicListBySlug im
 
     constructor(public payload: GetBBSTopicListBySlugResponse) { super(); }
 }
+
+// bbs topic by id
+class GetBBSTopic extends ApiAction {
+    isSingleParams = true;
+
+    command = 'GetBBSTopic';
+
+    noneParams = false;
+
+    order = null;
+}
+
+export const GET_BBS_TOPIC_BY_ID = '[BBS] GET_BBS_TOPIC_BY_ID';
+
+export class GetBBSTopicRequestAction extends GetBBSTopic implements Action {
+    readonly type = GET_BBS_TOPIC_BY_ID;
+
+    constructor(public payload: GetBBSTopicRequest) { super(); }
+}
+
+export const GET_BBS_TOPIC_BY_ID_FAIL = '[BBS] GET_BBS_TOPIC_BY_ID_FAIL';
+
+export class GetBBSTopicFailAction extends GetBBSTopic implements Action {
+    readonly type = GET_BBS_TOPIC_BY_ID_FAIL;
+
+    constructor(public payload: GetBBSTopicResponse) { super(); }
+}
+
+export const GET_BBS_TOPIC_BY_ID_SUCCESS = '[BBS] GET_BBS_TOPIC_BY_ID_SUCCESS';
+
+export class GetBBSTopicSuccessAction extends GetBBSTopic implements Action {
+    readonly type = GET_BBS_TOPIC_BY_ID_SUCCESS;
+
+    constructor(public payload: GetBBSTopicResponse) { super(); }
+}
+
 //  ===========================================Local action===================================
+
+export const RESET_BBS_TOPIC = '[BBS] RESET_BBS_TOPIC';
+
+export class ResetBBSTopicAction implements Action {
+    readonly type = RESET_BBS_TOPIC;
+}
 
 export type ApiActions = GetBBSPlaneListRequestAction
     | GetBBSNodeListFailAction
@@ -128,9 +170,13 @@ export type ApiActions = GetBBSPlaneListRequestAction
     | GetBBSPlaneListSuccessAction
     | GetBBSTopicListBySlugFailAction
     | GetBBSTopicListBySlugRequestAction
-    | GetBBSTopicListBySlugSuccessAction;
+    | GetBBSTopicListBySlugSuccessAction
+    | GetBBSTopicRequestAction
+    | GetBBSTopicFailAction
+    | GetBBSTopicSuccessAction;
 
-export type Actions = ApiActions;
+export type Actions = ApiActions
+    | ResetBBSTopicAction;
 
 export const ResponseActions = {
     GetBBSNodeListFailAction,
@@ -139,4 +185,6 @@ export const ResponseActions = {
     GetBBSPlaneListSuccessAction,
     GetBBSTopicListBySlugFailAction,
     GetBBSTopicListBySlugSuccessAction,
+    GetBBSTopicFailAction,
+    GetBBSTopicSuccessAction,
 };

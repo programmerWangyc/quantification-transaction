@@ -1,10 +1,4 @@
 // topic
-const getBBSTopic = 'GetBBSTopic';
-
-interface GetBBSTopic {
-    id: number;
-}
-
 const addBBSTopic = 'AddBBSTopic';
 interface AddTopic {
     topicId: number;
