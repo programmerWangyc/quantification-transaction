@@ -1,0 +1,19 @@
+#bbs-navigator {
+    position: relative;
+    .create-topic {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+#bbs-search {
+    margin: 20px 0;
+    nz-input-group {
+        width: 200px;
+    }
+}
+
+#bbs-pagination {
+    margin: 20px 0;
+}

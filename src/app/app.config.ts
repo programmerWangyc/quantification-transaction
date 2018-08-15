@@ -10,7 +10,7 @@ export enum Path {
     robot = 'robot',
     strategy = 'strategy',
     exchange = 'exchange',
-    simulate = 'simulate',
+    simulation = 'simulation',
     dashboard = 'dashboard',
     add = 'add',
     charge = 'charge',

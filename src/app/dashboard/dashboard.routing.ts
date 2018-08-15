@@ -1,29 +1,27 @@
 import { RouterModule, Routes } from '@angular/router';
-
+import { FactRobotComponent } from '../fact/fact-robot/fact-robot.component';
+import { FactComponent } from '../fact/fact/fact.component';
+import { SquareComponent } from '../square/square/square.component';
+import { StrategyDetailComponent } from '../square/strategy-detail/strategy-detail.component';
 import { AgentAddComponent } from './agent-add/agent-add.component';
 import { AgentComponent } from './agent/agent.component';
-import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { DocComponent } from './doc/doc.component';
-import { StrategyGuard, RobotGuard } from './providers/guard.service';
+import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
+import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
+import { ExchangeComponent } from './exchange/exchange.component';
+import { RobotGuard, StrategyGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotComponent } from './robot/robot.component';
-import { SquareComponent } from '../square/square/square.component';
 import { StrategyAddComponent } from './strategy-add/strategy-add.component';
 import { StrategyCopyComponent } from './strategy-copy/strategy-copy.component';
 import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { StrategyComponent } from './strategy/strategy.component';
-import { ExchangeComponent } from './exchange/exchange.component';
-import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
-import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
-import { StrategyDetailComponent } from '../square/strategy-detail/strategy-detail.component';
-import { FactComponent } from '../fact/fact/fact.component';
-import { FactRobotComponent } from '../fact/fact-robot/fact-robot.component';
 
 const routs: Routes = [
     {
@@ -65,7 +63,13 @@ const routs: Routes = [
             { path: 'fact', component: FactComponent },
             { path: 'fact/:id/:name', component: FactRobotComponent },
 
-            { path: 'community', component: CommunityComponent },
+            // simulation
+            { path: 'simulation', loadChildren: '../simulation/simulation.module#SimulationModule' },
+
+            // community
+            { path: 'community', loadChildren: '../community/community.module#CommunityModule' },
+
+            // document
             { path: 'doc', component: DocComponent },
 
 

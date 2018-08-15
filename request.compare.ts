@@ -1,17 +1,3 @@
-// plane list
-const getBBSPlaneList = 'GetBBSPlaneList';
-
-interface GetBBSPlaneList {
-    list: any[];
-}
-
-// bbs node list
-const getBBSNodeList = 'GetBBSNodeList';
-
-interface GetBBSNodeList {
-    list: any[];
-}
-
 // topic
 const getBBSTopic = 'GetBBSTopic';
 
@@ -20,7 +6,6 @@ interface GetBBSTopic {
 }
 
 const addBBSTopic = 'AddBBSTopic';
-
 interface AddTopic {
     topicId: number;
     nodeNumber: number;
@@ -35,16 +20,6 @@ interface DeleteTopic {
     magic1: number;
     magic2: number;
 }
-
-const getBBSTopicListBySlug = 'GetBBSTopicListBySlug';
-
-interface GetBBSTopicListBySlug {
-    slug: string;
-    total: number;
-    pageSize: number;
-    keyword: string;
-}
-
 
 // lock user
 const LockUser = 'M_User';
@@ -238,11 +213,6 @@ interface UpdateTradeHistory {
     expire: string;
     concurrent: number;
 }
-
-// sandbox
-const getSandBoxToken = 'GetSandBoxToken';
-
-interface GetSandBoxToken { }
 
 // Stats
 const getStats = 'GetStats';

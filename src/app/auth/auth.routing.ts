@@ -15,9 +15,9 @@ const routs: Routes = [
             { path: 'signup', component: SignupComponent },
             { path: 'reset', component: ResetComponent },
             { path: 'pwd/:token', component: PasswordComponent },
-            { path: '', redirectTo: 'login', pathMatch: 'full' }
-        ]
-    }
+            { path: '', redirectTo: 'login', pathMatch: 'full' },
+        ],
+    },
 ];
 
 

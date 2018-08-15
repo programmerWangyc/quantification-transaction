@@ -70,7 +70,7 @@ const controlCenter: SideNav = {
 
 const simulation: SideNav = {
     label: 'FIRMWARE_SIMULATION',
-    path: Path.simulate,
+    path: Path.simulation,
     icon: 'meh-o',
 };
 
@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * 侧边栏列表
      */
-    list: SideNav[] = [controlCenter, simulation, square, factFinder, community, documentation, market, analyzing];
+    list: SideNav[] = [controlCenter, square, factFinder, simulation, community, documentation, market, analyzing];
 
     /**
      * 当前展示的模块

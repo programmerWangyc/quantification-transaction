@@ -1,0 +1,5 @@
+<ul fxLayout="row" *ngIf="!!data.length">
+    <li *ngFor="let node of data">
+        <nz-tag nzMode="checkable" [(nzChecked)]="node.checked" (nzCheckedChange)="onNodeSelect()">{{node.name}}</nz-tag>
+    </li>
+</ul>

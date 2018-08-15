@@ -1,0 +1,23 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div id="bbs-navigator">
+    <app-navigator [nodes]="nodes | async" [planes]="planes | async" (select)="slugs$.next($event)"></app-navigator>
+
+    <button nz-button class="create-topic">
+        <i class="anticon anticon-plus"></i>
+        {{'CREATE_TOPIC' | translate}}
+    </button>
+</div>
+
+<div fxLayoutAlign="end center" id="bbs-search">
+    <nz-input-group nzSuffixIcon="anticon anticon-search">
+        <input type="text" nz-input [placeholder]="'SEARCH_TOPIC' | translate" [formControl]="search">
+    </nz-input-group>
+</div>
+
+<app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
+
+<div fxLayoutAlign="end center" id="bbs-pagination">
+    <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true" [nzPageSizeOptions]="pageSizes" [(nzPageSize)]="limit"
+        (nzPageSizeChange)="limit$.next($event)" (nzPageIndexChange)="page$.next($event)"></nz-pagination>
+</div>

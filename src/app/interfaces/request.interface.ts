@@ -486,8 +486,27 @@ export interface GetQiniuTokenRequest {
     name: string;
 }
 
+// =================================================BBS==================================================
+
+// bbs plane list
+export interface GetBBSPlaneListRequest { }
+
+// bbs node list
+export interface GetBBSNodeListRequest { }
+
+// bbs topic list
+export interface GetBBSTopicListBySlugRequest {
+    slug: string;
+    offset: number;
+    limit: number;
+    keyword: string;
+}
+
+// ============================================Simulation==================================================
+
+// sandbox token
+export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 45
+ * 接口总数： 83， 已完成： 49
  */
-

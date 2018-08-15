@@ -7,19 +7,22 @@ import * as reset from './auth/reset.reducer';
 import * as signup from './auth/signup.reducer';
 import * as verifyPwd from './auth/verify-password.reducer';
 import * as backtest from './backtest/backtest.reducer';
+import * as bbs from './bbs/bbs.reducer';
 import * as btNode from './bt-node/bt-node.reducer';
 import * as charge from './charge/charge.reducer';
+import * as comment from './comment/comment.reducer';
 import * as exchange from './exchange/exchange.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
 import { RouterStateUrl } from './router/router.reducer';
+import * as simulation from './simulation/simulation.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
-import * as comment from './comment/comment.reducer';
 
 export interface AppState {
     backtest: backtest.State;
+    bbs: bbs.State;
     btNode: btNode.State;
     charge: charge.State;
     comment: comment.State;
@@ -32,6 +35,7 @@ export interface AppState {
     robot: robot.State;
     route: RouterReducerState<RouterStateUrl>;
     signup: signup.State;
+    simulation: simulation.State;
     strategy: strategy.State;
     verifyPwd: verifyPwd.State;
     watchDog: watchDog.State;
@@ -39,6 +43,7 @@ export interface AppState {
 
 export const reducers: ActionReducerMap<AppState> = {
     backtest: backtest.reducer,
+    bbs: bbs.reducer,
     btNode: btNode.reducer,
     charge: charge.reducer,
     comment: comment.reducer,
@@ -51,6 +56,7 @@ export const reducers: ActionReducerMap<AppState> = {
     robot: robot.reducer,
     route: routerReducer,
     signup: signup.reducer,
+    simulation: simulation.reducer,
     strategy: strategy.reducer,
     verifyPwd: verifyPwd.reducer,
     watchDog: watchDog.reducer,
@@ -359,3 +365,26 @@ export const selectCommentRequestParams = createSelector(getComment, comment.get
 
 // UI state
 export const selectCommentUIState = createSelector(getComment, comment.getUIState);
+
+//  =======================================================BBS======================================================
+
+const getBBSState = (state: AppState) => state.bbs;
+
+// plane list
+export const selectBBSPlaneListResponse = createSelector(getBBSState, bbs.getPlaneListRes);
+
+// bbs node list
+export const selectBBSNodeListResponse = createSelector(getBBSState, bbs.getNodeListRes);
+
+// topic list by slug
+export const selectBBSTopicListBySlugResponse = createSelector(getBBSState, bbs.getTopicListBySlugRes);
+
+// request params
+export const selectBBSRequestParams = createSelector(getBBSState, bbs.getRequestParams);
+
+//  ===================================================Simulation======================================================
+
+const getSimulation = (state: AppState) => state.simulation;
+
+// sandbox token;
+export const selectSandboxTokenResponse = createSelector(getSimulation, simulation.getSandboxTokenRes);

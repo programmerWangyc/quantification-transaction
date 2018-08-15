@@ -20,6 +20,8 @@ import * as RobotActions from '../store/robot/robot.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import * as CommentActions from '../store/comment/comment.action';
+import * as SimulationActions from '../store/simulation/simulation.action';
+import * as BBSActions from '../store/bbs/bbs.action';
 
 /**
  * @ignore
@@ -272,5 +274,25 @@ export class ProcessService {
 
     processGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new CommentActions.GetQiniuTokenRequestAction(params)));
+    }
+
+    //  =========================================================BBS======================================================
+
+    processBBSPlaneList(paramObs: Observable<Request.GetBBSPlaneListRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new BBSActions.GetBBSPlaneListRequestAction()));
+    }
+
+    processBBSNodeList(paramObs: Observable<Request.GetBBSNodeListRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new BBSActions.GetBBSNodeListRequestAction()));
+    }
+
+    processBBSTopicListBySlug(paramObs: Observable<Request.GetBBSTopicListBySlugRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSTopicListBySlugRequestAction(params)));
+    }
+
+    //  ===================================================Simulation======================================================
+
+    processSandboxToken(paramObs: Observable<any>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new SimulationActions.GetSandBoxTokenRequestAction()));
     }
 }

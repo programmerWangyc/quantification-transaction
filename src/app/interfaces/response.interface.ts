@@ -217,20 +217,20 @@ export interface GetRobotListResponse extends ResponseUnit<RobotListResponse> { 
 
 // public robot list
 export interface PublicRobot {
-   date: string;
-   id: number;
-   is_sandbox: number;
-   name: string;
-   profit: number;
-   public: number;
-   refresh: number;
-   start_time: string;
-   status: number;
-   strategy_category: number;
-   strategy_id: number;
-   strategy_name: string;
-   summary?: string; // JSON type string; wrap in ``, 在store中被解析;
-   username: string;
+    date: string;
+    id: number;
+    is_sandbox: number;
+    name: string;
+    profit: number;
+    public: number;
+    refresh: number;
+    start_time: string;
+    status: number;
+    strategy_category: number;
+    strategy_id: number;
+    strategy_name: string;
+    summary?: string; // JSON type string; wrap in ``, 在store中被解析;
+    username: string;
 }
 
 export interface PublicRobotListResponse {
@@ -927,3 +927,63 @@ export interface GetCommentListResponse extends ResponseUnit<CommentListResponse
 
 // get qiniu token
 export interface GetQiniuTokenResponse extends ResponseUnit<string> { }
+
+// ===========================================BBS======================================================
+
+// bbs plane list
+export interface BBSPlane {
+    id: number;
+    name: string;
+}
+
+export interface BBSPlaneListResponse {
+    items: BBSPlane[];
+}
+
+export interface GetBBSPlaneListResponse extends ResponseUnit<BBSPlaneListResponse> { }
+
+// bbs node list
+export interface BBSNode {
+    hide: number;
+    id: number;
+    name: string;
+    plane_id: number;
+    slug: string;
+}
+
+export interface BBSNodeListResponse {
+    items: BBSNode[];
+}
+
+export interface GetBBSNodeListResponse extends ResponseUnit<BBSNodeListResponse> { }
+
+// bbs topic list
+export interface BBSTopic {
+    author: string;
+    created: string; // date string;
+    hits: number;
+    id: number;
+    node_id: number;
+    reply_count: number;
+    status: number;
+    title: string;
+    top?: number;
+    updated?: string; // date string;
+}
+
+export interface BBSTopicListBySlugResponse {
+    all_items: number;
+    items: BBSTopic[];
+}
+
+export interface GetBBSTopicListBySlugResponse extends ResponseUnit<BBSTopicListBySlugResponse> { }
+
+// ========================================Simulation======================================================
+
+// sandbox token
+export interface SandboxTokenResponse {
+    super: boolean;
+    token: string;
+}
+
+export interface GetSandboxTokenResponse extends ResponseUnit<SandboxTokenResponse> { }

@@ -1,0 +1,6 @@
+<nz-radio-group [(ngModel)]="selectedPlane" nzButtonStyle="solid" (ngModelChange)="onPlaneSelected($event)">
+    <label nz-radio-button [nzValue]="0">{{'ALL' | translate}}</label>
+    <label nz-radio-button *ngFor="let plane of data" [nzValue]="plane.id">{{plane.name}}</label>
+</nz-radio-group>
+
+<app-nodes-panel [nodes]="activatedNodes" (select)="onNodeSelect($event)"></app-nodes-panel>
