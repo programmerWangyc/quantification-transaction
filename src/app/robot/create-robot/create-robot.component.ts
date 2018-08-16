@@ -52,7 +52,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      */
     xs = 24;
 
-
     /**
      * @ignore
      */

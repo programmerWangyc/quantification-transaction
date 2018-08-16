@@ -1,25 +1,29 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <div>
-    <ul fxLayout="row-reverse">
-        <li class="subtitle">
-            <b>{{'CLICK' | translate}}</b>
-            <i>{{topic.hits}}</i>
-        </li>
-        <li class="subtitle">
-            <b>{{'CREATE_TIME' | translate}}</b>
-            <i>{{topic.created}}</i>
-        </li>
-        <li class="subtitle">
-            <b>{{'LATEST_MODIFY' | translate}}</b>
-            <i>{{topic.updated}}</i>
-        </li>
+    <div fxLayoutAlign="space-between center" class="topic-info">
+        <a *ngIf="isTopicOwner | async" nz-button nzType="primary" [routerLink]="['../../', 'update', topic.id]">{{'UPDATE' | translate}}</a>
 
-        <li class="subtitle">
-            <b>{{'AUTHOR' | translate}}</b>
-            <i>{{topic.author}}</i>
-        </li>
-    </ul>
+        <ul fxLayout="row-reverse">
+            <li class="subtitle">
+                <b>{{'CLICK' | translate}}</b>
+                <i>{{topic.hits}}</i>
+            </li>
+            <li class="subtitle">
+                <b>{{'CREATE_TIME' | translate}}</b>
+                <i>{{topic.created}}</i>
+            </li>
+            <li class="subtitle">
+                <b>{{'LATEST_MODIFY' | translate}}</b>
+                <i>{{topic.updated}}</i>
+            </li>
+
+            <li class="subtitle">
+                <b>{{'AUTHOR' | translate}}</b>
+                <i>{{topic.author}}</i>
+            </li>
+        </ul>
+    </div>
 
     <div *ngIf="topic" nz-row>
         <div nz-col nzSpan="23">

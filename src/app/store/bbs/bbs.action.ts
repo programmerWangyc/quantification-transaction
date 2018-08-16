@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 
-import { GetBBSPlaneListRequest, GetBBSNodeListRequest, GetBBSTopicListBySlugRequest, GetBBSTopicRequest } from '../../interfaces/request.interface';
-import { GetBBSNodeListResponse, GetBBSTopicListBySlugResponse, GetBBSPlaneListResponse, GetBBSTopicResponse } from '../../interfaces/response.interface';
+import { GetBBSPlaneListRequest, GetBBSNodeListRequest, GetBBSTopicListBySlugRequest, GetBBSTopicRequest, AddBBSTopicRequest, GetQiniuTokenRequest } from '../../interfaces/request.interface';
+import { GetBBSNodeListResponse, GetBBSTopicListBySlugResponse, GetBBSPlaneListResponse, GetBBSTopicResponse, AddBBSTopicResponse, GetQiniuTokenResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
@@ -154,6 +154,86 @@ export class GetBBSTopicSuccessAction extends GetBBSTopic implements Action {
     constructor(public payload: GetBBSTopicResponse) { super(); }
 }
 
+// add bbs topic
+enum AddBBSTopicOrder {
+    id,
+    nodeId,
+    title,
+    content,
+    length,
+}
+
+class AddBBSTopic extends ApiAction {
+    isSingleParams = false;
+
+    command = 'AddBBSTopic';
+
+    noneParams = false;
+
+    order = AddBBSTopicOrder;
+}
+
+export const ADD_BBS_TOPIC = '[BBS] ADD_BBS_TOPIC';
+
+export class AddBBSTopicRequestAction extends AddBBSTopic implements Action {
+    readonly type = ADD_BBS_TOPIC;
+
+    constructor(public payload: AddBBSTopicRequest) { super(); }
+}
+
+export const ADD_BBS_TOPIC_FAIL = '[BBS] ADD_BBS_TOPIC_FAIL';
+
+export class AddBBSTopicFailAction extends AddBBSTopic implements Action {
+    readonly type = ADD_BBS_TOPIC_FAIL;
+
+    constructor(public payload: AddBBSTopicResponse) { super(); }
+}
+
+export const ADD_BBS_TOPIC_SUCCESS = '[BBS] ADD_BBS_TOPIC_SUCCESS';
+
+export class AddBBSTopicSuccessAction extends AddBBSTopic implements Action {
+    readonly type = ADD_BBS_TOPIC_SUCCESS;
+
+    constructor(public payload: AddBBSTopicResponse) { super(); }
+}
+
+// qi niu token
+class GetQiniuToken extends ApiAction {
+    isSingleParams = true;
+
+    command = 'GetQiniuToken';
+
+    noneParams = false;
+
+    order = null;
+
+    callbackId = 'GetBBSQiniuToken';
+}
+
+export const GET_QINIU_TOKEN = '[BBS] GET_QINIU_TOKEN';
+
+export class GetBBSQiniuTokenRequestAction extends GetQiniuToken implements Action {
+    readonly type = GET_QINIU_TOKEN;
+
+    constructor(public payload: GetQiniuTokenRequest) { super(); }
+}
+
+export const GET_QINIU_TOKEN_FAIL = '[BBS] GET_QINIU_TOKEN_FAIL';
+
+export class GetBBSQiniuTokenFailAction extends GetQiniuToken implements Action {
+    readonly type = GET_QINIU_TOKEN_FAIL;
+
+    constructor(public payload: GetQiniuTokenResponse) { super(); }
+}
+
+export const GET_QINIU_TOKEN_SUCCESS = '[BBS] GET_QINIU_TOKEN_SUCCESS';
+
+export class GetBBSQiniuTokenSuccessAction extends GetQiniuToken implements Action {
+    readonly type = GET_QINIU_TOKEN_SUCCESS;
+
+    constructor(public payload: GetQiniuTokenResponse) { super(); }
+}
+
 //  ===========================================Local action===================================
 
 export const RESET_BBS_TOPIC = '[BBS] RESET_BBS_TOPIC';
@@ -162,29 +242,47 @@ export class ResetBBSTopicAction implements Action {
     readonly type = RESET_BBS_TOPIC;
 }
 
+export const CLEAR_QINIU_TOKEN = '[BBS] CLEAR_QINIU_TOKEN';
+
+export class ClearQiniuTokenAction implements Action {
+    readonly type = CLEAR_QINIU_TOKEN;
+}
+
 export type ApiActions = GetBBSPlaneListRequestAction
+    | AddBBSTopicFailAction
+    | AddBBSTopicRequestAction
+    | AddBBSTopicSuccessAction
     | GetBBSNodeListFailAction
     | GetBBSNodeListRequestAction
     | GetBBSNodeListSuccessAction
     | GetBBSPlaneListFailAction
     | GetBBSPlaneListSuccessAction
+    | GetBBSTopicFailAction
     | GetBBSTopicListBySlugFailAction
     | GetBBSTopicListBySlugRequestAction
     | GetBBSTopicListBySlugSuccessAction
     | GetBBSTopicRequestAction
-    | GetBBSTopicFailAction
-    | GetBBSTopicSuccessAction;
+    | GetBBSTopicSuccessAction
+    | GetBBSQiniuTokenFailAction
+    | GetBBSQiniuTokenRequestAction
+    | GetBBSQiniuTokenSuccessAction;
 
 export type Actions = ApiActions
-    | ResetBBSTopicAction;
+    | ResetBBSTopicAction
+    | ClearQiniuTokenAction;
 
 export const ResponseActions = {
+    AddBBSTopicFailAction,
+    AddBBSTopicSuccessAction,
     GetBBSNodeListFailAction,
     GetBBSNodeListSuccessAction,
     GetBBSPlaneListFailAction,
     GetBBSPlaneListSuccessAction,
+    GetBBSTopicFailAction,
     GetBBSTopicListBySlugFailAction,
     GetBBSTopicListBySlugSuccessAction,
-    GetBBSTopicFailAction,
     GetBBSTopicSuccessAction,
+    GetBBSQiniuTokenFailAction,
+    GetBBSQiniuTokenRequestAction,
+    GetBBSQiniuTokenSuccessAction,
 };

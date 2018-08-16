@@ -2,13 +2,16 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { CommentService } from '../../comment/providers/comment.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { BBSTopicById } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
+import { UtilService } from '../../providers/util.service';
 import { CommentBaseComponent } from '../../square/square/square.component';
 import { CommunityService } from '../providers/community.service';
-import { UtilService } from '../../providers/util.service';
 
 @Component({
     selector: 'app-topic',
@@ -36,6 +39,11 @@ export class TopicComponent extends CommentBaseComponent implements OnInit, OnDe
      * Use when share bbs;
      */
     pictures: string[] = [];
+
+    /**
+     * 发贴人是本人时显示编辑
+     */
+    isTopicOwner: Observable<boolean>;
 
     constructor(
         private route: ActivatedRoute,
@@ -72,6 +80,10 @@ export class TopicComponent extends CommentBaseComponent implements OnInit, OnDe
      */
     private privateInitialModel() {
         this.paths = [...this.paths, { name: this.route.snapshot.paramMap.get('title') }];
+
+        this.isTopicOwner = this.publicService.getCurrentUser().pipe(
+            map(username => username === this.topic.author)
+        );
     }
 
     /**

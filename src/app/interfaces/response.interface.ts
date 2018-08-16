@@ -985,7 +985,11 @@ export interface BBSTopicById extends BBSTopic {
     md5: string;
     node_name: string;
 }
+
 export interface GetBBSTopicResponse extends ResponseUnit<BBSTopicById> { }
+
+// add bbs topic
+export interface AddBBSTopicResponse extends ResponseUnit<number> { }
 
 // ========================================Simulation======================================================
 

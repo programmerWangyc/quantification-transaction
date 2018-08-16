@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+
 import { MarkdownModule } from 'ngx-markdown';
+
 import { CommentModule } from '../comment/comment.module';
 import { SharedModule } from '../shared/shared.module';
 import { routing } from './community.routing';
@@ -9,9 +11,12 @@ import { NavigatorComponent } from './navigator/navigator.component';
 import { NodesPanelComponent } from './nodes-panel/nodes-panel.component';
 import { TopicResolver } from './providers/community.guard.service';
 import { CommunityService } from './providers/community.service';
+import { TopicAddComponent } from './topic-add/topic-add.component';
+import { TopicContentEditComponent } from './topic-content-edit/topic-content-edit.component';
+import { TopicFormComponent } from './topic-form/topic-form.component';
 import { TopicComponent } from './topic/topic.component';
 import { TopicsComponent } from './topics/topics.component';
-
+import { TopicUpdateComponent } from './topic-update/topic-update.component';
 
 @NgModule({
     imports: [
@@ -27,6 +32,10 @@ import { TopicsComponent } from './topics/topics.component';
         NodesPanelComponent,
         TopicComponent,
         TopicsComponent,
+        TopicAddComponent,
+        TopicContentEditComponent,
+        TopicFormComponent,
+        TopicUpdateComponent,
     ],
     providers: [
         CommunityService,

@@ -1,10 +1,12 @@
-import { GetBBSNodeListResponse, GetBBSPlaneListResponse, GetBBSTopicListBySlugResponse, GetBBSTopicResponse } from '../../interfaces/response.interface';
-import { GetBBSTopicListBySlugRequest, GetBBSTopicRequest } from '../../interfaces/request.interface';
+import { GetBBSNodeListResponse, GetBBSPlaneListResponse, GetBBSTopicListBySlugResponse, AddBBSTopicResponse, GetBBSTopicResponse, GetQiniuTokenResponse } from '../../interfaces/response.interface';
+import { GetBBSTopicListBySlugRequest, GetBBSTopicRequest, AddBBSTopicRequest, GetQiniuTokenRequest } from '../../interfaces/request.interface';
 import * as actions from './bbs.action';
 
 export interface RequestParams {
-    topicListBySlug: GetBBSTopicListBySlugRequest;
+    addTopic: AddBBSTopicRequest;
     topicById: GetBBSTopicRequest;
+    topicListBySlug: GetBBSTopicListBySlugRequest;
+    qiniuToken: GetQiniuTokenRequest;
 }
 
 export interface UIState {
@@ -13,11 +15,13 @@ export interface UIState {
 
 export interface State {
     UIState: UIState;
+    addTopicRes: AddBBSTopicResponse;
     nodeListRes: GetBBSNodeListResponse;
     planeListRes: GetBBSPlaneListResponse;
+    qiniuTokenRes: GetQiniuTokenResponse;
     requestParams: RequestParams;
-    topicListBySlugRes: GetBBSTopicListBySlugResponse;
     topicByIdRes: GetBBSTopicResponse;
+    topicListBySlugRes: GetBBSTopicListBySlugResponse;
 }
 
 const initialUIState: UIState = {
@@ -25,17 +29,21 @@ const initialUIState: UIState = {
 };
 
 const initialRequestParams: RequestParams = {
-    topicListBySlug: null,
+    addTopic: null,
+    qiniuToken: null,
     topicById: null,
+    topicListBySlug: null,
 };
 
 const initialState: State = {
     UIState: initialUIState,
+    addTopicRes: null,
     nodeListRes: null,
     planeListRes: null,
+    qiniuTokenRes: null,
     requestParams: initialRequestParams,
-    topicListBySlugRes: null,
     topicByIdRes: null,
+    topicListBySlugRes: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -67,14 +75,32 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_BBS_TOPIC_BY_ID_SUCCESS:
             return { ...state, topicByIdRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
-        case actions.GET_BBS_NODE_LIST:
-        case actions.GET_BBS_PLANE_LIST:
+        // add bbs topic
+        case actions.ADD_BBS_TOPIC:
+            return { ...state, UIState: { ...state.UIState, loading: true }, requestParams: { ...state.requestParams, addTopic: action.payload } };
+
+        case actions.ADD_BBS_TOPIC_FAIL:
+        case actions.ADD_BBS_TOPIC_SUCCESS:
+            return { ...state, UIState: { ...state.UIState, loading: false }, addTopicRes: action.payload };
+
+        // qiniu token
+        case actions.GET_QINIU_TOKEN:
+            return { ...state, requestParams: { ...state.requestParams, qiniuToken: action.payload } };
+
+        case actions.GET_QINIU_TOKEN_FAIL:
+        case actions.GET_QINIU_TOKEN_SUCCESS:
+            return { ...state, qiniuTokenRes: action.payload };
 
         // ===================================================Local state===========================================
 
         case actions.RESET_BBS_TOPIC:
-            return { ...state, topicByIdRes: null };
+            return { ...state, topicByIdRes: null, addTopicRes: null, requestParams: { ...state.requestParams, addTopic: null, qiniuToken: null } };
 
+        case actions.CLEAR_QINIU_TOKEN:
+            return { ...state, qiniuTokenRes: null, requestParams: { ...state.requestParams, qiniuToken: null } };
+
+        case actions.GET_BBS_NODE_LIST:
+        case actions.GET_BBS_PLANE_LIST:
         default:
             return state;
     }
@@ -91,3 +117,7 @@ export const getRequestParams = (state: State) => state.requestParams;
 export const getTopicByIdRes = (state: State) => state.topicByIdRes;
 
 export const getUIState = (state: State) => state.UIState;
+
+export const getAddTopiRes = (state: State) => state.addTopicRes;
+
+export const getQiniuTokenRes = (state: State) => state.qiniuTokenRes;

@@ -244,12 +244,11 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
             const theme = <string>config.theme;
 
             if (theme && this.codeOptions.theme !== theme) this.codeOptions.theme = theme;
-        })
-            .add(this.saveBacktest$.pipe(
+        }).add(
+            this.saveBacktest$.pipe(
                 switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null))
-            )
-                .subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
-            );
+            ).subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
+        );
     }
 
     /**
@@ -305,7 +304,9 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
         const extensionName = target.extensionName;
 
-        const content = new Blob([this.codeContent, { type: `application/${target.mode}charset=utf8;` }]);
+        const blob: any = [this.codeContent, { type: `application/${target.mode}charset=utf8;` }];
+
+        const content = new Blob(blob);
 
         this.download.next({ content, extensionName });
     }

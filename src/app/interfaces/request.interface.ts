@@ -507,11 +507,19 @@ export interface GetBBSTopicRequest {
     id: number;
 }
 
+// add bbs topic
+export interface AddBBSTopicRequest {
+    id: number;
+    nodeId: number;
+    title: string;
+    content: string;
+}
+
 // ============================================Simulation==================================================
 
 // sandbox token
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 50
+ * 接口总数： 83， 已完成： 51
  */

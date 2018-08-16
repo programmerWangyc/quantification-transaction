@@ -1,0 +1,32 @@
+<nz-tabset [(nzSelectedIndex)]="activateTabIndex" [nzType]="'card'" [nzTabBarExtraContent]="!activateTabIndex ?  control : ''">
+    <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="tab | translate">
+        <div [ngSwitch]="idx">
+            <div *ngSwitchCase="0">
+                <ng-content *ngTemplateOutlet="edit"></ng-content>
+            </div>
+            <div *ngSwitchCase="1">
+                <ng-content *ngTemplateOutlet="preview"></ng-content>
+            </div>
+
+            <div *ngSwitchDefault>template not found</div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+
+<ng-template #edit>
+    <div class="editor-area">
+        <ngx-codemirror [(ngModel)]="content" [options]="codeOptions"></ngx-codemirror>
+    </div>
+</ng-template>
+
+<ng-template #preview>
+    <div class="editor-area">
+        <textarea nz-input rows="30"></textarea>
+    </div>
+</ng-template>
+
+<ng-template #control>
+    <nz-button-group id="control">
+        <button nz-button (click)="toggleVimMode()">{{vimBtnText | translate}}</button>
+    </nz-button-group>
+</ng-template>

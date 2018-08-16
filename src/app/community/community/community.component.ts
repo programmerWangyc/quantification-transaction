@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { Observable, of, Subject, combineLatest } from 'rxjs';
 import { map, startWith, takeWhile, debounceTime } from 'rxjs/operators';
@@ -74,7 +75,7 @@ export class CommunityComponent implements OnInit {
     /**
      * @ignore
      */
-    loading: Observable<boolean>;
+    isLoading: Observable<boolean>;
 
     /**
      * @ignore
@@ -84,6 +85,8 @@ export class CommunityComponent implements OnInit {
     constructor(
         private bbs: CommunityService,
         private constant: ConstantService,
+        private router: Router,
+        private route: ActivatedRoute,
     ) { }
 
     /**
@@ -111,7 +114,7 @@ export class CommunityComponent implements OnInit {
 
         this.limit = this.pageSizes[0];
 
-        this.loading = this.bbs.isLoading();
+        this.isLoading = this.bbs.isLoading();
     }
 
     /**
@@ -158,8 +161,14 @@ export class CommunityComponent implements OnInit {
     /**
      * @ignore
      */
+    navigateTo() {
+        this.router.navigate(['add'], { relativeTo: this.route });
+    }
+
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.isAlive = false;
     }
-
 }

@@ -26,6 +26,7 @@ declare namespace Qiniu {
         isRequestError: true | undefined;
         reqId: string;
         message: string;
+        code: number;
     }
 
     interface Response {

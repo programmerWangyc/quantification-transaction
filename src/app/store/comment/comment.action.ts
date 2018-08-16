@@ -173,7 +173,7 @@ export class DeleteCommentSuccessAction extends DeleteComment implements Action 
 }
 
 // qiniu token
-export class GetQiniuToken extends ApiAction {
+class GetQiniuToken extends ApiAction {
     isSingleParams = true;
 
     command = 'GetQiniuToken';
@@ -214,8 +214,6 @@ export const CLEAR_QINIU_TOKEN = '[Comment] CLEAR_QINIU_TOKEN';
 export class ClearQiniuTokenAction implements Action {
     readonly type = CLEAR_QINIU_TOKEN;
 }
-
-//  none local action
 
 export type ApiActions = GetCommentListRequestAction
     | GetCommentListFailAction

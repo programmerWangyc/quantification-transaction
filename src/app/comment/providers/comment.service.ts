@@ -6,19 +6,19 @@ import * as qiniu from 'qiniu-js';
 import { Observable, Subscription, zip } from 'rxjs';
 import { filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { BaseService } from '../../base/base.service';
+import { UploadService } from '../../base/upload.component';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
+import { ErrorService } from '../../providers/error.service';
+import { ProcessService } from '../../providers/process.service';
+import { TipService } from '../../providers/tip.service';
 import { ClearQiniuTokenAction } from '../../store/comment/comment.action';
 import { RequestParams } from '../../store/comment/comment.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { ErrorService } from '../../providers/error.service';
-import { ProcessService } from '../../providers/process.service';
-import { TipService } from '../../providers/tip.service';
 
 @Injectable()
-export class CommentService extends BaseService {
+export class CommentService extends  UploadService {
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -70,7 +70,7 @@ export class CommentService extends BaseService {
      * Get qiniu token
      */
     launchQiniuToken(source: Observable<fromReq.GetQiniuTokenRequest>): Subscription {
-        return this.process.processGetQiniuToken(source);
+        return this.process.processCommentGetQiniuToken(source);
     }
 
     /**
@@ -133,9 +133,9 @@ export class CommentService extends BaseService {
     /**
      * Get qiniu token
      */
-    private getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
+    getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
         return this.store.pipe(
-            select(fromRoot.selectQiniuTokenResponse),
+            select(fromRoot.selectCommentQiniuTokenResponse),
             this.filterTruth()
         );
     }

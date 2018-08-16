@@ -7,6 +7,7 @@ import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import * as bbsActions from './bbs.action';
+import { AddBBSTopicResponse } from '../../interfaces/response.interface';
 
 @Injectable()
 export class BBSEffect extends BaseEffect {
@@ -23,10 +24,23 @@ export class BBSEffect extends BaseEffect {
     @Effect()
     topicById$: Observable<ResponseAction> = this.getResponseAction(bbsActions.GET_BBS_TOPIC_BY_ID, bbsActions.ResponseActions);
 
+    @Effect()
+    add$: Observable<ResponseAction> = this.getResponseAction(bbsActions.ADD_BBS_TOPIC, bbsActions.ResponseActions, isAddBBSTopicFail);
+
+    @Effect()
+    qiniu$: Observable<ResponseAction> = this.getResponseAction(bbsActions.GET_QINIU_TOKEN, bbsActions.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
     ) {
         super(ws, actions$);
     }
+}
+
+/**
+ * @ignore
+ */
+export function isAddBBSTopicFail(res: AddBBSTopicResponse): boolean {
+    return !!res.error || isNaN(res.result);
 }

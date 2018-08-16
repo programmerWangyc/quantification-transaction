@@ -1,12 +1,4 @@
 // topic
-const addBBSTopic = 'AddBBSTopic';
-interface AddTopic {
-    topicId: number;
-    nodeNumber: number;
-    title: string;
-    content: string;
-}
-
 const deleteBBSTopic = 'M_Topic';
 
 interface DeleteTopic {

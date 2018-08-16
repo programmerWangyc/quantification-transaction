@@ -358,7 +358,7 @@ export const selectCommentListResponse = createSelector(getComment, comment.getC
 export const selectSubmitResponse = createSelector(getComment, comment.getSubmitCommentRes);
 
 // qiniu token
-export const selectQiniuTokenResponse = createSelector(getComment, comment.getQiniuTokenRes);
+export const selectCommentQiniuTokenResponse = createSelector(getComment, comment.getQiniuTokenRes);
 
 // request params;
 export const selectCommentRequestParams = createSelector(getComment, comment.getRequestParams);
@@ -387,6 +387,12 @@ export const selectBBSTopicByIdResponse = createSelector(getBBSState, bbs.getTop
 
 // ui state
 export const selectBBSUiState = createSelector(getBBSState, bbs.getUIState);
+
+// add topic response
+export const selectAddBBSTopicResponse = createSelector(getBBSState, bbs.getAddTopiRes);
+
+// qiniu token
+export const selectBBSQiniuTokenResponse = createSelector(getBBSState, bbs.getQiniuTokenRes);
 
 //  ===================================================Simulation======================================================
 

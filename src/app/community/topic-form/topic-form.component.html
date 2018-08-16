@@ -1,0 +1,39 @@
+<form nz-form [formGroup]="form">
+
+    <nz-form-item>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+            <input formControlName="title" nz-input [placeholder]="'ADD_BBS_TOPIC_PLACEHOLDER' | translate">
+            <nz-form-explain *ngIf="title.invalid && (title.dirty || title.touched)">
+                <div *ngIf="!!title.errors.required">{{'TOPIC_TITLE_EMPTY_ERROR' | translate}}</div>
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+            <nz-select formControlName="topic" [nzPlaceHolder]="'PLEASE_SELECT_TOPIC' | translate" [ngModel]="selectedTopic">
+                <nz-option-group *ngFor="let topic of topics | async" [nzLabel]="topic.groupName | translate">
+                    <nz-option *ngFor="let item of topic.values" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                </nz-option-group>
+            </nz-select>
+            <nz-form-explain *ngIf="topic.invalid && (topic.dirty || topic.touched)">
+                <div *ngIf="!!topic.errors.required">{{'PLEASE_SELECT_TOPIC' | translate}}</div>
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" class="main-content">
+            <app-topic-content-edit [image]="images | async"></app-topic-content-edit>
+
+            <nz-upload [(nzFileList)]="files" nzType="drag" nzMultiple="true" [nzShowUploadList]="false" [nzBeforeUpload]="beforeUpload" [nzAccept]="allowedContentTypes">
+                <i class="anticon anticon-picture" style="color: #1890ff"></i>
+                {{'DRAG_OR_CLICK_TO_UPLOAD' | translate}}
+            </nz-upload>
+        </nz-form-control>
+    </nz-form-item>
+
+    <button nz-button [nzType]="'primary'" nzSize="large" (click)="emitValue()" [disabled]="form.invalid || isLoading">
+        {{buttonText | translate}}
+    </button>
+</form>

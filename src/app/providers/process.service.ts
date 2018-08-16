@@ -272,7 +272,7 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new CommentActions.UpdateCommentRequestAction(params)));
     }
 
-    processGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {
+    processCommentGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new CommentActions.GetQiniuTokenRequestAction(params)));
     }
 
@@ -292,6 +292,14 @@ export class ProcessService {
 
     processBBSTopicById(paramObs: Observable<Request.GetBBSTopicRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSTopicRequestAction(params)));
+    }
+
+    processAddBBSTopic(paramObs: Observable<Request.AddBBSTopicRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new BBSActions.AddBBSTopicRequestAction(params)));
+    }
+
+    processBBSGetQiniuToken(paramObs: Observable<Request.GetQiniuTokenRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSQiniuTokenRequestAction(params)));
     }
 
     //  ===================================================Simulation======================================================
