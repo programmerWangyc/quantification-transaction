@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 
 import { BBSNode, BBSTopic } from '../../interfaces/response.interface';
+import { PublicService } from '../../providers/public.service';
+import { take } from 'rxjs/operators';
 
 interface Color {
     [key: number]: string;
@@ -38,13 +40,19 @@ export class TopicsComponent implements OnInit {
         14: '#108ee9',
     };
 
+    username: string;
+
     constructor(
+        private publicService: PublicService,
     ) { }
 
     /**
      * @ignore
      */
     ngOnInit() {
+        this.publicService.getCurrentUser().pipe(
+            take(1)
+        ).subscribe(username => this.username = username);
     }
 
     /**

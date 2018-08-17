@@ -24,7 +24,7 @@
 
     <nz-form-item>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs" class="main-content">
-            <app-topic-content-edit [image]="images | async"></app-topic-content-edit>
+            <app-topic-content-edit [data]="data?.content" [image]="images | async"></app-topic-content-edit>
 
             <nz-upload [(nzFileList)]="files" nzType="drag" nzMultiple="true" [nzShowUploadList]="false" [nzBeforeUpload]="beforeUpload" [nzAccept]="allowedContentTypes">
                 <i class="anticon anticon-picture" style="color: #1890ff"></i>

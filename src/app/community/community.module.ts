@@ -9,7 +9,7 @@ import { routing } from './community.routing';
 import { CommunityComponent } from './community/community.component';
 import { NavigatorComponent } from './navigator/navigator.component';
 import { NodesPanelComponent } from './nodes-panel/nodes-panel.component';
-import { TopicResolver } from './providers/community.guard.service';
+import { TopicResolver, FormContentGuard } from './providers/community.guard.service';
 import { CommunityService } from './providers/community.service';
 import { TopicAddComponent } from './topic-add/topic-add.component';
 import { TopicContentEditComponent } from './topic-content-edit/topic-content-edit.component';
@@ -40,6 +40,7 @@ import { TopicUpdateComponent } from './topic-update/topic-update.component';
     providers: [
         CommunityService,
         TopicResolver,
+        FormContentGuard,
     ],
 })
 export class CommunityModule { }

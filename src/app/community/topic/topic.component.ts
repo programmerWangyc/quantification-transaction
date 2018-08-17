@@ -20,6 +20,7 @@ import { CommunityService } from '../providers/community.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class TopicComponent extends CommentBaseComponent implements OnInit, OnDestroy {
+
     /**
      * @ignore
      */

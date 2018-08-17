@@ -1,24 +1,31 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { of } from 'rxjs';
 import { map, filter, takeWhile } from 'rxjs/operators';
 
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { CommunityService } from '../providers/community.service';
-import { BBSTopicForm } from '../topic-form/topic-form.component';
+import { BBSTopicForm, TopicFormComponent } from '../topic-form/topic-form.component';
 import { Router, ActivatedRoute } from '@angular/router';
+import { CanDeactivateComponent } from '../../dashboard/providers/guard.service';
+import { DeactivateGuard } from '../../dashboard/dashboard.interface';
 
 @Component({
     selector: 'app-topic-add',
     templateUrl: './topic-add.component.html',
     styleUrls: ['./topic-add.component.scss'],
 })
-export class TopicAddComponent implements OnInit, OnDestroy {
+export class TopicAddComponent implements OnInit, OnDestroy, CanDeactivateComponent {
 
     /**
      * @ignore
      */
     paths: Breadcrumb[] = [{ name: 'COMMUNITY', path: '../' }, { name: 'POSTING' }];
+
+    /**
+     * @ignore
+     */
+    @ViewChild(TopicFormComponent) formComponent: TopicFormComponent;
 
     /**
      * @ignore
@@ -50,6 +57,13 @@ export class TopicAddComponent implements OnInit, OnDestroy {
                 map(({ title, topic, content }) => ({ id: -1, nodeId: topic, content, title })),
             )
         );
+    }
+
+    /**
+     * @ignore
+     */
+    canDeactivate(): DeactivateGuard[] {
+        return this.formComponent.canDeactivate();
     }
 
     /**

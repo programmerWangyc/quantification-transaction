@@ -173,6 +173,15 @@ export class CommunityService extends UploadService {
     }
 
     /**
+     * 提供store中 BBSTopicById的所有响应状态
+     */
+    getBBSTopicByIdResponseState(): Observable<fromRes.GetBBSTopicResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectBBSTopicByIdResponse)
+        );
+    }
+
+    /**
      * @ignore
      */
     getBBSTopic(): Observable<fromRes.BBSTopicById> {

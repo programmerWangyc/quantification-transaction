@@ -15,7 +15,7 @@ export interface CanDeactivateComponent {
     canDeactivate(): DeactivateGuard[];
 }
 
-class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
+export class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
     constructor(
         public tip: TipService,
     ) {
@@ -76,7 +76,7 @@ export class StrategyGuard extends BaseGuard implements CanActivate {
 }
 
 @Injectable()
-export class RobotGuard extends BaseGuard {
+export class ChargeGuard extends BaseGuard {
     constructor(
         public tip: TipService
     ) {

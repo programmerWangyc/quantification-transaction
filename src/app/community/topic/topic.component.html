@@ -1,8 +1,8 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <div>
-    <div fxLayoutAlign="space-between center" class="topic-info">
-        <a *ngIf="isTopicOwner | async" nz-button nzType="primary" [routerLink]="['../../', 'update', topic.id]">{{'UPDATE' | translate}}</a>
+    <div class="topic-info">
+        <a *ngIf="isTopicOwner | async" nz-button nzType="primary" [routerLink]="['../../update', topic.id]">{{'UPDATE' | translate}}</a>
 
         <ul fxLayout="row-reverse">
             <li class="subtitle">

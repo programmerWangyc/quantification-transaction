@@ -1,4 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
+
 import { FactRobotComponent } from '../fact/fact-robot/fact-robot.component';
 import { FactComponent } from '../fact/fact/fact.component';
 import { SquareComponent } from '../square/square/square.component';
@@ -10,7 +11,7 @@ import { DocComponent } from './doc/doc.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { ExchangeComponent } from './exchange/exchange.component';
-import { RobotGuard, StrategyGuard } from './providers/guard.service';
+import { ChargeGuard, StrategyGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
@@ -44,7 +45,7 @@ const routs: Routes = [
             { path: 'strategy/rent/:id', component: StrategyRentComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
 
             // charge
-            { path: 'charge', component: RechargeComponent, canDeactivate: [RobotGuard] },
+            { path: 'charge', component: RechargeComponent, canDeactivate: [ChargeGuard] },
 
             // agent
             { path: 'agent', component: AgentComponent },

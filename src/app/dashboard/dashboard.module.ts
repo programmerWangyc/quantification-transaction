@@ -23,7 +23,7 @@ import { DocComponent } from './doc/doc.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { ExchangeComponent } from './exchange/exchange.component';
-import { RobotGuard, StrategyGuard } from './providers/guard.service';
+import { ChargeGuard, StrategyGuard } from './providers/guard.service';
 import { RechargeComponent } from './recharge/recharge.component';
 import { RobotCreationComponent } from './robot-creation/robot-creation.component';
 import { RobotDebugComponent } from './robot-debug/robot-debug.component';
@@ -78,7 +78,7 @@ import { StrategyComponent } from './strategy/strategy.component';
     providers: [
         { provide: RouterStateSerializer, useClass: CustomSerializer },
         StrategyGuard,
-        RobotGuard,
+        ChargeGuard,
     ],
 })
 export class DashboardModule { }

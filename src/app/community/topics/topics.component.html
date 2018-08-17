@@ -24,6 +24,10 @@
             <nz-list-item-meta [nzTitle]="nzTitle">
                 <ng-template #nzTitle>
                     <a [routerLink]="['./', item.id, item.title]">{{item.title}}</a>
+
+                    <a *ngIf="item.author === username" [routerLink]="['./update', item.id]" style="margin-left: 8px;">
+                        <i class="anticon anticon-edit"></i>
+                    </a>
                 </ng-template>
             </nz-list-item-meta>
 

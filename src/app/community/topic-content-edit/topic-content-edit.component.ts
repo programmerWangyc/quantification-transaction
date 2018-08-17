@@ -42,7 +42,7 @@ export class TopicContentEditComponent implements OnInit {
     /**
      * @ignore
      */
-    private originContent = '';
+    originContent = '';
 
     /**
      * Code mirror的配置
