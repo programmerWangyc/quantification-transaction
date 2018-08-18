@@ -10,18 +10,19 @@ import { ResetPasswordRequestAction } from '../store/auth/reset.action';
 import { SignupRequestAction } from '../store/auth/signup.action';
 import { VerifyPasswordRequestAction } from '../store/auth/verify-password.action';
 import * as BacktestActions from '../store/backtest/backtest.action';
+import * as BBSActions from '../store/bbs/bbs.action';
 import * as BtNode from '../store/bt-node/bt-node.action';
 import { GetPaymentArgRequestAction, GetPayOrdersRequestAction } from '../store/charge/charge.action';
+import * as CommentActions from '../store/comment/comment.action';
+import * as DocumentActions from '../store/document/document.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import * as PlatformActions from '../store/platform/platform.action';
 import { GetSettingsRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
+import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
-import * as CommentActions from '../store/comment/comment.action';
-import * as SimulationActions from '../store/simulation/simulation.action';
-import * as BBSActions from '../store/bbs/bbs.action';
 
 /**
  * @ignore
@@ -302,6 +303,11 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSQiniuTokenRequestAction(params)));
     }
 
+    //  ===================================================Document======================================================
+
+    processDocument(paramObs: Observable<Request.GetBBSTopicRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new DocumentActions.GetDocumentRequestAction(params)));
+    }
     //  ===================================================Simulation======================================================
 
     processSandboxToken(paramObs: Observable<any>): Subscription {

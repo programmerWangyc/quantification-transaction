@@ -4,6 +4,7 @@ import { BBSEffect } from './bbs/bbs.effect';
 import { BtNodeEffect } from './bt-node/bt-node.effect';
 import { ChargeEffect } from './charge/charge.effect';
 import { CommentEffect } from './comment/comment.effect';
+import { DocumentEffect } from './document/document.effect';
 import { ExchangeEffect } from './exchange/exchange.effect';
 import { PlatformEffect } from './platform/platform.effect';
 import { PublicEffect } from './public/public.effect';
@@ -16,6 +17,7 @@ export const EFFECTS = [
     AuthEffect,
     BBSEffect,
     CommentEffect,
+    DocumentEffect,
     ExchangeEffect,
     PublicEffect,
 ];

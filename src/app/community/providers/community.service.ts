@@ -12,7 +12,7 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { GroupedList, UtilService } from '../../providers/util.service';
-import { ResetBBSTopicAction, ClearQiniuTokenAction } from '../../store/bbs/bbs.action';
+import { ResetBBSTopicAction, ClearQiniuTokenAction, ClearBBSOperateStateAction } from '../../store/bbs/bbs.action';
 import * as fromRoot from '../../store/index.reducer';
 
 @Injectable()
@@ -247,7 +247,7 @@ export class CommunityService extends UploadService {
     //  =======================================================Local state change=======================================================
 
     /**
-     * @ignore
+     * Reset bbs top by id response;
      */
     resetTopicState(): void {
         this.store.dispatch(new ResetBBSTopicAction());
@@ -258,6 +258,13 @@ export class CommunityService extends UploadService {
      */
     clearQiniuToken(): void {
         this.store.dispatch(new ClearQiniuTokenAction());
+    }
+
+    /**
+     * clear add topic state;
+     */
+    clearBBSOperateState(): void {
+        this.store.dispatch(new ClearBBSOperateStateAction());
     }
 
     //  =======================================================Error handler=======================================================

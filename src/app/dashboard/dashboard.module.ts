@@ -19,7 +19,6 @@ import { AgentComponent } from './agent/agent.component';
 import { CommunityComponent } from './community/community.component';
 import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
-import { DocComponent } from './doc/doc.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { ExchangeComponent } from './exchange/exchange.component';
@@ -58,7 +57,6 @@ import { StrategyComponent } from './strategy/strategy.component';
         AgentComponent,
         CommunityComponent,
         DashboardComponent,
-        DocComponent,
         ExchangeAddComponent,
         ExchangeComponent,
         ExchangeEditComponent,

@@ -8,6 +8,7 @@ import { Actions as bbs, ApiActions as apiBBS } from './bbs/bbs.action';
 import { Actions as btNode, ApiActions as apiBtNode } from './bt-node/bt-node.action';
 import { Actions as charge, ApiActions as apiCharge } from './charge/charge.action';
 import { Actions as comment, ApiActions as apiComment } from './comment/comment.action';
+import { Actions as document, ApiActions as apiDocument } from './document/document.action';
 import { Actions as exchange, ApiActions as apiExchange } from './exchange/exchange.action';
 import { Actions as platform, ApiActions as apiPlatform } from './platform/platform.action';
 import { Actions as pub, ApiActions as apiPublic } from './public/public.action';
@@ -26,6 +27,7 @@ export type Actions = pub
     | btNode
     | charge
     | comment
+    | document
     | exchange
     | login
     | platform
@@ -44,6 +46,7 @@ export type ApiActions = apiLogin
     | apiBtNode
     | apiCharge
     | apiComment
+    | apiDocument
     | apiExchange
     | apiPlatform
     | apiPublic

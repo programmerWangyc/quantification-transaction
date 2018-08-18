@@ -7,7 +7,6 @@ import { StrategyDetailComponent } from '../square/strategy-detail/strategy-deta
 import { AgentAddComponent } from './agent-add/agent-add.component';
 import { AgentComponent } from './agent/agent.component';
 import { DashboardComponent } from './dashboard.component';
-import { DocComponent } from './doc/doc.component';
 import { ExchangeAddComponent } from './exchange-add/exchange-add.component';
 import { ExchangeEditComponent } from './exchange-edit/exchange-edit.component';
 import { ExchangeComponent } from './exchange/exchange.component';
@@ -40,7 +39,7 @@ const routs: Routes = [
             { path: 'strategy/add', component: StrategyAddComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
             { path: 'strategy/copy/:id', component: StrategyCopyComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
             { path: 'strategy/edit/:id', component: StrategyEditComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
-            { path: 'strategy/backtest/:id', component: DocComponent },
+            // { path: 'strategy/backtest/:id', component: DocComponent },
             { path: 'strategy/verify/:id/:codeType', component: StrategyVerifyCodeComponent },
             { path: 'strategy/rent/:id', component: StrategyRentComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
 
@@ -71,8 +70,7 @@ const routs: Routes = [
             { path: 'community', loadChildren: '../community/community.module#CommunityModule' },
 
             // document
-            { path: 'doc', component: DocComponent },
-
+            { path: 'doc', loadChildren: '../document/document.module#DocumentModule' },
 
             { path: '', redirectTo: 'robot', pathMatch: 'full' },
             // { path: '', redirectTo: Path.robot, pathMatch: 'full' },

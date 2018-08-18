@@ -248,6 +248,12 @@ export class ClearQiniuTokenAction implements Action {
     readonly type = CLEAR_QINIU_TOKEN;
 }
 
+export const CLEAR_BBS_OPERATE_STATE = '[BBS] CLEAR_BBS_OPERATE_STATE';
+
+export class ClearBBSOperateStateAction implements Action {
+    readonly type = CLEAR_BBS_OPERATE_STATE;
+}
+
 export type ApiActions = GetBBSPlaneListRequestAction
     | AddBBSTopicFailAction
     | AddBBSTopicRequestAction
@@ -269,6 +275,7 @@ export type ApiActions = GetBBSPlaneListRequestAction
 
 export type Actions = ApiActions
     | ResetBBSTopicAction
+    | ClearBBSOperateStateAction
     | ClearQiniuTokenAction;
 
 export const ResponseActions = {

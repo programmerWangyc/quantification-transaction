@@ -78,7 +78,7 @@ export class PublicService extends BaseService {
      */
     getSetting(settingType: string): Observable<string> {
         return this.store.select(selectSettings).pipe(
-            tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType])),
+            tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType] || settingType)),
             filter(settings => !!settings[settingType]),
             map(settings => settings[settingType])
         );

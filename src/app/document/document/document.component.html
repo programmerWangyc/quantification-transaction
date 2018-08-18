@@ -1,0 +1,17 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
+    <div nz-row>
+        <div nz-col nzSpan="20">
+            <markdown [data]="doc | async | toMarkdown"></markdown>
+        </div>
+
+        <div nz-col nzSpan="4">
+            <nz-anchor>
+                <nz-link *ngFor="let item of anchors" [nzHref]="item.anchor" [nzTitle]="item.name" [ngClass]="classMap[item.level]"></nz-link>
+            </nz-anchor>
+        </div>
+    </div>
+</nz-spin>
+
+<nz-back-top></nz-back-top>

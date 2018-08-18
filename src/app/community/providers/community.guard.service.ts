@@ -41,6 +41,7 @@ export class TopicResolver implements Resolve<BBSTopicById> {
      * 1、检查是否获取过topic
      * 2、从主页进入时需要先获取；
      * 3、从详情页进入时不应该再获取。
+     * 4、路由id和当前的 store 中的 bbs topic by id 响应 id不一致时，重置响应数据；
      */
     private checkExistTopic(id: number): void {
         this.community.getBBSTopicByIdResponseState().pipe(
@@ -48,8 +49,10 @@ export class TopicResolver implements Resolve<BBSTopicById> {
         ).subscribe(state => {
             if (!state || state.result.id !== id) {
                 this.community.launchBBSTopicById(of({ id }));
-            } else {
-                // do nothing;
+            }
+
+            if (!!state && state.result.id !== id) {
+                this.community.resetTopicState();
             }
         });
     }

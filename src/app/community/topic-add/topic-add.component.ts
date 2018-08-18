@@ -70,7 +70,7 @@ export class TopicAddComponent implements OnInit, OnDestroy, CanDeactivateCompon
      * @ignore
      */
     ngOnDestroy() {
-        this.communityService.resetTopicState();
+        this.communityService.clearBBSOperateState();
 
         this.isAlive = false;
     }

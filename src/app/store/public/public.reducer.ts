@@ -7,12 +7,12 @@ import * as actions from './public.action';
 export interface Settings {
     agreement: string;
     about: string;
-    api: string;
     promotion: Object;
     docker: Object;
     brokers: string;
     index: Object;
     backtest_javascript: string; // !FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
+    [key: string]: any;
 }
 
 export interface State {

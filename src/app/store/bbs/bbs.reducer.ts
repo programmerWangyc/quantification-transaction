@@ -94,10 +94,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // ===================================================Local state===========================================
 
         case actions.RESET_BBS_TOPIC:
-            return { ...state, addTopicRes: null, requestParams: { ...state.requestParams, addTopic: null, qiniuToken: null } };
+            return { ...state, topicByIdRes: null };
 
         case actions.CLEAR_QINIU_TOKEN:
             return { ...state, qiniuTokenRes: null, requestParams: { ...state.requestParams, qiniuToken: null } };
+
+        case actions.CLEAR_BBS_OPERATE_STATE:
+            return { ...state, addTopicRes: null, requestParams: { ...state.requestParams, addTopic: null, qiniuToken: null } };
 
         case actions.GET_BBS_NODE_LIST:
         case actions.GET_BBS_PLANE_LIST:

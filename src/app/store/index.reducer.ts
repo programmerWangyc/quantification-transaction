@@ -19,6 +19,7 @@ import { RouterStateUrl } from './router/router.reducer';
 import * as simulation from './simulation/simulation.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
+import * as doc from './document/document.reducer';
 
 export interface AppState {
     backtest: backtest.State;
@@ -26,6 +27,7 @@ export interface AppState {
     btNode: btNode.State;
     charge: charge.State;
     comment: comment.State;
+    doc: doc.State;
     exchange: exchange.State;
     login: login.State;
     platform: platform.State;
@@ -47,6 +49,7 @@ export const reducers: ActionReducerMap<AppState> = {
     btNode: btNode.reducer,
     charge: charge.reducer,
     comment: comment.reducer,
+    doc: doc.reducer,
     exchange: exchange.reducer,
     login: login.reducer,
     platform: platform.reducer,
@@ -393,6 +396,15 @@ export const selectAddBBSTopicResponse = createSelector(getBBSState, bbs.getAddT
 
 // qiniu token
 export const selectBBSQiniuTokenResponse = createSelector(getBBSState, bbs.getQiniuTokenRes);
+
+//  ===================================================Simulation======================================================
+
+const getDocument = (state: AppState) => state.doc;
+
+// topic by id
+export const selectDocumentResponse = createSelector(getDocument, doc.getTopicByIdRes);
+
+export const selectDocumentUIState = createSelector(getDocument, doc.getUIState);
 
 //  ===================================================Simulation======================================================
 

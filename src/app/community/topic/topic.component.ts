@@ -11,7 +11,6 @@ import { BBSTopicById } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { UtilService } from '../../providers/util.service';
 import { CommentBaseComponent } from '../../square/square/square.component';
-import { CommunityService } from '../providers/community.service';
 
 @Component({
     selector: 'app-topic',
@@ -48,7 +47,6 @@ export class TopicComponent extends CommentBaseComponent implements OnInit, OnDe
 
     constructor(
         private route: ActivatedRoute,
-        private bbs: CommunityService,
         private util: UtilService,
         public publicService: PublicService,
         public commentService: CommentService,
@@ -92,7 +90,5 @@ export class TopicComponent extends CommentBaseComponent implements OnInit, OnDe
      */
     ngOnDestroy() {
         this.isAlive = false;
-
-        this.bbs.resetTopicState();
     }
 }
