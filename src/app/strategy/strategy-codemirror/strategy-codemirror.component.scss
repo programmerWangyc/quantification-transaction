@@ -10,22 +10,33 @@
 
 #control {
     button {
+        height: 24px;
+        line-height: 0;
         font-size: 12px;
     }
-}
-
-.input-number {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    font-size: 12px;
-}
-
-.dropdown {
-    button {
+    button:first-child {
+        border-radius: 4px 0 0 0;
+    }
+    button:last-child {
+        border-radius: 0 4px 0 0;
+    }
+    .input-number {
         border-radius: 0;
+        border-left: none;
         border-right: none;
         font-size: 12px;
+    }
+    .dropdown {
+        button {
+            border-radius: 0;
+            border-right: none;
+        }
+    }
+    .anticon {
+        height: 11px;
+    }
+    .ant-btn-group {
+        line-height: 55px;
     }
 }
 

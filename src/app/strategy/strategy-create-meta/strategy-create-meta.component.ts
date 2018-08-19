@@ -421,8 +421,10 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
      * 提供给子类使用，完善当前的路径信息。
      */
-    protected addCurrentPath(name): void {
+    protected addCurrentPath(name: string, path?: string): void {
         this.paths.push({ name });
+
+        if (path) this.paths[1].path = path;
     }
 
     /**

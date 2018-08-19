@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
 
 const appRoutes: Routes = [
-    { path: 'home', component: HomeComponent }, // 主页
-    { path: 'square', loadChildren: './square/square.module#SquareModule' }, // 策略广场
-    { path: 'fact', loadChildren: './fact/fact.module#FactModule' }, // 实盘围观
-    { path: 'community', loadChildren: './community/community.module#CommunityModule' }, // 交流社区
-    { path: 'doc', loadChildren: './document/document.module#DocumentModule' }, // API 文档
-    { path: 'auth', loadChildren: './auth/auth.module#AuthModule' }, // 登录、注册、重置密码、修改密码
-    { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' }, // 控制台
-    { path: '', redirectTo: '/home', pathMatch: 'full' }, // 重定向页面
-    { path: '**', component: HomeComponent },  // 404页面
+    { path: 'home', component: HomeComponent },
+    { path: 'square', loadChildren: './square/square.module#SquareModule' },
+    { path: 'fact', loadChildren: './fact/fact.module#FactModule' },
+    { path: 'community', loadChildren: './community/community.module#CommunityModule' },
+    { path: 'doc', loadChildren: './document/document.module#DocumentModule' },
+    { path: 'auth', loadChildren: './auth/auth.module#AuthModule' },
+    { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule', data: { preload: true } },
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '**', component: HomeComponent },
 ];
 
 @NgModule({
@@ -23,10 +23,10 @@ const appRoutes: Routes = [
             appRoutes,
             {
                 // enableTracing: true,
+                preloadingStrategy: PreloadAllModules,
             } // for debugging purpose;
         ),
     ],
-    declarations: [],
     exports: [
         RouterModule,
     ],

@@ -129,14 +129,6 @@ export class StrategyComponent implements BaseComponent {
     }
 
     /**
-     * Navigate to other pate;
-     * @param path target route;
-     */
-    navigateTo(path: string, isRelativeToParent = false): void {
-        this.router.navigate([path], { relativeTo: isRelativeToParent ? this.activatedRoute.parent : this.activatedRoute });
-    }
-
-    /**
      * @ignore
      */
     ngOnDestroy() {
