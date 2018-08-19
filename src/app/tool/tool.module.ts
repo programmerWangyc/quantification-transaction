@@ -6,15 +6,23 @@ import { MatDialogModule, MatSnackBarModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ChartModule } from 'angular2-highcharts';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { ConfirmComponent } from './confirm/confirm.component';
 import { DIRECTIVES } from './directives/directives.import';
+import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
 import { FooterComponent } from './footer/footer.component';
 import { IndicatorComponent } from './indicator/indicator.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PIPES } from './pipes/index.pipe';
+import { RobotLogComponent } from './robot-log/robot-log.component';
+import { RobotProfitChartComponent } from './robot-profit-chart/robot-profit-chart.component';
+import {
+    RobotInfoComponent, RobotInnerTableComponent, RobotStatusComponent, RobotSubtitleComponent
+} from './robot-status/robot-status.component';
+import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strategy-chart.component';
 import { RunningLogComponent } from './running-log/running-log.component';
 import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
@@ -33,11 +41,17 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         ReactiveFormsModule,
         RouterModule,
         TranslateModule,
+        ChartModule.forRoot(
+            require('highcharts/highstock'),
+            require('../plugins/exporting.js'),
+            require('../plugins/offline-exporting.js'),
+        ),
     ],
     declarations: [
         ConfirmComponent,
         CustomSnackBarComponent,
         DIRECTIVES,
+        ExchangePairComponent,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
@@ -46,6 +60,13 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         ShareComponent,
         SimpleNzConfirmWrapComponent,
         VerifyPasswordComponent,
+        RobotInfoComponent,
+        RobotInnerTableComponent,
+        RobotLogComponent,
+        RobotProfitChartComponent,
+        RobotStatusComponent,
+        RobotStrategyChartComponent,
+        RobotSubtitleComponent,
     ],
 
     entryComponents: [
@@ -56,6 +77,7 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
     ],
     exports: [
         DIRECTIVES,
+        ExchangePairComponent,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
@@ -63,6 +85,13 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         RunningLogComponent,
         ShareComponent,
         SimpleNzConfirmWrapComponent,
+        RobotInfoComponent,
+        RobotInnerTableComponent,
+        RobotLogComponent,
+        RobotProfitChartComponent,
+        RobotStatusComponent,
+        RobotStrategyChartComponent,
+        RobotSubtitleComponent,
     ],
 })
 export class ToolModule { }

@@ -4,10 +4,3 @@ export interface ImportedArg {
     variableValue: string | number | boolean;
     templateId?: number;
 }
-
-export interface RobotStatusTable {
-    type: string;
-    title: string;
-    cols: string[];
-    rows: any[][];
-}

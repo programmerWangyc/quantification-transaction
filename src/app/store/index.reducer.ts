@@ -3,8 +3,7 @@ import { ActionReducerMap, createSelector } from '@ngrx/store';
 
 import * as login from './auth/login.reducer';
 import * as pwd from './auth/password.reducer';
-import * as reset from './auth/reset.reducer';
-import * as signup from './auth/signup.reducer';
+import * as reset from './auth/reset.reducer'; import * as signup from './auth/signup.reducer';
 import * as verifyPwd from './auth/verify-password.reducer';
 import * as backtest from './backtest/backtest.reducer';
 import * as bbs from './bbs/bbs.reducer';
@@ -77,6 +76,7 @@ export const selectLanguage = createSelector(getPubState, pub.getLanguage);
 export const selectFooterState = createSelector(getPubState, pub.getFooterState);
 export const selectEditorConfig = createSelector(getPubState, pub.getEditorConfig);
 export const selectServerMsgSubscribeState = createSelector(getPubState, pub.getServerMsgSubscribeState);
+export const selectLogoutResponse = createSelector(getPubState, pub.getLogoutRes);
 
 // router
 const getRouteState = (state: AppState) => state.route;

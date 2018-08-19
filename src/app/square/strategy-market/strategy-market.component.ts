@@ -11,10 +11,10 @@ import { CategoryType, GetStrategyListByNameRequest } from '../../interfaces/req
 import { StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { UtilService } from '../../providers/util.service';
-import { StrategyVisibilityType } from '../../strategy/strategy.config';
-import { Category, StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
-import { StrategyService } from '../../strategy/providers/strategy.service';
+import { Category, STRATEGY_CATEGORIES } from '../../strategy/providers/strategy.constant.service';
 import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
+import { StrategyVisibilityType } from '../../strategy/strategy.config';
+import { SquareService } from '../providers/square.service';
 
 @Component({
     selector: 'app-strategy-market',
@@ -105,8 +105,7 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
     isLoading: Observable<boolean>;
 
     constructor(
-        private strategyService: StrategyService,
-        private constant: StrategyConstantService,
+        private squareService: SquareService,
         private utilService: UtilService,
         private router: Router,
         private activatedRoute: ActivatedRoute,
@@ -127,24 +126,24 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
      * @ignore
      */
     launch() {
-        this.strategyService.launchStrategyListByName(this.getRequestParams());
+        this.squareService.launchStrategyListByName(this.getRequestParams());
 
-        this.strategyService.handleStrategyListByNameError(() => this.isAlive);
+        this.squareService.handleStrategyListByNameError(() => this.isAlive);
     }
 
     /**
      * @ignore
      */
     initialModel() {
-        this.list = this.strategyService.getMarketStrategyList();
+        this.list = this.squareService.getMarketStrategyList();
 
-        this.total = this.strategyService.getMarketStrategyTotal();
+        this.total = this.squareService.getMarketStrategyTotal();
 
-        this.categories = [{ name: 'ALL_TYPES', id: CategoryType.ALL }, ...this.constant.STRATEGY_CATEGORIES.slice(0, -1)];
+        this.categories = [{ name: 'ALL_TYPES', id: CategoryType.ALL }, ...STRATEGY_CATEGORIES.slice(0, -1)];
 
         this.statistics = this.utilService.getPaginationStatistics(this.total, this.pageSize);
 
-        this.isLoading = this.strategyService.isLoading();
+        this.isLoading = this.squareService.isLoading();
     }
 
     /**
@@ -161,7 +160,7 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
         const { pricing, id, username, email, name } = strategy;
 
         if (pricing && pricing.includes('/')) {
-            this.router.navigate([Path.strategy, Path.rent, id], { relativeTo: this.activatedRoute.parent });
+            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent });
         } else {
             this.nzModal.create({
                 nzContent: StrategyRenewalComponent,

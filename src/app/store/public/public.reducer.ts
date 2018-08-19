@@ -1,7 +1,7 @@
 import { LocalStorageKey } from '../../app.config';
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
 import { SettingsRequest } from '../../interfaces/request.interface';
-import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse } from '../../interfaces/response.interface';
+import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse, LogoutResponse } from '../../interfaces/response.interface';
 import * as actions from './public.action';
 
 export interface Settings {
@@ -22,6 +22,7 @@ export interface State {
     settingsResponse: ResponseState;
     settingsRequest: SettingsRequest;
     language: string;
+    logoutRes: LogoutResponse;
     needFooter: boolean;
     editorConfig: EditorConfig;
     serverSendMessageSubscribeState: { [key: string]: boolean }; // 用来控制是否处理服务端相应的消息推送。
@@ -45,6 +46,7 @@ export const initialState: State = {
     settingsRequest: null,
     settingsResponse: null,
     language: 'zh',
+    logoutRes: null,
     needFooter: false,
     editorConfig: editor || null,
     serverSendMessageSubscribeState: {
@@ -96,7 +98,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result),
             };
 
-        // ui state
+        // logout
+        case actions.LOGOUT_FAIL:
+            return { ...state, logoutRes: action.payload };
+
+        case actions.LOGOUT_SUCCESS:
+            return { ...state, logoutRes: action.payload, publicRes: null };
+
+        // ==============================================ui state=========================================
+
         case actions.SET_REFERRER:
             return { ...state, referrer: action.payload };
 
@@ -114,6 +124,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, editorConfig };
         }
 
+        // clear logout response
+        case actions.RESET_LOGOUT_RESPONSE:
+            return { ...state, logoutRes: null };
+
+        case actions.LOGOUT:
         default:
             return state;
     }
@@ -149,3 +164,5 @@ export const getFooterState = (state: State) => state.needFooter;
 export const getEditorConfig = (state: State) => state.editorConfig;
 
 export const getServerMsgSubscribeState = (state: State) => state.serverSendMessageSubscribeState;
+
+export const getLogoutRes = (state: State) => state.logoutRes;

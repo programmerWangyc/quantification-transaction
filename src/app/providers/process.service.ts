@@ -18,7 +18,7 @@ import * as DocumentActions from '../store/document/document.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import * as PlatformActions from '../store/platform/platform.action';
-import { GetSettingsRequestAction } from '../store/public/public.action';
+import { GetSettingsRequestAction, LogoutRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
@@ -58,6 +58,10 @@ export class ProcessService {
 
     processVerifyPwd(paramObs: Observable<Request.VerifyPasswordRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new VerifyPasswordRequestAction(params)));
+    }
+
+    processLogout(paramObs: Observable<Request.LoginRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new LogoutRequestAction(params)));
     }
 
     //  ===================================================Exchange===================================================
@@ -310,6 +314,9 @@ export class ProcessService {
     }
     //  ===================================================Simulation======================================================
 
+    /**
+     * @deprecated 实盘仿真的接口
+     */
     processSandboxToken(paramObs: Observable<any>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new SimulationActions.GetSandBoxTokenRequestAction()));
     }

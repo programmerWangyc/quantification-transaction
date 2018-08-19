@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
-import { SettingsRequest } from '../../interfaces/request.interface';
-import { PublicResponse, SettingsResponse } from '../../interfaces/response.interface';
+import { SettingsRequest, LogoutRequest } from '../../interfaces/request.interface';
+import { PublicResponse, SettingsResponse, LogoutResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
@@ -61,6 +61,41 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super(); }
 }
 
+// logout
+export class Logout extends ApiAction {
+    isSingleParams = false;
+
+    command = 'Logout';
+
+    order = null;
+
+    noneParams = true;
+}
+
+export const LOGOUT = '[Public] LOGOUT';
+
+export class LogoutRequestAction extends Logout implements Action {
+    readonly type = LOGOUT;
+
+    constructor(public payload: LogoutRequest) { super(); }
+}
+
+export const LOGOUT_FAIL = '[Public] LOGOUT_FAIL';
+
+export class LogoutFailAction extends Logout implements Action {
+    readonly type = LOGOUT_FAIL;
+
+    constructor(public payload: LogoutResponse) { super(); }
+}
+
+export const LOGOUT_SUCCESS = '[Public] LOGOUT_SUCCESS';
+
+export class LogoutSuccessAction extends Logout implements Action {
+    readonly type = LOGOUT_SUCCESS;
+
+    constructor(public payload: LogoutResponse) { super(); }
+}
+
 //  ===========================================Local action===================================
 
 export const SET_LANGUAGE = '[Public] SET_LANGUAGE';
@@ -95,19 +130,31 @@ export class ToggleSubscribeServerSendMessageTypeAction implements Action {
     constructor(public payload: { message: string; status?: boolean }) { }
 }
 
+export const RESET_LOGOUT_RESPONSE = '[Public] RESET_LOGOUT_RESPONSE';
+
+export class ResetLogoutResponseAction implements Action {
+    readonly type = RESET_LOGOUT_RESPONSE;
+}
+
 export type ApiActions = GetSettingsRequestAction
     | GetSettingsFailAction
-    | GetSettingsSuccessAction;
+    | GetSettingsSuccessAction
+    | LogoutRequestAction
+    | LogoutFailAction
+    | LogoutSuccessAction;
 
 export type Actions = ApiActions
+    | ResetLogoutResponseAction
+    | SetLanguageAction
     | SetPublicInformationAction
     | SetReferrerAction
-    | SetLanguageAction
     | ToggleFooterAction
-    | UpdateFavoriteEditorConfigAction
-    | ToggleSubscribeServerSendMessageTypeAction;
+    | ToggleSubscribeServerSendMessageTypeAction
+    | UpdateFavoriteEditorConfigAction;
 
 export const ResponseActions = {
     GetSettingsFailAction,
     GetSettingsSuccessAction,
+    LogoutFailAction,
+    LogoutSuccessAction,
 };

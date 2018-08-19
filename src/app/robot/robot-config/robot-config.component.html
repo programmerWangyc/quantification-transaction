@@ -22,7 +22,7 @@
         <nz-form-item>
             <nz-form-label [nzSpan]="6">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
             <nz-form-control [nzSpan]="16">
-                <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" [nzSpan]="6" nzShowSearch>
+                <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzSpan="6" nzShowSearch>
                     <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
                 </nz-select>
                 <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">

@@ -7,3 +7,9 @@ export enum LogTypes {
     MESSAGE,
     RESTART,
 }
+
+export enum SemanticsLog {
+    runningLog = 'runningLog',
+    profitLog = 'profitLog',
+    strategyLog = 'strategyLog',
+}

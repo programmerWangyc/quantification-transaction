@@ -3,12 +3,11 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { of } from 'rxjs';
 import { map, filter, takeWhile } from 'rxjs/operators';
 
-import { Breadcrumb } from '../../interfaces/app.interface';
+import { Breadcrumb, DeactivateGuard } from '../../interfaces/app.interface';
 import { CommunityService } from '../providers/community.service';
 import { BBSTopicForm, TopicFormComponent } from '../topic-form/topic-form.component';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CanDeactivateComponent } from '../../dashboard/providers/guard.service';
-import { DeactivateGuard } from '../../dashboard/dashboard.interface';
+import { CanDeactivateComponent } from '../../base/guard.service';
 
 @Component({
     selector: 'app-topic-add',

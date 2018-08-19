@@ -19,6 +19,13 @@
         z-index: 1000;
         section {
             float: right;
+            margin: 0 50px 0 0;
+            a {
+                margin: 0 1em;
+            }
+            nz-avatar {
+                background-color: $blue;
+            }
         }
     }
     nz-sider {
@@ -46,7 +53,7 @@
 }
 
 :host ::ng-deep .trigger:hover {
-    color: #1890ff;
+    color: $blue;
 }
 
 :host ::ng-deep .logo {

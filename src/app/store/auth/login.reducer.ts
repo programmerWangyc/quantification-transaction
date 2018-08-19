@@ -33,28 +33,22 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
             response.error = LoginErrorMsg[errorCode];
 
-            return { ...state, response, needGoogleSecondaryVerificationCode: needGoogleSecondaryVerificationCode(errorCode) };
+            return { ...state, response, needGoogleSecondaryVerificationCode: [LoginErrorMsg.NEED_GOOGLE_SECONDARY_VERIFICATION, LoginErrorMsg.GOOGLE_SECONDARY_VERIFICATION_CODE_ERROR].includes(errorCode) };
         }
 
         case actions.LOGIN_SUCCESS:
             return { ...state, response: action.payload };
 
         // ui state
-        case actions.RESET_LOGIN_ERROR:
-            return { ...state, response: { ...state.response, error: null } };
-
         case actions.CLOSE_SECONDARY_VERIFY:
             return { ...state, needGoogleSecondaryVerificationCode: false };
+
+        case actions.CLEAR_LOGIN_INFO:
+            return initialState;
 
         default:
             return state;
     }
-}
-
-function needGoogleSecondaryVerificationCode(code): boolean {
-    const codes = [LoginErrorMsg.NEED_GOOGLE_SECONDARY_VERIFICATION, LoginErrorMsg.GOOGLE_SECONDARY_VERIFICATION_CODE_ERROR];
-
-    return codes.indexOf(code) !== -1;
 }
 
 export const getUsername = (state: State) => state.username;

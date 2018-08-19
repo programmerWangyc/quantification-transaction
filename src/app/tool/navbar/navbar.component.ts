@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Path } from '../../app.config';
-import { PublicService } from '../../providers/public.service';
 
 export interface Link {
     path: string;
@@ -34,13 +33,13 @@ const documentation: Link = {
     label: 'API_DOCUMENTATION',
 };
 
-const market: Link = {
-    path: Path.market,
-    label: 'QUOTE_TOOL',
+const quoteChart: Link = {
+    path: 'https://quant.la/Tools/View/4/chart.html',
+    label: 'QUOTE_CHART',
 };
 
 const analyzing: Link = {
-    path: Path.analyze,
+    path: 'https://quant.la/Tools/View/3/formula.html',
     label: 'ANALYZING_TOOL',
 };
 
@@ -51,24 +50,46 @@ const analyzing: Link = {
 })
 export class NavbarComponent implements OnInit {
 
-    navLinks: Link[] = [main, square, factFinder, community, documentation, market, analyzing];
+    /**
+     * Head navigation
+     */
+    navLinks: Link[] = [main, square, factFinder, community, documentation, quoteChart, analyzing];
 
+    /**
+     * 搜索内容
+     */
     searchValue: string;
 
+    /**
+     * 控制下拉菜单伸缩
+     */
     isCollapsed = true;
 
-    isLogin: Observable<boolean>;
-
-    inputSize = 'large';
-
     constructor(
-        private publicService: PublicService,
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
     ) { }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
-        this.isLogin = this.publicService.isLogin();
     }
 
+    /**
+     * @ignore
+     */
+    navigateTo(target: Link): void {
+        if (!target.path.startsWith('http')) {
+            this.router.navigate([target.path], { relativeTo: this.activatedRoute });
+        } else {
+            window.open(target.path);
+        }
+    }
+
+    /**
+     * @ignore
+     */
     onSearch(event: string): void {
         console.log(event);
     }

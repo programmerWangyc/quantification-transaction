@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign="center center" class="login-container">
+<div fxLayout="column" fxLayoutAlign="center center">
     <div class="auth">
         <img src="../../../assets/images/auth.jpg">
     </div>
@@ -6,7 +6,7 @@
         <nz-card [nzTitle]="'USER_LOGIN' | translate">
             <form nz-form fxLayout="column" fxLayoutAlign="start stretch" [formGroup]="loginForm" (ngSubmit)="login$.next(loginForm.value)">
                 <nz-form-item>
-                    <nz-form-label>{{'USERNAME' | translate}}</nz-form-label>
+                    <nz-form-label nzRequired>{{'USERNAME' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input formControlName="username" [nzSize]="inputSize" [placeholder]="'USERNAME' | translate" nz-input required>
@@ -21,7 +21,7 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
-                    <nz-form-label id="get-password">{{'PASSWORD' | translate}}</nz-form-label>
+                    <nz-form-label  nzRequired id="get-password">{{'PASSWORD' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input type="password" formControlName="password" [nzSize]="inputSize" [placeholder]="'PASSWORD' | translate" nz-input required>

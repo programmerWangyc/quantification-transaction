@@ -6,12 +6,12 @@ import { Observable, of, Subject } from 'rxjs';
 import { auditTime, takeWhile } from 'rxjs/operators';
 
 import { UploadBaseComponent } from '../../base/upload.component';
-import { DeactivateGuard } from '../../dashboard/dashboard.interface';
 import { BBSNode, BBSTopicById } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { GroupedList } from '../../providers/util.service';
 import { CommunityService } from '../providers/community.service';
 import { TopicContentEditComponent } from '../topic-content-edit/topic-content-edit.component';
+import { DeactivateGuard } from '../../interfaces/app.interface';
 
 export interface BBSTopicForm {
     title: string;

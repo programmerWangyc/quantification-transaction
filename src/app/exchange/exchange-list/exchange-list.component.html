@@ -1,9 +1,10 @@
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
     <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta">
         <thead>
-            <tr>
-                <th *ngFor="let item of tableHead; first as isFirst" bt-text-center [nzWidth]="isFirst ? '30%' : 'auto'">{{item | translate}}</th>
-            </tr>
+            <th bt-text-center nzWidth="20%">{{'FLAG' | translate}}</th>
+            <th bt-text-center nzWidth="20%">{{'NAME' | translate}}</th>
+            <th bt-text-center nzWidth="45%">{{'EXCHANGE_PAIR' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'OPERATE' | translate}}</th>
         </thead>
         <tbody>
             <tr *ngFor="let platform of nzTable.data">

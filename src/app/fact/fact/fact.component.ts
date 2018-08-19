@@ -11,8 +11,8 @@ import { CommentService } from '../../comment/providers/comment.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { PublicRobot, RobotStatus } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
-import { RobotService } from '../../robot/providers/robot.service';
 import { CommentBaseComponent } from '../../square/square/square.component';
+import { FactService } from '../providers/fact.service';
 
 @Component({
     selector: 'app-fact',
@@ -49,7 +49,7 @@ export class FactComponent extends CommentBaseComponent implements OnInit, OnDes
         public publicService: PublicService,
         public commentService: CommentService,
         public translate: TranslateService,
-        private robotService: RobotService,
+        private factService: FactService,
     ) {
         super(publicService, commentService, translate);
     }
@@ -71,10 +71,10 @@ export class FactComponent extends CommentBaseComponent implements OnInit, OnDes
      * @ignore
      */
     private privateInitialModel() {
-        this.isLoading = this.robotService.isLoading();
+        this.isLoading = this.factService.isLoading();
 
         this.robots = combineLatest(
-            this.robotService.getPublicRobotList().pipe(
+            this.factService.getPublicRobotList().pipe(
                 map(robots => robots.filter(item => item.status === RobotStatus.RUNNING))
             ),
             this.search.valueChanges.pipe(
@@ -91,7 +91,9 @@ export class FactComponent extends CommentBaseComponent implements OnInit, OnDes
      * @ignore
      */
     private privateLaunch() {
-        this.robotService.launchPublicRobotList(of({ offset: -1, limit: -1, status: -1 }));
+        this.factService.launchPublicRobotList(of({ offset: -1, limit: -1, status: -1 }));
+
+        this.factService.handlePublicRobotListError(() => this.isAlive);
     }
 
     /**

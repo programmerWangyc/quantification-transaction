@@ -9,7 +9,7 @@
 </div>
 
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <app-robot [robots]="robots | async"></app-robot>
+    <app-fact-robot-table [robots]="robots | async"></app-fact-robot-table>
 </nz-spin>
 
 <div fxLayoutAlign="space-between center">

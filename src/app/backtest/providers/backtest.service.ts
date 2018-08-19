@@ -26,6 +26,7 @@ import { BacktestCode, BacktestSelectedPair, TimeRange } from '../backtest.inter
 import { BacktestComputingService } from './backtest.computing.service';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { BacktestParamService } from './backtest.param.service';
+import { VariableOverview } from '../../interfaces/app.interface';
 
 @Injectable()
 export class BacktestService extends BacktestParamService {
@@ -379,6 +380,24 @@ export class BacktestService extends BacktestParamService {
             this.filterTruth()
         );
     }
+
+    /**
+     * 获取已经存在的策略参数；
+     * @param predicate 判定函数，用来判定参数是否所需要的参数；
+     */
+    getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
+        return this.getStrategyDetail().pipe(
+            map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
+        );
+    }
+
+    /**
+     * 判定参数是否交互参数；
+     */
+    isCommandArg() {
+        return this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX);
+    }
+
 
     //  =======================================================UI state =======================================================
 

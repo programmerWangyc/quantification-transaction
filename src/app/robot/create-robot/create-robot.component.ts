@@ -7,16 +7,16 @@ import { concat, Observable, of as observableOf, Subject, Subscription } from 'r
 import { map, reduce } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
-import { SelectedPair, VariableOverview } from '../../interfaces/app.interface';
+import { SelectedPair, VariableOverview, GroupedStrategy, SemanticArg } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveRobotRequest } from '../../interfaces/request.interface';
 import { Platform } from '../../interfaces/response.interface';
 import { BtNodeService, GroupedNode } from '../../providers/bt-node.service';
 import { K_LINE_PERIOD } from '../../providers/constant.service';
 import { EncryptService } from '../../providers/encrypt.service';
 import { PlatformService } from '../../providers/platform.service';
-import { SemanticArg, StrategyService, GroupedStrategy } from '../../strategy/providers/strategy.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
+import { RobotStrategyService } from '../providers/robot.strategy.service';
 
 export interface RobotCreationForm {
     robotName: string;
@@ -131,7 +131,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         private platformService: PlatformService,
         private robotOperate: RobotOperateService,
         private btNodeService: BtNodeService,
-        private strategyService: StrategyService,
+        private strategyService: RobotStrategyService,
         private location: Location,
         private robotService: RobotService,
         private encrypt: EncryptService,

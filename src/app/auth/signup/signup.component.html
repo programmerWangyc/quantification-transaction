@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign="center center" class="signup-container">
+<div fxLayout="column" fxLayoutAlign="center center">
     <div class="auth">
         <img src="../../../assets/images/auth.jpg">
     </div>
@@ -10,8 +10,8 @@
 
             <form nz-form fxLayout="column" fxLayoutAlign="start stretch" [formGroup]="signupForm" (ngSubmit)="signup$.next(signupForm.value)">
                 <nz-form-item>
-                    <nz-form-label>{{'USERNAME' | translate}}</nz-form-label>
-                    <nz-form-control nzHasFeedback>
+                    <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'USERNAME' | translate}}</nz-form-label>
+                    <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input nz-input formControlName="username" [nzSize]="inputSize" required>
                             <ng-template #prefix>
@@ -26,8 +26,8 @@
                 </nz-form-item>
 
                 <nz-form-item>
-                    <nz-form-label>{{'EMAIL' | translate}}</nz-form-label>
-                    <nz-form-control nzHasFeedback>
+                    <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'EMAIL' | translate}}</nz-form-label>
+                    <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input type="email" formControlName="email" [nzSize]="inputSize" nz-input required>
                             <ng-template #prefix>
@@ -42,8 +42,8 @@
                 </nz-form-item>
 
                 <nz-form-item formGroupName="passwordInfo">
-                    <nz-form-label>{{'PASSWORD' |translate}}</nz-form-label>
-                    <nz-form-control nzHasFeedback>
+                    <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'PASSWORD' |translate}}</nz-form-label>
+                    <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input type="password" formControlName="password" [nzSize]="inputSize" nz-input required>
                             <ng-template #prefix>
@@ -58,8 +58,8 @@
                 </nz-form-item>
 
                 <nz-form-item formGroupName="passwordInfo">
-                    <nz-form-label>{{'CONFIRM_PASSWORD' | translate}}</nz-form-label>
-                    <nz-form-control nzHasFeedback>
+                    <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'CONFIRM_PASSWORD' | translate}}</nz-form-label>
+                    <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
                             <input type="password" formControlName="confirmPassword" [nzSize]="inputSize" nz-input required>
                             <ng-template #prefix>

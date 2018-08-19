@@ -1,4 +1,4 @@
-<header fxLayout="column" *ngIf="!(isLogin | async)">
+<header fxLayout="column">
     <div id="header" class="header" fxLayoutAlign="space-between center">
         <span fxLayout="row no-wrap" fxFlex="1 0 auto">
             <img src="../../assets/images/botvs.png">
@@ -8,7 +8,7 @@
 
             <form fxLayoutAlign="center center">
                 <nz-input-group [nzAddOnBefore]="addOnBefore">
-                    <input [(ngModel)]="searchValue" [ngModelOptions]="{standalone: true}" [placeholder]="'SEARCH' | translate" [nzSize]="inputSize"
+                    <input [(ngModel)]="searchValue" [ngModelOptions]="{standalone: true}" [placeholder]="'SEARCH' | translate" nzSize="large"
                         nz-input>
                     <ng-template #addOnBefore>
                         <i class="anticon anticon-search"></i>
@@ -20,13 +20,13 @@
 
             <i class="anticon anticon-ellipsis"></i>
 
-            <nz-avatar nzIcon="user" class="avatar"></nz-avatar>
+            <nz-avatar nzIcon="anticon anticon-user" nz-popover nzPlacement="right" [nzContent]="'NOT_LOGGED_IN' | translate" class="avatar"></nz-avatar>
         </section>
     </div>
 
     <nav class="header" fxLayoutAlign="space-between center">
         <div fxLayoutAlign="space-between center" id="nav">
-            <a *ngFor="let link of navLinks" [routerLink]="link.path">
+            <a *ngFor="let link of navLinks"  (click)="navigateTo(link)">
                 {{link.label | translate}}
             </a>
         </div>
@@ -37,17 +37,17 @@
             </button>
             <ul nz-menu [style.display]="isCollapsed ? 'none' : 'block'">
                 <li *ngFor="let link of navLinks" nz-menu-item>
-                    <a [routerLink]="link.path">{{link.label | translate}}</a>
+                    <a (click)="navigateTo(link)">{{link.label | translate}}</a>
                 </li>
             </ul>
         </div>
 
         <div id="auth" fxLayoutAlign="space-between center">
-            <button nz-button [nzType]="'primary'" [nzSize]="'large'" routerLink="/auth/login" routerLinkActive="active" fxLayoutAlign="center center">
+            <button nz-button nzType="primary" routerLink="/auth/login" routerLinkActive="active" fxLayoutAlign="center center">
                 <i class="anticon anticon-login"></i>
                 <span>{{'LOGIN' | translate}}</span>
             </button>
-            <button nz-button [nzType]="'default'" [nzSize]="'large'" routerLink="auth/signup" routerLinkActive="active" fxLayoutAlign="center center">
+            <button nz-button routerLink="auth/signup" routerLinkActive="active" fxLayoutAlign="center center">
                 <i class="anticon anticon-user-add"></i>
                 <span>{{'SIGNUP' | translate}}</span>
             </button>

@@ -25,11 +25,6 @@ export class ExchangeListComponent extends BaseComponent {
     list: Observable<Platform[]>;
 
     /**
-     * @ignore
-     */
-    tableHead: string[] = ['FLAG', 'NAME', 'EXCHANGE_PAIR', 'OPERATE'];
-
-    /**
      * 删除
      */
     delete$: Subject<Platform> = new Subject();

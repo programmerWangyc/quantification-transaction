@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { intersectionWith, isNumber, sortBy, uniqBy } from 'lodash';
+import { intersectionWith, uniqBy } from 'lodash';
 import * as moment from 'moment';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
-import { find, map, mergeMap, switchMap, take, withLatestFrom, takeWhile, filter } from 'rxjs/operators';
+import { filter, find, map, mergeMap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
+import { VariableOverview } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
-import { GroupedList, UtilService } from '../../providers/util.service';
+import { UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
 import {
     ResetStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
@@ -25,16 +25,6 @@ import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
-
-
-export interface GroupedStrategy extends GroupedList<fromRes.Strategy> {
-    groupNameValue?: any;
-}
-
-export interface SemanticArg {
-    semanticArgs: VariableOverview[];
-    semanticTemplateArgs: TemplateVariableOverview[];
-}
 
 @Injectable()
 export class StrategyService extends BaseService {
@@ -78,20 +68,6 @@ export class StrategyService extends BaseService {
         return this.process.processStrategyDetail(source);
     }
 
-    /**
-     * 通过名称查询策略详情
-     */
-    launchStrategyListByName(source: Observable<fromReq.GetStrategyListByNameRequest>): Subscription {
-        return this.process.processStrategyListByName(source);
-    }
-
-    /**
-     * 查询公共策略的详情信息
-     */
-    launchPublicStrategyDetail(source: Observable<fromReq.GetPublicStrategyDetailRequest>): Subscription {
-        return this.process.processPublicStrategyDetail(source);
-    }
-
     //  =======================================================Date acquisition=======================================================
 
     /**
@@ -118,37 +94,6 @@ export class StrategyService extends BaseService {
     getStrategies(): Observable<fromRes.Strategy[]> {
         return this.getStrategyListResponse().pipe(
             map(res => res.result.strategies)
-        );
-    }
-
-    getGroupedStrategy(key: string, getName?: (arg: number | boolean) => string, getNameValue?: (arg: string) => number | boolean): Observable<GroupedStrategy[]> {
-        return this.utilService.getGroupedList(this.getStrategies(), key, getName).pipe(
-            map(list => {
-                if (getNameValue) {
-                    const result = list.map(({ groupName, values }) => ({ groupName, values, groupNameValue: getNameValue(groupName) }));
-
-                    return sortBy(result, item => item.groupNameValue);
-                } else {
-                    return list;
-                }
-            })
-        );
-    }
-
-    getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
-        return combineLatest(
-            this.getStrategies(),
-            strategyId.pipe(
-                this.filterTruth()
-            )
-        ).pipe(
-            map(([strategies, id]) => {
-                const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
-
-                const noArgs = !semanticArgs.length && !semanticTemplateArgs;
-
-                return noArgs ? null : { semanticArgs, semanticTemplateArgs };
-            })
         );
     }
 
@@ -306,34 +251,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 策略广场的数据总量
-     */
-    getMarketStrategyTotal(): Observable<number> {
-        return this.getStrategyListByNameResponse().pipe(
-            map(res => res.result.all)
-        );
-    }
-
-    /**
-     * @ignore
-     */
-    private getPublicStrategyDetailResponse(): Observable<fromRes.GetPublicStrategyDetailResponse> {
-        return this.store.pipe(
-            select(fromRoot.selectPublicStrategyDetailResponse),
-            this.filterTruth()
-        );
-    }
-
-    /**
-     * 公共策略详情
-     */
-    getPublicStrategyDetail(): Observable<fromRes.PublicStrategyDetail> {
-        return this.getPublicStrategyDetailResponse().pipe(
-            map(res => res.result.strategy)
-        );
-    }
-
     //  =======================================================Local state change=======================================================
 
     resetState(): void {
@@ -349,16 +266,6 @@ export class StrategyService extends BaseService {
     }
 
     //  =======================================================Shortcut methods=======================================================
-
-    getCategoryName(id: number): string {
-        return fromReq.CategoryType[id] || 'UNKNOWN_TYPE';
-    }
-
-    reverseGetCategoryName(str: string): number {
-        const id = fromReq.CategoryType[str];
-
-        return isNumber(id) ? id : void 0;
-    }
 
     getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
         return this.getStrategies().pipe(
@@ -422,21 +329,5 @@ export class StrategyService extends BaseService {
      */
     handleStrategyDetailError(): Subscription {
         return this.error.handleResponseError(this.getStrategyDetailResponse());
-    }
-
-    /**
-     * @ignore
-     */
-    handleStrategyListByNameError(keepAlive: () => boolean = () => true): Subscription {
-        return this.error.handleResponseError(this.getStrategyListByNameResponse().pipe(
-            takeWhile(keepAlive)
-        ));
-    }
-
-    /**
-     * @ignore
-     */
-    handlePublicStrategyDetailError(): Subscription {
-        return this.error.handleResponseError(this.getPublicStrategyDetailResponse());
     }
 }

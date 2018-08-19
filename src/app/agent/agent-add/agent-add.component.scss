@@ -1,0 +1,9 @@
+@import '../../../theme/_variable.theme';
+.steps {
+    margin: 2em 1em;
+    i {
+        color: $blue;
+        margin-left: 1em;
+        font-size: 14px;
+    }
+}

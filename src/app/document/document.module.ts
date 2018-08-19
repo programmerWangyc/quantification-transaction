@@ -4,8 +4,8 @@ import { NgModule } from '@angular/core';
 import { routing } from './document.routing';
 import { DocumentComponent } from './document/document.component';
 import { SharedModule } from '../shared/shared.module';
-import { MarkdownModule } from 'ngx-markdown';
 import { DocumentService } from './providers/document.service';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
     imports: [

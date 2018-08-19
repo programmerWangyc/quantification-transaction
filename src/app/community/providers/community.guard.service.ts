@@ -4,10 +4,10 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router } from '@angula
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
-import { BaseGuard } from '../../dashboard/providers/guard.service';
 import { BBSTopicById } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { CommunityService } from './community.service';
+import { BaseGuard } from '../../base/guard.service';
 
 @Injectable()
 export class TopicResolver implements Resolve<BBSTopicById> {

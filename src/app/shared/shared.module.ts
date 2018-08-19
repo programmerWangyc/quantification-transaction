@@ -13,14 +13,14 @@ import { WatchDogService } from './providers/watch-dog.service';
 
 @NgModule({
     exports: [
-        FlexLayoutModule,
-        TranslateModule,
-        NgZorroAntdModule,
-        FormsModule,
-        ReactiveFormsModule,
-        FileUploadModule,
         CodemirrorModule,
+        FileUploadModule,
+        FlexLayoutModule,
+        FormsModule,
+        NgZorroAntdModule,
+        ReactiveFormsModule,
         ToolModule,
+        TranslateModule,
     ],
 })
 export class SharedModule {

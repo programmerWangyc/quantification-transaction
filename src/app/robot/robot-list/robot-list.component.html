@@ -1,9 +1,13 @@
 <nz-table #nzTable [nzData]="data | async" [nzPageSize]="10" [nzShowSizeChanger]="true">
     <thead>
         <tr>
-            <th *ngFor="let item of tableHead" bt-text-center>
-                <span>{{item | translate}}</span>
-            </th>
+            <th bt-text-center nzWidth="15%">{{'NAME' | translate}}</th>
+            <th bt-text-center nzWidth="20%">{{'STRATEGY' | translate}}</th>
+            <th bt-text-center nzWidth="10%">{{'STATUS' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'PROFIT' | translate}}</th>
+            <th bt-text-center nzWidth="10%">{{'PUBLISH' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'CREATE_DATE' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'OPERATE' | translate}}</th>
         </tr>
     </thead>
     <tbody>
@@ -11,8 +15,9 @@
             <td bt-text-direction direction="left">
                 <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
             </td>
-            <td>
-                <a [routerLink]="['../', 'strategy', 'edit', robot.strategy_id]">{{robot.strategy_name}}</a>
+            <td bt-text-direction direction="left">
+                <!--FIXME: 懒加载会造成第一次跳转失败，strategy模块加载过后正常-->
+                <a [routerLink]="['../../strategy/edit', robot.strategy_id]">{{robot.strategy_name}}</a>
             </td>
             <td>{{robot.status | robotStatus | translate}}</td>
             <td>{{robot.profit | number: '1.0-5'}}</td>

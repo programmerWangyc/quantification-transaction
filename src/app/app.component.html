@@ -1,5 +1,5 @@
 <!-- Main Header -->
-<app-navbar></app-navbar>
+<app-navbar *ngIf="beforeLogin | async"></app-navbar>
 
 <!-- Left side column. contains the logo and sidebar -->
 <!-- <app-menu></app-menu> -->

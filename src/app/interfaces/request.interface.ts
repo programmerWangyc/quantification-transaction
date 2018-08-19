@@ -39,6 +39,11 @@ export interface VerifyPasswordRequest {
     password: string;
 }
 
+// logout
+export interface LogoutRequest {
+
+}
+
 // ===================================================Setting=========================================
 
 // get settings
@@ -521,5 +526,5 @@ export interface AddBBSTopicRequest {
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 51
+ * 接口总数： 83， 已完成： 52
  */

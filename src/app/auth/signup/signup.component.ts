@@ -31,6 +31,14 @@ export interface SignupFormModel {
 })
 export class SignupComponent extends BaseComponent {
 
+    labelSm = 6;
+
+    labelSx = 24;
+
+    controlSm = 14;
+
+    controlXs = 24;
+
     subscription$$: Subscription;
 
     signupForm: FormGroup;

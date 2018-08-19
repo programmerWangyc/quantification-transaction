@@ -18,7 +18,9 @@ import * as fromRoot from '../../store/index.reducer';
 import { ResetRobotDetailAction, ResetRobotStateAction } from '../../store/robot/robot.action';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class RobotService extends BaseService {
 
     constructor(
@@ -69,13 +71,6 @@ export class RobotService extends BaseService {
                 this.filterTruth()
             )
         );
-    }
-
-    /**
-     * @ignore
-     */
-    launchPublicRobotList(source: Observable<fromReq.GetPublicRobotListRequest>): Subscription {
-        return this.process.processPublicRobotList(source);
     }
 
     //  =======================================================Date Acquisition=======================================================
@@ -167,15 +162,6 @@ export class RobotService extends BaseService {
         return this.store.pipe(
             select(fromRoot.selectPublicRobotListResponse),
             this.filterTruth()
-        );
-    }
-
-    /**
-     * @ignore
-     */
-    getPublicRobotList(): Observable<fromRes.PublicRobot[]> {
-        return this.getPublicRobotListResponse().pipe(
-            map(res => res.result.robots)
         );
     }
 
@@ -353,12 +339,5 @@ export class RobotService extends BaseService {
      */
     handleSubscribeRobotError(): Subscription {
         return this.error.handleResponseError(this.getSubscribeRobotResponse());
-    }
-
-    /**
-     * @ignore
-     */
-    handlePublicRobotListError(): Subscription {
-        return this.error.handleResponseError(this.getPublicRobotListResponse());
     }
 }

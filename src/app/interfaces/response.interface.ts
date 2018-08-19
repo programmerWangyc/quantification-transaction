@@ -90,6 +90,8 @@ export interface SetPasswordResponse extends ResponseUnit<boolean> { }
 // verify password
 export interface VerifyPasswordResponse extends ResponseUnit<boolean> { }
 
+// logout
+export interface LogoutResponse extends ResponseUnit<boolean> { }
 
 //  =======================================================Setting response=========================================================
 
@@ -168,6 +170,14 @@ export interface GetExchangeListResponse extends ResponseUnit<ExchangeListRespon
 
 
 // ===================================================Robot=========================================
+
+// 接口中的summary字段被解析后的结构
+export interface RobotStatusTable {
+    type: string;
+    title: string;
+    cols: string[];
+    rows: any[][];
+}
 
 // robot list
 export interface Robot {

@@ -17,16 +17,35 @@ import { passwordValidator, usernameValidator } from '../../validators/validator
     styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent extends BaseComponent {
+
+    /**
+     * @ignore
+     */
     loginForm: FormGroup;
 
+    /**
+     * @ignore
+     */
     subscription$$: Subscription;
 
+    /**
+     * @ignore
+     */
     login$: Subject<LoginRequest> = new Subject();
 
+    /**
+     * @ignore
+     */
     needVerification: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
     tipPosition = 'after';
 
+    /**
+     * @ignore
+     */
     inputSize = 'large';
 
     constructor(
@@ -36,15 +55,22 @@ export class LoginComponent extends BaseComponent {
         private router: Router,
     ) {
         super();
+        this.authService.resetLoginInfo();
         this.createForm();
     }
 
+    /**
+     * @ignore
+     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
+    /**
+     * @ignore
+     */
     initialModel(): void {
         this.needVerification = this.authService.needVerification().pipe(
             tap(need => {
@@ -54,6 +80,9 @@ export class LoginComponent extends BaseComponent {
         );
     }
 
+    /**
+     * @ignore
+     */
     createForm(): void {
         this.loginForm = this.fb.group({
             username: ['', usernameValidator],
@@ -62,6 +91,9 @@ export class LoginComponent extends BaseComponent {
         });
     }
 
+    /**
+     * @ignore
+     */
     launch(): void {
         this.subscription$$ = this.authService.launchLogin(
             this.login$.pipe(
@@ -77,20 +109,30 @@ export class LoginComponent extends BaseComponent {
             .add(this.authService.handleLoginError());
     }
 
+    /**
+     * @ignore
+     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
-
-        this.authService.resetLoginError();
     }
 
+    /**
+     * @ignore
+     */
     get username(): AbstractControl {
         return this.loginForm.get('username');
     }
 
+    /**
+     * @ignore
+     */
     get password(): AbstractControl {
         return this.loginForm.get('password');
     }
 
+    /**
+     * @ignore
+     */
     get verificationCode(): AbstractControl {
         return this.loginForm.get('verificationCode');
     }

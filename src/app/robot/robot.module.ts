@@ -1,60 +1,48 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 
-import { ChartModule } from 'angular2-highcharts';
-
-import { ChargeModule } from '../charge/charge.module';
 import { SharedModule } from '../shared/shared.module';
-import { StrategyModule } from '../strategy/strategy.module';
 import { CreateRobotComponent } from './create-robot/create-robot.component';
 import { DeleteRobotComponent } from './delete-robot/delete-robot.component';
-import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
 import { PIPES } from './pipes/index.pipe';
 import { RobotConstantService } from './providers/robot.constant.service';
-import { RobotLogService } from './providers/robot.log.service';
 import { RobotOperateService } from './providers/robot.operate.service';
 import { RobotService } from './providers/robot.service';
 import { RobotCommandComponent } from './robot-command/robot-command.component';
 import { RobotConfigComponent } from './robot-config/robot-config.component';
+import { RobotCreationComponent } from './robot-creation/robot-creation.component';
+import { RobotDebugComponent } from './robot-debug/robot-debug.component';
 import { RobotDebuggerComponent } from './robot-debugger/robot-debugger.component';
+import { RobotDetailComponent } from './robot-detail/robot-detail.component';
 import { RobotDurationComponent } from './robot-duration/robot-duration.component';
 import { RobotListComponent } from './robot-list/robot-list.component';
-import { RobotLogComponent } from './robot-log/robot-log.component';
 import { RobotOverviewComponent } from './robot-overview/robot-overview.component';
-import { RobotProfitChartComponent } from './robot-profit-chart/robot-profit-chart.component';
-import { RobotStatusComponent, RobotSubtitleComponent, RobotInnerTableComponent, RobotInfoComponent } from './robot-status/robot-status.component';
-import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strategy-chart.component';
+import { routing } from './robot.routing';
+import { RobotComponent } from './robot/robot.component';
+import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
+import { RobotStrategyService } from './providers/robot.strategy.service';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
-        RouterModule,
-        ChartModule.forRoot(
-            require('highcharts/highstock')
-        ),
-        StrategyModule,
-        ChargeModule,
+        routing,
     ],
     declarations: [
         CreateRobotComponent,
         DeleteRobotComponent,
-        ExchangePairComponent,
         PIPES,
         RobotCommandComponent,
         RobotConfigComponent,
         RobotDebuggerComponent,
         RobotDurationComponent,
-        RobotInfoComponent,
-        RobotInnerTableComponent,
         RobotListComponent,
-        RobotLogComponent,
         RobotOverviewComponent,
-        RobotProfitChartComponent,
-        RobotStatusComponent,
-        RobotStrategyChartComponent,
-        RobotSubtitleComponent,
+        StrategyArgComponent,
+        RobotComponent,
+        RobotCreationComponent,
+        RobotDebugComponent,
+        RobotDetailComponent,
     ],
 
     entryComponents: [
@@ -64,31 +52,9 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
 
     providers: [
         RobotService,
-        RobotLogService,
         RobotOperateService,
         RobotConstantService,
-    ],
-    exports: [
-        CreateRobotComponent,
-        DeleteRobotComponent,
-        ExchangePairComponent,
-        PIPES,
-        RobotCommandComponent,
-        RobotConfigComponent,
-        RobotDebuggerComponent,
-        RobotDurationComponent,
-        RobotInfoComponent,
-        RobotInnerTableComponent,
-        RobotListComponent,
-        RobotLogComponent,
-        RobotOverviewComponent,
-        RobotProfitChartComponent,
-        RobotStatusComponent,
-        RobotStrategyChartComponent,
-        RobotSubtitleComponent,
-    ],
-    schemas: [
-        CUSTOM_ELEMENTS_SCHEMA,
+        RobotStrategyService,
     ],
 })
 export class RobotModule { }

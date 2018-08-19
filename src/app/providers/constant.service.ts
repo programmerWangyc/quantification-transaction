@@ -222,4 +222,11 @@ export class ConstantService {
     isButton = (value: any): boolean => {
         return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
+
+    getArgSelectedItem(id: number): VariableTypeDes {
+        if (id > 5 || id < 0) {
+            throw new RangeError('Range error: ID passed in is out of range;');
+        }
+        return this.VARIABLE_TYPES.find(item => item.id === id);
+    }
 }

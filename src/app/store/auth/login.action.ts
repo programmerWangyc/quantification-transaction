@@ -62,16 +62,16 @@ export class LoginSuccessAction extends LoginAction implements Action {
 
 //  ===========================================Local action===================================
 
-export const RESET_LOGIN_ERROR = '[Login] RESET_LOGIN_ERROR';
-
-export class ResetLoginErrorAction implements Action {
-    readonly type = RESET_LOGIN_ERROR;
-}
-
 export const CLOSE_SECONDARY_VERIFY = '[Login] CLOSE_SECONDARY_VERIFY';
 
 export class CloseSecondaryVerifyAction implements Action {
     readonly type = CLOSE_SECONDARY_VERIFY;
+}
+
+export const CLEAR_LOGIN_INFO = '[Login] CLEAR_LOGIN_INFO';
+
+export class ClearLoginInfoAction implements Action {
+    readonly type = CLEAR_LOGIN_INFO;
 }
 
 export type ApiActions = LoginRequestAction
@@ -79,7 +79,7 @@ export type ApiActions = LoginRequestAction
     | LoginSuccessAction;
 
 export type Actions = ApiActions
-    | ResetLoginErrorAction
+    | ClearLoginInfoAction
     | CloseSecondaryVerifyAction;
 
 export const ResponseActions = {

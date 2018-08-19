@@ -38,7 +38,10 @@ export class PublicEffect extends BaseEffect {
         );
 
     @Effect()
-    sett$ = this.getResponseAction(pub.GET_SETTINGS, pub);
+    sett$ = this.getResponseAction(pub.GET_SETTINGS, pub.ResponseActions);
+
+    @Effect()
+    logout$: Observable<ResponseAction> = this.getResponseAction(pub.LOGOUT, pub.ResponseActions);
 
     constructor(
         public ws: WebsocketService,

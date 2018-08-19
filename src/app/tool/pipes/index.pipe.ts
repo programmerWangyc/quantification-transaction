@@ -1,22 +1,42 @@
-import { BytesPipe, FromJSONPipe, FromNowPipe, OriginDataPipe, SafeHtmlPipe, ToMarkdownPipe } from './common.pipe';
+import {
+    BalancePipe, BtNodeNamePipe, BytesPipe, CategoryColorPipe, CategoryNamePipe, CommandButtonTextPipe, FromJSONPipe,
+    FromNowPipe, KLinePeriodPipe, OriginDataPipe, PlatformStockPipe, ProgramLanguagePipe, RemoveMd5Pipe, SafeHtmlPipe,
+    StrategyNamePipe, TemplateNamePipe, ToMarkdownPipe, VariableToSelectListPipe, VariableTypePipe, SummaryInfoPipe, PluckContentPipe, StrategyChartTitlePipe
+} from './common.pipe';
 import {
     DirectionTypePipe, Eid2StringPipe, ExtraBcgColorPickerPipe, ExtraColorPickerPipe, ExtraContentPipe, LogPricePipe,
     LogTypePipe, ShowExtraIconPipe
 } from './log.pipe';
 
 export const PIPES = [
-    FromNowPipe,
-    FromJSONPipe,
-    SafeHtmlPipe,
-    OriginDataPipe,
+    BalancePipe,
+    BtNodeNamePipe,
     BytesPipe,
-    Eid2StringPipe,
+    CategoryColorPipe,
+    CategoryNamePipe,
+    CommandButtonTextPipe,
     DirectionTypePipe,
-    LogTypePipe,
-    LogPricePipe,
-    ToMarkdownPipe,
-    ExtraContentPipe,
-    ShowExtraIconPipe,
-    ExtraColorPickerPipe,
+    Eid2StringPipe,
     ExtraBcgColorPickerPipe,
+    ExtraColorPickerPipe,
+    ExtraContentPipe,
+    FromJSONPipe,
+    FromNowPipe,
+    KLinePeriodPipe,
+    LogPricePipe,
+    LogTypePipe,
+    OriginDataPipe,
+    PlatformStockPipe,
+    PluckContentPipe,
+    ProgramLanguagePipe,
+    RemoveMd5Pipe,
+    SafeHtmlPipe,
+    ShowExtraIconPipe,
+    StrategyChartTitlePipe,
+    StrategyNamePipe,
+    SummaryInfoPipe,
+    TemplateNamePipe,
+    ToMarkdownPipe,
+    VariableToSelectListPipe,
+    VariableTypePipe,
 ];

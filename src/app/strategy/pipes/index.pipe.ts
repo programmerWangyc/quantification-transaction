@@ -1,30 +1,11 @@
 import {
-    CommandButtonTextPipe,
     ExpireStatusPipe,
-    RemoveMd5Pipe,
-    StrategyNamePipe,
-    TemplateNamePipe,
-    VariableToSelectListPipe,
     VariableTypeNamePipe,
-    VariableTypePipe,
     VariableValuePipe,
-    CategoryNamePipe,
-    ProgramLanguagePipe,
-    CategoryColorPipe,
 } from './strategy.pipe';
 
 export const PIPES = [
-    CommandButtonTextPipe,
     ExpireStatusPipe,
-    RemoveMd5Pipe,
-    StrategyNamePipe,
-    TemplateNamePipe,
-    VariableToSelectListPipe,
-    VariableToSelectListPipe,
     VariableTypeNamePipe,
-    VariableTypePipe,
     VariableValuePipe,
-    CategoryNamePipe,
-    ProgramLanguagePipe,
-    CategoryColorPipe,
 ];

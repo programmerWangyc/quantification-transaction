@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 
 import { Path } from '../app.config';
 import { RoutingService } from '../providers/routing.service';
+import { PublicService } from '../providers/public.service';
+import { filter, takeWhile } from 'rxjs/operators';
 
 export interface SideNavItem {
     label: string;
@@ -40,22 +42,6 @@ const documentation: SideNav = {
     icon: 'folder-open',
 };
 
-const market: SideNav = {
-    path: Path.market,
-    label: 'QUOTE_TOOL',
-    icon: 'bars',
-};
-
-const analyzing: SideNav = {
-    path: Path.analyze,
-    label: 'ANALYZING_TOOL',
-    icon: 'tool',
-    subNav: [
-        { path: '', label: 'QUOTE_TOOL', icon: 'area-chart' },
-        { path: '', label: 'ANALYZING_TOOL', icon: 'edit' },
-    ],
-};
-
 const controlCenter: SideNav = {
     path: '',
     label: 'CONTROL_CENTER',
@@ -68,11 +54,14 @@ const controlCenter: SideNav = {
     ],
 };
 
-const simulation: SideNav = {
-    label: 'FIRMWARE_SIMULATION',
-    path: Path.simulation,
-    icon: 'meh-o',
-};
+/**
+ * @deprecated 暂时不搞实盘仿真
+ */
+// const simulation: SideNav = {
+//     label: 'FIRMWARE_SIMULATION',
+//     path: Path.simulation,
+//     icon: 'meh-o',
+// };
 
 @Component({
     selector: 'app-dashboard',
@@ -89,7 +78,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * 侧边栏列表
      */
-    list: SideNav[] = [controlCenter, square, factFinder, simulation, community, documentation, market, analyzing];
+    list: SideNav[] = [controlCenter, square, factFinder, community, documentation];
 
     /**
      * 当前展示的模块
@@ -101,10 +90,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
      */
     subscription$$: Subscription;
 
+    /**
+     * @ignore
+     */
+    username: Observable<string>;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private routing: RoutingService,
+        private publicService: PublicService,
     ) {
     }
 
@@ -118,22 +118,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
                 this.currentModule = ary[2];
             });
+
+        this.username = this.publicService.getCurrentUser();
+
+        this.publicService.handleLogoutError(() => this.isAlive);
+
+        this.publicService.isLogoutSuccess().pipe(
+            filter(success => success),
+            takeWhile(() => this.isAlive)
+        ).subscribe(_ => this.router.navigate(['home'], { relativeTo: this.activatedRoute.root }));
     }
 
     /**
      * @ignore
      */
     navigateTo(target: SideNav): void {
-        this.router.navigate([target.path], { relativeTo: this.activatedRoute });
+        if (!target.path.startsWith('http')) {
+            this.router.navigate([target.path], { relativeTo: this.activatedRoute });
+        } else {
+            window.open(target.path);
+        }
     }
 
     /**
      * 模块是否处于激活状态
      */
     isActive(source: SideNav): boolean {
-        const paths = source.subNav.map(item => item.path);
+        return source.subNav.map(item => item.path).includes(this.currentModule);
+    }
 
-        return paths.indexOf(this.currentModule) !== -1;
+    /**
+     * 退出
+     */
+    logout(): void {
+        this.publicService.launchLogout(of(null));
     }
 
     /**
@@ -141,6 +159,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
-    }
 
+        this.isAlive = false;
+
+        this.publicService.clearLogoutInfo();
+    }
 }

@@ -32,10 +32,3 @@ export function getChargePrice(guid: string): number {
 export class ChargePricePipe implements PipeTransform {
     transform = getChargePrice;
 }
-
-@Pipe({ name: 'balance' })
-export class BalancePipe implements PipeTransform {
-    transform(data: number): string {
-        return (data / 1e8).toFixed(3);
-    }
-}

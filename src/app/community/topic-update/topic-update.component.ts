@@ -4,11 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { DeactivateGuard } from '../../dashboard/dashboard.interface';
-import { CanDeactivateComponent } from '../../dashboard/providers/guard.service';
-import { Breadcrumb } from '../../interfaces/app.interface';
+import { Breadcrumb, DeactivateGuard } from '../../interfaces/app.interface';
 import { BBSTopicById } from '../../interfaces/response.interface';
 import { TopicFormComponent } from '../topic-form/topic-form.component';
+import { CanDeactivateComponent } from '../../base/guard.service';
 
 @Component({
     selector: 'app-topic-update',

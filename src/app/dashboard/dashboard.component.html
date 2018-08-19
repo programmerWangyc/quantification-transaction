@@ -20,8 +20,8 @@
                 </li>
 
                 <ng-template #elseBlock>
-                    <li [ngClass]="{'ant-menu-item-selected': nav.path === currentModule}" nz-menu-item>
-                        <span (click)="navigateTo(nav)" title>
+                    <li [ngClass]="{'ant-menu-item-selected': nav.path === currentModule}" (click)="navigateTo(nav)" nz-menu-item>
+                        <span title>
                             <i class="anticon" [ngClass]="'anticon-'+nav.icon"></i>
                             <span>{{nav.label | translate}}</span>
                         </span>
@@ -35,8 +35,18 @@
     <nz-layout>
         <nz-header [ngClass]="{'head-collapsed': isCollapsed}">
             <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
-            <section>
-                <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
+            <section fxLayoutAlign="end center">
+
+                <a href="https://quant.la/Tools/View/4/chart.html" target="__blank">
+                    <i class="anticon anticon-dot-chart"></i>
+                    {{'QUOTE_CHART' | translate}}
+                </a>
+                <a href="https://quant.la/Tools/View/3/formula.html" target="__blank">
+                    <i class="anticon anticon-tool"></i>
+                    {{'ANALYZING_TOOL' | translate}}
+                </a>
+
+                <nz-avatar [nzText]="username | async" nz-popover nzPlacement="bottom" [nzTitle]="welcomeTpl" [nzContent]="userInfoTpl"></nz-avatar>
             </section>
         </nz-header>
         <nz-content [style.margin]="isCollapsed ? '64px 0 0 80px' : '64px 0 0 200px'">
@@ -44,3 +54,16 @@
         </nz-content>
     </nz-layout>
 </nz-layout>
+
+<ng-template #welcomeTpl>
+    <h6>
+        {{'HELLO' | translate}}: {{username | async}}
+    </h6>
+</ng-template>
+
+<ng-template #userInfoTpl>
+    <a (click)="logout()" style="font-size: 12px;">
+        <i class="anticon anticon-logout"></i>
+        {{'LOGOUT' | translate}}
+    </a>
+</ng-template>

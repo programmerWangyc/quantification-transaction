@@ -28,11 +28,6 @@ export class RobotListComponent extends BaseComponent {
     data: Observable<Robot[]>;
 
     /**
-     * @ignore
-     */
-    tableHead: string[] = ['NAME', 'STRATEGY', 'STATUS', 'PROFIT', 'PUBLISH', 'CREATE_DATE', 'OPERATE'];
-
-    /**
      * 公开机器人
      */
     publicRobot$: Subject<Robot> = new Subject();

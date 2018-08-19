@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { VariableType } from '../../app.config';
-import { VariableTypeDes } from '../../interfaces/app.interface';
 import { CategoryType } from '../../interfaces/request.interface';
 import { ConstantService } from '../../providers/constant.service';
 import { Language, OpStrategyTokenTypeAdapter } from '../strategy.config';
@@ -17,7 +16,7 @@ export interface SupportedLanguage {
     icon: string;
 }
 
-const STRATEGY_CATEGORIES: Category[] = [
+export const STRATEGY_CATEGORIES: Category[] = [
     { name: CategoryType[0], id: CategoryType.GENERAL_STRATEGY },
     { name: CategoryType[1], id: CategoryType.COMMODITY_FUTURES },
     { name: CategoryType[2], id: CategoryType.STOCK_SECURITY },
@@ -120,13 +119,6 @@ export class StrategyConstantService extends ConstantService {
 
     constructor() {
         super();
-    }
-
-    getArgSelectedItem(id: number): VariableTypeDes {
-        if (id > 5 || id < 0) {
-            throw new RangeError('Range error: ID passed in is out of range;');
-        }
-        return this.VARIABLE_TYPES.find(item => item.id === id);
     }
 
     adaptedOpStrategyTokenType(type: number): number {

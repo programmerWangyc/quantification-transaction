@@ -12,7 +12,6 @@ import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
-import { StrategyService } from '../../strategy/providers/strategy.service';
 
 @Component({
     selector: 'app-backtest-simulation',
@@ -134,7 +133,6 @@ export class BacktestSimulationComponent extends BaseComponent {
     forceFreeze = false;
 
     constructor(
-        private strategyService: StrategyService,
         private backtestService: BacktestService,
         private constant: BacktestConstantService,
         private route: ActivatedRoute,
@@ -160,9 +158,9 @@ export class BacktestSimulationComponent extends BaseComponent {
             map(param => +param.get('id'))
         );
 
-        this.strategyArgs = this.strategyService.getExistedStrategyArgs(() => true).pipe(
+        this.strategyArgs = this.backtestService.getExistedStrategyArgs(() => true).pipe(
             startWith([]),
-            map(args => args.filter(arg => !this.strategyService.isCommandArg()(arg.variableName)))
+            map(args => args.filter(arg => !this.backtestService.isCommandArg()(arg.variableName)))
         );
 
         this.templates = this.backtestService.getSelectedTemplates();

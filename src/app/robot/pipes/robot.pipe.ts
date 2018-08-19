@@ -1,7 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
-import { isObject, zip, isString } from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -24,36 +22,6 @@ export class RobotPublicStatusPipe implements PipeTransform {
     }
 }
 
-export interface PlatformStockPair {
-    platform: string;
-    stock: string;
-}
-@Pipe({ name: 'platformStock' })
-export class PlatformStockPipe implements PipeTransform {
-    transform(source: any[][]): PlatformStockPair[] {
-        const [, platforms, stocks] = source;
-
-        return zip(platforms, stocks).map(ary => ({ platform: ary[0] === -1 ? 'BotVS' : ary[0], stock: ary[1] }));
-    }
-}
-
-@Pipe({ name: 'strategyChartTitle' })
-export class StrategyChartTitlePipe implements PipeTransform {
-    constructor(private translate: TranslateService) { }
-
-    transform(source: Highcharts.Options, index: number): string {
-        if (!!source.title && !!source.title.text) {
-            return source.title.text;
-        } else {
-            let str = '';
-
-            this.translate.get('STRATEGY_DEFAULT_TITLE', { index }).subscribe(label => str = label);
-
-            return str;
-        }
-    }
-}
-
 @Pipe({ name: 'robotOperateBtnText' })
 export class RobotOperateBtnTextPipe implements PipeTransform {
     constructor(
@@ -70,28 +38,5 @@ export class RobotOperateBtnTextPipe implements PipeTransform {
 
             return this.constantService.getRobotOperateBtnText(loading, btnTexts);
         }));
-    }
-}
-
-@Pipe({ name: 'summaryInfo' })
-export class SummaryInfoPipe implements PipeTransform {
-    transform(value: string): any {
-        if (isString(value)) {
-            return `<img src="${value.substring(0, value.length - 1)}" style="max-width: 200px;">`;
-        } else {
-            return value;
-        }
-    }
-}
-
-@Pipe({ name: 'pluckContent' })
-export class PluckContentPipe implements PipeTransform {
-    transform(value: any): any {
-
-        if (isObject(value)) {
-            return value.name;
-        } else {
-            return value;
-        }
     }
 }

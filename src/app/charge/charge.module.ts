@@ -11,29 +11,37 @@ import { ChargeConstantService } from './providers/charge.constant.service';
 import { ChargeService } from './providers/charge.service';
 import { RentComponent } from './rent/rent.component';
 import { PaymentIndicatorComponent } from './payment-indicator/payment-indicator.component';
+import { RechargeComponent } from './recharge/recharge.component';
+import { ChargeGuard } from './providers/guard.service';
+import { routing } from './charge.routing';
+import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
         QRCodeModule,
+        routing,
     ],
     declarations: [
+        AccountBalanceComponent,
         ChargeComponent,
         ChargeHistoryComponent,
         PIPES,
-        AccountBalanceComponent,
-        RentComponent,
         PaymentIndicatorComponent,
+        RechargeComponent,
+        RentComponent,
+        StrategyRentComponent,
     ],
     providers: [
-        ChargeService,
         ChargeConstantService,
+        ChargeGuard,
+        ChargeService,
     ],
     exports: [
+        AccountBalanceComponent,
         ChargeComponent,
         ChargeHistoryComponent,
-        AccountBalanceComponent,
         PIPES,
         RentComponent,
     ],

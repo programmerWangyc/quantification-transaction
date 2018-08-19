@@ -1,4 +1,7 @@
 import { NavigationExtras } from '@angular/router';
+import { Observable } from 'rxjs';
+import { GroupedList } from '../providers/util.service';
+import { Strategy } from './response.interface';
 
 // ==========================================================Global========================================
 
@@ -91,4 +94,18 @@ export interface ChartSize {
     charts: Highcharts.ChartObject[] | Highcharts.ChartObject;
     height: number;
     width: number;
+}
+
+export interface DeactivateGuard {
+    canDeactivate: Observable<boolean>;
+    message: string;
+}
+
+export interface GroupedStrategy extends GroupedList<Strategy> {
+    groupNameValue?: any;
+}
+
+export interface SemanticArg {
+    semanticArgs: VariableOverview[];
+    semanticTemplateArgs: TemplateVariableOverview[];
 }

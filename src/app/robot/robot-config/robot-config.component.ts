@@ -151,7 +151,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
         reader.readAsText(files[0]);
 
         reader.onload = (event: ProgressEvent) => {
-            const result = JSON.parse((<FileReader>event.target).result);
+            const result = JSON.parse((<FileReader>event.target).result as string);
 
             result.period && this.configForm.patchValue({ kLinePeriod: result.period });
 

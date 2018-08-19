@@ -15,7 +15,7 @@ import {
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
-import { CloseSecondaryVerifyAction, ResetLoginErrorAction } from '../../store/auth/login.action';
+import { CloseSecondaryVerifyAction, ClearLoginInfoAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
@@ -85,8 +85,11 @@ export class AuthService extends BaseService {
         );
     }
 
-    resetLoginError(): void {
-        this.store.dispatch(new ResetLoginErrorAction());
+    /**
+     * 清除用户的登录信息
+     */
+    resetLoginInfo(): void {
+        this.store.dispatch(new ClearLoginInfoAction());
     }
 
     // signup
@@ -199,6 +202,9 @@ export class AuthService extends BaseService {
         this.store.dispatch(new ResetVerifyPasswordResponseAction());
     }
 
+    /**
+     * 清除谷歌二次验证码
+     */
     closeSecondaryVerify(): void {
         this.store.dispatch(new CloseSecondaryVerifyAction());
     }

@@ -22,9 +22,3 @@ export enum StrategyChartSeriesData {
     LOW,
     CLOSE,
 }
-
-export enum SemanticsLog {
-    runningLog = 'runningLog',
-    profitLog = 'profitLog',
-    strategyLog = 'strategyLog',
-}
