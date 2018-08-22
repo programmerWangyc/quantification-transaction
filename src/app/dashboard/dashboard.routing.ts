@@ -7,13 +7,13 @@ const routs: Routes = [
         path: '',
         component: DashboardComponent,
         children: [
-            { path: 'robot', loadChildren: '../robot/robot.module#RobotModule'},
+            { path: 'robot', loadChildren: '../robot/robot.module#RobotModule' },
 
             { path: 'strategy', loadChildren: '../strategy/strategy.module#StrategyModule' },
 
             { path: 'charge', loadChildren: '../charge/charge.module#ChargeModule' },
 
-            { path: 'agent', loadChildren: '../agent/agent.module#AgentModule'  },
+            { path: 'agent', loadChildren: '../agent/agent.module#AgentModule' },
 
             { path: 'exchange', loadChildren: '../exchange/exchange.module#ExchangeModule' },
 
@@ -30,7 +30,9 @@ const routs: Routes = [
 
             { path: 'doc', loadChildren: '../document/document.module#DocumentModule' },
 
-            { path: 'account', loadChildren: '../account/account.module#AccountModule'},
+            { path: 'account', loadChildren: '../account/account.module#AccountModule' },
+
+            { path: 'message', loadChildren: '../message/message.module#MessageModule' },
         ],
     },
 ];

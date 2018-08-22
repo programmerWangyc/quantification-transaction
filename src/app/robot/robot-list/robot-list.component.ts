@@ -35,6 +35,11 @@ export class RobotListComponent extends BaseComponent {
     /**
      * @ignore
      */
+    isPublicLoading: Observable<boolean>;
+
+    /**
+     * @ignore
+     */
     isLoading: Observable<boolean>;
 
     /**
@@ -93,7 +98,9 @@ export class RobotListComponent extends BaseComponent {
             startWith([])
         );
 
-        this.isLoading = this.robotOperate.getPublicRobotLoadingState();
+        this.isPublicLoading = this.robotOperate.getPublicRobotLoadingState();
+
+        this.isLoading = this.robotService.isLoading();
 
         this.isSubAccount = this.pubService.isSubAccount();
     }

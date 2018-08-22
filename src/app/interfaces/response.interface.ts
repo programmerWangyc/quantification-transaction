@@ -1070,6 +1070,52 @@ export interface AccountResponse {
 
 export interface GetAccountResponse extends ResponseUnit<AccountResponse> { }
 
+// ============================================Message======================================================
+
+export interface BaseMessage {
+    date: string;
+    id: number;
+    text: string;
+}
+
+export interface MessageResponse<T> {
+    sns: boolean;
+    items: T[];
+}
+
+// push message
+export interface GetMessageResponse extends ResponseUnit<MessageResponse<BaseMessage>> { }
+
+// delete message
+export interface DeleteMessageResponse extends ResponseUnit<boolean> { } // delete 接口的响应都没有验证，猜的。
+
+// apm message
+export interface APMMessage extends BaseMessage {
+    send_date: string;
+    status: number;
+}
+
+export interface GetAPMMessageResponse extends ResponseUnit<MessageResponse<APMMessage>> { }
+
+// delete apm message
+export interface DeleteAPMMessageResponse extends ResponseUnit<boolean> { }
+
+// bbs notify
+export interface BBSNotify extends BaseMessage {
+    md5: string;
+    topic: string;
+    username: string;
+}
+
+export interface BBSNotifyResponse {
+    items: BBSNotify[];
+}
+
+export interface GetBBSNotifyResponse extends ResponseUnit<BBSNotifyResponse> { }
+
+// delete bbs notify
+export interface DeleteBBSNotifyResponse extends ResponseUnit<boolean> { }
+
 // ========================================Simulation======================================================
 
 // sandbox token

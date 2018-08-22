@@ -3,7 +3,7 @@ import { Actions, Effect } from '@ngrx/effects';
 
 import { omit } from 'lodash';
 import { empty as observableEmpty, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, filter } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../../app.config';
 import { PublicResponse } from '../../interfaces/response.interface';
@@ -14,12 +14,15 @@ import * as pub from './public.action';
 
 @Injectable()
 export class PublicEffect extends BaseEffect {
+
+    /**
+     * 简单的把事件流从公共信息中去除，保证是dispatch 的是 PublicResponse;
+     * 各业务reducer自行订阅所需事件，公共reducer不提供。
+     */
     @Effect()
     pubInfo$: Observable<ResponseAction> = this.ws.messages.pipe(
+        filter(data => !data.event),
         map(data => {
-            /**
-             * !FIXME 机器人运行时会不停止的收到运行消息，需要把它分流到业务reducer中。
-             */
             const info = <PublicResponse>omit(data, 'result');
 
             return new pub.SetPublicInformationAction(info);

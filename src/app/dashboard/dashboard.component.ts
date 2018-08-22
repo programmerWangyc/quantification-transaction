@@ -74,6 +74,15 @@ const account: SideNav = {
 };
 
 /**
+ * !TODO：应该有一个接口能获取到消息的状态，否则用户不点消息中心时是看不到有没有消息过来的。
+ * !除非一进来就拉那3个message接口。
+ */
+const message: SideNav = {
+    path: Path.message,
+    label: 'MESSAGE_CENTER',
+    icon: 'bell',
+};
+/**
  * @deprecated 暂时不搞实盘仿真
  */
 // const simulation: SideNav = {
@@ -97,12 +106,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * 侧边栏列表
      */
-    list: SideNav[] = [controlCenter, square, factFinder, community, documentation, charge, account];
+    list: SideNav[] = [controlCenter, square, factFinder, community, documentation, charge, account, message];
 
     /**
      * 当前展示的模块
      */
-    currentModule: string;
+    private currentModule: string;
+
+    /**
+     * @ignore
+     */
+    private currentPath: string;
 
     /**
      * @ignore
@@ -135,6 +149,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .subscribe(url => {
                 const ary = url.split('/'); // ary : ['', 'dashboard', moduleName, ...params etc.]
 
+                this.currentPath = url;
+
                 this.currentModule = ary[2];
             });
 
@@ -149,7 +165,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         this.publicService.getError().pipe(
             takeWhile(() => this.isAlive)
-        ).subscribe(error => error === 'Need Login' && this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root}));
+        ).subscribe(error => error === 'Need Login' && this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root }));
     }
 
     /**
@@ -167,7 +183,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
      * 模块是否处于激活状态
      */
     isActive(source: SideNav): boolean {
-        return source.subNav.map(item => item.path).includes(this.currentModule);
+        return source.subNav.map(item => item.path.includes('/') ? item.path.split('/')[0] : item.path).includes(this.currentModule);
+    }
+
+    /**
+     * @ignore
+     */
+    isPath(path: string): boolean {
+        const subPath = path.includes('/') ? path.split('/')[1] : path;
+
+        return this.currentPath.includes(subPath);
     }
 
     /**

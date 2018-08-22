@@ -1,47 +1,49 @@
-<nz-table #nzTable [nzData]="data | async" [nzPageSize]="10" [nzShowSizeChanger]="true">
-    <thead>
-        <tr>
-            <th bt-text-center nzWidth="15%">{{'NAME' | translate}}</th>
-            <th bt-text-center nzWidth="20%">{{'STRATEGY' | translate}}</th>
-            <th bt-text-center nzWidth="10%">{{'STATUS' | translate}}</th>
-            <th bt-text-center nzWidth="15%">{{'PROFIT' | translate}}</th>
-            <th bt-text-center nzWidth="10%">{{'PUBLISH' | translate}}</th>
-            <th bt-text-center nzWidth="15%">{{'CREATE_DATE' | translate}}</th>
-            <th bt-text-center nzWidth="15%">{{'OPERATE' | translate}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let robot of nzTable.data">
-            <td bt-text-direction direction="left">
-                <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
-            </td>
-            <td bt-text-direction direction="left">
-                <!--FIXME: 懒加载会造成第一次跳转失败，strategy模块加载过后正常-->
-                <a [routerLink]="['../../strategy/edit', robot.strategy_id]">{{robot.strategy_name}}</a>
-            </td>
-            <td>{{robot.status | robotStatus | translate}}</td>
-            <td>{{robot.profit | number: '1.0-5'}}</td>
-            <td>
-                <!--1已公开，0未公开-->
-                <nz-switch [(ngModel)]="robot.public" (click)="publicRobot$.next(robot)" [nzCheckedChildren]="'DISCLOSED' | translate" [nzUnCheckedChildren]="'UNDISCLOSED' | translate"
-                    [nzLoading]="(isLoading | async) && currentPublicRobot?.id === robot.id" [nzControl]="true">
-                </nz-switch>
-            </td>
-            <td>{{robot.date}}</td>
-            <td>
-                <span *ngIf="robot.status > 2; else elseBlock">
-                    <a href="javascript: void 0" [attr.disabled]="(isSubAccount | async) ? true : null" (click)="deleteRobot$.next(robot)">{{'DELETE' | translate}}</a>
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <a (click)="restartRobot$.next(robot)" class="unstable">{{robot | robotOperateBtnText | async | translate}}</a>
-                </span>
+<nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
+    <nz-table #nzTable [nzData]="data | async" [nzPageSize]="10" [nzShowSizeChanger]="true">
+        <thead>
+            <tr>
+                <th bt-text-center nzWidth="15%">{{'NAME' | translate}}</th>
+                <th bt-text-center nzWidth="20%">{{'STRATEGY' | translate}}</th>
+                <th bt-text-center nzWidth="10%">{{'STATUS' | translate}}</th>
+                <th bt-text-center nzWidth="15%">{{'PROFIT' | translate}}</th>
+                <th bt-text-center nzWidth="10%">{{'PUBLISH' | translate}}</th>
+                <th bt-text-center nzWidth="15%">{{'CREATE_DATE' | translate}}</th>
+                <th bt-text-center nzWidth="15%">{{'OPERATE' | translate}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let robot of nzTable.data">
+                <td bt-text-direction direction="left">
+                    <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
+                </td>
+                <td bt-text-direction direction="left">
+                    <!--FIXME: 懒加载会造成第一次跳转失败，strategy模块加载过后正常-->
+                    <a [routerLink]="['../../strategy/edit', robot.strategy_id]">{{robot.strategy_name}}</a>
+                </td>
+                <td>{{robot.status | robotStatus | translate}}</td>
+                <td>{{robot.profit | number: '1.0-5'}}</td>
+                <td>
+                    <!--1已公开，0未公开-->
+                    <nz-switch [(ngModel)]="robot.public" (click)="publicRobot$.next(robot)" [nzCheckedChildren]="'DISCLOSED' | translate" [nzUnCheckedChildren]="'UNDISCLOSED' | translate"
+                        [nzLoading]="(isPublicLoading | async) && currentPublicRobot?.id === robot.id" [nzControl]="true">
+                    </nz-switch>
+                </td>
+                <td>{{robot.date}}</td>
+                <td>
+                    <span *ngIf="robot.status > 2; else elseBlock">
+                        <a href="javascript: void 0" [attr.disabled]="(isSubAccount | async) ? true : null" (click)="deleteRobot$.next(robot)">{{'DELETE' | translate}}</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="restartRobot$.next(robot)" class="unstable">{{robot | robotOperateBtnText | async | translate}}</a>
+                    </span>
 
-                <ng-template #elseBlock>
-                    <a [attr.disabled]="(isSubAccount | async) ? true : null" (click)="setRobotWD$.next(robot)" href="javascript: void 0">{{ (robot.wd === 0 ? 'MONITOR' : 'CANCEL') | translate}}</a>
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <a href="javascript: void 0" (click)="stopRobot$.next(robot)" class="unstable">{{robot | robotOperateBtnText | async | translate}}</a>
-                </ng-template>
+                    <ng-template #elseBlock>
+                        <a [attr.disabled]="(isSubAccount | async) ? true : null" (click)="setRobotWD$.next(robot)" href="javascript: void 0">{{ (robot.wd === 0 ? 'MONITOR' : 'CANCEL') | translate}}</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a href="javascript: void 0" (click)="stopRobot$.next(robot)" class="unstable">{{robot | robotOperateBtnText | async | translate}}</a>
+                    </ng-template>
 
-            </td>
-        </tr>
-    </tbody>
-</nz-table>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-spin>

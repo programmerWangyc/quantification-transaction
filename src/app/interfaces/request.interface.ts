@@ -570,11 +570,37 @@ export interface LockShadowMemberRequest {
 // get account
 export interface GetAccountRequest { }
 
+// ============================================Message==================================================
+
+export interface BaseNotify {
+    offset: number;
+    limit: number;
+}
+
+export interface BaseDeleteNotify {
+    id: number;
+}
+
+// push message
+export interface GetMessageRequest extends BaseNotify { }
+
+export interface DeleteMessageRequest extends BaseDeleteNotify { }
+
+// apm message
+export interface GetAPMMessageRequest extends BaseNotify { }
+
+export interface DeleteAPMMessageRequest extends BaseDeleteNotify { }
+
+// bbs notify
+export interface GetBBSNotifyRequest extends BaseNotify { }
+
+export interface DeleteBBSNotifyRequest extends BaseDeleteNotify { }
+
 // ============================================Simulation==================================================
 
 // sandbox token
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 61;
+ * 接口总数： 83， 已完成： 66;
  */

@@ -12,6 +12,7 @@ import * as btNode from './bt-node/bt-node.reducer';
 import * as charge from './charge/charge.reducer';
 import * as comment from './comment/comment.reducer';
 import * as exchange from './exchange/exchange.reducer';
+import * as message from './message/message.reducer';
 import * as platform from './platform/platform.reducer';
 import * as pub from './public/public.reducer';
 import * as robot from './robot/robot.reducer';
@@ -31,6 +32,7 @@ export interface AppState {
     doc: doc.State;
     exchange: exchange.State;
     login: login.State;
+    message: message.State;
     platform: platform.State;
     pub: pub.State;
     pwd: pwd.State;
@@ -54,6 +56,7 @@ export const reducers: ActionReducerMap<AppState> = {
     doc: doc.reducer,
     exchange: exchange.reducer,
     login: login.reducer,
+    message: message.reducer,
     platform: platform.reducer,
     pub: pub.reducer,
     pwd: pwd.reducer,
@@ -451,6 +454,28 @@ export const selectDeleteShadowMemberResponse = createSelector(getAccount, accou
 
 // lock shadow member
 export const selectLockShadowMemberResponse = createSelector(getAccount, account.getLockShadowMemberRes);
+
+//  ===================================================Message======================================================
+
+const getMessageState = (state: AppState) => state.message;
+
+// message
+export const selectGetMessageResponse = createSelector(getMessageState, message.getMessageRes);
+
+// delete message
+export const selectDeleteMessageResponse = createSelector(getMessageState, message.getDeleteMessageRes);
+
+// apm message
+export const selectGetAPMMessageResponse = createSelector(getMessageState, message.getAPMMessageRes);
+
+// delete apm message
+export const selectDeleteAPMMessageResponse = createSelector(getMessageState, message.getDeleteAPMMessageRes);
+
+// bbs notify
+export const selectGetBBSNotifyResponse = createSelector(getMessageState, message.getNotifyRes);
+
+// delete bbs notify
+export const selectDeleteBBSNotifyResponse = createSelector(getMessageState, message.getDeleteNotifyRes);
 
 //  ===================================================Simulation======================================================
 

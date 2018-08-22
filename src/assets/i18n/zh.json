@@ -819,6 +819,12 @@
     "DELETE_SUBACCOUNT_FAIL": "子帐户删除失败",
     "MODIFY_SUBACCOUNT_PASSWORD": "修改子帐户密码",
     "SUBACCOUNT_PERMISSION": "子帐户权限",
-    "ADDED": "已添加"
+    "ADDED": "已添加",
+    "INNER_MESSAGE": "站内通知",
+    "PUSHED_MESSAGE": "推送消息",
+    "WARNING_MESSAGE": "告警消息",
+    "TOPIC_REPLIED": "{{username}} 回复主题 {{topic}}",
+    "CLEAR": "清空",
+    "WECHAT_UNBOUND": "您还没有绑定微信, 无法接收推送与告警消息!",
+    "IMMEDIATELY_BINDING": "立即绑定"
 }
-

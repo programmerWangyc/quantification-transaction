@@ -214,13 +214,13 @@ export class RobotOperateService extends BaseService {
         );
     }
 
-    // robot detail
     getPublicRobotLoadingState(): Observable<boolean> {
         return this.store.select(fromRoot.selectRobotUiState).pipe(
             map(res => res.publicRobotLoading)
         );
     }
 
+    // robot detail
     private getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.select(fromRoot.selectRobotDetailResponse).pipe(
             this.filterTruth()

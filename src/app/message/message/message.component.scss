@@ -1,0 +1,15 @@
+:host::ng-deep .ant-tabs,
+:host::ng-deep .ant-tabs-nav-container,
+:host::ng-deep .ant-tabs-nav-wrap,
+:host::ng-deep .ant-tabs-nav-scroll {
+    overflow: visible;
+}
+
+:host::ng-deep sup {
+    top: -23px;
+    right: -9px !important;
+}
+
+nz-alert {
+    margin: 2em 0;
+}

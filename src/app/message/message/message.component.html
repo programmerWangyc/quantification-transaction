@@ -1,0 +1,53 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-alert *ngIf="!(hasSNS | async)" nzType="warning" [nzCloseText]="'I_KNOWN' | translate" [nzMessage]="tipTpl" nzShowIcon>
+</nz-alert>
+
+<ng-template #tipTpl>
+    {{'WECHAT_UNBOUND' | translate}}
+    <a [routerLink]="['../../account/wechat']">{{'IMMEDIATELY_BINDING' | translate}}</a>
+</ng-template>
+
+<nz-tabset [(nzSelectedIndex)]="activateTabIndex" [nzType]="'card'" [nzTabBarExtraContent]="control">
+    <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
+        <ng-template #titleTemplate>
+            <nz-badge [nzCount]="tab.count">
+                <i class="anticon" [ngClass]="tab.icon"></i>
+                {{ tab.name | translate }}
+            </nz-badge>
+        </ng-template>
+        <div [ngSwitch]="idx">
+            <div *ngSwitchCase="0">
+                <ng-content *ngTemplateOutlet="msgTpl"></ng-content>
+            </div>
+            <div *ngSwitchCase="1">
+                <ng-content *ngTemplateOutlet="apmMsgTpl"></ng-content>
+            </div>
+            <div *ngSwitchCase="2">
+                <ng-content *ngTemplateOutlet="warnMsgTpl"></ng-content>
+            </div>
+            <div *ngSwitchDefault>template not found</div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+
+<ng-template #msgTpl>
+    <app-message-list [data]="bbsNotify | async" (delete)="deleteBBSNotify($event)"></app-message-list>
+</ng-template>
+
+<ng-template #apmMsgTpl>
+    <app-message-list [data]="message | async" (delete)="deleteMessage($event)"></app-message-list>
+</ng-template>
+
+<ng-template #warnMsgTpl>
+    <app-message-list [data]="apmMessage | async" (delete)="deleteAPMMessage($event)"></app-message-list>
+</ng-template>
+
+<ng-template #control>
+    <nz-button-group>
+        <button nz-button (click)="onRefresh()">
+            <i class="anticon anticon-reload"></i>
+            {{'REFRESH' | translate}}
+        </button>
+    </nz-button-group>
+</ng-template>

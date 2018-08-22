@@ -11,6 +11,7 @@ import { Actions as charge, ApiActions as apiCharge } from './charge/charge.acti
 import { Actions as comment, ApiActions as apiComment } from './comment/comment.action';
 import { Actions as document, ApiActions as apiDocument } from './document/document.action';
 import { Actions as exchange, ApiActions as apiExchange } from './exchange/exchange.action';
+import { Actions as message, ApiActions as apiMessage } from './message/message.action';
 import { Actions as platform, ApiActions as apiPlatform } from './platform/platform.action';
 import { Actions as pub, ApiActions as apiPublic } from './public/public.action';
 import { Actions as robot, ApiActions as apiRobot } from './robot/robot.action';
@@ -32,6 +33,7 @@ export type Actions = pub
     | document
     | exchange
     | login
+    | message
     | platform
     | pwd
     | reset
@@ -51,6 +53,7 @@ export type ApiActions = apiLogin
     | apiComment
     | apiDocument
     | apiExchange
+    | apiMessage
     | apiPlatform
     | apiPublic
     | apiPwd

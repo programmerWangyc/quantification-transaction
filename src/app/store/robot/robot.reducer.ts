@@ -176,11 +176,14 @@ const initialState: State = {
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
         // robot list
+        case actions.GET_ROBOT_LIST:
+            return { ...state, UIState: { ...state.UIState, loading: true } };
+
         case actions.GET_ROBOT_LIST_FAIL:
-            return { ...state, robotListResState: { error: action.payload.error, action: action.payload.action }, robotList: null };
+            return { ...state, robotListResState: { error: action.payload.error, action: action.payload.action }, robotList: null, UIState: { ...state.UIState, loading: false } };
 
         case actions.GET_ROBOT_LIST_SUCCESS:
-            return { ...state, robotListResState: { error: action.payload.error, action: action.payload.action }, robotList: action.payload.result };
+            return { ...state, robotListResState: { error: action.payload.error, action: action.payload.action }, robotList: action.payload.result, UIState: { ...state.UIState, loading: false } };
 
         // public robot list
         case actions.GET_PUBLIC_ROBOT_LIST:
@@ -489,7 +492,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
             };
         }
 
-        case actions.GET_ROBOT_LIST:
         default:
             return state;
     }

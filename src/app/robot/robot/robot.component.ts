@@ -22,7 +22,7 @@ export class RobotComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
     ) { }
 
     /**

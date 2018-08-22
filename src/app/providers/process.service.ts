@@ -24,6 +24,7 @@ import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import * as AccountActions from '../store/account/account.action';
+import * as MessageActions from '../store/message/message.action';
 
 /**
  * @ignore
@@ -358,6 +359,32 @@ export class ProcessService {
 
     processLockShadowMember(paramObs: Observable<Request.LockShadowMemberRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new AccountActions.LockShadowMemberRequestAction(params)));
+    }
+
+    //  ===================================================Message======================================================
+
+    processGetMessage(paramObs: Observable<Request.GetMessageRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.GetMessageRequestAction(params)));
+    }
+
+    processDeleteMessage(paramObs: Observable<Request.DeleteMessageRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.DeleteMessageRequestAction(params)));
+    }
+
+    processGetAPMMessage(paramObs: Observable<Request.GetAPMMessageRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.GetAPMMessageRequestAction(params)));
+    }
+
+    processDeleteAPMMessage(paramObs: Observable<Request.DeleteAPMMessageRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.DeleteAPMMessageRequestAction(params)));
+    }
+
+    processGetBBSNotify(paramObs: Observable<Request.GetBBSNotifyRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.GetBBSNotifyRequestAction(params)));
+    }
+
+    processDeleteBBSNotify(paramObs: Observable<Request.DeleteBBSNotifyRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new MessageActions.DeleteBBSNotifyRequestAction(params)));
     }
 
     //  ===================================================Simulation======================================================

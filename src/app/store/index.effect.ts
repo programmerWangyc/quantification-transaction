@@ -1,3 +1,4 @@
+import { AccountEffect } from './account/account.effect';
 import { AuthEffect } from './auth/auth.effect';
 import { BacktestEffect } from './backtest/backtest.effect';
 import { BBSEffect } from './bbs/bbs.effect';
@@ -6,13 +7,13 @@ import { ChargeEffect } from './charge/charge.effect';
 import { CommentEffect } from './comment/comment.effect';
 import { DocumentEffect } from './document/document.effect';
 import { ExchangeEffect } from './exchange/exchange.effect';
+import { MessageEffect } from './message/message.effect';
 import { PlatformEffect } from './platform/platform.effect';
 import { PublicEffect } from './public/public.effect';
 import { RobotEffect } from './robot/robot.effect';
 import { SimulationEffect } from './simulation/simulation.effect';
 import { StrategyEffect } from './strategy/strategy.effect';
 import { WatchDogEffect } from './watch-dog/watch-dog.effect';
-import { AccountEffect } from './account/account.effect';
 
 export const EFFECTS = [
     AuthEffect,
@@ -28,6 +29,7 @@ export const DASHBOARD_EFFECTS = [
     BacktestEffect,
     BtNodeEffect,
     ChargeEffect,
+    MessageEffect,
     PlatformEffect,
     RobotEffect,
     SimulationEffect,

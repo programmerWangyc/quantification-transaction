@@ -1,0 +1,36 @@
+<div fxLayout="row-reverse">
+    <button nz-button nzType="danger" (click)="delete.next(-1)">{{'CLEAR' | translate}}</button>
+</div>
+
+<nz-list [nzDataSource]="data" [nzItemLayout]="'vertical'" [nzRenderItem]="item">
+    <ng-template #item let-item>
+        <nz-list-item [nzActions]="[authorAction, dateAction, sendAction]" [nzExtra]="extra">
+            <ng-template #authorAction>
+                <span *ngIf="item.username">
+                    <i class="anticon anticon-user"></i>
+                    {{'TOPIC_REPLIED' | translate: {username: item.username, topic: item.topic || item.md5} }}
+                </span>
+            </ng-template>
+
+            <ng-template #dateAction>
+                <i class="anticon anticon-clock-circle-o"></i>
+                {{item.date}}
+            </ng-template>
+
+            <ng-template #sendAction>
+                <span *ngIf="item.send_date">
+                    <i class="anticon anticon-clock-rocket"></i>
+                    {{item.send_date | fromNow}}
+                </span>
+            </ng-template>
+
+            <nz-list-item-meta [nzTitle]="item.text"></nz-list-item-meta>
+
+            <ng-template #extra>
+                <a (click)="delete.next(item.id)">
+                    <i class="anticon anticon-delete"></i>
+                </a>
+            </ng-template>
+        </nz-list-item>
+    </ng-template>
+</nz-list>

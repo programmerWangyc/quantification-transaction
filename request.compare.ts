@@ -1,20 +1,20 @@
 // topic
-const deleteBBSTopic = 'M_Topic';
+// const deleteBBSTopic = 'M_Topic';
 
-interface DeleteTopic {
-    topicId: number;
-    magic1: number;
-    magic2: number;
-}
+// interface DeleteTopic {
+//     topicId: number;
+//     magic1: number;
+//     magic2: number;
+// }
 
 // lock user
-const LockUser = 'M_User';
+// const LockUser = 'M_User';
 
-interface LockUser {
-    id: number;
-    magic1: number;
-    magic2: number;
-}
+// interface LockUser {
+//     id: number;
+//     magic1: number;
+//     magic2: number;
+// }
 
 // compentition list
 const getCompetitionList = 'GetCompetitionList';
@@ -31,47 +31,6 @@ interface DisableTwofactor {
     token: string;
 }
 
-interface CommonDelete {
-    id: number;
-}
-
-// notify
-const deleteNotify = 'DeleteNotify';
-
-interface DeleteNotify extends CommonDelete { }
-
-const getBBSNotify = 'GetBBSNotify';
-
-interface GetBBSNotify {
-    magic1: number;
-    magic2: number;
-}
-
-// message
-const deleteMessage = 'DeleteMessage';
-
-interface DeleteMessage extends CommonDelete { }
-
-const deleteAPMMessage = 'DeleteAPMMessage';
-
-interface DeleteAPMMessage extends CommonDelete { }
-
-// push queue
-const GetPushQueue = 'getPushQueue';
-
-interface GetPushQueue {
-    magic1: number;
-    magic2: number;
-}
-
-// apm queue
-const getAPMQueue = 'GetAPMQueue';
-
-interface GetAPMQueue {
-    magic1: number;
-    magic2: number;
-}
-
 
 // api key list
 const getApiKeyList = 'GetApiKeyList';
@@ -83,8 +42,8 @@ interface GetApiKeyList {
 const addApiKey = 'CreateApiKey';
 
 interface AddApiKey {
-    magic1: string;
-    magic2: string;
+    ip: string;
+    permission: string;
 }
 
 const updateApiKey = 'LockApiKey';
@@ -96,7 +55,7 @@ interface UpdateApiKey {
 
 const deleteApiKey = 'DeleteApiKey';
 
-interface DeleteApiKey extends CommonDelete { }
+interface DeleteApiKey { id: number; }
 
 // broadcast
 const setBroadcast = 'SetBroadcast';
@@ -146,22 +105,23 @@ const resetTwofactor = 'ResetTwofactor';
 interface ResetTwofactor {
     username: string;
     password: string;
-    emmail: string;
+    email: string;
 }
 
 // csp report
 const getCSPReport = 'CSPReport';
 
 interface GetCSPReport {
-    magic1: string[];
+    blockedUrl: string;
+    documentUrl: string;
 }
 
 
 // M_Public
-const getM_Public = 'M_Public';
+// const getM_Public = 'M_Public';
 
-interface GetMPublic {
-    id: number;
-    magic1: number;
-    magic2: number;
-}
+// interface GetMPublic {
+//     id: number;
+//     magic1: number;
+//     magic2: number;
+// }
