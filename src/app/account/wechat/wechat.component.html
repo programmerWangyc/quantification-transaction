@@ -1,0 +1,19 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div *ngIf="isBind | async" class="unbind">
+    <span>{{'WECHAT_BOUND' | translate}}</span>
+    <button nz-button nzType="danger" (click)="unbind$.next(true)">{{'UNBIND' | translate}}</button>
+</div>
+
+<div nz-row>
+    <div nz-col nzSpan="16">
+        <nz-steps nzDirection="vertical">
+            <nz-step nzStatus="process" [nzTitle]="'BIND_WECHAT_TITLE_1' | translate" [nzDescription]="'BIND_WECHAT_STEP_1' | translate"></nz-step>
+            <nz-step nzStatus="process" [nzTitle]="'BIND_WECHAT_TITLE_2' | translate" [nzDescription]="'BIND_WECHAT_STEP_2' | translate"></nz-step>
+        </nz-steps>
+    </div>
+
+    <div nz-col nzSpan="8">
+        <img src="../../../assets/images/weixin_botvs.jpg">
+    </div>
+</div>

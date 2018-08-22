@@ -273,7 +273,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
     private getArgsIfWechart(): Observable<RentFormModal> {
         return this.form.valueChanges.pipe(
             filter((form: RentFormModal) => {
-                const isWechartPay = form.payMethod === PaymentMethod.WECHART;
+                const isWechartPay = form.payMethod === PaymentMethod.WECHAT;
 
                 const isRentPeriodValid = !!this.chargeShortcut.value || this.charge.valid;
 

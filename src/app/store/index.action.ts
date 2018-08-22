@@ -1,3 +1,4 @@
+import { Actions as account, ApiActions as apiAccount } from './account/account.action';
 import { Actions as login, ApiActions as apiLogin } from './auth/login.action';
 import { Actions as pwd, ApiActions as apiPwd } from './auth/password.action';
 import { Actions as reset, ApiActions as apiReset } from './auth/reset.action';
@@ -22,6 +23,7 @@ export const failTail = 'FailAction';
 export const successTail = 'SuccessAction';
 
 export type Actions = pub
+    | account
     | backtest
     | bbs
     | btNode
@@ -41,6 +43,7 @@ export type Actions = pub
     | watchDog;
 
 export type ApiActions = apiLogin
+    | apiAccount
     | apiBBS
     | apiBacktest
     | apiBtNode

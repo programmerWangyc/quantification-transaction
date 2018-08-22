@@ -23,6 +23,7 @@ import * as RobotActions from '../store/robot/robot.action';
 import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
 import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
+import * as AccountActions from '../store/account/account.action';
 
 /**
  * @ignore
@@ -312,6 +313,53 @@ export class ProcessService {
     processDocument(paramObs: Observable<Request.GetBBSTopicRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new DocumentActions.GetDocumentRequestAction(params)));
     }
+
+    //  ===================================================Account======================================================
+
+    processChangePassword(paramObs: Observable<Request.ChangePasswordRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.ChangePasswordRequestAction(params)));
+    }
+
+    processChangeNickname(paramObs: Observable<Request.ChangeNickNameRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.ChangeNickNameRequestAction(params)));
+    }
+
+    processGetGoogleAuthKey(paramObs: Observable<Request.GetGoogleAuthKeyRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new AccountActions.GetGoogleAuthKeyRequestAction()));
+    }
+
+    processUnbindSNS(paramObs: Observable<Request.UnbindSNSRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new AccountActions.UnbindSNSRequestAction()));
+    }
+
+    processBindGoogleAuth(paramObs: Observable<Request.BindGoogleAuthRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.BindGoogleAuthRequestAction(params)));
+    }
+
+    processGetAccount(paramObs: Observable<Request.GetAccountRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new AccountActions.GetAccountRequestAction()));
+    }
+
+    processGetShadowMember(paramObs: Observable<Request.GetShadowMemberRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new AccountActions.GetShadowMemberRequestAction()));
+    }
+
+    processSaveShadowMember(paramObs: Observable<Request.SaveShadowMemberRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.AddShadowMemberRequestAction(params)));
+    }
+
+    processUpdateShadowMember(paramObs: Observable<Request.SaveShadowMemberRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.UpdateShadowMemberRequestAction(params)));
+    }
+
+    processDeleteShadowMember(paramObs: Observable<Request.DeleteShadowMemberRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.DeleteShadowMemberRequestAction(params)));
+    }
+
+    processLockShadowMember(paramObs: Observable<Request.LockShadowMemberRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.LockShadowMemberRequestAction(params)));
+    }
+
     //  ===================================================Simulation======================================================
 
     /**

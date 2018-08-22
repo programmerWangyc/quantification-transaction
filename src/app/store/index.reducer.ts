@@ -1,6 +1,7 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, createSelector } from '@ngrx/store';
 
+import * as account from './account/account.reducer';
 import * as login from './auth/login.reducer';
 import * as pwd from './auth/password.reducer';
 import * as reset from './auth/reset.reducer'; import * as signup from './auth/signup.reducer';
@@ -21,6 +22,7 @@ import * as watchDog from './watch-dog/watch-dog.reducer';
 import * as doc from './document/document.reducer';
 
 export interface AppState {
+    account: account.State;
     backtest: backtest.State;
     bbs: bbs.State;
     btNode: btNode.State;
@@ -43,6 +45,7 @@ export interface AppState {
 }
 
 export const reducers: ActionReducerMap<AppState> = {
+    account: account.reducer,
     backtest: backtest.reducer,
     bbs: bbs.reducer,
     btNode: btNode.reducer,
@@ -405,6 +408,49 @@ const getDocument = (state: AppState) => state.doc;
 export const selectDocumentResponse = createSelector(getDocument, doc.getTopicByIdRes);
 
 export const selectDocumentUIState = createSelector(getDocument, doc.getUIState);
+
+//  ===================================================Account======================================================
+
+const getAccount = (state: AppState) => state.account;
+
+// modify password
+export const selectChangePasswordResponse = createSelector(getAccount, account.getChangePasswordRes);
+
+// account request params
+export const selectAccountRequestParams = createSelector(getAccount, account.getRequestArgs);
+
+// account ui state
+export const selectAccountUIState = createSelector(getAccount, account.getUIState);
+
+// modify nickname
+export const selectChangeNicknameResponse = createSelector(getAccount, account.getNicknameRes);
+
+// google auth key
+export const selectGoogleAuthKeyResponse = createSelector(getAccount, account.getGoogleAuthKeyRes);
+
+// unbind sns
+export const selectUnbindSNSResponse = createSelector(getAccount, account.getUnbindSNSRes);
+
+// bind google verify code
+export const selectBindGoogleAuthResponse = createSelector(getAccount, account.getBindGoogleAuthRes);
+
+// get accounts
+export const selectGetAccountResponse = createSelector(getAccount, account.getAccountRes);
+
+// get shadow member
+export const selectGetShadowMemberResponse = createSelector(getAccount, account.getShadowMemberRes);
+
+// add shadow member
+export const selectAddShadowMemberResponse = createSelector(getAccount, account.getAddShadowMemberRes);
+
+// update shadow member
+export const selectUpdateShadowMemberResponse = createSelector(getAccount, account.getUpdateShadowMemberRes);
+
+// delete shadow member
+export const selectDeleteShadowMemberResponse = createSelector(getAccount, account.getDeleteShadowMemberRes);
+
+// lock shadow member
+export const selectLockShadowMemberResponse = createSelector(getAccount, account.getLockShadowMemberRes);
 
 //  ===================================================Simulation======================================================
 

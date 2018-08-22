@@ -1,4 +1,5 @@
 export enum Path {
+    account = 'account',
     add = 'add',
     agent = 'agent',
     analyze = 'analyze',
@@ -12,14 +13,19 @@ export enum Path {
     edit = 'edit',
     exchange = 'exchange',
     fact = 'fact',
+    google = 'google',
     home = 'home',
     market = 'market',
+    nickname = 'nickname',
     rent = 'rent',
+    reset = 'reset',
     robot = 'robot',
     simulation = 'simulation',
     square = 'square',
     strategy = 'strategy',
+    usergroup = 'usergroup',
     verify = 'verify',
+    wechat = 'wechat',
 }
 
 export enum LocalStorageKey {

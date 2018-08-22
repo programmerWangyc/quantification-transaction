@@ -12,6 +12,7 @@ import { RobotEffect } from './robot/robot.effect';
 import { SimulationEffect } from './simulation/simulation.effect';
 import { StrategyEffect } from './strategy/strategy.effect';
 import { WatchDogEffect } from './watch-dog/watch-dog.effect';
+import { AccountEffect } from './account/account.effect';
 
 export const EFFECTS = [
     AuthEffect,
@@ -23,6 +24,7 @@ export const EFFECTS = [
 ];
 
 export const DASHBOARD_EFFECTS = [
+    AccountEffect,
     BacktestEffect,
     BtNodeEffect,
     ChargeEffect,

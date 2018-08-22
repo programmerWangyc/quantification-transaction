@@ -1,0 +1,32 @@
+<nz-table #nzTable [nzData]="accounts" [nzPageSize]="20">
+    <thead>
+        <tr>
+            <th bt-text-center nzWidth="20%">{{'USERNAME' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'IP_ADDRESS' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'LAST_LOGIN' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'ACTIVITY' | translate}}</th>
+            <th bt-text-center nzWidth="10%">{{'STATUS' | translate}}</th>
+            <th bt-text-center nzWidth="25%">{{'OPERATE' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let account of nzTable.data">
+            <td>{{account.username}}</td>
+            <td bt-text-center>{{account.last_login_ip}}</td>
+            <td bt-text-center>{{account.last_login}}</td>
+            <td bt-text-center>{{account.last_input | accountAlive}}</td>
+            <td bt-text-center>
+                <i class="anticon" [ngClass]="classMap[account.status]"></i>
+            </td>
+            <td bt-text-center>
+                <a (click)="changePermission(account)">{{'PERMISSION' | translate}}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="changePassword(account)">{{'PASSWORD' | translate}}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)=lock.next(account)>{{(account.status ? 'UNLOCK' : 'LOCK') | translate}}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="delete.next(account)">{{'DELETE' | translate}}</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

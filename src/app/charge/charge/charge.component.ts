@@ -36,7 +36,7 @@ export class ChargeBase {
      */
     protected notifyPayStart(control: AbstractControl): Observable<any> {
         return control.valueChanges.pipe(
-            filter(method => method !== PaymentMethod.WECHART),
+            filter(method => method !== PaymentMethod.WECHAT),
             startWith(null)
         );
     }
@@ -48,7 +48,7 @@ export class ChargeBase {
         return merge(
             submit,
             control.valueChanges.pipe(
-                filter(method => method === PaymentMethod.WECHART)
+                filter(method => method === PaymentMethod.WECHAT)
             )
         );
     }
@@ -165,7 +165,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      */
     private getArgsIfWechart(): Observable<RechargeFormModal> {
         return this.form.valueChanges.pipe(
-            filter((form: RechargeFormModal) => this.charge.valid && (form.payMethod === PaymentMethod.WECHART)),
+            filter((form: RechargeFormModal) => this.charge.valid && (form.payMethod === PaymentMethod.WECHAT)),
             distinctUntilKeyChanged('charge')
         );
     }

@@ -17,6 +17,9 @@ export class PublicEffect extends BaseEffect {
     @Effect()
     pubInfo$: Observable<ResponseAction> = this.ws.messages.pipe(
         map(data => {
+            /**
+             * !FIXME 机器人运行时会不停止的收到运行消息，需要把它分流到业务reducer中。
+             */
             const info = <PublicResponse>omit(data, 'result');
 
             return new pub.SetPublicInformationAction(info);

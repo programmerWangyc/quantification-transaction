@@ -30,7 +30,7 @@ const routs: Routes = [
 
             { path: 'doc', loadChildren: '../document/document.module#DocumentModule' },
 
-            // { path: '', redirectTo: 'robot', pathMatch: 'full' },
+            { path: 'account', loadChildren: '../account/account.module#AccountModule'},
         ],
     },
 ];

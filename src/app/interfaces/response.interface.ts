@@ -1001,6 +1001,75 @@ export interface GetBBSTopicResponse extends ResponseUnit<BBSTopicById> { }
 // add bbs topic
 export interface AddBBSTopicResponse extends ResponseUnit<number> { }
 
+// ========================================Account======================================================
+
+// modify password
+export interface ChangePasswordResponse extends ResponseUnit<boolean> { }
+
+// modify nickname
+export interface ChangeNickNameResponse extends ResponseUnit<boolean> { }
+
+// google auth key
+export interface GoogleAuthKey {
+    key: string;
+    nickname: string;
+    snskey: string;
+    username: string;
+}
+
+export interface GetGoogleAuthKeyResponse extends ResponseUnit<GoogleAuthKey> { }
+
+// unbind sns
+export interface UnbindSNSResponse extends ResponseUnit<boolean> { }
+
+// bind google verify key
+export interface BindGoogleAuthResponse extends ResponseUnit<GoogleAuthKey> { }
+
+// shadow member
+export interface ShadowMember {
+    id: number;
+    last_input: number;
+    last_login: string; // date string;
+    last_login_ip: string;
+    permission: string;
+    status: number;
+    username: string;
+}
+
+export interface ShadowRobot {
+    id: number;
+    name: string;
+}
+
+export interface ShadowMemberResponse {
+    items: ShadowMember[];
+    robots: ShadowRobot[];
+}
+
+export interface GetShadowMemberResponse extends ResponseUnit<ShadowMemberResponse> { }
+
+// save shadow member
+export interface SaveShadowMemberResponse extends ResponseUnit<number> { }
+
+// delete shadow member
+export interface DeleteShadowMemberResponse extends ResponseUnit<boolean> { }
+
+// lock shadow member;
+export interface LockShadowMemberResponse extends ResponseUnit<boolean> { }
+
+// get account
+export interface AccountResponse {
+    balance: number;
+    consumed: number;
+    invitation_code: string;
+    level: number;
+    points: number;
+    settings: object;
+    username: string;
+}
+
+export interface GetAccountResponse extends ResponseUnit<AccountResponse> { }
+
 // ========================================Simulation======================================================
 
 // sandbox token

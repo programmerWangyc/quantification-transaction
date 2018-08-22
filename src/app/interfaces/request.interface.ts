@@ -520,11 +520,61 @@ export interface AddBBSTopicRequest {
     content: string;
 }
 
+// ============================================Account==================================================
+
+// modify password
+export interface ChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
+}
+
+// modify nick name
+export interface ChangeNickNameRequest {
+    name: string;
+}
+
+// google auth key
+export interface GetGoogleAuthKeyRequest { }
+
+// unbind SNS
+export interface UnbindSNSRequest { }
+
+// bind google verify code
+export interface BindGoogleAuthRequest {
+    code: string;
+    key: string;
+}
+
+// shadow member
+export interface GetShadowMemberRequest { }
+
+// save shadow member
+export interface SaveShadowMemberRequest {
+    memberId: number;
+    username: string;
+    password: string;
+    permissions: number[];
+}
+
+// delete shadow member
+export interface DeleteShadowMemberRequest {
+    memberId: number;
+}
+
+// lock shadow member;
+export interface LockShadowMemberRequest {
+    memberId: number;
+    status: number;
+}
+
+// get account
+export interface GetAccountRequest { }
+
 // ============================================Simulation==================================================
 
 // sandbox token
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 52
+ * 接口总数： 83， 已完成： 61;
  */

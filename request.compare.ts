@@ -72,55 +72,6 @@ interface GetAPMQueue {
     magic2: number;
 }
 
-// google auth key
-const getGoogleAuthKey = 'GetGoogleAuthKey';
-
-interface GetGoogleAuthKey {
-
-}
-
-const getBindGoogleAuth = 'BindGoogleAuth';
-
-interface GetBindGoogleAuth {
-    code: string;
-    key: string;
-}
-
-// shadow member
-const getShadowMember = 'GetShadowMember';
-
-interface GetShadowMember {
-
-}
-
-const addShadowMember = 'SaveShadowMember';
-
-interface AddShadowMember {
-    memberId: number;
-    username: string;
-    password: string;
-    permissionList: number[];
-}
-
-const deleteShadowMember = 'DeleteShadowMember';
-
-interface DeleteShadowMember {
-    memberId: number;
-}
-
-const updateShadowMember = 'LockShadowMember';
-
-interface UpdateShadowMember {
-    memberId: number;
-    status: number;
-}
-
-// account
-const getAccount = 'GetAccount';
-
-interface GetAccount {
-
-}
 
 // api key list
 const getApiKeyList = 'GetApiKeyList';
@@ -128,32 +79,7 @@ const getApiKeyList = 'GetApiKeyList';
 interface GetApiKeyList {
 
 }
-
-// SNS
-const getUnbindSNS = 'UnbindSNS';
-
-interface GetUnbindSNS {
-
-}
-
-// change nick name
-const getChangeNickName = 'ChangeNickName';
-
-interface ChangeNickName {
-    name: string;
-}
-
-// change pass word
-
-const getChangePassword = 'ChangePassword';
-
-interface ChangePassword {
-    oldPassword: string;
-    newPassword: string;
-}
-
 // api key
-
 const addApiKey = 'CreateApiKey';
 
 interface AddApiKey {

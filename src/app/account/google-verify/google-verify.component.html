@@ -1,0 +1,36 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div nz-row>
+    <div nz-col nzSpan="16">
+        <nz-steps nzDirection="vertical">
+            <nz-step nzStatus="process" [nzTitle]="'BIND_GOOGLE_VERIFY_TITLE_1' | translate" [nzDescription]="'BIND_GOOGLE_VERIFY_STEP_1' | translate"></nz-step>
+            <nz-step nzStatus="process" [nzTitle]="'BIND_GOOGLE_VERIFY_TITLE_2' | translate" [nzDescription]="'BIND_GOOGLE_VERIFY_STEP_2' | translate"></nz-step>
+            <nz-step nzStatus="process" [nzTitle]="'BIND_GOOGLE_VERIFY_TITLE_3' | translate" [nzDescription]="step3 | async"></nz-step>
+        </nz-steps>
+    </div>
+
+    <div nz-col nzSpan="8">
+        <qr-code [value]="qrcode | async" [size]="150"></qr-code>
+    </div>
+</div>
+
+
+<form nz-form #verifyForm="ngForm" nzLayout="inline" (ngSubmit)="submit$.next(code)">
+    <nz-form-item>
+        <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'GOOGLE_VERIFY_CODE' | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>
+            <nz-input-group>
+                <input nz-input [(ngModel)]="code" [ngModelOptions]="{standalone: true}" required #spy="ngModel">
+            </nz-input-group>
+            <nz-form-explain *ngIf="spy.invalid && (spy.dirty || spy.touched)">
+                <div *ngIf="!!spy.errors.required">{{'GOOGLE_VERIFY_CODE_LENGTH_ERROR' | translate}}</div>
+                <div *ngIf="!spy.errors.required && code?.length !== 6">{{'GOOGLE_VERIFY_CODE_LENGTH_ERROR' | translate}}</div>
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row>
+        <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <button nz-button [nzType]="btnType | async" type="submit" [disabled]="verifyForm.form.invalid || code?.length !== 6">{{btnText | async | translate}}</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

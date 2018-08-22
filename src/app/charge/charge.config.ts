@@ -1,7 +1,7 @@
 
 export enum PaymentMethod {
     ALIPAY,
-    WECHART,
+    WECHAT,
     PAY_PAL,
 }
 

@@ -1,0 +1,9 @@
+<h3>{{'SUBACCOUNT_PERMISSION' | translate}}</h3>
+
+<nz-transfer [nzDataSource]="robots" [nzTitles]="titles" [nzOperations]="operations" (nzChange)="onChange($event)" fxLayoutAlign="center center">
+</nz-transfer>
+
+<div bt-text-direction direction="right">
+    <button nz-button (click)="close()">{{'CANCEL' | translate}}</button>
+    <button nz-button (click)="close(robots)" nzType="primary">{{'CONFIRM' | translate}}</button>
+</div>

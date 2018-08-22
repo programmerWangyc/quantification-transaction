@@ -9,7 +9,7 @@
                     <nz-form-label>{{'EMAIL' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
                         <nz-input-group [nzPrefix]="prefix">
-                            <input nz-input type="email" [(ngModel)]="email" [nzSize]="inputSize" required email #spy="ngModel">
+                            <input nz-input type="email" [(ngModel)]="email" [ngModelOptions]="{standalone: true}" [nzSize]="inputSize" required email #spy="ngModel">
                             <ng-template #prefix>
                                 <i class="anticon anticon-mail"></i>
                             </ng-template>

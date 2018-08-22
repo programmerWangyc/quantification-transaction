@@ -54,6 +54,25 @@ const controlCenter: SideNav = {
     ],
 };
 
+const charge: SideNav = {
+    path: Path.charge,
+    label: 'ACCOUNT_CHARGE',
+    icon: 'pay-circle-o',
+};
+
+const account: SideNav = {
+    path: '',
+    label: 'ACCOUNT_MANAGEMENT',
+    icon: 'setting',
+    subNav: [
+        { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'key' },
+        { path: Path.account + '/' + Path.nickname, label: 'MODIFY_NICKNAME', icon: 'smile-o' },
+        { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHART', icon: 'wechat' },
+        { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
+        { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
+    ],
+};
+
 /**
  * @deprecated 暂时不搞实盘仿真
  */
@@ -78,7 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * 侧边栏列表
      */
-    list: SideNav[] = [controlCenter, square, factFinder, community, documentation];
+    list: SideNav[] = [controlCenter, square, factFinder, community, documentation, charge, account];
 
     /**
      * 当前展示的模块
@@ -127,6 +146,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
             filter(success => success),
             takeWhile(() => this.isAlive)
         ).subscribe(_ => this.router.navigate(['home'], { relativeTo: this.activatedRoute.root }));
+
+        this.publicService.getError().pipe(
+            takeWhile(() => this.isAlive)
+        ).subscribe(error => error === 'Need Login' && this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root}));
     }
 
     /**

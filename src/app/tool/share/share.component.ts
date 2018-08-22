@@ -17,7 +17,7 @@ export class ShareComponent implements OnInit {
     /**
      * @ignore
      */
-    @Input() wechart: string = location.href;
+    @Input() wechat: string = location.href;
 
     /**
      * @ignore

@@ -1,0 +1,59 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<form nz-form fxLayout="column" fxLayoutAlign="start stretch" [formGroup]="form" (ngSubmit)="submit$.next(form.value)">
+
+    <nz-form-item>
+        <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'SUBACCOUNT_USERNAME' | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>
+            <nz-input-group [nzPrefix]="userPrefix">
+                <input formControlName="username" nz-input>
+                <ng-template #userPrefix>
+                    <i class="anticon anticon-user"></i>
+                </ng-template>
+            </nz-input-group>
+            <nz-form-explain *ngIf="username.invalid && (username.dirty || username.touched)">
+                <div *ngIf="!!username.errors.required">{{'USERNAME_TIP' | translate}}</div>
+                <div *ngIf="!username.errors.required && !!username.errors.usernameFormat">{{form.getError('usernameFormat', 'username') | translate}}</div>
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'SUB_PASSWORD' | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>
+            <nz-input-group [nzPrefix]="prefix">
+                <input type="password" formControlName="password" nz-input>
+                <ng-template #prefix>
+                    <i class="anticon anticon-lock"></i>
+                </ng-template>
+            </nz-input-group>
+            <nz-form-explain *ngIf="password.invalid && (password.dirty || password.touched)">
+                <div *ngIf="!!password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
+                <div *ngIf="!password.errors.required && !!password.errors.passwordFormat">{{form.getError('passwordFormat', 'password') | translate}}</div>
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'PERMISSION' | translate}}</nz-form-label>
+        <nz-form-control>
+            <label nz-checkbox [(ngModel)]="allChecked" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAllChecked()" [nzIndeterminate]="indeterminate">
+                {{'SELECT_ALL' | translate}}
+            </label>
+            <nz-checkbox-group [(ngModel)]="robots" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateSingleChecked()"></nz-checkbox-group>
+        </nz-form-control>
+        <nz-form-explain>
+            <div *ngIf="noneSelectedRobot" class="form-error">{{'ROBOT_REQUIRED_ERROR' | translate}}</div>
+        </nz-form-explain>
+    </nz-form-item>
+
+    <nz-form-item nz-row>
+        <nz-form-control [nzSpan]="14">
+            <button nz-button nzType="primary" type="submit" [disabled]="form.invalid || noneSelectedRobot">{{'CREATE' | translate}}</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>
+
+<nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
+    <app-subaccount-list [accounts]="accounts | async" (lock)="onLock($event)" (delete)="onDelete($event)" (update)="onUpdateSubaccount($event)"></app-subaccount-list>
+</nz-spin>

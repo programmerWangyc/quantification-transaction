@@ -75,11 +75,11 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     serverSendEvent$: Observable<ResponseAction> = this.toggleResponsiveServerSendEvent().pipe(
-        switchMap(state => this.ws.messages.pipe(
+        switchMap(isOpen => this.ws.messages.pipe(
             filter(msg => {
                 const condition = msg.event && (msg.event === ServerSendEventType.ROBOT);
 
-                return state ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS);
+                return isOpen ? condition : condition && !!((<ServerSendRobotMessage>msg.result).flags & ServerSendRobotEventType.UPDATE_STATUS);
             }),
             map(msg => new robotActions.ReceiveServerSendRobotEventAction(<ServerSendRobotMessage>msg.result)),
         ))
@@ -102,10 +102,15 @@ export class RobotEffect extends BaseEffect {
      */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
         return this.store.select(selectRobotRequestParameters).pipe(
-            filter(v => !!v),
+            filter(request => !!request),
             map(res => res.subscribeRobot && res.subscribeRobot.id !== 0),
             distinctUntilChanged()
         );
+        // return this.store.pipe(
+        //     select(selectRouteState),
+        //     map(state => /robot\/\d+\/\w+/.test(state.url)),
+        //     distinctUntilChanged()
+        // );
     }
 }
 
