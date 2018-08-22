@@ -70,6 +70,7 @@ const account: SideNav = {
         { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHART', icon: 'wechat' },
         { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
         { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
+        { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
     ],
 };
 

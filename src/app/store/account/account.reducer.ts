@@ -1,21 +1,25 @@
 import {
     BindGoogleAuthRequest, ChangeNickNameRequest, ChangePasswordRequest, DeleteShadowMemberRequest,
-    LockShadowMemberRequest, SaveShadowMemberRequest
+    LockShadowMemberRequest, SaveShadowMemberRequest, GetApiKeyListRequest, CreateApiKeyRequest, LockApiKeyRequest, DeleteApiKeyRequest
 } from '../../interfaces/request.interface';
 import {
     BindGoogleAuthResponse, ChangeNickNameResponse, ChangePasswordResponse, DeleteShadowMemberResponse,
     GetAccountResponse, GetGoogleAuthKeyResponse, GetShadowMemberResponse, LockShadowMemberResponse,
-    SaveShadowMemberResponse, UnbindSNSResponse
+    SaveShadowMemberResponse, UnbindSNSResponse, GetApiKeyListResponse, LockApiKeyResponse, DeleteApiKeyResponse, CreateApiKeyResponse
 } from '../../interfaces/response.interface';
 import * as actions from './account.action';
 
 export interface RequestParams {
+    addShadowMember: SaveShadowMemberRequest;
+    apiKeyList: GetApiKeyListRequest;
     bindGoogleAuth: BindGoogleAuthRequest;
     changeNickname: ChangeNickNameRequest;
     changePassword: ChangePasswordRequest;
+    createApiKey: CreateApiKeyRequest;
+    deleteApiKey: DeleteApiKeyRequest;
     deleteShadowMember: DeleteShadowMemberRequest;
+    lockApiKey: LockApiKeyRequest;
     lockShadowMember: LockShadowMemberRequest;
-    addShadowMember: SaveShadowMemberRequest;
     updateShadowMember: SaveShadowMemberRequest;
 }
 
@@ -25,27 +29,35 @@ export interface UIState {
 
 export interface State {
     UIState: UIState;
+    addShadowMemberRes: SaveShadowMemberResponse;
+    apiKeyListRes: GetApiKeyListResponse;
     bindGoogleAuthRes: BindGoogleAuthResponse;
     changeNicknameRes: ChangeNickNameResponse;
     changePasswordRes: ChangePasswordResponse;
+    createApiKeyRes: CreateApiKeyResponse;
+    deleteApiKeyRes: DeleteApiKeyResponse;
     deleteShadowMemberRes: DeleteShadowMemberResponse;
     getAccountRes: GetAccountResponse;
     getShadowMemberRes: GetShadowMemberResponse;
     googleAuthKeyRes: GetGoogleAuthKeyResponse;
+    lockApiKeyRes: LockApiKeyResponse;
     lockShadowMemberRes: LockShadowMemberResponse;
     requestParams: RequestParams;
-    addShadowMemberRes: SaveShadowMemberResponse;
-    updateShadowMemberRes: SaveShadowMemberResponse;
     unbindSNSRes: UnbindSNSResponse;
+    updateShadowMemberRes: SaveShadowMemberResponse;
 }
 
 const initialRequestParams: RequestParams = {
+    addShadowMember: null,
+    apiKeyList: null,
     bindGoogleAuth: null,
     changeNickname: null,
     changePassword: null,
+    createApiKey: null,
+    deleteApiKey: null,
     deleteShadowMember: null,
+    lockApiKey: null,
     lockShadowMember: null,
-    addShadowMember: null,
     updateShadowMember: null,
 };
 
@@ -56,13 +68,17 @@ const initialUIState: UIState = {
 const initialState: State = {
     UIState: initialUIState,
     addShadowMemberRes: null,
+    apiKeyListRes: null,
     bindGoogleAuthRes: null,
     changeNicknameRes: null,
     changePasswordRes: null,
+    createApiKeyRes: null,
+    deleteApiKeyRes: null,
     deleteShadowMemberRes: null,
     getAccountRes: null,
     getShadowMemberRes: null,
     googleAuthKeyRes: null,
+    lockApiKeyRes: null,
     lockShadowMemberRes: null,
     requestParams: initialRequestParams,
     unbindSNSRes: null,
@@ -176,6 +192,50 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, lockShadowMemberRes: action.payload, getShadowMemberRes: { ...state.getShadowMemberRes, result: { ...state.getShadowMemberRes.result, items: state.getShadowMemberRes.result.items.map(item => item.id === memberId ? { ...item, status } : item) } } };
         }
 
+        // api key list
+        case actions.GET_API_KEY_LIST:
+            return { ...state, UIState: { ...state.UIState, loading: true } };
+
+        case actions.GET_API_KEY_LIST_FAIL:
+        case actions.GET_API_KEY_LIST_SUCCESS:
+            return { ...state, apiKeyListRes: action.payload };
+
+        // create api key
+        case actions.CREATE_API_KEY:
+            return { ...state, requestParams: { ...state.requestParams, createApiKey: action.payload } };
+
+        case actions.CREATE_API_KEY_FAIL:
+            return { ...state, createApiKeyRes: action.payload };
+
+        case actions.CREATE_API_KEY_SUCCESS: {
+            const { result } = state.apiKeyListRes;
+
+            return { ...state, createApiKeyRes: action.payload, apiKeyListRes: { ...state.apiKeyListRes, result: [...result, { ...action.payload.result, nonce: NaN, rights: '', status: NaN }] } };
+        }
+
+        // lock api key
+        case actions.LOCK_API_KEY:
+            return { ...state, requestParams: { ...state.requestParams, lockApiKey: action.payload } };
+
+        case actions.LOCK_API_KEY_FAIL:
+            return { ...state, lockApiKeyRes: action.payload };
+
+        case actions.LOCK_API_KEY_SUCCESS: {
+            const { id, status } = state.requestParams.lockApiKey;
+
+            return { ...state, lockApiKeyRes: action.payload, apiKeyListRes: { ...state.apiKeyListRes, result: state.apiKeyListRes.result.map(item => item.id === id ? { ...item, status } : item) } };
+        }
+
+        // delete api key
+        case actions.DELETE_API_KEY:
+            return { ...state, requestParams: { ...state.requestParams, deleteApiKey: action.payload } };
+
+        case actions.DELETE_API_KEY_FAIL:
+            return { ...state, deleteApiKeyRes: action.payload };
+
+        case actions.DELETE_API_KEY_SUCCESS:
+            return { ...state, deleteApiKeyRes: action.payload, apiKeyListRes: { ...state.apiKeyListRes, result: state.apiKeyListRes.result.filter(item => item.id !== state.requestParams.deleteApiKey.id) } };
+
         case actions.GET_ACCOUNT:
         case actions.GET_GOOGLE_AUTH_KEY:
         case actions.UNBIND_SNS:
@@ -209,3 +269,11 @@ export const getUpdateShadowMemberRes = (state: State) => state.updateShadowMemb
 export const getLockShadowMemberRes = (state: State) => state.lockShadowMemberRes;
 
 export const getDeleteShadowMemberRes = (state: State) => state.deleteShadowMemberRes;
+
+export const getApiKeyListRes = (state: State) => state.apiKeyListRes;
+
+export const getDeleteApiKeyListRes = (state: State) => state.deleteApiKeyRes;
+
+export const getCreateApiKeyListRes = (state: State) => state.createApiKeyRes;
+
+export const getLockApiKeyListRes = (state: State) => state.lockApiKeyRes;

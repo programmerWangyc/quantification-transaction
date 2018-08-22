@@ -455,6 +455,18 @@ export const selectDeleteShadowMemberResponse = createSelector(getAccount, accou
 // lock shadow member
 export const selectLockShadowMemberResponse = createSelector(getAccount, account.getLockShadowMemberRes);
 
+// get api key list
+export const selectGetApiKeyListResponse = createSelector(getAccount, account.getApiKeyListRes);
+
+// create api key
+export const selectCreateApiKeResponse = createSelector(getAccount, account.getCreateApiKeyListRes);
+
+// lock api key
+export const selectLockApiKeResponse = createSelector(getAccount, account.getLockApiKeyListRes);
+
+// delete api key
+export const selectDeleteApiKeResponse = createSelector(getAccount, account.getDeleteApiKeyListRes);
+
 //  ===================================================Message======================================================
 
 const getMessageState = (state: AppState) => state.message;

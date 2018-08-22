@@ -31,32 +31,6 @@ interface DisableTwofactor {
     token: string;
 }
 
-
-// api key list
-const getApiKeyList = 'GetApiKeyList';
-
-interface GetApiKeyList {
-
-}
-// api key
-const addApiKey = 'CreateApiKey';
-
-interface AddApiKey {
-    ip: string;
-    permission: string;
-}
-
-const updateApiKey = 'LockApiKey';
-
-interface UpdateApiKey {
-    id: number;
-    status: number;
-}
-
-const deleteApiKey = 'DeleteApiKey';
-
-interface DeleteApiKey { id: number; }
-
 // broadcast
 const setBroadcast = 'SetBroadcast';
 

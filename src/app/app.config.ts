@@ -15,6 +15,7 @@ export enum Path {
     fact = 'fact',
     google = 'google',
     home = 'home',
+    key = 'key',
     market = 'market',
     message = 'message',
     nickname = 'nickname',

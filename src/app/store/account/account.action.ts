@@ -1,13 +1,14 @@
 import { Action } from '@ngrx/store';
 
 import {
-    BindGoogleAuthRequest, ChangeNickNameRequest, ChangePasswordRequest, DeleteShadowMemberRequest, GetAccountRequest,
-    GetShadowMemberRequest, LockShadowMemberRequest, SaveShadowMemberRequest
+    BindGoogleAuthRequest, ChangeNickNameRequest, ChangePasswordRequest, CreateApiKeyRequest, DeleteApiKeyRequest,
+    DeleteShadowMemberRequest, GetAccountRequest, GetApiKeyListRequest, GetShadowMemberRequest, LockApiKeyRequest,
+    LockShadowMemberRequest, SaveShadowMemberRequest
 } from '../../interfaces/request.interface';
 import {
-    BindGoogleAuthResponse, ChangeNickNameResponse, ChangePasswordResponse, DeleteShadowMemberResponse,
-    GetAccountResponse, GetGoogleAuthKeyResponse, GetShadowMemberResponse, LockShadowMemberResponse,
-    SaveShadowMemberResponse, UnbindSNSResponse
+    BindGoogleAuthResponse, ChangeNickNameResponse, ChangePasswordResponse, CreateApiKeyResponse, DeleteApiKeyResponse,
+    DeleteShadowMemberResponse, GetAccountResponse, GetApiKeyListResponse, GetGoogleAuthKeyResponse,
+    GetShadowMemberResponse, LockApiKeyResponse, LockShadowMemberResponse, SaveShadowMemberResponse, UnbindSNSResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -423,6 +424,153 @@ export class GetAccountSuccessAction extends GetAccount implements Action {
     constructor(public payload: GetAccountResponse) { super(); }
 }
 
+// get api key list
+export class GetApiKeyList extends ApiAction {
+    isSingleParams = false;
+
+    command = 'GetApiKeyList';
+
+    noneParams = true;
+
+    order = null;
+}
+
+export const GET_API_KEY_LIST = '[Account] GET_API_KEY_LIST';
+
+export class GetApiKeyListRequestAction extends GetApiKeyList implements Action {
+    readonly type = GET_API_KEY_LIST;
+
+    constructor(public payload: GetApiKeyListRequest = null) { super(); }
+}
+
+export const GET_API_KEY_LIST_FAIL = '[Account] GET_API_KEY_LIST_FAIL';
+
+export class GetApiKeyListFailAction extends GetApiKeyList implements Action {
+    readonly type = GET_API_KEY_LIST_FAIL;
+
+    constructor(public payload: GetApiKeyListResponse) { super(); }
+}
+
+export const GET_API_KEY_LIST_SUCCESS = '[Account] GET_API_KEY_LIST_SUCCESS';
+
+export class GetApiKeyListSuccessAction extends GetApiKeyList implements Action {
+    readonly type = GET_API_KEY_LIST_SUCCESS;
+
+    constructor(public payload: GetApiKeyListResponse) { super(); }
+}
+
+// create api key
+enum CreateApiKeyOrder {
+    ip,
+    permission,
+    length,
+}
+
+export class CreateApiKey extends ApiAction {
+    isSingleParams = false;
+
+    command = 'CreateApiKey';
+
+    noneParams = false;
+
+    order = CreateApiKeyOrder;
+}
+
+export const CREATE_API_KEY = '[Account] CREATE_API_KEY';
+
+export class CreateApiKeyRequestAction extends CreateApiKey implements Action {
+    readonly type = CREATE_API_KEY;
+
+    constructor(public payload: CreateApiKeyRequest) { super(); }
+}
+
+export const CREATE_API_KEY_FAIL = '[Account] CREATE_API_KEY_FAIL';
+
+export class CreateApiKeyFailAction extends CreateApiKey implements Action {
+    readonly type = CREATE_API_KEY_FAIL;
+
+    constructor(public payload: CreateApiKeyResponse) { super(); }
+}
+
+export const CREATE_API_KEY_SUCCESS = '[Account] CREATE_API_KEY_SUCCESS';
+
+export class CreateApiKeySuccessAction extends CreateApiKey implements Action {
+    readonly type = CREATE_API_KEY_SUCCESS;
+
+    constructor(public payload: CreateApiKeyResponse) { super(); }
+}
+
+// lock api key
+export class LockApiKey extends ApiAction {
+    isSingleParams = true;
+
+    command = 'LockApiKey';
+
+    noneParams = false;
+
+    order = null;
+}
+
+export const LOCK_API_KEY = '[Account] LOCK_API_KEY';
+
+export class LockApiKeyRequestAction extends LockApiKey implements Action {
+    readonly type = LOCK_API_KEY;
+
+    constructor(public payload: LockApiKeyRequest) { super(); }
+}
+
+export const LOCK_API_KEY_FAIL = '[Account] LOCK_API_KEY_FAIL';
+
+export class LockApiKeyFailAction extends LockApiKey implements Action {
+    readonly type = LOCK_API_KEY_FAIL;
+
+    constructor(public payload: LockApiKeyResponse) { super(); }
+}
+
+export const LOCK_API_KEY_SUCCESS = '[Account] LOCK_API_KEY_SUCCESS';
+
+export class LockApiKeySuccessAction extends LockApiKey implements Action {
+    readonly type = LOCK_API_KEY_SUCCESS;
+
+    constructor(public payload: LockApiKeyResponse) { super(); }
+}
+
+// delete api key
+export class DeleteApiKey extends ApiAction {
+    isSingleParams = true;
+
+    command = 'DeleteApiKey';
+
+    noneParams = false;
+
+    order = null;
+}
+
+export const DELETE_API_KEY = '[Account] DELETE_API_KEY';
+
+export class DeleteApiKeyRequestAction extends DeleteApiKey implements Action {
+    readonly type = DELETE_API_KEY;
+
+    constructor(public payload: DeleteApiKeyRequest) { super(); }
+}
+
+export const DELETE_API_KEY_FAIL = '[Account] DELETE_API_KEY_FAIL';
+
+export class DeleteApiKeyFailAction extends DeleteApiKey implements Action {
+    readonly type = DELETE_API_KEY_FAIL;
+
+    constructor(public payload: DeleteApiKeyResponse) { super(); }
+}
+
+export const DELETE_API_KEY_SUCCESS = '[Account] DELETE_API_KEY_SUCCESS';
+
+export class DeleteApiKeySuccessAction extends DeleteApiKey implements Action {
+    readonly type = DELETE_API_KEY_SUCCESS;
+
+    constructor(public payload: DeleteApiKeyResponse) { super(); }
+}
+
+
 //  ===========================================Local action===================================
 
 export const RESET_ACCOUNT = '[Account] RESET_ACCOUNT';
@@ -443,18 +591,30 @@ export type ApiActions = ChangePasswordRequestAction
     | ChangeNickNameSuccessAction
     | ChangePasswordFailAction
     | ChangePasswordSuccessAction
+    | CreateApiKeyFailAction
+    | CreateApiKeyRequestAction
+    | CreateApiKeySuccessAction
+    | DeleteApiKeyFailAction
+    | DeleteApiKeyRequestAction
+    | DeleteApiKeySuccessAction
     | DeleteShadowMemberFailAction
     | DeleteShadowMemberRequestAction
     | DeleteShadowMemberSuccessAction
     | GetAccountFailAction
     | GetAccountRequestAction
     | GetAccountSuccessAction
+    | GetApiKeyListFailAction
+    | GetApiKeyListRequestAction
+    | GetApiKeyListSuccessAction
     | GetGoogleAuthKeyFailAction
     | GetGoogleAuthKeyRequestAction
     | GetGoogleAuthKeySuccessAction
     | GetShadowMemberFailAction
     | GetShadowMemberRequestAction
     | GetShadowMemberSuccessAction
+    | LockApiKeyFailAction
+    | LockApiKeyRequestAction
+    | LockApiKeySuccessAction
     | LockShadowMemberFailAction
     | LockShadowMemberRequestAction
     | LockShadowMemberSuccessAction
@@ -477,14 +637,22 @@ export const ResponseActions = {
     ChangeNickNameSuccessAction,
     ChangePasswordFailAction,
     ChangePasswordSuccessAction,
+    CreateApiKeyFailAction,
+    CreateApiKeySuccessAction,
+    DeleteApiKeyFailAction,
+    DeleteApiKeySuccessAction,
     DeleteShadowMemberFailAction,
     DeleteShadowMemberSuccessAction,
     GetAccountFailAction,
     GetAccountSuccessAction,
+    GetApiKeyListFailAction,
+    GetApiKeyListSuccessAction,
     GetGoogleAuthKeyFailAction,
     GetGoogleAuthKeySuccessAction,
     GetShadowMemberFailAction,
     GetShadowMemberSuccessAction,
+    LockApiKeyFailAction,
+    LockApiKeySuccessAction,
     LockShadowMemberFailAction,
     LockShadowMemberSuccessAction,
     UnbindSNSFailAction,

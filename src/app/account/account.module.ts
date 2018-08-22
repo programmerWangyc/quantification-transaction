@@ -17,6 +17,8 @@ import { SubaccountListComponent } from './subaccount-list/subaccount-list.compo
 import { PIPES } from './pipes/index.pipe';
 import { ModifySubaccountPasswordComponent } from './modify-subaccount-password/modify-subaccount-password.component';
 import { ModifySubaccountPermissionComponent } from './modify-subaccount-permission/modify-subaccount-permission.component';
+import { ApiKeyComponent } from './api-key/api-key.component';
+import { ApiKeyService } from './providers/api.key.service';
 
 @NgModule({
     imports: [
@@ -36,6 +38,7 @@ import { ModifySubaccountPermissionComponent } from './modify-subaccount-permiss
         PIPES,
         ModifySubaccountPasswordComponent,
         ModifySubaccountPermissionComponent,
+        ApiKeyComponent,
     ],
     entryComponents: [
         ModifySubaccountPasswordComponent,
@@ -44,6 +47,7 @@ import { ModifySubaccountPermissionComponent } from './modify-subaccount-permiss
     providers: [
         AccountService,
         SubaccountService,
+        ApiKeyService,
         PIPES,
     ],
 })

@@ -14,16 +14,50 @@ import * as fromRoot from '../../store/index.reducer';
 import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 import { TranslateService } from '@ngx-translate/core';
 
+export class AccountOperateBase extends BaseService {
+    label: string;
+
+    constructor(
+        public tipService: TipService,
+        public translate: TranslateService,
+        public confirmMsg: string,
+    ) {
+        super();
+        this.label = confirmMsg;
+    }
+
+    /**
+     * Combine action and operate label;
+     * @param operate Operate action;
+     */
+    private getTipMsg(operate: string): string {
+        return this.unwrap(this.translate.get(this.label, { operate: this.unwrap(this.translate.get(operate)) }));
+    }
+
+    /**
+     * @ignore
+     */
+    protected confirm<T>(params: T, msg: string): Observable<T> {
+        return this.tipService.confirmOperateTip(
+            ConfirmComponent,
+            { message: this.getTipMsg(msg), needTranslate: true },
+        ).pipe(
+            this.filterTruth(),
+            mapTo(params)
+        );
+    }
+}
+
 @Injectable()
-export class SubaccountService extends BaseService {
+export class SubaccountService extends AccountOperateBase {
     constructor(
         private store: Store<fromRoot.AppState>,
         private process: ProcessService,
         private errorService: ErrorService,
-        private tipService: TipService,
-        private translate: TranslateService,
+        public tipService: TipService,
+        public translate: TranslateService,
     ) {
-        super();
+        super(tipService, translate, 'OPERATE_SUBACCOUNT_CONFIRM');
     }
 
     //  =======================================================Serve Request=======================================================
@@ -61,13 +95,7 @@ export class SubaccountService extends BaseService {
      */
     launchDeleteShadowMember(params: Observable<fromReq.DeleteShadowMemberRequest>): Subscription {
         return this.process.processDeleteShadowMember(params.pipe(
-            switchMap(({ memberId }) => this.tipService.confirmOperateTip(
-                ConfirmComponent,
-                { message: this.getTipMsg('DELETE'), needTranslate: false },
-            ).pipe(
-                this.filterTruth(),
-                mapTo({ memberId })
-            ))
+            switchMap(({ memberId }) => this.confirm({ memberId }, 'DELETE'))
         ));
     }
 
@@ -76,13 +104,7 @@ export class SubaccountService extends BaseService {
      */
     launchLockShadowMember(params: Observable<fromReq.LockShadowMemberRequest>): Subscription {
         return this.process.processLockShadowMember(params.pipe(
-            switchMap(({ memberId, status }) => this.tipService.confirmOperateTip(
-                ConfirmComponent,
-                { message: this.getTipMsg(status ? 'UNLOCK' : 'LOCK'), needTranslate: false },
-            ).pipe(
-                this.filterTruth(),
-                mapTo({ memberId, status: Number(!status) })
-            ))
+            switchMap(({ memberId, status }) => this.confirm({ memberId, status: Number(!status) }, status ? 'UNLOCK' : 'LOCK'))
         ));
     }
 
@@ -184,14 +206,6 @@ export class SubaccountService extends BaseService {
     //  =======================================================Local state change=======================================================
 
     //  =======================================================shortcut method=======================================================
-
-    /**
-     * Combine action and operate label;
-     * @param operate Operate action;
-     */
-    private getTipMsg(operate: string): string {
-        return this.unwrap(this.translate.get('OPERATE_SUBACCOUNT_CONFIRM', { operate: this.unwrap(this.translate.get(operate)) }));
-    }
 
     //  =======================================================Error handler=======================================================
 

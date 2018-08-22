@@ -1070,6 +1070,38 @@ export interface AccountResponse {
 
 export interface GetAccountResponse extends ResponseUnit<AccountResponse> { }
 
+// api key list
+export interface ApiKey {
+    access_key: string;
+    date: string;
+    id: number;
+    nonce: number;
+    rights: string;
+    secret_key: string;
+    status: number;
+}
+
+export interface GetApiKeyListResponse extends ResponseUnit<ApiKey[]> { }
+
+// api key
+export interface CreateApiResult {
+    access_key: string;
+    date: string;
+    id: number;
+    secret_key: string;
+}
+
+export interface CreateApiKeyResponse extends ResponseUnit<CreateApiResult> {
+    ip: string;
+    permission: string;
+}
+
+// lock api key
+export interface LockApiKeyResponse extends ResponseUnit<boolean> { }
+
+// delete api key
+export interface DeleteApiKeyResponse extends ResponseUnit<boolean> { }
+
 // ============================================Message======================================================
 
 export interface BaseMessage {

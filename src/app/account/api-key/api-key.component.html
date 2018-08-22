@@ -1,0 +1,35 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<div fxLayout="row-reverse" class="button-container">
+    <button nz-button nzType="primary" (click)="onCreate()">
+        <i class="anticon anticon-plus"></i>
+        {{'CREATE' | translate}}
+    </button>
+</div>
+
+<nz-table #nzTable [nzData]="list | async" [nzPageSize]="20">
+    <thead>
+        <tr>
+            <th bt-text-center nzWidth="30%">{{'ACCESS_KEY' | translate}}</th>
+            <th bt-text-center nzWidth="30%">{{'SECRET_KEY' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'DATE' | translate}}</th>
+            <th bt-text-center nzWidth="10%">{{'STATUS' | translate}}</th>
+            <th bt-text-center nzWidth="20%">{{'OPERATE' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of nzTable.data">
+            <td>{{item.access_key}}</td>
+            <td bt-text-center>{{item.secret_key}}</td>
+            <td bt-text-center>{{item.date}}</td>
+            <td bt-text-center>
+                <i class="anticon" [ngClass]="classMap[item.status]"></i>
+            </td>
+            <td bt-text-center>
+                <a (click)=onLock(item)>{{(item.status ? 'UNLOCK' : 'LOCK') | translate}}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="onDelete(item)">{{'DELETE' | translate}}</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

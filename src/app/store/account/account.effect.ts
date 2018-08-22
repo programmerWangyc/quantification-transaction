@@ -61,6 +61,24 @@ export class AccountEffect extends BaseEffect {
         tap(this.message('DELETE_SUBACCOUNT_SUCCESS', 'DELETE_SUBACCOUNT_FAIL'))
     );
 
+    @Effect()
+    apiKeyList$: Observable<ResponseAction> = this.getResponseAction(accountAction.GET_API_KEY_LIST, accountAction.ResponseActions);
+
+    @Effect()
+    createApiKey$: Observable<ResponseAction> = this.getResponseAction(accountAction.CREATE_API_KEY, accountAction.ResponseActions).pipe(
+        tap(this.message('CREATE_API_KEY_SUCCESS', 'CREATE_API_KEY_FAIL'))
+    );
+
+    @Effect()
+    lockApiKe$: Observable<ResponseAction> = this.getResponseAction(accountAction.LOCK_API_KEY, accountAction.ResponseActions).pipe(
+        tap(this.message('OPERATE_SUCCESS', 'OPERATE_FAIL'))
+    );
+
+    @Effect()
+    deleteApiKey$: Observable<ResponseAction> = this.getResponseAction(accountAction.DELETE_API_KEY, accountAction.ResponseActions).pipe(
+        tap(this.message('DELETE_API_KEY_SUCCESS', 'DELETE_API_KEY_FAIL'))
+    );
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,

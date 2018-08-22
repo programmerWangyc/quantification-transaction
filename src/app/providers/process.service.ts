@@ -361,6 +361,22 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new AccountActions.LockShadowMemberRequestAction(params)));
     }
 
+    processGetApiKeyList(paramObs: Observable<Request.GetApiKeyListRequest>): Subscription {
+        return paramObs.subscribe(_ => this.store.dispatch(new AccountActions.GetApiKeyListRequestAction()));
+    }
+
+    processCreateApiKey(paramObs: Observable<Request.CreateApiKeyRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.CreateApiKeyRequestAction(params)));
+    }
+
+    processLockApiKey(paramObs: Observable<Request.LockApiKeyRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.LockApiKeyRequestAction(params)));
+    }
+
+    processDeleteApiKey(paramObs: Observable<Request.DeleteApiKeyRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.DeleteApiKeyRequestAction(params)));
+    }
+
     //  ===================================================Message======================================================
 
     processGetMessage(paramObs: Observable<Request.GetMessageRequest>): Subscription {

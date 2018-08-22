@@ -6,6 +6,7 @@ import { NicknameComponent } from './nickname/nickname.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { SubaccountComponent } from './subaccount/subaccount.component';
 import { WechatComponent } from './wechat/wechat.component';
+import { ApiKeyComponent } from './api-key/api-key.component';
 
 const routs: Routes = [
     { path: '', component: AccountComponent },
@@ -14,6 +15,7 @@ const routs: Routes = [
     { path: 'wechat', component: WechatComponent },
     { path: 'google', component: GoogleVerifyComponent },
     { path: 'usergroup', component: SubaccountComponent },
+    { path: 'key', component: ApiKeyComponent },
 ];
 
 export const routing = RouterModule.forChild(routs);

@@ -570,6 +570,26 @@ export interface LockShadowMemberRequest {
 // get account
 export interface GetAccountRequest { }
 
+// api key list
+export interface GetApiKeyListRequest { }
+
+// api key
+export interface CreateApiKeyRequest {
+    ip: string;
+    permission: string;
+}
+
+// lock api key
+export interface LockApiKeyRequest {
+    id: number;
+    status: number;
+}
+
+// delete api key
+export interface DeleteApiKeyRequest {
+    id: number;
+}
+
 // ============================================Message==================================================
 
 export interface BaseNotify {
@@ -602,5 +622,5 @@ export interface DeleteBBSNotifyRequest extends BaseDeleteNotify { }
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 66;
+ * 接口总数： 83， 已完成： 70;
  */
