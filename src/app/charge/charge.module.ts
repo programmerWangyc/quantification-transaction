@@ -12,7 +12,7 @@ import { ChargeService } from './providers/charge.service';
 import { RentComponent } from './rent/rent.component';
 import { PaymentIndicatorComponent } from './payment-indicator/payment-indicator.component';
 import { RechargeComponent } from './recharge/recharge.component';
-import { ChargeGuard } from './providers/guard.service';
+import { ChargeGuard, StrategyGuard } from './providers/guard.service';
 import { routing } from './charge.routing';
 import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
 
@@ -37,13 +37,7 @@ import { StrategyRentComponent } from './strategy-rent/strategy-rent.component';
         ChargeConstantService,
         ChargeGuard,
         ChargeService,
-    ],
-    exports: [
-        AccountBalanceComponent,
-        ChargeComponent,
-        ChargeHistoryComponent,
-        PIPES,
-        RentComponent,
+        StrategyGuard,
     ],
 })
 export class ChargeModule { }

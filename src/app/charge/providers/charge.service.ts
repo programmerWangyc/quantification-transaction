@@ -124,7 +124,7 @@ export class ChargeService extends BaseService {
     /**
      * 获取微信扫描二维码
      */
-    getWechartQrCode(): Observable<string> {
+    getWechatQrCode(): Observable<string> {
         return this.goToPaymentPage(PaymentMethod.WECHAT).pipe(
             map(res => res.result.code_url),
             distinctUntilChanged()

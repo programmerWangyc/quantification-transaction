@@ -1,0 +1,41 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-table #nzTable [nzData]="codes | async" [nzPageSize]="pageSize" [nzShowTotal]="sta">
+    <thead>
+        <tr>
+            <th bt-text-center>{{'REGISTER_CODE' | translate}}</th>
+            <th bt-text-center>{{'STRATEGY' | translate}}</th>
+            <th bt-text-center>{{'TYPE' | translate}}</th>
+            <th bt-text-center>{{'CONCURRENCY' | translate}}</th>
+            <th bt-text-center>{{'USED_COUNT' | translate}}</th>
+            <th bt-text-center>{{'EXPIRED_DATE' | translate}}</th>
+            <th bt-text-center>{{'CREATE_DATE' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let code of nzTable.data">
+            <td>{{code.key_sn}}</td>
+            <td bt-text-center>
+                <a [routerLink]="['../../strategy', 'verify', code.id, code.key_type]">{{code.strategy_name}}</a>
+            </td>
+            <td bt-text-center>
+                <nz-tag *ngIf="code.key_type === 1; else elseBlock" nzColor="green">{{'SELL_CODE' | translate}}</nz-tag>
+
+                <ng-template #elseBlock>
+                    <nz-tag nzColor="red">{{'COPY_CODE' | translate}}</nz-tag>
+                </ng-template>
+            </td>
+            <td bt-text-center>{{code.concurrent}}</td>
+            <td bt-text-center>{{code.used}}</td>
+            <td bt-text-center>
+                {{code.expire_date}}
+                <nz-tag *ngIf="isExpired(code)" [nzColor]="'red'">{{'EXPIRED' | translate}}</nz-tag>
+            </td>
+            <td bt-text-center>{{code.date}}</td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<ng-template #sta>
+    <div>{{statistics | async}}</div>
+</ng-template>

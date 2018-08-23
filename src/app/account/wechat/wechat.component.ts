@@ -16,7 +16,7 @@ export class WechatComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'ACCOUNT_MANAGEMENT' }, { name: 'BIND_WECHART' }];
+    paths: Breadcrumb[] = [{ name: 'ACCOUNT_MANAGEMENT' }, { name: 'BIND_WECHAT' }];
 
     /**
      * @ignore

@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
+import { takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
+import { PublicService } from '../../providers/public.service';
 import { TipService } from '../../providers/tip.service';
-import { GenKeyType, StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
+import { GenKeyType } from '../../strategy/providers/strategy.operate.service';
 
 @Component({
     selector: 'app-strategy-verify-code',
@@ -15,7 +17,8 @@ import { GenKeyType, StrategyOperateService } from '../../strategy/providers/str
     styleUrls: ['./strategy-verify-code.component.scss'],
 })
 export class StrategyVerifyCodeComponent implements BaseComponent {
-    subscription$$: Subscription;
+
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY', path: '../../../' }, { name: 'VERIFY_CODE' }];
 
     verify$: Subject<string> = new Subject();
 
@@ -23,15 +26,18 @@ export class StrategyVerifyCodeComponent implements BaseComponent {
 
     id: number;
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY', path: '../../../' }, { name: 'VERIFY_CODE' }];
-
     isCopyCode: boolean;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private strategyOperate: StrategyOperateService,
-        private tip: TipService
+        private tip: TipService,
+        private publicService: PublicService,
     ) { }
 
     ngOnInit() {
@@ -49,15 +55,19 @@ export class StrategyVerifyCodeComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify$
+        const keepAlive = () => this.isAlive;
+
+        this.publicService.launchVerifyKey(this.verify$
             .pipe(
-                map(verifyCode => ({ strategyId: this.id, verifyCode }))
+                map(verifyCode => ({ strategyId: this.id, verifyCode })),
+                takeWhile(keepAlive)
             )
-        )
-            .add(this.strategyOperate.isVerifyKeySuccess()
-                .subscribe(isSuccess => this.handleVerifySuccess(isSuccess))
-            )
-            .add(this.strategyOperate.handleVerifyKeyError());
+        );
+
+        this.publicService.isVerifyKeySuccess(keepAlive)
+            .subscribe(isSuccess => this.handleVerifySuccess(isSuccess));
+
+        this.publicService.handleVerifyKeyError(keepAlive);
     }
 
     private handleVerifySuccess(isSuccess: boolean): void {
@@ -69,7 +79,7 @@ export class StrategyVerifyCodeComponent implements BaseComponent {
     }
 
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
     }
 
 }

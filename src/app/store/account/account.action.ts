@@ -3,12 +3,12 @@ import { Action } from '@ngrx/store';
 import {
     BindGoogleAuthRequest, ChangeNickNameRequest, ChangePasswordRequest, CreateApiKeyRequest, DeleteApiKeyRequest,
     DeleteShadowMemberRequest, GetAccountRequest, GetApiKeyListRequest, GetShadowMemberRequest, LockApiKeyRequest,
-    LockShadowMemberRequest, SaveShadowMemberRequest
+    LockShadowMemberRequest, SaveShadowMemberRequest, GetRegisterCodeRequest
 } from '../../interfaces/request.interface';
 import {
     BindGoogleAuthResponse, ChangeNickNameResponse, ChangePasswordResponse, CreateApiKeyResponse, DeleteApiKeyResponse,
     DeleteShadowMemberResponse, GetAccountResponse, GetApiKeyListResponse, GetGoogleAuthKeyResponse,
-    GetShadowMemberResponse, LockApiKeyResponse, LockShadowMemberResponse, SaveShadowMemberResponse, UnbindSNSResponse
+    GetShadowMemberResponse, LockApiKeyResponse, LockShadowMemberResponse, SaveShadowMemberResponse, UnbindSNSResponse, GetRegisterCodeResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -570,6 +570,50 @@ export class DeleteApiKeySuccessAction extends DeleteApiKey implements Action {
     constructor(public payload: DeleteApiKeyResponse) { super(); }
 }
 
+// get register code
+enum GetRegisterCodeOrder {
+    offset,
+    limit,
+    magic1,
+    length,
+}
+
+export class GetRegisterCode extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    command = 'GetTokens';
+
+    callbackId = 'GetRegisterCode';
+
+    order = GetRegisterCodeOrder;
+}
+
+export const GET_REGISTER_CODE = '[Account] GET_REGISTER_CODE';
+
+export class GetRegisterCodeRequestAction extends GetRegisterCode implements Action {
+    readonly type = GET_REGISTER_CODE;
+
+    constructor(public payload: GetRegisterCodeRequest) { super(); }
+}
+
+export const GET_REGISTER_CODE_FAIL = '[Account] GET_REGISTER_CODE_FAIL';
+
+export class GetRegisterCodeFailAction extends GetRegisterCode implements Action {
+    readonly type = GET_REGISTER_CODE_FAIL;
+
+    constructor(public payload: GetRegisterCodeResponse) { super(); }
+}
+
+export const GET_REGISTER_CODE_SUCCESS = '[Account] GET_REGISTER_CODE_SUCCESS';
+
+export class GetRegisterCodeSuccessAction extends GetRegisterCode implements Action {
+    readonly type = GET_REGISTER_CODE_SUCCESS;
+
+    constructor(public payload: GetRegisterCodeResponse) { super(); }
+}
+
 
 //  ===========================================Local action===================================
 
@@ -609,6 +653,9 @@ export type ApiActions = ChangePasswordRequestAction
     | GetGoogleAuthKeyFailAction
     | GetGoogleAuthKeyRequestAction
     | GetGoogleAuthKeySuccessAction
+    | GetRegisterCodeFailAction
+    | GetRegisterCodeRequestAction
+    | GetRegisterCodeSuccessAction
     | GetShadowMemberFailAction
     | GetShadowMemberRequestAction
     | GetShadowMemberSuccessAction
@@ -649,6 +696,8 @@ export const ResponseActions = {
     GetApiKeyListSuccessAction,
     GetGoogleAuthKeyFailAction,
     GetGoogleAuthKeySuccessAction,
+    GetRegisterCodeFailAction,
+    GetRegisterCodeSuccessAction,
     GetShadowMemberFailAction,
     GetShadowMemberSuccessAction,
     LockApiKeyFailAction,

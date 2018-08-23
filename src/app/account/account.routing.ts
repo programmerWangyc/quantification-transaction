@@ -8,6 +8,7 @@ import { SubaccountComponent } from './subaccount/subaccount.component';
 import { WechatComponent } from './wechat/wechat.component';
 import { ApiKeyComponent } from './api-key/api-key.component';
 import { EarlyWarningComponent } from './early-warning/early-warning.component';
+import { RegisterCodeComponent } from './register-code/register-code.component';
 
 const routs: Routes = [
     { path: '', component: AccountComponent },
@@ -18,6 +19,7 @@ const routs: Routes = [
     { path: 'usergroup', component: SubaccountComponent },
     { path: 'key', component: ApiKeyComponent },
     { path: 'warn', component: EarlyWarningComponent },
+    { path: 'code', component: RegisterCodeComponent },
 ];
 
 export const routing = RouterModule.forChild(routs);

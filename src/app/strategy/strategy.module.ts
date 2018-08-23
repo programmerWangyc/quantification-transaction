@@ -26,7 +26,6 @@ import { StrategyEditComponent } from './strategy-edit/strategy-edit.component';
 import { StrategyListComponent } from './strategy-list/strategy-list.component';
 import { StrategyOverviewComponent } from './strategy-overview/strategy-overview.component';
 import { StrategyRemoteEditComponent } from './strategy-remote-edit/strategy-remote-edit.component';
-import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { StrategyVerifyCodeComponent } from './strategy-verify-code/strategy-verify-code.component';
 import { routing } from './strategy.routing';
 import { StrategyComponent } from './strategy/strategy.component';
@@ -56,7 +55,6 @@ import { BacktestModule } from '../backtest/backtest.module';
         StrategyListComponent,
         StrategyOverviewComponent,
         StrategyRemoteEditComponent,
-        StrategyRenewalComponent,
         VerifyGenKeyComponent,
         StrategyComponent,
         StrategyAddComponent,
@@ -75,12 +73,6 @@ import { BacktestModule } from '../backtest/backtest.module';
         GenKeyPanelComponent,
         InnerShareConfirmComponent,
         ShareConfirmComponent,
-        StrategyRenewalComponent,
-    ],
-    exports: [
-        DIRECTIVES,
-        PIPES,
-        StrategyRenewalComponent,
     ],
 })
 export class StrategyModule { }

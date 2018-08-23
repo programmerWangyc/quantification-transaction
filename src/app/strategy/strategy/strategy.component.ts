@@ -15,9 +15,9 @@ import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { StrategyService } from '../../strategy/providers/strategy.service';
-import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { ShareStrategyStateSnapshot } from '../../strategy/strategy.interface';
 import { Path } from '../../app.config';
+import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
 
 @Component({
     selector: 'app-strategy',

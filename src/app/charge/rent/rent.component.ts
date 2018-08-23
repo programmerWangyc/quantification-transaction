@@ -53,7 +53,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
     /**
      * 微信支付码
      */
-    wechartQRCode: Observable<string>;
+    wechatQRCode: Observable<string>;
 
     /**
      * 充值的策略
@@ -116,7 +116,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.wechartQRCode = this.chargeService.getWechartQrCode();
+        this.wechatQRCode = this.chargeService.getWechatQrCode();
 
         this.start = this.notifyPayStart(this.payMethod);
 
@@ -150,7 +150,7 @@ export class RentComponent extends ChargeBase implements BaseComponent {
     private getPaymentArgOptions() {
         return merge(
             this.pay$,
-            this.getArgsIfWechart()
+            this.getArgsIfWechat()
         ).pipe(
             map(({ payMethod, charge, chargeShortcut }) => ({ payMethod, charge: chargeShortcut || charge }))
         );
@@ -270,14 +270,14 @@ export class RentComponent extends ChargeBase implements BaseComponent {
     /**
      * 用户选择微信支付时，获取参数
      */
-    private getArgsIfWechart(): Observable<RentFormModal> {
+    private getArgsIfWechat(): Observable<RentFormModal> {
         return this.form.valueChanges.pipe(
             filter((form: RentFormModal) => {
-                const isWechartPay = form.payMethod === PaymentMethod.WECHAT;
+                const isWechatPay = form.payMethod === PaymentMethod.WECHAT;
 
                 const isRentPeriodValid = !!this.chargeShortcut.value || this.charge.valid;
 
-                return isWechartPay && isRentPeriodValid;
+                return isWechatPay && isRentPeriodValid;
             }),
             distinctUntilChanged((pre, cur) => pre.charge === cur.charge && pre.chargeShortcut === cur.chargeShortcut)
         );

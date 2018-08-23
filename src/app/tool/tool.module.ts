@@ -28,6 +28,7 @@ import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
+import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 
 @NgModule({
     imports: [
@@ -56,10 +57,6 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         IndicatorComponent,
         NavbarComponent,
         PIPES,
-        RunningLogComponent,
-        ShareComponent,
-        SimpleNzConfirmWrapComponent,
-        VerifyPasswordComponent,
         RobotInfoComponent,
         RobotInnerTableComponent,
         RobotLogComponent,
@@ -67,12 +64,18 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         RobotStatusComponent,
         RobotStrategyChartComponent,
         RobotSubtitleComponent,
+        RunningLogComponent,
+        ShareComponent,
+        SimpleNzConfirmWrapComponent,
+        StrategyRenewalComponent,
+        VerifyPasswordComponent,
     ],
 
     entryComponents: [
         ConfirmComponent,
         CustomSnackBarComponent,
         SimpleNzConfirmWrapComponent,
+        StrategyRenewalComponent,
         VerifyPasswordComponent,
     ],
     exports: [
@@ -82,9 +85,6 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         IndicatorComponent,
         NavbarComponent,
         PIPES,
-        RunningLogComponent,
-        ShareComponent,
-        SimpleNzConfirmWrapComponent,
         RobotInfoComponent,
         RobotInnerTableComponent,
         RobotLogComponent,
@@ -92,6 +92,10 @@ import { VerifyPasswordComponent } from './verify-password/verify-password.compo
         RobotStatusComponent,
         RobotStrategyChartComponent,
         RobotSubtitleComponent,
+        RunningLogComponent,
+        ShareComponent,
+        SimpleNzConfirmWrapComponent,
+        StrategyRenewalComponent,
     ],
 })
 export class ToolModule { }

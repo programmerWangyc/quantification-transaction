@@ -383,6 +383,10 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new AccountActions.DeleteApiKeyRequestAction(params)));
     }
 
+    processGetRegisterCodeKey(paramObs: Observable<Request.GetRegisterCodeRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new AccountActions.GetRegisterCodeRequestAction(params)));
+    }
+
     //  ===================================================Message======================================================
 
     processGetMessage(paramObs: Observable<Request.GetMessageRequest>): Subscription {

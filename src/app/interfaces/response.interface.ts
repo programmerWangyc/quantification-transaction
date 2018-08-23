@@ -1105,6 +1105,25 @@ export interface LockApiKeyResponse extends ResponseUnit<boolean> { }
 // delete api key
 export interface DeleteApiKeyResponse extends ResponseUnit<boolean> { }
 
+// get tokens
+export interface RegisterCode {
+    concurrent: number;
+    date: string;
+    expire_date: string;
+    id: number;
+    key_sn: string;
+    key_type: number;
+    strategy_id: number;
+    strategy_name: string;
+    used: string;
+}
+
+export interface RegisterCodeResponse {
+    items: RegisterCode[];
+}
+
+export interface GetRegisterCodeResponse extends ResponseUnit<RegisterCodeResponse> { }
+
 // ============================================Message======================================================
 
 export interface BaseMessage {

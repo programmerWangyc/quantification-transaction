@@ -68,10 +68,6 @@ export class StrategyOperateService extends StrategyService {
         ));
     }
 
-    launchVerifyKey(params: Observable<fromReq.VerifyKeyRequest>): Subscription {
-        return this.process.processVerifyKey(params);
-    }
-
     /**
      * 发起删除策略请求
      */
@@ -149,18 +145,6 @@ export class StrategyOperateService extends StrategyService {
             });
     }
 
-    private getVerifyKeyResponse(): Observable<fromRes.VerifyKeyResponse> {
-        return this.store.select(fromRoot.selectVerifyKeyResponse).pipe(
-            this.filterTruth()
-        );
-    }
-
-    isVerifyKeySuccess(): Observable<boolean> {
-        return this.getVerifyKeyResponse().pipe(
-            map(res => res.result)
-        );
-    }
-
     private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {
         return this.store.select(fromRoot.selectDeleteStrategyResponse).pipe(
             this.filterTruth()
@@ -198,10 +182,6 @@ export class StrategyOperateService extends StrategyService {
 
     handleGenKeyError(): Subscription {
         return this.error.handleResponseError(this.getGenKeyResponse());
-    }
-
-    handleVerifyKeyError(): Subscription {
-        return this.error.handleResponseError(this.getVerifyKeyResponse());
     }
 
     handleDeleteStrategyError(): Subscription {

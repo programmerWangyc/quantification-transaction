@@ -5,6 +5,7 @@ export enum Path {
     analyze = 'analyze',
     backtest = 'backtest',
     charge = 'charge',
+    code = 'code',
     community = 'community',
     copy = 'copy',
     dashboard = 'dashboard',

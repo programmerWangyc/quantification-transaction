@@ -20,6 +20,7 @@ import { ModifySubaccountPermissionComponent } from './modify-subaccount-permiss
 import { ApiKeyComponent } from './api-key/api-key.component';
 import { ApiKeyService } from './providers/api.key.service';
 import { EarlyWarningComponent } from './early-warning/early-warning.component';
+import { RegisterCodeComponent } from './register-code/register-code.component';
 
 @NgModule({
     imports: [
@@ -41,6 +42,7 @@ import { EarlyWarningComponent } from './early-warning/early-warning.component';
         ModifySubaccountPermissionComponent,
         ApiKeyComponent,
         EarlyWarningComponent,
+        RegisterCodeComponent,
     ],
     entryComponents: [
         ModifySubaccountPasswordComponent,

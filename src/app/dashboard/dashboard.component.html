@@ -1,7 +1,7 @@
 <nz-layout id="dashboard">
     <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
         <div class="logo">BotVS</div>
-        <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'">
+        <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'" id="side-container">
 
             <ng-container *ngFor="let nav of list">
 
@@ -36,19 +36,33 @@
         <nz-header [ngClass]="{'head-collapsed': isCollapsed}">
             <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
             <section fxLayoutAlign="end center">
+                <nz-dropdown>
+                    <a nz-dropdown>
+                        <i class="anticon anticon-down"></i>
+                        {{'QUOTE_TOOLS' | translate}}
+                    </a>
+                    <ul nz-menu>
+                        <li nz-menu-item>
+                            <a href="https://quant.la/Tools/View/4/chart.html" target="__blank">
+                                <i class="anticon anticon-line-chart"></i>
+                                {{'QUOTE_CHART' | translate}}
+                            </a>
+                        </li>
+                        <li nz-menu-item>
+                            <a href="https://quant.la/Tools/View/3/formula.html" target="__blank">
+                                <i class="anticon anticon-tool"></i>
+                                {{'ANALYZING_TOOL' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </nz-dropdown>
 
-                <a href="https://quant.la/Tools/View/4/chart.html" target="__blank">
-                    <i class="anticon anticon-line-chart"></i>
-                    {{'QUOTE_CHART' | translate}}
-                </a>
-                <a href="https://quant.la/Tools/View/3/formula.html" target="__blank">
-                    <i class="anticon anticon-tool"></i>
-                    {{'ANALYZING_TOOL' | translate}}
-                </a>
+                <button nz-button (click)="changeLanguage$.next(true)">{{language | async | translate}}</button>
 
                 <nz-avatar [nzText]="username | async" nz-popover nzPlacement="bottom" [nzTitle]="welcomeTpl" [nzContent]="userInfoTpl"></nz-avatar>
             </section>
         </nz-header>
+
         <nz-content [style.margin]="isCollapsed ? '64px 0 0 80px' : '64px 0 0 200px'">
             <router-outlet></router-outlet>
         </nz-content>

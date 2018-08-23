@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 
 interface VerifyGenKeyText {
     title: string;
@@ -11,6 +11,7 @@ interface VerifyGenKeyText {
     selector: 'app-verify-gen-key',
     templateUrl: './verify-gen-key.component.html',
     styleUrls: ['./verify-gen-key.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VerifyGenKeyComponent implements OnInit {
     @Input() set type(value) {

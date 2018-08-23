@@ -596,8 +596,12 @@ export interface DeleteApiKeyRequest {
     id: number;
 }
 
-// change settings
-
+// get register code
+export interface GetRegisterCodeRequest {
+    offset: number;
+    limit: number;
+    magic1: number;
+ }
 
 // ============================================Message==================================================
 
@@ -631,5 +635,5 @@ export interface DeleteBBSNotifyRequest extends BaseDeleteNotify { }
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 71;
+ * 接口总数： 84， 已完成： 72;
  */

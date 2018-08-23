@@ -8,8 +8,8 @@ import { filter, map, startWith, takeWhile } from 'rxjs/operators';
 import { Path } from '../../app.config';
 import { PublicStrategyDetail } from '../../interfaces/response.interface';
 import { UtilService } from '../../providers/util.service';
-import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { SquareService } from '../providers/square.service';
+import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
 
 @Component({
     selector: 'app-public-detail',

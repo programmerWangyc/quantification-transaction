@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription, Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
+import { filter, map, switchMapTo, take, takeWhile } from 'rxjs/operators';
 
 import { Path } from '../app.config';
-import { RoutingService } from '../providers/routing.service';
 import { PublicService } from '../providers/public.service';
-import { filter, takeWhile } from 'rxjs/operators';
+import { RoutingService } from '../providers/routing.service';
 
 export interface SideNavItem {
     label: string;
@@ -67,11 +67,12 @@ const account: SideNav = {
     subNav: [
         { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'key' },
         { path: Path.account + '/' + Path.nickname, label: 'MODIFY_NICKNAME', icon: 'smile-o' },
-        { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHART', icon: 'wechat' },
+        { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHAT', icon: 'wechat' },
         { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
         { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
         { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
         { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'bell' },
+        { path: Path.account + '/' + Path.code, label: 'REGISTER_CODE', icon: 'tags-o' },
     ],
 };
 
@@ -123,17 +124,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    subscription$$: Subscription;
-
-    /**
-     * @ignore
-     */
     username: Observable<string>;
 
     /**
      * @ignore
      */
     isAlive = true;
+
+    /**
+     * @ignore
+     */
+    language: Observable<string>;
+
+    /**
+     * @ignore
+     */
+    changeLanguage$: Subject<boolean> = new Subject();
 
     constructor(
         private router: Router,
@@ -147,27 +153,49 @@ export class DashboardComponent implements OnInit, OnDestroy {
      * @ignore
      */
     ngOnInit() {
-        this.subscription$$ = this.routing.getCurrentUrl()
-            .subscribe(url => {
-                const ary = url.split('/'); // ary : ['', 'dashboard', moduleName, ...params etc.]
+        this.initialModel();
 
-                this.currentPath = url;
+        this.launch();
+    }
 
-                this.currentModule = ary[2];
-            });
-
+    initialModel(): void {
         this.username = this.publicService.getCurrentUser();
 
-        this.publicService.handleLogoutError(() => this.isAlive);
+        this.language = this.publicService.getLanguage().pipe(
+            map(lan => lan === 'zh' ? 'SIMPLE_CHINESE' : 'ENGLISH')
+        );
+    }
+
+    launch(): void {
+        const keepAlive = () => this.isAlive;
+
+        this.routing.getCurrentUrl().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(url => {
+            const ary = url.split('/'); // ary : ['', 'dashboard', moduleName or moduleName / path, ...params etc.]
+
+            this.currentPath = url;
+
+            this.currentModule = ary[2];
+        });
+
+        this.publicService.handleLogoutError(keepAlive);
 
         this.publicService.isLogoutSuccess().pipe(
             filter(success => success),
-            takeWhile(() => this.isAlive)
+            takeWhile(keepAlive)
         ).subscribe(_ => this.router.navigate(['home'], { relativeTo: this.activatedRoute.root }));
 
         this.publicService.getError().pipe(
-            takeWhile(() => this.isAlive)
+            takeWhile(keepAlive)
         ).subscribe(error => error === 'Need Login' && this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root }));
+
+        this.publicService.updateLanguage(this.changeLanguage$.pipe(
+           switchMapTo(this.language.pipe(
+               take(1),
+               map(lan => lan === 'SIMPLE_CHINESE' ? 'en' : 'zh')
+           ))
+        ));
     }
 
     /**
@@ -208,8 +236,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
-
         this.isAlive = false;
 
         this.publicService.clearLogoutInfo();

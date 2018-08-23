@@ -12,9 +12,9 @@ import { StrategyListByNameStrategy } from '../../interfaces/response.interface'
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { UtilService } from '../../providers/util.service';
 import { Category, STRATEGY_CATEGORIES } from '../../strategy/providers/strategy.constant.service';
-import { StrategyRenewalComponent } from '../../strategy/strategy-renewal/strategy-renewal.component';
 import { StrategyVisibilityType } from '../../strategy/strategy.config';
 import { SquareService } from '../providers/square.service';
+import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
 
 @Component({
     selector: 'app-strategy-market',
@@ -56,7 +56,7 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    categories: Category[] = [];
+    categories: Category[] = [{ name: 'ALL_TYPES', id: CategoryType.ALL }, ...STRATEGY_CATEGORIES.slice(0, -1)];
 
     /**
      * 是否需要响应中返回策略的 args 字段。
@@ -139,8 +139,6 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
 
         this.total = this.squareService.getMarketStrategyTotal();
 
-        this.categories = [{ name: 'ALL_TYPES', id: CategoryType.ALL }, ...STRATEGY_CATEGORIES.slice(0, -1)];
-
         this.statistics = this.utilService.getPaginationStatistics(this.total, this.pageSize);
 
         this.isLoading = this.squareService.isLoading();
@@ -160,7 +158,7 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
         const { pricing, id, username, email, name } = strategy;
 
         if (pricing && pricing.includes('/')) {
-            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent });
+            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent.parent });
         } else {
             this.nzModal.create({
                 nzContent: StrategyRenewalComponent,

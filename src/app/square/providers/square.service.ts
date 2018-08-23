@@ -45,7 +45,7 @@ export class SquareService extends BaseService {
      */
     isLoading(): Observable<boolean> {
         return this.store.select(fromRoot.selectStrategyUIState).pipe(
-            map(state => state.loading)
+            map(state => state && state.loading)
         );
     }
 

@@ -1,11 +1,11 @@
 import {
     BindGoogleAuthRequest, ChangeNickNameRequest, ChangePasswordRequest, DeleteShadowMemberRequest,
-    LockShadowMemberRequest, SaveShadowMemberRequest, GetApiKeyListRequest, CreateApiKeyRequest, LockApiKeyRequest, DeleteApiKeyRequest
+    LockShadowMemberRequest, SaveShadowMemberRequest, GetApiKeyListRequest, CreateApiKeyRequest, LockApiKeyRequest, DeleteApiKeyRequest, GetRegisterCodeRequest
 } from '../../interfaces/request.interface';
 import {
     BindGoogleAuthResponse, ChangeNickNameResponse, ChangePasswordResponse, DeleteShadowMemberResponse,
     GetAccountResponse, GetGoogleAuthKeyResponse, GetShadowMemberResponse, LockShadowMemberResponse,
-    SaveShadowMemberResponse, UnbindSNSResponse, GetApiKeyListResponse, LockApiKeyResponse, DeleteApiKeyResponse, CreateApiKeyResponse
+    SaveShadowMemberResponse, UnbindSNSResponse, GetApiKeyListResponse, LockApiKeyResponse, DeleteApiKeyResponse, CreateApiKeyResponse, GetRegisterCodeResponse
 } from '../../interfaces/response.interface';
 import * as actions from './account.action';
 
@@ -20,6 +20,7 @@ export interface RequestParams {
     deleteShadowMember: DeleteShadowMemberRequest;
     lockApiKey: LockApiKeyRequest;
     lockShadowMember: LockShadowMemberRequest;
+    registerCode: GetRegisterCodeRequest;
     updateShadowMember: SaveShadowMemberRequest;
 }
 
@@ -42,6 +43,7 @@ export interface State {
     googleAuthKeyRes: GetGoogleAuthKeyResponse;
     lockApiKeyRes: LockApiKeyResponse;
     lockShadowMemberRes: LockShadowMemberResponse;
+    registerCodeRes: GetRegisterCodeResponse;
     requestParams: RequestParams;
     unbindSNSRes: UnbindSNSResponse;
     updateShadowMemberRes: SaveShadowMemberResponse;
@@ -58,6 +60,7 @@ const initialRequestParams: RequestParams = {
     deleteShadowMember: null,
     lockApiKey: null,
     lockShadowMember: null,
+    registerCode: null,
     updateShadowMember: null,
 };
 
@@ -80,6 +83,7 @@ const initialState: State = {
     googleAuthKeyRes: null,
     lockApiKeyRes: null,
     lockShadowMemberRes: null,
+    registerCodeRes: null,
     requestParams: initialRequestParams,
     unbindSNSRes: null,
     updateShadowMemberRes: null,
@@ -236,6 +240,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.DELETE_API_KEY_SUCCESS:
             return { ...state, deleteApiKeyRes: action.payload, apiKeyListRes: { ...state.apiKeyListRes, result: state.apiKeyListRes.result.filter(item => item.id !== state.requestParams.deleteApiKey.id) } };
 
+        // get register code
+        case actions.GET_REGISTER_CODE:
+            return { ...state, requestParams: { ...state.requestParams, registerCode: action.payload } };
+
+        case actions.GET_REGISTER_CODE_FAIL:
+        case actions.GET_REGISTER_CODE_SUCCESS:
+            return { ...state, registerCodeRes: action.payload };
+
         case actions.GET_ACCOUNT:
         case actions.GET_GOOGLE_AUTH_KEY:
         case actions.UNBIND_SNS:
@@ -277,3 +289,5 @@ export const getDeleteApiKeyListRes = (state: State) => state.deleteApiKeyRes;
 export const getCreateApiKeyListRes = (state: State) => state.createApiKeyRes;
 
 export const getLockApiKeyListRes = (state: State) => state.lockApiKeyRes;
+
+export const getRegisterCodeRes = (state: State) => state.registerCodeRes;

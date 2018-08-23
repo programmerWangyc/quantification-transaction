@@ -90,7 +90,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
     /**
      * 微信支付码
      */
-    wechartQRCode: Observable<string>;
+    wechatQRCode: Observable<string>;
 
     /**
      * 标识支付正在进行的流
@@ -129,7 +129,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.wechartQRCode = this.chargeService.getWechartQrCode();
+        this.wechatQRCode = this.chargeService.getWechatQrCode();
 
         this.start = this.notifyPayStart(this.payMethod);
 
@@ -143,7 +143,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      */
     launch() {
         this.subscription$$ = this.chargeService.launchPaymentArg(
-            merge(this.pay$, this.getArgsIfWechart())
+            merge(this.pay$, this.getArgsIfWechat())
         )
             .add(this.chargeService.goToAlipayPage())
             .add(this.chargeService.goToPayPal())
@@ -163,7 +163,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
     /**
      * 用户选择微信支付时，获取参数
      */
-    private getArgsIfWechart(): Observable<RechargeFormModal> {
+    private getArgsIfWechat(): Observable<RechargeFormModal> {
         return this.form.valueChanges.pipe(
             filter((form: RechargeFormModal) => this.charge.valid && (form.payMethod === PaymentMethod.WECHAT)),
             distinctUntilKeyChanged('charge')

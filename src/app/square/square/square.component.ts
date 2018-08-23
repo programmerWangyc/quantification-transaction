@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, of, Subject, merge } from 'rxjs';
-import { map, mergeMap, takeWhile, filter } from 'rxjs/operators';
+import { merge, Observable, of, Subject } from 'rxjs';
+import { filter, map, mergeMap, takeWhile } from 'rxjs/operators';
 
 import { BtCommentType } from '../../app.config';
+import { CommentService } from '../../comment/providers/comment.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { SubmitCommentRequest } from '../../interfaces/request.interface';
 import { CommentListResponse } from '../../interfaces/response.interface';
-import { CommentService } from '../../comment/providers/comment.service';
 import { PublicService } from '../../providers/public.service';
 
 export class CommentBaseComponent {

@@ -95,7 +95,7 @@ export class ApiKeyService extends AccountOperateBase {
      */
     private getLockApiKeyResponse(): Observable<fromRes.LockApiKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectLockApiKeResponse),
+            select(fromRoot.selectLockApiKeyResponse),
             this.filterTruth()
         );
     }
@@ -105,7 +105,7 @@ export class ApiKeyService extends AccountOperateBase {
      */
     private getDeleteApikeyResponse(): Observable<fromRes.DeleteApiKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteApiKeResponse),
+            select(fromRoot.selectDeleteApiKeyResponse),
             this.filterTruth()
         );
     }

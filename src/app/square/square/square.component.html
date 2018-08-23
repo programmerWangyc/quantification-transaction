@@ -13,6 +13,7 @@
     <span>{{total | async}}</span>
 </div>
 
-<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async" [buttonText]="'REVIEW'" [row]="10"></app-reply>
+<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+    [buttonText]="'REVIEW'" [row]="10"></app-reply>
 
 <app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>

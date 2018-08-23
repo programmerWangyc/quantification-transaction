@@ -8,17 +8,15 @@ import { distinctUntilChanged, filter, map, startWith, take, takeWhile, tap } fr
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
 import { EditorConfig, Referrer } from '../interfaces/app.interface';
-import { SettingTypes } from '../interfaces/request.interface';
-import { Broker, LogoutResponse, PublicResponse, ResponseState, ChangeAlertThresholdSettingResponse } from '../interfaces/response.interface';
+import { SettingTypes, VerifyKeyRequest } from '../interfaces/request.interface';
+import {
+    Broker, ChangeAlertThresholdSettingResponse, LogoutResponse, PublicResponse, ResponseState, VerifyKeyResponse
+} from '../interfaces/response.interface';
 import { ClearLoginInfoAction } from '../store/auth/login.action';
+import * as fromRoot from '../store/index.reducer';
 import {
-    AppState, selectEditorConfig, selectFooterState, selectLanguage, selectLogoutResponse, selectPublicResponse,
-    selectReferrer, selectServerMsgSubscribeState, selectSettings, selectSettingsResponse, selectChangeAlertThresholdSettingResponse
-} from '../store/index.reducer';
-import {
-    SetLanguageAction, SetReferrerAction, ToggleFooterAction, ToggleSubscribeServerSendMessageTypeAction,
-    UpdateFavoriteEditorConfigAction,
-    ResetLogoutResponseAction
+    ResetLogoutResponseAction, SetLanguageAction, SetReferrerAction, ToggleFooterAction,
+    ToggleSubscribeServerSendMessageTypeAction, UpdateFavoriteEditorConfigAction
 } from '../store/public/public.action';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
@@ -29,7 +27,7 @@ export class PublicService extends BaseService {
     refUser$$: Subject<string> = new Subject();
 
     constructor(
-        private store: Store<AppState>,
+        private store: Store<fromRoot.AppState>,
         private process: ProcessService,
         private error: ErrorService,
     ) {
@@ -72,13 +70,21 @@ export class PublicService extends BaseService {
         ));
     }
 
+    /**
+     * @ignore
+     */
+    launchVerifyKey(params: Observable<VerifyKeyRequest>): Subscription {
+        return this.process.processVerifyKey(params);
+    }
+
     //  =======================================================Date acquisition=======================================================
 
     /**
      * 获取设置的服务器响应
      */
     getSettingsResponse(): Observable<ResponseState> {
-        return this.store.select(selectSettingsResponse).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectSettingsResponse),
             this.filterTruth()
         );
     }
@@ -87,7 +93,8 @@ export class PublicService extends BaseService {
      * 是否有指定的设置
      */
     hasSetting(settingType: string): Observable<boolean> {
-        return this.store.select(selectSettings).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectSettings),
             map(res => !!res[settingType])
         );
     }
@@ -98,7 +105,8 @@ export class PublicService extends BaseService {
      * @return Setting; JSON type string, maybe need to pares then use;
      */
     getSetting(settingType: string): Observable<string> {
-        return this.store.select(selectSettings).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectSettings),
             tap(settings => !settings[settingType] && this.launchGetSettings(SettingTypes[settingType] || settingType)),
             filter(settings => !!settings[settingType]),
             map(settings => settings[settingType])
@@ -118,7 +126,9 @@ export class PublicService extends BaseService {
      * 服务器响应的公共信息。此部分信息在所有的接口都会返回。
      */
     private getPublicResponse(): Observable<PublicResponse> {
-        return this.store.select(selectPublicResponse);
+        return this.store.pipe(
+            select(fromRoot.selectPublicResponse)
+        );
     }
 
     /**
@@ -204,7 +214,7 @@ export class PublicService extends BaseService {
      */
     private getLogoutResponse(): Observable<LogoutResponse> {
         return this.store.pipe(
-            select(selectLogoutResponse),
+            select(fromRoot.selectLogoutResponse),
             this.filterTruth()
         );
     }
@@ -223,8 +233,28 @@ export class PublicService extends BaseService {
      */
     private getChangeAlertThresholdSettingResponse(): Observable<ChangeAlertThresholdSettingResponse> {
         return this.store.pipe(
-            select(selectChangeAlertThresholdSettingResponse),
+            select(fromRoot.selectChangeAlertThresholdSettingResponse),
             this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    private getVerifyKeyResponse(): Observable<VerifyKeyResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectVerifyKeyResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    isVerifyKeySuccess(keepAlive: () => boolean): Observable<boolean> {
+        return this.getVerifyKeyResponse().pipe(
+            map(res => res.result),
+            takeWhile(keepAlive)
         );
     }
 
@@ -234,21 +264,26 @@ export class PublicService extends BaseService {
      * @ignore
      */
     getLanguage(): Observable<string> {
-        return this.store.select(selectLanguage);
+        return this.store.pipe(
+            select(fromRoot.selectLanguage)
+        );
     }
 
     /**
      * @ignore
      */
     getFooterState(): Observable<boolean> {
-        return this.store.select(selectFooterState);
+        return this.store.pipe(
+            select(fromRoot.selectFooterState)
+        );
     }
 
     /**
      * editor config
      */
     getFavoriteEditorConfig(): Observable<EditorConfig> {
-        return this.store.select(selectEditorConfig).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectEditorConfig),
             map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
             filter(this.isTruth)
         );
@@ -259,7 +294,7 @@ export class PublicService extends BaseService {
      */
     getServerMsgSubscribeState(msgType: string): Observable<boolean> {
         return this.store.pipe(
-            select(selectServerMsgSubscribeState),
+            select(fromRoot.selectServerMsgSubscribeState),
             map(res => res[msgType])
         );
     }
@@ -289,7 +324,7 @@ export class PublicService extends BaseService {
     getReferrer(): Observable<Referrer> {
         return merge(
             this.store.pipe(
-                select(selectReferrer),
+                select(fromRoot.selectReferrer),
                 filter(referrer => !!referrer)
             ),
             this.getReferrerFromLocalStorage()
@@ -423,6 +458,15 @@ export class PublicService extends BaseService {
      */
     handleChangeAlertThresholdError(keepAlive: () => boolean): Subscription {
         return this.error.handleResponseError(this.getChangeAlertThresholdSettingResponse().pipe(
+            takeWhile(keepAlive)
+        ));
+    }
+
+    /**
+     * @ignore
+     */
+    handleVerifyKeyError(keepAlive: () => boolean): Subscription {
+        return this.error.handleResponseError(this.getVerifyKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

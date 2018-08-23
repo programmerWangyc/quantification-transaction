@@ -78,6 +78,13 @@ export class AccountService extends BaseService {
         );
     }
 
+    /**
+     * @ignore
+     */
+    launchGetRegisterCode(params: Observable<fromReq.GetRegisterCodeRequest>): Subscription {
+        return this.process.processGetRegisterCodeKey(params);
+    }
+
     //  =======================================================Data acquisition=======================================================
 
     /**
@@ -184,6 +191,25 @@ export class AccountService extends BaseService {
         );
     }
 
+    /**
+     * @ignore
+     */
+    private getRegisterCodeResponse(): Observable<fromRes.GetRegisterCodeResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectRegisterCodeResponse),
+            this.filterTruth()
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getRegisterCodeResult(): Observable<fromRes.RegisterCode[]> {
+        return this.getRegisterCodeResponse().pipe(
+            map(res => res.result.items)
+        );
+    }
+
 
     //  =======================================================UI state =======================================================
 
@@ -232,6 +258,15 @@ export class AccountService extends BaseService {
      */
     handleBindGoogleAuthError(keepAlive: () => boolean): Subscription {
         return this.errorService.handleResponseError(this.getBindGoogleAuthKeyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
+    }
+
+    /**
+     * @ignore
+     */
+    handleGetRegisterCodeError(keepAlive: () => boolean): Subscription {
+        return this.errorService.handleResponseError(this.getRegisterCodeResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

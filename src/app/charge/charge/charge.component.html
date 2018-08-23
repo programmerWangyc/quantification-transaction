@@ -31,6 +31,6 @@
     </div>
 
     <div *ngIf="payMethod.value === 1 && charge.valid" nz-col [nzSpan]="6" class="qr-code">
-        <qr-code [value]="wechartQRCode | async" [size]="150"></qr-code>
+        <qr-code [value]="wechatQRCode | async" [size]="150"></qr-code>
     </div>
 </div>

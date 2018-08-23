@@ -1,10 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { NzModalRef } from 'ng-zorro-antd';
-import { Observable, Subject, Subscription, timer as observableTimer } from 'rxjs';
-import { map, switchMapTo, take, tap } from 'rxjs/operators';
+import { Observable, Subject, timer as observableTimer } from 'rxjs';
+import { map, switchMapTo, take, takeWhile, tap } from 'rxjs/operators';
 
-import { StrategyOperateService } from '../providers/strategy.operate.service';
+import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-strategy-renewal',
@@ -44,11 +44,6 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     code = '';
 
     /**
-     * @ignore
-     */
-    subscription$$: Subscription;
-
-    /**
      * 是否禁用提交按钮
      */
     forbidden = false;
@@ -63,9 +58,14 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
      */
     private startTimer: Subject<boolean> = new Subject();
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private modalRef: NzModalRef,
-        private strategyOperate: StrategyOperateService,
+        private publicService: PublicService,
     ) { }
 
     /**
@@ -74,17 +74,23 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.timer = this.startTimer.pipe(switchMapTo(this.tryAgain(6)));
 
-        this.subscription$$ = this.strategyOperate.launchVerifyKey(this.verify.pipe(
-            map(verifyCode => ({ verifyCode, strategyId: this.id }))
-        ))
-            .add(this.strategyOperate.isVerifyKeySuccess().subscribe(isSuccess => {
+        const keepAlive = () => this.isAlive;
+
+        this.publicService.launchVerifyKey(this.verify.pipe(
+            map(verifyCode => ({ verifyCode, strategyId: this.id })),
+            takeWhile(keepAlive)
+        ));
+
+        this.publicService.isVerifyKeySuccess(keepAlive)
+            .subscribe(isSuccess => {
                 if (isSuccess) {
                     this.close();
                 } else {
                     this.startTimer.next(true);
                 }
-            }))
-            .add(this.strategyOperate.handleVerifyKeyError());
+            });
+
+        this.publicService.handleVerifyKeyError(keepAlive);
     }
 
     /**
@@ -110,6 +116,6 @@ export class StrategyRenewalComponent implements OnInit, OnDestroy {
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
     }
 }

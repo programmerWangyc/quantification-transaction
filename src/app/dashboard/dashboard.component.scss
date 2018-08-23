@@ -26,6 +26,9 @@
             nz-avatar {
                 background-color: $blue;
             }
+            button {
+                margin: 0 2em;
+            }
         }
     }
     nz-sider {
@@ -38,6 +41,10 @@
         z-index: 1000;
         ul {
             height: calc(100% - 64px);
+            overflow-y: scroll;
+        }
+        #side-container {
+            padding: 0 0 50px 0;
         }
     }
     nz-content {

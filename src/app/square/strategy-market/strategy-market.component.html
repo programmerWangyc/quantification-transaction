@@ -1,15 +1,14 @@
-<div class="table-head">
-    <nz-radio-group [formControl]="categoryId">
-        <label nz-radio-button *ngFor="let item of categories" [nzValue]="item.id">{{item.name | translate}}</label>
-    </nz-radio-group>
-
-    <nz-input-group nzSuffixIcon="anticon anticon-search">
-        <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='keyword'>
-    </nz-input-group>
-</div>
-
-
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
+    <div class="table-head">
+        <nz-radio-group [formControl]="categoryId">
+            <label nz-radio-button *ngFor="let item of categories" [nzValue]="item.id">{{item.name | translate}}</label>
+        </nz-radio-group>
+
+        <nz-input-group nzSuffixIcon="anticon anticon-search">
+            <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='keyword'>
+        </nz-input-group>
+    </div>
+
     <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize | async" [nzShowPagination]="false">
         <thead>
             <tr>

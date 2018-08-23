@@ -472,10 +472,13 @@ export const selectGetApiKeyListResponse = createSelector(getAccount, account.ge
 export const selectCreateApiKeResponse = createSelector(getAccount, account.getCreateApiKeyListRes);
 
 // lock api key
-export const selectLockApiKeResponse = createSelector(getAccount, account.getLockApiKeyListRes);
+export const selectLockApiKeyResponse = createSelector(getAccount, account.getLockApiKeyListRes);
 
 // delete api key
-export const selectDeleteApiKeResponse = createSelector(getAccount, account.getDeleteApiKeyListRes);
+export const selectDeleteApiKeyResponse = createSelector(getAccount, account.getDeleteApiKeyListRes);
+
+// get register code
+export const selectRegisterCodeResponse = createSelector(getAccount, account.getRegisterCodeRes);
 
 //  ===================================================Message======================================================
 

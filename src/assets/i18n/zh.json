@@ -71,6 +71,7 @@
     "CREATE_DATE": "创建日期",
     "CREATE_TIME": "创建时间",
     "START_DATE": "开始日期",
+    "EXPIRED_DATE": "过期日期",
     "START_TIME": "开始时间",
     "END_DATE": "结束日期",
     "END_TIME": "结束时间",
@@ -216,12 +217,15 @@
     "MODIFY_PWD": "修改密码",
     "NICKNAME": "昵称",
     "MODIFY_NICKNAME": "修改昵称",
-    "BIND_WECHART": "绑定微信",
+    "BIND_WECHAT": "绑定微信",
     "GOOGLE_VERIFY": "谷歌验证",
     "GOOGLE_VERIFY_CODE": "谷歌验证码",
     "SUBACCOUNT_GROUP": "子帐户组",
     "API_INTERFACE": "API接口",
     "BALANCE_WARNING": "额度预警",
+    "CONCURRENCY": "并发",
+    "USED_COUNT": "使用次数",
+    "SELL_CODE" : "租售码",
 
     "TIP": "提示",
     "PLEASE_SELECT": "请选择",
@@ -310,7 +314,7 @@
     "INTRODUCTION_LABEL": "云端部署 在线编程",
     "INTRODUCTION_LABEL_2": "跨平台 跨品种",
     "INTRODUCTION_LABEL_3": "免费灵活 策略可简可繁",
-    "FOLLOW_WECHART": "宽客在线",
+    "FOLLOW_WECHAT": "宽客在线",
     "JOIN_QQ_GROUP": "加入QQ群",
 
     "INTRO_DES_KEYWORD_1": "专注",
@@ -444,7 +448,7 @@
     "RECHARGE_AMOUNT": "充值金额（元）",
     "CHARGE_STEP": "充值步骤",
     "ALIPAY": "支付宝",
-    "WECHART": "微信",
+    "WECHAT": "微信",
     "PAY_PAL": "payPal",
     "RECHARGE_HISTORY": "支付历史",
     "SELECT_PAYMENT_METHOD": "选择支付方式",
@@ -697,7 +701,7 @@
     "AGENT_CREATE_GUIDE": "请根据以下步骤完成创建",
     "PRIVATE_AGENT_INTRO": "布署的私有托管者不受 FMZ 服务器性能的影响，托管者直接与交易所进行通信，只在本地保存日志信息。",
     "YOUR_PASSWORD": "你的 FMZ 密码",
-    "SUBSCRIBE_WECHART_TIP": "关注下方微信号(或搜索公众号botvs) 绑定后可查看机器人状态与接收策略推送消息！",
+    "SUBSCRIBE_WECHAT_TIP": "关注下方微信号(或搜索公众号botvs) 绑定后可查看机器人状态与接收策略推送消息！",
     "AGENT_LATEST_VERSION": "最新版本：{{version}}, 更新时间：{{time}}",
 
     "EXCHANGE_DEFINITION": "交易所指具体执行买卖交易的平台，一个策略可以连接多个交易所。没有列出的交易对可以在创建机器人时通过自定义交易对添加。",
@@ -842,5 +846,6 @@
 
     "BALANCE_EARLY_WARNING": "额度预警",
     "BALANCE_MIN_VALUE": "预警阈值",
-    "BALANCE_EARLY_WARING_TIP":"当账户可用余额小于此值时, 您将会收到邮件与微信通知, 设置为0禁止用此功能, 没有充值或者更改此设置的情况下, 24小时内只通知一次。"
+    "BALANCE_EARLY_WARING_TIP":"当账户可用余额小于此值时, 您将会收到邮件与微信通知, 设置为0禁止用此功能, 没有充值或者更改此设置的情况下, 24小时内只通知一次。",
+    "REGISTER_CODE_MANAGEMENT": "注册码管理"
 }

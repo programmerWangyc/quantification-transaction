@@ -10,8 +10,7 @@ import { TipService } from '../../providers/tip.service';
 import { AppState, selectStrategyListByNameResponse, selectStrategyListResponse } from '../../store/index.reducer';
 import { BaseGuard } from '../../base/guard.service';
 
-@Injectable()
-export class StrategyGuard extends BaseGuard implements CanActivate {
+export class StrategyBaseGuard extends BaseGuard implements CanActivate {
     constructor(
         public store: Store<AppState>,
         public router: Router,
@@ -35,5 +34,15 @@ export class StrategyGuard extends BaseGuard implements CanActivate {
             map(([hasList, hasListByName]) => hasList || hasListByName),
             tap(v => !v && this.router.navigate([Path.dashboard, Path.strategy]))
         );
+    }
+}
+@Injectable()
+export class StrategyGuard extends StrategyBaseGuard {
+    constructor(
+        public store: Store<AppState>,
+        public router: Router,
+        public tip: TipService,
+    ) {
+        super(store, router, tip);
     }
 }

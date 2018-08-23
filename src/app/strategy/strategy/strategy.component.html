@@ -11,6 +11,10 @@
         <i class="anticon anticon-profile"></i>
         {{'GO_TO_STRATEGY_SQUARE' | translate}}
     </a>
+    <a nz-button [nzType]="'secondary'" routerLink="../../account/code">
+        <i class="anticon anticon-tags-o"></i>
+        {{'REGISTER_CODE_MANAGEMENT' | translate}}
+    </a>
 
     <nz-input-group nzSuffixIcon="anticon anticon-search">
         <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>

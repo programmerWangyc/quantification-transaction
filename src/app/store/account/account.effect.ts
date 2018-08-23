@@ -79,6 +79,9 @@ export class AccountEffect extends BaseEffect {
         tap(this.tip.messageByResponse('DELETE_API_KEY_SUCCESS', 'DELETE_API_KEY_FAIL'))
     );
 
+    @Effect()
+    registerCode$: Observable<ResponseAction> = this.getResponseAction(accountAction.GET_REGISTER_CODE, accountAction.ResponseActions);
+
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,
