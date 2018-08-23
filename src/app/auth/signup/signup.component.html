@@ -66,9 +66,9 @@
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
-                        <nz-form-explain *ngIf="signupForm.hasError('mismatch', 'passwordInfo') && (confirmPassword.dirty || confirmPassword.touched)"
+                        <nz-form-explain *ngIf="signupForm.hasError('mismatch', ['passwordInfo']) && (confirmPassword.dirty || confirmPassword.touched)"
                             style="color: #f44336">
-                            <span>{{signupForm.getError('mismatch', 'passwordInfo') | translate}}</span>
+                            <span>{{signupForm.getError('mismatch', ['passwordInfo']) | translate}}</span>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>

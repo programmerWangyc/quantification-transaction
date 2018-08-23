@@ -27,16 +27,14 @@ import { BacktestSandboxService } from './providers/backtest.sandbox.service';
 import { BacktestService } from './providers/backtest.service';
 import { QuotaChartComponent } from './quota-chart/quota-chart.component';
 import { TimeOptionsComponent } from './time-options/time-options.component';
+import { highchartsFactory } from '../tool/tool.module';
+import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
-        ChartModule.forRoot(
-            require('highcharts/highstock'),
-            require('../plugins/exporting.js'),
-            require('../plugins/offline-exporting.js'),
-        ),
+        ChartModule,
     ],
     declarations: [
         AccountInfoComponent,
@@ -65,6 +63,7 @@ import { TimeOptionsComponent } from './time-options/time-options.component';
         BacktestConstantService,
         BacktestSandboxService,
         BacktestService,
+        { provide: HighchartsStatic, useFactory: highchartsFactory },
     ],
 
     exports: [

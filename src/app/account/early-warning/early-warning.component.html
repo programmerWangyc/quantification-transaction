@@ -2,7 +2,7 @@
 
 <nz-alert nzType="info" [nzDescription]="'BALANCE_EARLY_WARING_TIP' | translate" [nzCloseText]="'I_KNOWN' | translate" nzShowIcon></nz-alert>
 
-<form nz-form #alertForm="ngForm" (ngSubmit)="onSet()" nzLayout="inline">
+<form nz-form #alertForm="ngForm" (ngSubmit)="onSet(amount)" nzLayout="inline">
     <nz-form-item>
         <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'BALANCE_MIN_VALUE' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>

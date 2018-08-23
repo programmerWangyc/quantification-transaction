@@ -19,6 +19,6 @@
 </form>
 
 <div class="button-group" bt-text-direction direction="right">
-    <button nz-button (click)="close()">{{'CANCEL' | translate}}</button>
+    <button nz-button (click)="close(null)">{{'CANCEL' | translate}}</button>
     <button nz-button (click)="close(form.value)" [disabled]="form.invalid" [nzType]="'primary'">{{(isShare ? 'GENERATE_COPY_CODE': 'GENERATE_REGISTER_CODE') | translate}}</button>
 </div>

@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ChartModule } from 'angular2-highcharts';
+import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
@@ -26,9 +27,18 @@ import { RobotStrategyChartComponent } from './robot-strategy-chart/robot-strate
 import { RunningLogComponent } from './running-log/running-log.component';
 import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
+import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
-import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
+
+export function highchartsFactory() {
+    const highStock = require('highcharts/highstock');
+    const highExporting = require('../plugins/exporting.js');
+
+    highExporting(highStock);
+
+    return highStock;
+}
 
 @NgModule({
     imports: [
@@ -42,11 +52,7 @@ import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.co
         ReactiveFormsModule,
         RouterModule,
         TranslateModule,
-        ChartModule.forRoot(
-            require('highcharts/highstock'),
-            require('../plugins/exporting.js'),
-            require('../plugins/offline-exporting.js'),
-        ),
+        ChartModule,
     ],
     declarations: [
         ConfirmComponent,
@@ -70,7 +76,6 @@ import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.co
         StrategyRenewalComponent,
         VerifyPasswordComponent,
     ],
-
     entryComponents: [
         ConfirmComponent,
         CustomSnackBarComponent,
@@ -96,6 +101,9 @@ import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.co
         ShareComponent,
         SimpleNzConfirmWrapComponent,
         StrategyRenewalComponent,
+    ],
+    providers: [
+        { provide: HighchartsStatic, useFactory: highchartsFactory },
     ],
 })
 export class ToolModule { }

@@ -92,7 +92,7 @@ export class ModifySubaccountPermissionComponent implements OnInit {
     /**
      * @ignore
      */
-    close(value: TransferItem[]) {
+    close(value?: TransferItem[]) {
         if (!value) {
             return this.modalRef.close(null);
         } else {
