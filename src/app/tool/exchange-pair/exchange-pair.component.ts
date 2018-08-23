@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { SelectedPair } from '../../interfaces/app.interface';
 
@@ -6,7 +6,6 @@ import { SelectedPair } from '../../interfaces/app.interface';
     selector: 'app-exchange-pair',
     templateUrl: './exchange-pair.component.html',
     styleUrls: ['./exchange-pair.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangePairComponent implements OnInit {
 

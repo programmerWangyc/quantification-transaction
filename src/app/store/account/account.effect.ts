@@ -19,18 +19,18 @@ export class AccountEffect extends BaseEffect {
 
     @Effect()
     changePassword$: Observable<ResponseAction> = this.getResponseAction(accountAction.CHANGE_PASSWORD, accountAction.ResponseActions, isRequestFail)
-        .pipe(tap(this.message('MODIFY_PASSWORD_SUCCESS', 'MODIFY_PASSWORD_FAIL')));
+        .pipe(tap(this.tip.messageByResponse('MODIFY_PASSWORD_SUCCESS', 'MODIFY_PASSWORD_FAIL')));
 
     @Effect()
     changeNickname$: Observable<ResponseAction> = this.getResponseAction(accountAction.CHANGE_NICKNAME, accountAction.ResponseActions, isRequestFail)
-        .pipe(tap(this.message('MODIFY_NICKNAME_SUCCESS', 'MODIFY_NICKNAME_FAIL')));
+        .pipe(tap(this.tip.messageByResponse('MODIFY_NICKNAME_SUCCESS', 'MODIFY_NICKNAME_FAIL')));
 
     @Effect()
     googleAuthKey$: Observable<ResponseAction> = this.getResponseAction(accountAction.GET_GOOGLE_AUTH_KEY, accountAction.ResponseActions);
 
     @Effect()
     unbindSNS$: Observable<ResponseAction> = this.getResponseAction(accountAction.UNBIND_SNS, accountAction.ResponseActions)
-        .pipe(tap(this.message('UNBIND_SUCCESS', 'UNBIND_FAIL')));
+        .pipe(tap(this.tip.messageByResponse('UNBIND_SUCCESS', 'UNBIND_FAIL')));
 
     @Effect()
     bindGoogleAuth$: Observable<ResponseAction> = this.getResponseAction(accountAction.BIND_GOOGLE_AUTH, accountAction.ResponseActions);
@@ -43,22 +43,22 @@ export class AccountEffect extends BaseEffect {
 
     @Effect()
     addShadowMember$: Observable<ResponseAction> = this.getResponseAction(accountAction.ADD_SHADOW_MEMBER, accountAction.ResponseActions, isRequestFail).pipe(
-        tap(this.message('CREATE_SUBACCOUNT_SUCCESS', 'CREATE_SUBACCOUNT_FAIL'))
+        tap(this.tip.messageByResponse('CREATE_SUBACCOUNT_SUCCESS', 'CREATE_SUBACCOUNT_FAIL'))
     );
 
     @Effect()
     updateShadowMember$: Observable<ResponseAction> = this.getResponseAction(accountAction.UPDATE_SHADOW_MEMBER, accountAction.ResponseActions, isRequestFail).pipe(
-        tap(this.message('UPDATE_SUBACCOUNT_SUCCESS', 'UPDATE_SUBACCOUNT_FAIL'))
+        tap(this.tip.messageByResponse('UPDATE_SUBACCOUNT_SUCCESS', 'UPDATE_SUBACCOUNT_FAIL'))
     );
 
     @Effect()
     lockMember$: Observable<ResponseAction> = this.getResponseAction(accountAction.LOCK_SHADOW_MEMBER, accountAction.ResponseActions, isRequestFail).pipe(
-        tap(this.message('OPERATE_SUCCESS', 'OPERATE_FAIL'))
+        tap(this.tip.messageByResponse('OPERATE_SUCCESS', 'OPERATE_FAIL'))
     );
 
     @Effect()
     deleteMember$: Observable<ResponseAction> = this.getResponseAction(accountAction.DELETE_SHADOW_MEMBER, accountAction.ResponseActions, isRequestFail).pipe(
-        tap(this.message('DELETE_SUBACCOUNT_SUCCESS', 'DELETE_SUBACCOUNT_FAIL'))
+        tap(this.tip.messageByResponse('DELETE_SUBACCOUNT_SUCCESS', 'DELETE_SUBACCOUNT_FAIL'))
     );
 
     @Effect()
@@ -66,17 +66,17 @@ export class AccountEffect extends BaseEffect {
 
     @Effect()
     createApiKey$: Observable<ResponseAction> = this.getResponseAction(accountAction.CREATE_API_KEY, accountAction.ResponseActions).pipe(
-        tap(this.message('CREATE_API_KEY_SUCCESS', 'CREATE_API_KEY_FAIL'))
+        tap(this.tip.messageByResponse('CREATE_API_KEY_SUCCESS', 'CREATE_API_KEY_FAIL'))
     );
 
     @Effect()
     lockApiKe$: Observable<ResponseAction> = this.getResponseAction(accountAction.LOCK_API_KEY, accountAction.ResponseActions).pipe(
-        tap(this.message('OPERATE_SUCCESS', 'OPERATE_FAIL'))
+        tap(this.tip.messageByResponse('OPERATE_SUCCESS', 'OPERATE_FAIL'))
     );
 
     @Effect()
     deleteApiKey$: Observable<ResponseAction> = this.getResponseAction(accountAction.DELETE_API_KEY, accountAction.ResponseActions).pipe(
-        tap(this.message('DELETE_API_KEY_SUCCESS', 'DELETE_API_KEY_FAIL'))
+        tap(this.tip.messageByResponse('DELETE_API_KEY_SUCCESS', 'DELETE_API_KEY_FAIL'))
     );
 
     constructor(
@@ -85,19 +85,6 @@ export class AccountEffect extends BaseEffect {
         private tip: TipService,
     ) {
         super(ws, actions$);
-    }
-
-    /**
-     * @ignore
-     */
-    private message(successMsg: string, failMsg: string): (action: accountAction.ApiActions) => void {
-        return (action: accountAction.ApiActions) => {
-            if (!!action.payload.result) {
-                this.tip.messageSuccess(successMsg);
-            } else {
-                this.tip.messageError(failMsg);
-            }
-        };
     }
 }
 

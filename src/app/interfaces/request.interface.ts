@@ -56,10 +56,16 @@ export enum SettingTypes {
     brokers = 'brokers',
     index = 'index',
     backtest_javascript = 'backtest_javascript',
+    alertThreshold = 'alertThreshold',
 }
 
 export interface SettingsRequest {
     type: string;
+}
+
+export interface ChangeAlertThresholdSettingRequest {
+    type: string;
+    amount: number;
 }
 
 // ===================================================Exchange=========================================
@@ -590,6 +596,9 @@ export interface DeleteApiKeyRequest {
     id: number;
 }
 
+// change settings
+
+
 // ============================================Message==================================================
 
 export interface BaseNotify {
@@ -622,5 +631,5 @@ export interface DeleteBBSNotifyRequest extends BaseDeleteNotify { }
 export interface GetSandboxTokenRequest { }
 
 /**
- * 接口总数： 83， 已完成： 70;
+ * 接口总数： 83， 已完成： 71;
  */

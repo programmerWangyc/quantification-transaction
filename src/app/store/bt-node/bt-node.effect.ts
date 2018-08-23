@@ -18,7 +18,7 @@ export class BtNodeEffect extends BaseEffect {
 
     @Effect()
     delete$: Observable<ResponseAction> = this.getResponseAction(btNode.DELETE_NODE, btNode.ResponseActions, isDeleteNodeFail).pipe(
-        tap((action: btNode.DeleteNodeSuccessAction | btNode.DeleteNodeFailAction) => action.payload.result === -1 && this.tip.messageError('SOME_ROBOT_IS_RUNNING_AT_AGENT'))
+        tap(this.tip.messageByResponse('DELETE_NODE_SUCCESS', 'SOME_ROBOT_IS_RUNNING_AT_AGENT', res => res !== -1))
     );
 
     @Effect()

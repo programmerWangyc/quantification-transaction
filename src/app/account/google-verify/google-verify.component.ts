@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { Observable, of, Subject } from 'rxjs';
 import { map, mergeMap, takeWhile, withLatestFrom } from 'rxjs/operators';
 
-import { FormTypeBaseComponent } from '../../base/base.component';
+import { FormTypeBaseComponent } from '../base/base';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { AccountService } from '../providers/account.service';
 

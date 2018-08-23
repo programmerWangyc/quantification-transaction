@@ -18,7 +18,7 @@ import * as DocumentActions from '../store/document/document.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import * as PlatformActions from '../store/platform/platform.action';
-import { GetSettingsRequestAction, LogoutRequestAction } from '../store/public/public.action';
+import { GetSettingsRequestAction, LogoutRequestAction, ChangeAlertThresholdSettingRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
@@ -36,6 +36,16 @@ export class ProcessService {
         private store: Store<AppState>,
     ) { }
 
+    //  ===================================================Public===================================================
+
+    processSettings(paramObs: Observable<Request.SettingsRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new GetSettingsRequestAction(params)));
+    }
+
+    processChangeAlertThresholdSetting(paramObs: Observable<Request.ChangeAlertThresholdSettingRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new ChangeAlertThresholdSettingRequestAction(params)));
+    }
+
     //  ===================================================Auth===================================================
 
     processLogin(paramObs: Observable<Request.LoginRequest>): Subscription {
@@ -44,10 +54,6 @@ export class ProcessService {
 
     processSignup(paramObs: Observable<Request.SignupRequest>): Subscription {
         return paramObs.subscribe(data => this.store.dispatch(new SignupRequestAction(data)));
-    }
-
-    processSettings(paramObs: Observable<Request.SettingsRequest>): Subscription {
-        return paramObs.subscribe(params => this.store.dispatch(new GetSettingsRequestAction(params)));
     }
 
     processRegain(paramObs: Observable<Request.ResetPasswordRequest>): Subscription {

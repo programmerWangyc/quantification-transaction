@@ -43,15 +43,9 @@ export class StrategyEffect extends BaseEffect {
     @Effect()
     saveStrategy$: Observable<ResponseAction> = this.getResponseAction(strategyActions.SAVE_STRATEGY, strategyActions.ResponseActions).pipe(
         tap((action: strategyActions.SaveStrategyFailAction | strategyActions.SaveStrategySuccessAction) => {
-            const result = action.payload.result;
+            const successMsg = isString(action.payload.result) ? 'SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY' : 'SAVE_SUCCESS';
 
-            if (!result) {
-                this.tip.messageError('STRATEGY_NAME_DUPLICATE_ERROR');
-            } else {
-                const message = isString(result) ? 'SAVE_STRATEGY_SUCCESS_WITH_UPDATED_KEY' : 'SAVE_SUCCESS';
-
-                this.tip.messageSuccess(message);
-            }
+            this.tip.messageByResponse(successMsg, 'STRATEGY_NAME_DUPLICATE_ERROR')(action);
         })
     );
 

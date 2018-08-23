@@ -1,6 +1,6 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<form nz-form #nickForm="ngForm" (ngSubmit)="nickname$.next(nickname)">
+<form nz-form #nickForm="ngForm" nzLayout="inline" (ngSubmit)="nickname$.next(nickname)">
     <nz-form-item>
         <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'NICKNAME' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>

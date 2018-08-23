@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { ConfirmOperateTipData } from '../interfaces/app.interface';
 import { CustomSnackBarComponent } from '../tool/tool.components';
+import { ApiActions } from '../store/index.action';
 
 @Injectable()
 export class TipService {
@@ -107,6 +108,17 @@ export class TipService {
 
         audio.play();
     }
-
+    /**
+     * @ignore
+     */
+    messageByResponse<T extends ApiActions>(successMsg: string, failMsg: string, isSuccess?: (result: any) => boolean): (action: T) => void {
+        return (action: T) => {
+            if (isSuccess ? isSuccess(action.payload.result) : !!action.payload.result) {
+                this.messageSuccess(successMsg);
+            } else {
+                this.messageError(failMsg);
+            }
+        };
+    }
 }
 

@@ -71,6 +71,7 @@ const account: SideNav = {
         { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
         { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
         { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
+        { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'bell' },
     ],
 };
 

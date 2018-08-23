@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Subject } from 'rxjs';
 import { filter, map, takeWhile } from 'rxjs/operators';
 
-import { FormTypeBaseComponent } from '../../base/base.component';
+import { FormTypeBaseComponent } from '../base/base';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { EncryptService } from '../../providers/encrypt.service';
 import { passwordMatchValidator, passwordValidator } from '../../validators/validators';

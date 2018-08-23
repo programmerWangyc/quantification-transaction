@@ -3,14 +3,15 @@ import { Actions, Effect } from '@ngrx/effects';
 
 import { omit } from 'lodash';
 import { empty as observableEmpty, Observable } from 'rxjs';
-import { map, mergeMap, filter } from 'rxjs/operators';
+import { map, mergeMap, filter, tap } from 'rxjs/operators';
 
 import { LocalStorageKey } from '../../app.config';
-import { PublicResponse } from '../../interfaces/response.interface';
+import { PublicResponse, ChangeAlertThresholdSettingResponse } from '../../interfaces/response.interface';
 import { WebsocketService } from '../../providers/websocket.service';
 import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import * as pub from './public.action';
+import { TipService } from '../../providers/tip.service';
 
 @Injectable()
 export class PublicEffect extends BaseEffect {
@@ -49,10 +50,20 @@ export class PublicEffect extends BaseEffect {
     @Effect()
     logout$: Observable<ResponseAction> = this.getResponseAction(pub.LOGOUT, pub.ResponseActions);
 
+    @Effect()
+    changeAlertThreshold$: Observable<ResponseAction> = this.getResponseAction(pub.CHANGE_ALERT_THRESHOLD_SETTING, pub.ResponseActions, isRequestFail).pipe(
+        tap(this.tip.messageByResponse('SET_ALERT_THRESHOLD_SUCCESS', 'SET_ALERT_THRESHOLD_FAIL'))
+    );
+
     constructor(
         public ws: WebsocketService,
-        public actions$: Actions
+        public actions$: Actions,
+        private tip: TipService,
     ) {
         super(ws, actions$);
     }
+}
+
+export function isRequestFail(res: ChangeAlertThresholdSettingResponse): boolean {
+    return !!res.error || !res.result;
 }

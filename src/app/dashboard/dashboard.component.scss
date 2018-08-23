@@ -45,6 +45,12 @@
     }
 }
 
+#user-info-tpl {
+    a {
+        margin: 10px 0;
+    }
+}
+
 :host ::ng-deep .trigger {
     font-size: 18px;
     line-height: $header-height;

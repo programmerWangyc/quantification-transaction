@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Observable, of, Subject } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
 
-import { FormTypeBaseComponent } from '../../base/base.component';
+import { FormTypeBaseComponent } from '../base/base';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { ShadowMember } from '../../interfaces/response.interface';
 import { EncryptService } from '../../providers/encrypt.service';

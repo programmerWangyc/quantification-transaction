@@ -19,29 +19,17 @@ export class CommentEffect extends BaseEffect {
 
     @Effect()
     addComment$: Observable<ResponseAction> = this.getResponseAction(actions.ADD_COMMENT, actions.ResponseActions).pipe(
-        tap((action: actions.AddCommentFailAction | actions.AddCommentFailAction) => !action.payload.result && this.tip.showTip('COMMIT_FAIL_TRY_AGAIN_LATER'))
+        tap(this.tip.messageByResponse('COMMIT_SUCCESS', 'COMMIT_FAIL_TRY_AGAIN_LATER'))
     );
 
     @Effect()
     deleteComment$: Observable<ResponseAction> = this.getResponseAction(actions.DELETE_COMMENT, actions.ResponseActions, isDeleteFail).pipe(
-        tap((action: actions.DeleteCommentFailAction | actions.DeleteCommentSuccessAction) => {
-            if (!!action.payload.result) {
-                this.tip.messageSuccess('COMMENT_DELETE_SUCCESS');
-            } else {
-                this.tip.showTip('CAN_NOT_DELETE_TOPIC');
-            }
-        })
+        tap(this.tip.messageByResponse('COMMENT_DELETE_SUCCESS', 'CAN_NOT_DELETE_TOPIC'))
     );
 
     @Effect()
     updateComment$: Observable<ResponseAction> = this.getResponseAction(actions.UPDATE_COMMENT, actions.ResponseActions).pipe(
-        tap((action: actions.UpdateCommentFailAction | actions.UpdateCommentSuccessAction) => {
-            if (!!action.payload.result) {
-                this.tip.messageSuccess('COMMENT_UPDATE_SUCCESS');
-            } else {
-                this.tip.showTip('REPLY_FAIL_TIP');
-            }
-        })
+        tap(this.tip.messageByResponse('COMMENT_UPDATE_SUCCESS', 'REPLY_FAIL_TIP'))
     );
 
     @Effect()

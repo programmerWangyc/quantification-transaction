@@ -14,14 +14,6 @@ export abstract class BaseComponent {
     abstract ngOnDestroy(): void;
 }
 
-export abstract class FormTypeBaseComponent extends BaseComponent {
-    labelSm = 2;
-
-    controlSm = 4;
-
-    xs = 24;
-}
-
 function toggle() {
     this.isFold = !this.isFold;
 

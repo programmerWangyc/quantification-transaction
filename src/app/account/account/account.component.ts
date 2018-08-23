@@ -10,7 +10,7 @@ export class AccountComponent implements OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{name: 'ACCOUNT_MANAGEMENT'}];
+    paths: Breadcrumb[] = [{ name: 'ACCOUNT_MANAGEMENT' }];
 
     constructor() { }
 

@@ -9,11 +9,11 @@ import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
 import { EditorConfig, Referrer } from '../interfaces/app.interface';
 import { SettingTypes } from '../interfaces/request.interface';
-import { Broker, LogoutResponse, PublicResponse, ResponseState } from '../interfaces/response.interface';
+import { Broker, LogoutResponse, PublicResponse, ResponseState, ChangeAlertThresholdSettingResponse } from '../interfaces/response.interface';
 import { ClearLoginInfoAction } from '../store/auth/login.action';
 import {
     AppState, selectEditorConfig, selectFooterState, selectLanguage, selectLogoutResponse, selectPublicResponse,
-    selectReferrer, selectServerMsgSubscribeState, selectSettings, selectSettingsResponse
+    selectReferrer, selectServerMsgSubscribeState, selectSettings, selectSettingsResponse, selectChangeAlertThresholdSettingResponse
 } from '../store/index.reducer';
 import {
     SetLanguageAction, SetReferrerAction, ToggleFooterAction, ToggleSubscribeServerSendMessageTypeAction,
@@ -61,6 +61,15 @@ export class PublicService extends BaseService {
         this.clearUserInfo();
 
         return this.process.processLogout(source);
+    }
+
+    /**
+     * @ignore
+     */
+    launchChangeAlertThresholdSetting(source: Observable<number>): Subscription {
+        return this.process.processChangeAlertThresholdSetting(source.pipe(
+            map(amount => ({ amount, type: SettingTypes.alertThreshold }))
+        ));
     }
 
     //  =======================================================Date acquisition=======================================================
@@ -206,6 +215,16 @@ export class PublicService extends BaseService {
     isLogoutSuccess(): Observable<boolean> {
         return this.getLogoutResponse().pipe(
             map(res => res.result)
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    private getChangeAlertThresholdSettingResponse(): Observable<ChangeAlertThresholdSettingResponse> {
+        return this.store.pipe(
+            select(selectChangeAlertThresholdSettingResponse),
+            this.filterTruth()
         );
     }
 
@@ -396,6 +415,14 @@ export class PublicService extends BaseService {
      */
     handleLogoutError(keepAlive: () => boolean): Subscription {
         return this.error.handleResponseError(this.getLogoutResponse().pipe(
+            takeWhile(keepAlive)
+        ));
+    }
+    /**
+     * @ignore
+     */
+    handleChangeAlertThresholdError(keepAlive: () => boolean): Subscription {
+        return this.error.handleResponseError(this.getChangeAlertThresholdSettingResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

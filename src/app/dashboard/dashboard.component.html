@@ -38,7 +38,7 @@
             <section fxLayoutAlign="end center">
 
                 <a href="https://quant.la/Tools/View/4/chart.html" target="__blank">
-                    <i class="anticon anticon-dot-chart"></i>
+                    <i class="anticon anticon-line-chart"></i>
                     {{'QUOTE_CHART' | translate}}
                 </a>
                 <a href="https://quant.la/Tools/View/3/formula.html" target="__blank">
@@ -62,8 +62,14 @@
 </ng-template>
 
 <ng-template #userInfoTpl>
-    <a (click)="logout()" style="font-size: 12px;">
-        <i class="anticon anticon-logout"></i>
-        {{'LOGOUT' | translate}}
-    </a>
+    <div fxLayout="column" id="user-info-tpl">
+        <a [routerLink]="['account']">
+            <i class="anticon anticon-setting"></i>
+            {{'ACCOUNT_MANAGEMENT' | translate}}
+        </a>
+        <a (click)="logout()" style="font-size: 12px; color: red">
+            <i class="anticon anticon-logout"></i>
+            {{'LOGOUT' | translate}}
+        </a>
+    </div>
 </ng-template>

@@ -22,7 +22,7 @@ export class PlatformEffect extends BaseEffect {
 
     @Effect()
     deletePlatform$: Observable<ResponseAction> = this.getResponseAction(platform.DELETE_PLATFORM, platform.ResponseActions).pipe(
-        tap((action: platform.DeletePlatformFailAction | platform.DeletePlatformSuccessAction) => action.payload.result && this.tip.messageSuccess('EXCHANGE_DELETE_SUCCESS'))
+        tap(this.tip.messageByResponse('EXCHANGE_DELETE_SUCCESS', 'EXCHANGE_DELETE_FAIL'))
     );
 
     @Effect()

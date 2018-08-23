@@ -1,62 +1,78 @@
 import { LocalStorageKey } from '../../app.config';
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
-import { SettingsRequest } from '../../interfaces/request.interface';
-import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse, LogoutResponse } from '../../interfaces/response.interface';
+import { SettingsRequest, ChangeAlertThresholdSettingRequest } from '../../interfaces/request.interface';
+import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse, LogoutResponse, ChangeAlertThresholdSettingResponse } from '../../interfaces/response.interface';
 import * as actions from './public.action';
 
 export interface Settings {
-    agreement: string;
     about: string;
-    promotion: Object;
-    docker: Object;
-    brokers: string;
-    index: Object;
+    agreement: string;
     backtest_javascript: string; // !FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
+    brokers: string;
+    docker: object;
+    index: object;
+    promotion: object;
     [key: string]: any;
 }
 
+export interface RequestParams {
+    changeAlertThreshold: ChangeAlertThresholdSettingRequest;
+}
+
 export interface State {
-    referrer: Referrer;
-    settings: Settings;
-    publicRes: PublicResponse;
-    settingsResponse: ResponseState;
-    settingsRequest: SettingsRequest;
+    changeAlertThresholdRes: ChangeAlertThresholdSettingResponse;
+    editorConfig: EditorConfig;
     language: string;
     logoutRes: LogoutResponse;
     needFooter: boolean;
-    editorConfig: EditorConfig;
+    publicRes: PublicResponse;
+    referrer: Referrer;
+    requestParams: RequestParams;
     serverSendMessageSubscribeState: { [key: string]: boolean }; // 用来控制是否处理服务端相应的消息推送。
+    settings: Settings;
+    settingsRequest: SettingsRequest;
+    settingsResponse: ResponseState;
 }
 
 const editor = JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig));
 
+const initialSettings = {
+    about: null,
+    agreement: null,
+    api: null,
+    backtest_javascript: null,
+    brokers: null,
+    docker: null,
+    index: null,
+    promotion: null,
+};
+
+const initialRequestParams: RequestParams = {
+    changeAlertThreshold: null,
+};
+
+const initialSubscribeState: { [key: string]: boolean } = {
+    backtest: false,
+    charge: false,
+    node: false,
+    payment: false,
+    robot: false,
+    rsync: false,
+};
+
 export const initialState: State = {
-    referrer: null,
-    publicRes: null,
-    settings: {
-        agreement: null,
-        about: null,
-        api: null,
-        promotion: null,
-        docker: null,
-        brokers: null,
-        index: null,
-        backtest_javascript: null,
-    },
-    settingsRequest: null,
-    settingsResponse: null,
+    changeAlertThresholdRes: null,
+    editorConfig: editor || null,
     language: 'zh',
     logoutRes: null,
     needFooter: false,
-    editorConfig: editor || null,
-    serverSendMessageSubscribeState: {
-        robot: false,
-        node: false,
-        rsync: false,
-        payment: false,
-        charge: false,
-        backtest: false,
-    },
+    publicRes: null,
+    referrer: null,
+    requestParams: initialRequestParams,
+    serverSendMessageSubscribeState: initialSubscribeState,
+    settings: initialSettings,
+    settingsRequest: null,
+    settingsResponse: null,
 };
 
 export function reducer(state = initialState, action: actions.Actions): State {
@@ -104,6 +120,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.LOGOUT_SUCCESS:
             return { ...state, logoutRes: action.payload, publicRes: null };
+
+        // change alert threshold setting
+        case actions.CHANGE_ALERT_THRESHOLD_SETTING:
+            return { ...state, requestParams: { ...state.requestParams, changeAlertThreshold: action.payload } };
+
+        case actions.CHANGE_ALERT_THRESHOLD_SETTING_FAIL:
+        case actions.CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS:
+            return { ...state, changeAlertThresholdRes: action.payload };
 
         // ==============================================ui state=========================================
 
@@ -166,3 +190,7 @@ export const getEditorConfig = (state: State) => state.editorConfig;
 export const getServerMsgSubscribeState = (state: State) => state.serverSendMessageSubscribeState;
 
 export const getLogoutRes = (state: State) => state.logoutRes;
+
+export const getChangeAlertThresholdRes = (state: State) => state.changeAlertThresholdRes;
+
+export const getRequestParams = (state: State) => state.requestParams;

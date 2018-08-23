@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { Subject } from 'rxjs';
 import { filter, map, takeWhile } from 'rxjs/operators';
 
-import { FormTypeBaseComponent } from '../../base/base.component';
+import { FormTypeBaseComponent } from '../base/base';
 import { Breadcrumb } from '../../interfaces/app.interface';
 import { AccountService } from '../providers/account.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
     selector: 'app-nickname',
@@ -34,11 +35,26 @@ export class NicknameComponent extends FormTypeBaseComponent {
      */
     isAlive = true;
 
+    /**
+     * @ignore
+     */
+    labelSm = 6;
+
+    /**
+     * @ignore
+     */
+    controlSm = 14;
+
+    /**
+     * @ignore
+     */
+    @ViewChild('nickForm') form: NgForm;
+
     constructor(
         private accountService: AccountService,
     ) {
         super();
-     }
+    }
 
     /**
      * @ignore
@@ -58,7 +74,11 @@ export class NicknameComponent extends FormTypeBaseComponent {
         this.accountService.isChangeNicknameSuccess().pipe(
             takeWhile(() => this.isAlive),
             filter(isSuccess => isSuccess)
-        ).subscribe(_ => this.nickname = null);
+        ).subscribe(_ => {
+            this.nickname = void 0;
+
+            this.form.resetForm();
+        });
 
     }
 

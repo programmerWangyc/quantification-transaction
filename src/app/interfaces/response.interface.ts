@@ -136,6 +136,9 @@ export type SettingResResult = string & DockerSetting & IndexSetting & Broker;
 
 export interface SettingsResponse extends ResponseUnit<SettingResResult> { }
 
+// change alert threshold setting
+export interface ChangeAlertThresholdSettingResponse extends ResponseUnit<boolean> { }
+
 //  =======================================================Exchange response=========================================================
 
 // exchange list

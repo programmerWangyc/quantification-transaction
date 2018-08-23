@@ -27,6 +27,7 @@ export enum Path {
     strategy = 'strategy',
     usergroup = 'usergroup',
     verify = 'verify',
+    warn = 'warn',
     wechat = 'wechat',
 }
 

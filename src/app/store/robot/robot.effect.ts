@@ -54,11 +54,7 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     commandRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.COMMAND_ROBOT, robotActions.ResponseActions, isCommandRobotFail).pipe(
-        tap(action => {
-            const message = (<robotActions.CommandRobotSuccessAction | robotActions.CommandRobotFailAction>action).payload.result ? 'COMMAND_ROBOT_SUCCESS_TIP' : 'COMMAND_ROBOT_FAIL_TIP';
-
-            this.tip.showTip(message);
-        })
+        tap(this.tip.messageByResponse('COMMAND_ROBOT_SUCCESS_TIP', 'COMMAND_ROBOT_FAIL_TIP'))
     );
 
     @Effect()
@@ -66,11 +62,7 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions).pipe(
-        tap(action => {
-            const message = (<robotActions.SaveRobotSuccessAction | robotActions.SaveRobotFailAction>action).payload.result ? 'CREATE_ROBOT_SUCCESS' : 'CREATE_ROBOT_FAIL';
-
-            this.tip.showTip(message);
-        })
+        tap(this.tip.messageByResponse('CREATE_ROBOT_SUCCESS', 'CREATE_ROBOT_FAIL'))
     );
 
     @Effect()

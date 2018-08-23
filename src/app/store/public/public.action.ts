@@ -1,8 +1,10 @@
 import { Action } from '@ngrx/store';
 
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
-import { SettingsRequest, LogoutRequest } from '../../interfaces/request.interface';
-import { PublicResponse, SettingsResponse, LogoutResponse } from '../../interfaces/response.interface';
+import { ChangeAlertThresholdSettingRequest, LogoutRequest, SettingsRequest } from '../../interfaces/request.interface';
+import {
+    ChangeAlertThresholdSettingResponse, LogoutResponse, PublicResponse, SettingsResponse
+} from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
 //  ===========================================Api action===================================
@@ -59,6 +61,49 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     readonly type = GET_SETTINGS_SUCCESS;
 
     constructor(public payload: SettingsResponse) { super(); }
+}
+
+// change alert threshold
+enum AlertThresholdOrder {
+    type,
+    amount,
+    length,
+}
+
+export class AlertThreshold extends ApiAction {
+    isSingleParams = false;
+
+    noneParams = false;
+
+    order = AlertThresholdOrder;
+
+    command = 'ChangeSettings';
+
+    callbackId = 'ChangeAlertThresholdSetting';
+}
+
+export const CHANGE_ALERT_THRESHOLD_SETTING = '[Public] CHANGE_ALERT_THRESHOLD_SETTING';
+
+export class ChangeAlertThresholdSettingRequestAction extends AlertThreshold implements Action {
+    readonly type = CHANGE_ALERT_THRESHOLD_SETTING;
+
+    constructor(public payload: ChangeAlertThresholdSettingRequest) { super(); }
+}
+
+export const CHANGE_ALERT_THRESHOLD_SETTING_FAIL = '[Public] CHANGE_ALERT_THRESHOLD_SETTING_FAIL';
+
+export class ChangeAlertThresholdSettingFailAction extends AlertThreshold implements Action {
+    readonly type = CHANGE_ALERT_THRESHOLD_SETTING_FAIL;
+
+    constructor(public payload: ChangeAlertThresholdSettingResponse) { super(); }
+}
+
+export const CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS = '[Public] CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS';
+
+export class ChangeAlertThresholdSettingSuccessAction extends AlertThreshold implements Action {
+    readonly type = CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS;
+
+    constructor(public payload: ChangeAlertThresholdSettingResponse) { super(); }
 }
 
 // logout
@@ -137,10 +182,13 @@ export class ResetLogoutResponseAction implements Action {
 }
 
 export type ApiActions = GetSettingsRequestAction
+    | ChangeAlertThresholdSettingFailAction
+    | ChangeAlertThresholdSettingRequestAction
+    | ChangeAlertThresholdSettingSuccessAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
-    | LogoutRequestAction
     | LogoutFailAction
+    | LogoutRequestAction
     | LogoutSuccessAction;
 
 export type Actions = ApiActions
@@ -153,6 +201,8 @@ export type Actions = ApiActions
     | UpdateFavoriteEditorConfigAction;
 
 export const ResponseActions = {
+    ChangeAlertThresholdSettingFailAction,
+    ChangeAlertThresholdSettingSuccessAction,
     GetSettingsFailAction,
     GetSettingsSuccessAction,
     LogoutFailAction,

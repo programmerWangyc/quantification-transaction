@@ -8,7 +8,7 @@
     <a [routerLink]="['../../account/wechat']">{{'IMMEDIATELY_BINDING' | translate}}</a>
 </ng-template>
 
-<nz-tabset [(nzSelectedIndex)]="activateTabIndex" [nzType]="'card'" [nzTabBarExtraContent]="control">
+<nz-tabset [(nzSelectedIndex)]="activateTabIndex" [nzTabBarExtraContent]="control">
     <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
         <ng-template #titleTemplate>
             <nz-badge [nzCount]="tab.count">

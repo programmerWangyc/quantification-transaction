@@ -7,6 +7,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { SubaccountComponent } from './subaccount/subaccount.component';
 import { WechatComponent } from './wechat/wechat.component';
 import { ApiKeyComponent } from './api-key/api-key.component';
+import { EarlyWarningComponent } from './early-warning/early-warning.component';
 
 const routs: Routes = [
     { path: '', component: AccountComponent },
@@ -16,6 +17,7 @@ const routs: Routes = [
     { path: 'google', component: GoogleVerifyComponent },
     { path: 'usergroup', component: SubaccountComponent },
     { path: 'key', component: ApiKeyComponent },
+    { path: 'warn', component: EarlyWarningComponent },
 ];
 
 export const routing = RouterModule.forChild(routs);

@@ -210,7 +210,7 @@
     "SUBMIT": "提交",
     "PREVIEW": "预览",
     "POSTING": "发贴",
-    "ACCOUNT_MANAGEMENT": "帐号管理",
+    "ACCOUNT_MANAGEMENT": "帐户管理",
     "ACCOUNT_CHARGE": "帐户充值",
     "MESSAGE_CENTER": "消息中心",
     "MODIFY_PWD": "修改密码",
@@ -685,6 +685,7 @@
     "OLD_VERSION": "旧版本",
     "LATEST_COMMUNICATE": "最近通信",
     "SOME_ROBOT_IS_RUNNING_AT_AGENT": "请先停止所有使用该托管者的机器人！",
+    "DELETE_NODE_SUCCESS": "托管者删除成功",
     "NO_PRIVATE_AGENT": "尚未部署私有托管者",
     "AGENT_DEFINITION": "托管者指部署到服务器上的一个程序，用来运行和管理机器人。",
     "DOWNLOAD_COMMAND_VERSION": "命令版",
@@ -701,6 +702,7 @@
 
     "EXCHANGE_DEFINITION": "交易所指具体执行买卖交易的平台，一个策略可以连接多个交易所。没有列出的交易对可以在创建机器人时通过自定义交易对添加。",
     "EXCHANGE_DELETE_SUCCESS": "交易所删除成功",
+    "EXCHANGE_DELETE_FAIL": "交易所删除失败",
     "DELETE_EXCHANGE_TIP": "确定要删除 {{name}} 交易所设置吗？",
     "ADD_EXCHANGE": "添加交易所",
     "TRADITIONAL_FUTURES": "传统期货",
@@ -761,6 +763,7 @@
     "CURRENT_ACCOUNT": "当用帐号",
     "PLEASE_LOGIN": "请登录",
     "COMMIT_FAIL_TRY_AGAIN_LATER": "提交失败，请稍候再试。",
+    "COMMIT_SUCCESS": "提交成功",
     "CAN_NOT_DELETE_TOPIC": "无法删除此评论，请联系管理员。",
     "REPLY_FAIL_TIP": "该主题可能已经锁定或者删除, 无法回复。",
     "CONFIRM_DELETE_COMMENT": "确定要删除这条评论吗？",
@@ -833,5 +836,11 @@
     "CREATE_API_KEY_FAIL": "API KEY 创建失败",
     "CREATE_API_KEY_SUCCESS": "API KEY 创建成功",
     "DELETE_API_KEY_SUCCESS": "API KEY 删除成功",
-    "DELETE_API_KEY_FAIL": "API KEY 删除失败"
+    "DELETE_API_KEY_FAIL": "API KEY 删除失败",
+    "SET_ALERT_THRESHOLD_SUCCESS": "预警额度设置成功",
+    "SET_ALERT_THRESHOLD_FAIL": "预警额度设置失败",
+
+    "BALANCE_EARLY_WARNING": "额度预警",
+    "BALANCE_MIN_VALUE": "预警阈值",
+    "BALANCE_EARLY_WARING_TIP":"当账户可用余额小于此值时, 您将会收到邮件与微信通知, 设置为0禁止用此功能, 没有充值或者更改此设置的情况下, 24小时内只通知一次。"
 }

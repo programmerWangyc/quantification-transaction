@@ -71,7 +71,8 @@ export const reducers: ActionReducerMap<AppState> = {
 };
 
 
-// public information
+// =============================================public information================================================
+
 export const getPubState = (state: AppState) => state.pub;
 
 export const selectPublicResponse = createSelector(getPubState, pub.getPublicResponse);
@@ -84,8 +85,17 @@ export const selectEditorConfig = createSelector(getPubState, pub.getEditorConfi
 export const selectServerMsgSubscribeState = createSelector(getPubState, pub.getServerMsgSubscribeState);
 export const selectLogoutResponse = createSelector(getPubState, pub.getLogoutRes);
 
-// router
+// change setting
+export const selectChangeAlertThresholdSettingResponse = createSelector(getPubState, pub.getChangeAlertThresholdRes);
+
+// request params
+export const selectPublicRequestParams = createSelector(getPubState, pub.getRequestParams);
+
+// =====================================================router================================================
+
 const getRouteState = (state: AppState) => state.route;
+
+// router
 export const selectRouteState = createSelector(getRouteState, state => state.state);
 
 //  ===================================================Auth===================================================
