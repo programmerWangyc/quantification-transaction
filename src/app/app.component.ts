@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as moment from 'moment';
+import { en_US, NzI18nService } from 'ng-zorro-antd';
 import { Observable, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 import { PublicService } from './providers/public.service';
-import { map, take } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private translate: TranslateService,
         private pubService: PublicService,
         private router: Router,
+        private nzI18nService: NzI18nService,
     ) {
     }
 
@@ -74,7 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 初始化应的语言，配置moment.js使用的语言；
+     * 初始化应用语言，配置moment.js使用的语言；
      */
     private initLanguage(): void {
         this.translate.setDefaultLang('zh');
@@ -84,6 +86,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.translate.use(actualLanguage);
 
         actualLanguage === 'zh' && moment.locale('zh-cn');
+
+        if (actualLanguage === 'zh') {
+            moment.locale('zh-cn');
+        } else {
+            this.nzI18nService.setLocale(en_US);
+        }
     }
 
     /**

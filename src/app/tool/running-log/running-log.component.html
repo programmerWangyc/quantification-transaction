@@ -6,7 +6,7 @@
             <th bt-text-center nzShowFilter [nzFilters]="filterTypes" (nzFilterChange)="search.next($event)">{{'TYPE' | translate}}</th>
             <th bt-text-center>{{'PRICE' | translate}}</th>
             <th bt-text-center>{{'AMOUNT' | translate}}</th>
-            <th bt-text-center>{{'INFORMATION' | translate}}</th>
+            <th bt-text-center nzWidth="50%">{{'INFORMATION' | translate}}</th>
         </tr>
     </thead>
 
@@ -19,7 +19,7 @@
                 <span *ngIf="data.logType < 4">{{data.eid | eid2String}}</span>
             </td>
 
-            <td>
+            <td bt-text-center>
                 <span>{{data.logType | logType | translate}}</span>
                 <span *ngIf="!!(data.direction | directionType)">
                     {{data.direction | directionType | translate}} - {{data.contractType}}
