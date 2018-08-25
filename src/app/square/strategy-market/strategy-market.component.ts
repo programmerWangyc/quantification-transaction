@@ -2,9 +2,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, concat, Observable, of, Subject } from 'rxjs';
-import { map, startWith, takeWhile } from 'rxjs/operators';
+import { map, startWith, takeWhile, take } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { CategoryType, GetStrategyListByNameRequest } from '../../interfaces/request.interface';
@@ -13,15 +12,58 @@ import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
 import { UtilService } from '../../providers/util.service';
 import { Category, STRATEGY_CATEGORIES } from '../../strategy/providers/strategy.constant.service';
 import { StrategyVisibilityType } from '../../strategy/strategy.config';
-import { SquareService } from '../providers/square.service';
+import { SquareService, StrategyInfo } from '../providers/square.service';
+import { NzModalService } from 'ng-zorro-antd';
+import { PublicService } from '../../providers/public.service';
 import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
+
+export class SquareStrategyBase {
+    constructor(
+        public router: Router,
+        public activatedRoute: ActivatedRoute,
+        public nzModal: NzModalService,
+        public publicService: PublicService,
+    ) { }
+
+    /**
+     * 购买策略
+     */
+    buyStrategy(strategy: StrategyListByNameStrategy): void {
+        this.publicService.isLogin().pipe(
+            take(1)
+        ).subscribe(isLogged => {
+            if (isLogged) {
+                this.directToBuy(strategy);
+            } else {
+                this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root });
+            }
+        });
+    }
+
+    /**
+     * @ignore
+     */
+    private directToBuy(strategy: StrategyInfo): void {
+        const { pricing, id, username, email, name } = strategy;
+
+        if (pricing && pricing.includes('/')) {
+            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent.parent });
+        } else {
+            this.nzModal.create({
+                nzContent: StrategyRenewalComponent,
+                nzComponentParams: { name, author: username, email, id },
+                nzFooter: null,
+            });
+        }
+    }
+}
 
 @Component({
     selector: 'app-strategy-market',
     templateUrl: './strategy-market.component.html',
     styleUrls: ['./strategy-market.component.scss'],
 })
-export class StrategyMarketComponent implements OnInit, OnDestroy {
+export class StrategyMarketComponent extends SquareStrategyBase implements OnInit, OnDestroy {
 
     /**
      * view source data;
@@ -107,10 +149,12 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
     constructor(
         private squareService: SquareService,
         private utilService: UtilService,
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private nzModal: NzModalService,
+        public router: Router,
+        public activatedRoute: ActivatedRoute,
+        public nzModal: NzModalService,
+        public publicService: PublicService,
     ) {
+        super(router, activatedRoute, nzModal, publicService);
     }
 
     /**
@@ -149,23 +193,6 @@ export class StrategyMarketComponent implements OnInit, OnDestroy {
      */
     navigateTo(strategy: StrategyListByNameStrategy): void {
         this.router.navigate([Path.strategy, strategy.id], { relativeTo: this.activatedRoute });
-    }
-
-    /**
-     * 购买策略
-     */
-    buyStrategy(strategy: StrategyListByNameStrategy): void {
-        const { pricing, id, username, email, name } = strategy;
-
-        if (pricing && pricing.includes('/')) {
-            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent.parent });
-        } else {
-            this.nzModal.create({
-                nzContent: StrategyRenewalComponent,
-                nzComponentParams: { name, author: username, email, id },
-                nzFooter: null,
-            });
-        }
     }
 
     /**

@@ -2,6 +2,7 @@ export enum Path {
     account = 'account',
     add = 'add',
     agent = 'agent',
+    auth = 'auth',
     analyze = 'analyze',
     backtest = 'backtest',
     charge = 'charge',

@@ -11,15 +11,12 @@ import { LoginComponent } from './login/login.component';
 import { PasswordComponent } from './password/password.component';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
-import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
         MarkdownModule.forRoot(),
-        MatDialogModule,
-        MatProgressSpinnerModule,
         routing,
     ],
     declarations: [

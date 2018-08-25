@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
+import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -17,6 +18,7 @@ import { GLOBAL_SERVICES } from './providers/service.import';
 import { SharedModule } from './shared/shared.module';
 import { EFFECTS } from './store/index.effect';
 import { reducers } from './store/index.reducer';
+import { CustomSerializer } from './store/router/router.reducer';
 
 // Use AoT, so we need a exported factory function for compiler.
 export function HttpLoaderFactory(http: HttpClient) {
@@ -47,11 +49,13 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
         EffectsModule.forRoot(EFFECTS),
         NgZorroAntdModule,
+        StoreRouterConnectingModule,
     ],
     providers: [
         Store,
         NzNotificationService,
         GLOBAL_SERVICES,
+        { provide: RouterStateSerializer, useClass: CustomSerializer },
     ],
     bootstrap: [AppComponent],
 })

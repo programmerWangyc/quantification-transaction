@@ -12,6 +12,8 @@ import { ResponseAction } from '../base.action';
 import { BaseEffect } from '../base.effect';
 import * as pub from './public.action';
 import { TipService } from '../../providers/tip.service';
+import { GET_PUBLIC_STRATEGY_DETAIL, ResponseActions as strategyResponseActions, GET_STRATEGY_LIST_BY_NAME } from '../strategy/strategy.action';
+import { GET_PUBLIC_ROBOT_LIST, ResponseActions as robotResponseActions } from '../robot/robot.action';
 
 @Injectable()
 export class PublicEffect extends BaseEffect {
@@ -54,6 +56,15 @@ export class PublicEffect extends BaseEffect {
     changeAlertThreshold$: Observable<ResponseAction> = this.getResponseAction(pub.CHANGE_ALERT_THRESHOLD_SETTING, pub.ResponseActions, isRequestFail).pipe(
         tap(this.tip.messageByResponse('SET_ALERT_THRESHOLD_SUCCESS', 'SET_ALERT_THRESHOLD_FAIL'))
     );
+
+    @Effect()
+    publicDetail$: Observable<ResponseAction> = this.getResponseAction(GET_PUBLIC_STRATEGY_DETAIL, strategyResponseActions);
+
+    @Effect()
+    publicRobotList$: Observable<ResponseAction> = this.getResponseAction(GET_PUBLIC_ROBOT_LIST, robotResponseActions);
+
+    @Effect()
+    strategyListByName$: Observable<ResponseAction> = this.getResponseAction(GET_STRATEGY_LIST_BY_NAME, strategyResponseActions);
 
     constructor(
         public ws: WebsocketService,

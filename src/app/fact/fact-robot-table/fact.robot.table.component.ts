@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { take } from 'rxjs/operators';
+
 import { PublicRobot } from '../../interfaces/response.interface';
+import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-fact-robot-table',
@@ -17,6 +20,7 @@ export class FactRobotTableComponent implements OnInit {
     @Input() robots: PublicRobot[];
 
     constructor(
+        private publicService: PublicService,
         private router: Router,
         private activatedRoute: ActivatedRoute,
     ) { }
@@ -30,7 +34,15 @@ export class FactRobotTableComponent implements OnInit {
     /**
      * @ignore
      */
-    navigateTo(robot: PublicRobot): void {
-        this.router.navigate([robot.id, robot.name], { relativeTo: this.activatedRoute });
+    lookupStrategy(robot: PublicRobot): void {
+        this.publicService.isLogin().pipe(
+            take(1)
+        ).subscribe(isLogged => {
+            if (isLogged) {
+                this.router.navigate([robot.id, robot.name], { relativeTo: this.activatedRoute });
+            } else {
+                this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root });
+            }
+        });
     }
 }

@@ -7,12 +7,14 @@ import { OperateCommentComponent } from './operate-comment/operate-comment.compo
 import { CommentService } from './providers/comment.service';
 import { ReplyComponent } from './reply/reply.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
         MarkdownModule.forRoot(),
+        RouterModule,
     ],
     declarations: [
         CommentComponent,

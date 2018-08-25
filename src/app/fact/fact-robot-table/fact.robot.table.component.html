@@ -28,7 +28,7 @@
                 <td>{{data.date}}</td>
                 <td>{{(data.is_sandbox ? 'SIMULATE_QUOTATION' : 'ACTUAL_QUOTATION' )| translate}}</td>
                 <td>
-                    <a (click)="navigateTo(data)">{{'ONLOOKERS' | translate}}</a>
+                    <a (click)="lookupStrategy(data)">{{'ONLOOKERS' | translate}}</a>
                 </td>
             </tr>
             <tr *ngIf="!!data.summary && data.expand">

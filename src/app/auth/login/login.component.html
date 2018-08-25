@@ -8,9 +8,9 @@
                 <nz-form-item>
                     <nz-form-label nzRequired>{{'USERNAME' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="userPrefix">
                             <input formControlName="username" [nzSize]="inputSize" [placeholder]="'USERNAME' | translate" nz-input required>
-                            <ng-template #prefix>
+                            <ng-template #userPrefix>
                                 <i class="anticon anticon-user"></i>
                             </ng-template>
                         </nz-input-group>
@@ -23,9 +23,9 @@
                 <nz-form-item>
                     <nz-form-label  nzRequired id="get-password">{{'PASSWORD' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="pwdPrefix">
                             <input type="password" formControlName="password" [nzSize]="inputSize" [placeholder]="'PASSWORD' | translate" nz-input required>
-                            <ng-template #prefix>
+                            <ng-template #pwdPrefix>
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
@@ -38,10 +38,10 @@
                 <nz-form-item *ngIf="needVerification | async">
                     <nz-form-label>{{'VERIFICATION_CODE' | translate}}</nz-form-label>
                     <nz-form-control nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="verifyPrefix">
                             <input formControlName="verificationCode" [nzSize]="inputSize" [placeholder]="'VERIFICATION_CODE' | translate"
                                 nz-input>
-                            <ng-template #prefix>
+                            <ng-template #verifyPrefix>
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>

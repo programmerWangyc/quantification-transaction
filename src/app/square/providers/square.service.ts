@@ -11,6 +11,14 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
 
+export interface StrategyInfo {
+    pricing?: string;
+    id: number;
+    username: string;
+    email: string;
+    name: string;
+}
+
 @Injectable()
 export class SquareService extends BaseService {
 

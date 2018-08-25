@@ -12,9 +12,9 @@
                 <nz-form-item>
                     <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'USERNAME' | translate}}</nz-form-label>
                     <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="userPrefix">
                             <input nz-input formControlName="username" [nzSize]="inputSize" required>
-                            <ng-template #prefix>
+                            <ng-template #userPrefix>
                                 <i class="anticon anticon-user"></i>
                             </ng-template>
                         </nz-input-group>
@@ -28,9 +28,9 @@
                 <nz-form-item>
                     <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'EMAIL' | translate}}</nz-form-label>
                     <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="emailPrefix">
                             <input type="email" formControlName="email" [nzSize]="inputSize" nz-input required>
-                            <ng-template #prefix>
+                            <ng-template #emailPrefix>
                                 <i class="anticon anticon-mail"></i>
                             </ng-template>
                         </nz-input-group>
@@ -44,9 +44,9 @@
                 <nz-form-item formGroupName="passwordInfo">
                     <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'PASSWORD' |translate}}</nz-form-label>
                     <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="pwdPrefix">
                             <input type="password" formControlName="password" [nzSize]="inputSize" nz-input required>
-                            <ng-template #prefix>
+                            <ng-template #pwdPrefix>
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
@@ -60,9 +60,9 @@
                 <nz-form-item formGroupName="passwordInfo">
                     <nz-form-label [nzSm]="labelSm" [nzXs]="labelSx" nzRequired>{{'CONFIRM_PASSWORD' | translate}}</nz-form-label>
                     <nz-form-control [nzSm]="controlSm" [nzXs]="controlXs" nzHasFeedback>
-                        <nz-input-group [nzPrefix]="prefix">
+                        <nz-input-group [nzPrefix]="confirmPwdPrefix">
                             <input type="password" formControlName="confirmPassword" [nzSize]="inputSize" nz-input required>
-                            <ng-template #prefix>
+                            <ng-template #confirmPwdPrefix>
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
@@ -78,7 +78,7 @@
 
             <label id="agreement" nz-checkbox [(ngModel)]="isAgree" (ngModelChange)="toggleAgree$.next($event.checked)">
                 {{'AGREEMENT_TIP' | translate}}
-                <a (click)="dialog$.next(true)" href="javascript:void 0" style="text-decoration: none;">{{'AGREEMENT' | translate}}</a>
+                <a (click)="showAgreement()" href="javascript:void 0" style="text-decoration: none;">{{'AGREEMENT' | translate}}</a>
             </label>
         </nz-card>
     </div>

@@ -49,12 +49,6 @@ export class StrategyEffect extends BaseEffect {
         })
     );
 
-    @Effect()
-    listByName$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_STRATEGY_LIST_BY_NAME, strategyActions.ResponseActions);
-
-    @Effect()
-    publicDetail$: Observable<ResponseAction> = this.getResponseAction(strategyActions.GET_PUBLIC_STRATEGY_DETAIL, strategyActions.ResponseActions);
-
     constructor(
         public actions$: Actions,
         public ws: WebsocketService,

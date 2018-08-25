@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { filter, map, startWith, takeWhile } from 'rxjs/operators';
 
@@ -9,7 +8,9 @@ import { Path } from '../../app.config';
 import { PublicStrategyDetail } from '../../interfaces/response.interface';
 import { UtilService } from '../../providers/util.service';
 import { SquareService } from '../providers/square.service';
-import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
+import { SquareStrategyBase } from '../strategy-market/strategy-market.component';
+import { NzModalService } from 'ng-zorro-antd';
+import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-public-detail',
@@ -17,7 +18,7 @@ import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-r
     styleUrls: ['./public-detail.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class PublicDetailComponent implements OnInit, OnDestroy {
+export class PublicDetailComponent extends SquareStrategyBase implements OnInit, OnDestroy {
 
     /**
      * @ignore
@@ -41,11 +42,13 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
 
     constructor(
         private squareService: SquareService,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private nzModal: NzModalService,
         private util: UtilService,
+        public router: Router,
+        public activatedRoute: ActivatedRoute,
+        public nzModal: NzModalService,
+        public publicService: PublicService,
     ) {
+        super(router, activatedRoute, nzModal, publicService);
     }
 
     /**
@@ -90,23 +93,6 @@ export class PublicDetailComponent implements OnInit, OnDestroy {
      */
     navigateTo(strategy: PublicStrategyDetail): void {
         this.router.navigate([Path.strategy, Path.copy, strategy.id], { relativeTo: this.activatedRoute.parent });
-    }
-
-    /**
-     * 购买策略
-     */
-    buyStrategy(strategy: PublicStrategyDetail): void {
-        const { pricing, id, username, email, name } = strategy;
-
-        if (pricing && pricing.includes('/')) {
-            this.router.navigate([Path.charge, Path.rent, id], { relativeTo: this.activatedRoute.parent });
-        } else {
-            this.nzModal.create({
-                nzContent: StrategyRenewalComponent,
-                nzComponentParams: { name, author: username, email, id },
-                nzFooter: null,
-            });
-        }
     }
 
     /**
