@@ -18,69 +18,73 @@ export interface SideNav extends SideNavItem {
     subNav?: SideNavItem[];
 }
 
-const square: SideNav = {
+export const square: SideNav = {
     path: Path.square,
     label: 'STRATEGY_SQUARE',
     icon: 'shopping-cart',
 };
 
-const factFinder: SideNav = {
+export const factFinder: SideNav = {
     path: Path.fact,
     label: 'FACT_FINDER',
     icon: 'line-chart',
 };
 
-const community: SideNav = {
+export const community: SideNav = {
     path: Path.community,
     label: 'COMMUNITY',
     icon: 'eye',
 };
 
-const documentation: SideNav = {
+export const documentation: SideNav = {
     path: Path.doc,
     label: 'API_DOCUMENTATION',
     icon: 'folder-open',
 };
 
+export const controlCenterModules: SideNavItem[] = [
+    { path: Path.robot, label: 'ROBOT', icon: 'android' },
+    { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
+    { path: Path.agent, label: 'AGENT', icon: 'apple' },
+    { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
+];
+
 const controlCenter: SideNav = {
     path: '',
     label: 'CONTROL_CENTER',
     icon: 'appstore',
-    subNav: [
-        { path: Path.robot, label: 'ROBOT', icon: 'android' },
-        { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
-        { path: Path.agent, label: 'AGENT', icon: 'apple' },
-        { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
-    ],
+    subNav: controlCenterModules,
 };
 
-const charge: SideNav = {
+export const charge: SideNav = {
     path: Path.charge,
     label: 'ACCOUNT_CHARGE',
     icon: 'pay-circle-o',
 };
 
+export const accountModules: SideNavItem[] = [
+    { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'key' },
+    { path: Path.account + '/' + Path.nickname, label: 'MODIFY_NICKNAME', icon: 'smile-o' },
+    { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHAT', icon: 'wechat' },
+    { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
+    { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
+    { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
+    { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'bell' },
+    { path: Path.account + '/' + Path.code, label: 'REGISTER_CODE', icon: 'tags-o' },
+];
+
 const account: SideNav = {
     path: '',
     label: 'ACCOUNT_MANAGEMENT',
     icon: 'setting',
-    subNav: [
-        { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'key' },
-        { path: Path.account + '/' + Path.nickname, label: 'MODIFY_NICKNAME', icon: 'smile-o' },
-        { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHAT', icon: 'wechat' },
-        { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
-        { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
-        { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
-        { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'bell' },
-        { path: Path.account + '/' + Path.code, label: 'REGISTER_CODE', icon: 'tags-o' },
-    ],
+    subNav: accountModules,
 };
 
 /**
  * !TODO：应该有一个接口能获取到消息的状态，否则用户不点消息中心时是看不到有没有消息过来的。
  * !除非一进来就拉那3个message接口。
  */
-const message: SideNav = {
+export const message: SideNav = {
     path: Path.message,
     label: 'MESSAGE_CENTER',
     icon: 'bell',
@@ -191,10 +195,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ).subscribe(error => error === 'Need Login' && this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root }));
 
         this.publicService.updateLanguage(this.changeLanguage$.pipe(
-           switchMapTo(this.language.pipe(
-               take(1),
-               map(lan => lan === 'SIMPLE_CHINESE' ? 'en' : 'zh')
-           ))
+            switchMapTo(this.language.pipe(
+                take(1),
+                map(lan => lan === 'SIMPLE_CHINESE' ? 'en' : 'zh')
+            ))
         ));
     }
 

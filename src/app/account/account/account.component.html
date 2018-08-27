@@ -1,36 +1,12 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <div fxLayoutAlign="space-around center">
-    <a nz-button routerLink="./reset">
-        <i class="anticon anticon-key"></i>
-        {{'MODIFY_PWD' | translate}}
-    </a>
-    <a nz-button routerLink="./nickname">
-        <i class="anticon anticon-smile-o"></i>
-        {{'MODIFY_NICKNAME' | translate}}
-    </a>
-    <a nz-button routerLink="./wechat">
-        <i class="anticon anticon-wechat"></i>
-        {{'BIND_WECHAT' | translate}}
-    </a>
-    <a nz-button routerLink="./google">
-        <i class="anticon anticon-google"></i>
-        {{'GOOGLE_VERIFY' | translate}}
-    </a>
-    <a nz-button routerLink="./usergroup">
-        <i class="anticon anticon-usergroup-add"></i>
-        {{'SUBACCOUNT_GROUP' | translate}}
-    </a>
-    <a nz-button routerLink="./key">
-        <i class="anticon anticon-key"></i>
-        {{'API_KEY' | translate}}
-    </a>
-    <a nz-button routerLink="./warn">
-        <i class="anticon anticon-bell"></i>
-        {{'BALANCE_EARLY_WARNING' | translate}}
-    </a>
-    <a nz-button routerLink="./code">
-        <i class="anticon anticon-tags-o"></i>
-        {{'REGISTER_CODE' | translate}}
-    </a>
+    <ng-container *ngFor="let navigator of navigators">
+        <div>
+            <a nz-button [routerLink]="navigator.path">
+                <i class="anticon" [ngClass]="'anticon-'+ navigator.icon"></i>
+                {{navigator.label | translate}}
+            </a>
+        </div>
+    </ng-container>
 </div>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, mergeMapTo } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -68,7 +68,8 @@ export class RobotDetailComponent extends BaseComponent {
      */
     launch() {
         const idObs = this.activatedRoute.paramMap.pipe(
-            map(param => +param.get('id'))
+            map(param => +param.get('id')),
+            take(1)
         );
 
         const isMainAccount = this.publicService.isSubAccount().pipe(
@@ -76,7 +77,9 @@ export class RobotDetailComponent extends BaseComponent {
             distinctUntilChanged(),
         );
 
-        const requestById = idObs.pipe(map(id => ({ id })));
+        const requestById = idObs.pipe(
+            map(id => ({ id }))
+        );
 
         const isMain = isMainAccount.pipe(
             mergeMapTo(idObs.pipe(
@@ -84,9 +87,11 @@ export class RobotDetailComponent extends BaseComponent {
             ))
         );
 
-        this.subscription$$ = this.robotService.launchRobotDetail(requestById)
-            .add(this.robotService.monitorServerSendRobotStatus())
-            .add(this.robotService.launchSubscribeRobot(requestById))
+        this.robotService.launchRobotDetail(requestById);
+
+        this.robotService.launchSubscribeRobot(requestById);
+
+        this.subscription$$ = this.robotService.monitorServerSendRobotStatus()
             .add(this.btNodeService.launchGetNodeList(isMain))
             .add(this.platformService.launchGetPlatformList(isMain))
             .add(this.robotService.handleRobotDetailError())

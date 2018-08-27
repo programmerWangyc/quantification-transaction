@@ -104,24 +104,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     strategies: Observable<GroupedStrategy[]>;
 
     /**
-     * !FIXME: selectAgent, selectedStrategy, selectedKLine, selectedExchange 实际是没有用的，
-     * 但是去掉后 nzPlaceholder 无法正确显示，貌似是 ng-zorro 的一个BUG.
-     * angular6中ngModel和响应式表单同时暂时警告，7中将无法同时使用，所以以下4个属性待修复
-     **/
-    selectedAgent = null;
-
-    selectedKLine = null;
-
-    selectedStrategy = null;
-
-    selectedExchange = null;
-
-    /**
-     * 选中的策略
-     */
-    selectedStrategy$: Subject<number> = new Subject();
-
-    /**
      * 策略参数
      */
     selectedStrategyArgs: SemanticArg = null;
@@ -174,7 +156,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
          *  Be careful ensure observables that emit 'complete' notification added at last;
          */
         this.subscription$$ = this.platformService.getPlatformList().subscribe(list => this.platforms = list)
-            .add(this.strategyService.getStrategyArgs(this.selectedStrategy$).subscribe(args => this.selectedStrategyArgs = args))
+            .add(this.strategyService.getStrategyArgs(this.strategy.valueChanges).subscribe(args => this.selectedStrategyArgs = args))
             // .add(this.robotService.launchCreateRobot(this.create$.map(form => this.createSaveParams(form))))
             .add(this.strategyService.handleStrategyListError())
             .add(this.btNodeService.handleNodeListError())
@@ -195,10 +177,10 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     private initForm() {
         this.form = this.fb.group({
             robotName: '',
-            agent: '',
-            strategy: '',
-            kLinePeriod: '',
-            platform: ['', Validators.required],
+            agent: null,
+            strategy: null,
+            kLinePeriod: null,
+            platform: [null, Validators.required],
             stock: '',
         });
     }
@@ -217,12 +199,10 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             concat(
                 this.encrypt.transformStrategyArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticArgs || [])),
                 this.encrypt.transformTemplateArgsToEncryptType(observableOf(this.selectedStrategyArgs.semanticTemplateArgs || []))
-            )
-                .pipe(
-                    reduce((acc, cur) => [...acc, ...cur], []),
-                    map(result => JSON.stringify(result))
-                )
-                .subscribe(result => args = result);
+            ).pipe(
+                reduce((acc, cur) => [...acc, ...cur], []),
+                map(result => JSON.stringify(result))
+            ).subscribe(result => args = result);
         }
 
         return { name: robotName, kLineId: kLinePeriod, nodeId: agent, args, strategyId: strategy, pairExchanges: platform, pairStocks: stocks };
@@ -266,6 +246,13 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      */
     get kLinePeriod(): AbstractControl {
         return this.form.get('kLinePeriod');
+    }
+
+    /**
+     * @ignore
+     */
+    get strategy(): AbstractControl {
+        return this.form.get('strategy');
     }
 
     /**

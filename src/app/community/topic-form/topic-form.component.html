@@ -11,7 +11,7 @@
 
     <nz-form-item>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="topic" [nzPlaceHolder]="'PLEASE_SELECT_TOPIC' | translate" [ngModel]="selectedTopic">
+            <nz-select formControlName="topic" [nzPlaceHolder]="'PLEASE_SELECT_TOPIC' | translate">
                 <nz-option-group *ngFor="let topic of topics | async" [nzLabel]="topic.groupName | translate">
                     <nz-option *ngFor="let item of topic.values" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
                 </nz-option-group>

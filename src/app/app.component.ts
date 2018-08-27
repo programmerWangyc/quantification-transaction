@@ -72,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private directTo() {
         this.pubService.isLogin().pipe(
             take(1)
-        ).subscribe(hasLogged => hasLogged && this.router.navigateByUrl('/dashboard/robot'));
+        ).subscribe(hasLogged => hasLogged && this.router.navigateByUrl(location.pathname));
     }
 
     /**

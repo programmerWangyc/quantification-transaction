@@ -13,7 +13,7 @@
     <nz-form-item>
         <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'MANDATORY' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate" [(ngModel)]="selectedAgent">
+            <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate">
                 <nz-option-group *ngFor="let agt of agents | async" [nzLabel]="agt.groupName | translate">
                     <nz-option *ngFor="let item of agt.values" [nzLabel]="item | btNodeName" [nzValue]="item.id"></nz-option>
                 </nz-option-group>
@@ -24,8 +24,7 @@
     <nz-form-item>
         <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="strategy" [(ngModel)]="selectedStrategy" (ngModelChange)="selectedStrategy$.next(selectedStrategy)"
-                [nzPlaceHolder]="'PLEASE_SELECT_STRATEGY' | translate">
+            <nz-select formControlName="strategy" [nzPlaceHolder]="'PLEASE_SELECT_STRATEGY' | translate">
                 <nz-option-group *ngFor="let strategy of strategies | async" [nzLabel]="strategy.groupName | translate">
                     <nz-option *ngFor="let item of strategy.values" [nzLabel]="item | strategyName" [nzValue]="item.id"></nz-option>
                 </nz-option-group>
@@ -48,8 +47,7 @@
     <nz-form-item>
         <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'K_LINE_PERIOD' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="kLinePeriod" [nzPlaceHolder]="'PLEASE_SELECT_KLINE_PERIOD' | translate" [(ngModel)]="selectedKLine"
-                required>
+            <nz-select formControlName="kLinePeriod" [nzPlaceHolder]="'PLEASE_SELECT_KLINE_PERIOD' | translate" required>
                 <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
             </nz-select>
         </nz-form-control>
@@ -58,7 +56,7 @@
     <nz-form-item>
         <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzShowSearch [(ngModel)]="selectedExchange">
+            <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzShowSearch>
                 <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
             </nz-select>
             <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
@@ -95,7 +93,7 @@
 </div>
 
 <div id="button-group" fxLayoutAlign="space-between center">
-    <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
+    <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
         {{'CREATE' | translate}}
     </button>
 

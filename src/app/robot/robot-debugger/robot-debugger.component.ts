@@ -18,9 +18,32 @@ export class RobotDebuggerComponent implements OnInit {
 
     isCustomStock = false;
 
-    @Input() platforms: Platform[] = [];
+    @Input() set platforms(input: Platform[]) {
+        if (!!input && input.length) {
+            this._platforms = input;
 
-    @Input() agents: BtNode[] = [];
+            this.platform.patchValue(input[0].id);
+        }
+    }
+
+    private _platforms: Platform[] = [];
+
+    get platforms(): Platform[] {
+        return this._platforms;
+    }
+
+    @Input() set agents(input: BtNode[]) {
+        if (!!input && input.length) {
+            this._agents = input;
+            this.agent.patchValue(input[0].id);
+        }
+    }
+
+    private _agents: BtNode[] = [];
+
+    get agents(): BtNode[] {
+        return this._agents;
+    }
 
     @Input() labelSpan = 6;
 
@@ -43,9 +66,9 @@ export class RobotDebuggerComponent implements OnInit {
 
     initForm() {
         this.form = this.fb.group({
-            agent: ['', Validators.required],
-            platform: ['', Validators.required],
-            stock: ['', Validators.required],
+            agent: [null, Validators.required],
+            platform: [null, Validators.required],
+            stock: [null, Validators.required],
         });
     }
 

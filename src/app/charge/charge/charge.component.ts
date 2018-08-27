@@ -156,7 +156,7 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
     initForm() {
         this.form = this.fb.group({
             charge: [3, Validators.required],
-            payMethod: '',
+            payMethod: null,
         });
     }
 

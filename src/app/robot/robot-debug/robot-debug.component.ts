@@ -21,7 +21,7 @@ import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/
 export class RobotDebugComponent implements BaseComponent {
     subscription$$: Subscription;
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name: 'DEBUG' }];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../' }, { name: 'DEBUG' }];
 
     platforms: Observable<Platform[]>;
 

@@ -13,7 +13,7 @@ export class RobotComponent implements OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT' }];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER', path: '../../' }, { name: 'ROBOT' }];
 
     /**
      * @ignore

@@ -28,7 +28,7 @@ export class StrategyComponent implements BaseComponent {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY' }];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER', path: '../../' }, { name: 'STRATEGY_LIBRARY' }];
 
     /**
      * @ignore

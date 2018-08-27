@@ -12,7 +12,7 @@ export class AgentComponent implements OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'AGENT' }];
+    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER', path: '../../' }, { name: 'AGENT' }];
 
     constructor(
         private router: Router,

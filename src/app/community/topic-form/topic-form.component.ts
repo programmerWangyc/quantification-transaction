@@ -43,8 +43,6 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
             this.topic.patchValue(node_id);
 
             this.title.patchValue(title);
-
-            this.selectedTopic = node_id;
         }
     }
 
@@ -94,11 +92,6 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
      * Available topics
      */
     topics: Observable<GroupedList<BBSNode>[]>;
-
-    /**
-     * @ignore
-     */
-    selectedTopic: number = null;
 
     /**
      * @ignore
@@ -155,7 +148,7 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
     initForm() {
         this.form = this.fb.group({
             title: ['', Validators.required],
-            topic: ['', Validators.required],
+            topic: [null, Validators.required],
         });
     }
 

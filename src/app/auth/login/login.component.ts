@@ -97,14 +97,10 @@ export class LoginComponent extends BaseComponent {
     launch(): void {
         this.subscription$$ = this.authService.launchLogin(
             this.login$.pipe(
-                map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) }))
-            )
-        )
+                map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) }))))
             .add(this.authService.isLoginSuccess().pipe(
                 filter(success => success)
-            )
-                .subscribe(_ => this.router.navigateByUrl('/dashboard/robot'))
-            )
+            ).subscribe(_ => this.router.navigateByUrl('/dashboard')))
             .add(this.username.valueChanges.subscribe(_ => this.authService.closeSecondaryVerify()))
             .add(this.authService.handleLoginError());
     }

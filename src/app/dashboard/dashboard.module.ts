@@ -6,6 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { DASHBOARD_EFFECTS } from '../store/index.effect';
 import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
+import { NavigationComponent } from './navigation/navigation.component';
 
 @NgModule({
     imports: [
@@ -16,6 +17,7 @@ import { routing } from './dashboard.routing';
     ],
     declarations: [
         DashboardComponent,
+        NavigationComponent,
     ],
 })
 export class DashboardModule { }

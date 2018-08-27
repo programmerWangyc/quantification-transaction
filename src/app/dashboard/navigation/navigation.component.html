@@ -1,0 +1,10 @@
+<div nz-row>
+    <ng-container *ngFor="let navigator of list">
+        <div nz-col nzSpan="6" class="navigator" >
+            <a nz-button [routerLink]="navigator.path" fxLayoutAlign="center center">
+                <i class="anticon" [ngClass]="'anticon-'+ navigator.icon"></i>
+                {{navigator.label | translate}}
+            </a>
+        </div>
+    </ng-container>
+</div>

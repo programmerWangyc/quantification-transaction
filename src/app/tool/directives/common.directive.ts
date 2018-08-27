@@ -1,27 +1,16 @@
-import { Directive, Input, Output, EventEmitter, TemplateRef, OnInit, ViewContainerRef } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 
+@Directive({
+    selector: '[routeDirective]',
+})
+export class RouteDirective {
 
-@Directive({ selector: '[commentControl]' })
-export class CommentControlDirective implements OnInit {
-    // tslint:disable-next-line:no-input-rename
-    @Input('user') username = '';
+    constructor(private router: Router) { }
 
-    // tslint:disable-next-line:no-input-rename
-    @Input('currentUser') curUsername = '';
+    @HostListener('click', ['$event.target']) onClick($event) {
+        const path = $event.getAttribute('data-link');
 
-    @Output() edit: EventEmitter<string> = new EventEmitter();
-
-    @Output() delete: EventEmitter<number> = new EventEmitter();
-
-    constructor(
-        private templateRef: TemplateRef<any>,
-        private vcr: ViewContainerRef
-    ) {
-        console.log(this.templateRef);
-        console.log(this.vcr);
-    }
-
-    ngOnInit() {
-        console.log(this.username);
+        path && this.router.navigateByUrl(path);
     }
 }

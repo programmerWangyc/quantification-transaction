@@ -119,9 +119,9 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
         this.configForm = this.fb.group({
             robotName: '',
             kLinePeriod: '',
-            platform: ['', Validators.required],
-            stock: '',
-            agent: '',
+            platform: [null, Validators.required],
+            stock: null,
+            agent: null,
         });
     }
 
@@ -135,7 +135,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
 
     // ====================================Component Shortcut methods=======================================
 
-    createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
+    private createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
         const { robotName, agent, kLinePeriod } = formValue;
 
         return { id: null, name: robotName, kLinePeriodId: kLinePeriod, nodeId: agent, args: null, ...this.robotOperate.getPairsParams(this.selectedPairs) };

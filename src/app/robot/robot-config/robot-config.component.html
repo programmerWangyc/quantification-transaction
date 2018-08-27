@@ -1,4 +1,5 @@
-<nz-alert *ngIf="warningMessage | async as msg;" [nzMessage]="message" nzType="warning" nzCloseable nzShowIcon>
+<nz-alert *ngIf="warningMessage | async as msg;" [nzMessage]="message" nzType="warning" [nzCloseText]="'I_KNOWN' | translate"
+    nzShowIcon routeDirective>
     <ng-template #message>
         <span [innerHTML]="msg"></span>
     </ng-template>
@@ -6,11 +7,11 @@
 
 <nz-card [nzTitle]="'MODIFY_CONFIG' | translate" [nzExtra]="extra">
 
-    <form nz-form [formGroup]="configForm" [nzLayout]="'horizontal'" fxLayout="row wrap">
+    <form nz-form [formGroup]="configForm" nzLayout="horizontal" fxLayout="row wrap">
 
         <nz-form-item>
-            <nz-form-label [nzSpan]="7">{{'ROBOT_NAME' | translate}}</nz-form-label>
-            <nz-form-control [nzSpan]="16">
+            <nz-form-label nzSpan="7">{{'ROBOT_NAME' | translate}}</nz-form-label>
+            <nz-form-control nzSpan="16">
                 <input formControlName="robotName" required nz-input>
                 <nz-form-explain *ngIf="robotName.invalid && (robotName.dirty || robotName.touched)">
                     <div *ngIf="!!robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
@@ -32,8 +33,8 @@
         </nz-form-item>
 
         <nz-form-item>
-            <nz-form-label [nzSpan]="7">{{'K_LINE_PERIOD' | translate}}</nz-form-label>
-            <nz-form-control [nzSpan]="16">
+            <nz-form-label nzSpan="7">{{'K_LINE_PERIOD' | translate}}</nz-form-label>
+            <nz-form-control nzSpan="16">
                 <nz-select formControlName="kLinePeriod" required>
                     <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
                 </nz-select>

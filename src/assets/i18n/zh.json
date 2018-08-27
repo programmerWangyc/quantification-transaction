@@ -406,7 +406,7 @@
     "COMMAND_ROBOT_EMPTY_STRING_ARG_ERROR_TIP": "字符串参数不能为空!",
     "COMMAND_ROBOT_LENGTH_ERROR_TIP": "指令过长，最多支持200个字符!",
     "CONFIRM_SEND_COMMAND_TO_ROBOT_TIP": "确定要向机器人发送命令 {{cmd}} 吗?",
-    "ROBOT_RUNNING_ON_PUBLIC_WARING": "该机器人目前在公用服务器({{ip}}-{{region}}{{city}})上运行，为保证稳定，建议<a href='javascript：:void 0'>部署私有托管者</a>运行策略。",
+    "ROBOT_RUNNING_ON_PUBLIC_WARING": "该机器人目前在公用服务器({{ip}}-{{region}}{{city}})上运行，为保证稳定，建议<a data-link='/dashboard/agent'>部署私有托管者</a>运行策略。",
 
     "LOG_INFORMATION": "日志信息",
     "HIDE_ERROR_LOG_INFORMATION": "隐藏错误日志",

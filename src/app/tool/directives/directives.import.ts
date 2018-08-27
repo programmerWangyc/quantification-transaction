@@ -1,9 +1,9 @@
 import { TextDirectionDirective, TextCenterDirective } from './style.directive';
-import { CommentControlDirective } from './common.directive';
+import { RouteDirective } from './common.directive';
 
 
 export const DIRECTIVES = [
-    CommentControlDirective,
-    TextDirectionDirective,
+    RouteDirective,
     TextCenterDirective,
+    TextDirectionDirective,
 ];
