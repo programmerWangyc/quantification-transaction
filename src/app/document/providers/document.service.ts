@@ -12,6 +12,7 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { PublicService } from '../../providers/public.service';
 import * as fromRoot from '../../store/index.reducer';
+import { TipService } from '../../providers/tip.service';
 
 @Injectable()
 export class DocumentService extends BaseService {
@@ -21,6 +22,7 @@ export class DocumentService extends BaseService {
         private error: ErrorService,
         private publicService: PublicService,
         private translate: TranslateService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -66,7 +68,8 @@ export class DocumentService extends BaseService {
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectDocumentUIState),
-            map(state => state.loading)
+            map(state => state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

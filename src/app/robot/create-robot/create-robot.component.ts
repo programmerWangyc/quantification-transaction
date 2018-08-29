@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 
 import { isEmpty } from 'lodash';
 import { concat, Observable, of as observableOf, Subject, Subscription } from 'rxjs';
-import { map, reduce } from 'rxjs/operators';
+import { map, reduce, takeWhile } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
 import { SelectedPair, VariableOverview, GroupedStrategy, SemanticArg } from '../../interfaces/app.interface';
@@ -89,11 +89,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     create$: Subject<RobotCreationForm> = new Subject();
 
     /**
-     * @ignore
-     */
-    create$$: Subscription;
-
-    /**
      * 托管者
      */
     agents: Observable<GroupedNode[]>;
@@ -107,6 +102,11 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      * 策略参数
      */
     selectedStrategyArgs: SemanticArg = null;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     constructor(
         private fb: FormBuilder,
@@ -152,12 +152,10 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      * @ignore
      */
     launch() {
-        /**
-         *  Be careful ensure observables that emit 'complete' notification added at last;
-         */
+        const keepAlive = () => this.isAlive;
+
         this.subscription$$ = this.platformService.getPlatformList().subscribe(list => this.platforms = list)
             .add(this.strategyService.getStrategyArgs(this.strategy.valueChanges).subscribe(args => this.selectedStrategyArgs = args))
-            // .add(this.robotService.launchCreateRobot(this.create$.map(form => this.createSaveParams(form))))
             .add(this.strategyService.handleStrategyListError())
             .add(this.btNodeService.handleNodeListError())
             .add(this.platformService.handlePlatformListError())
@@ -165,10 +163,12 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
             .add(this.platformService.launchGetPlatformList(observableOf(true)))
             .add(this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
 
-        // !FIXME: 这行加到上面时在组件销毁时没有取消掉。why?
-        this.create$$ = this.robotService.launchCreateRobot(this.create$.pipe(
+        this.robotService.launchCreateRobot(this.create$.pipe(
+            takeWhile(keepAlive),
             map(form => this.createSaveParams(form))
         ));
+
+        this.robotService.handleSaveRobotError(keepAlive);
     }
 
     /**
@@ -287,8 +287,8 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
 
-        this.create$$.unsubscribe();
+        this.subscription$$.unsubscribe();
     }
 }

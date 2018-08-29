@@ -10,6 +10,7 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
+import { TipService } from '../../providers/tip.service';
 
 export interface StrategyInfo {
     pricing?: string;
@@ -26,6 +27,7 @@ export class SquareService extends BaseService {
         private store: Store<fromRoot.AppState>,
         private error: ErrorService,
         private process: ProcessService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -53,7 +55,8 @@ export class SquareService extends BaseService {
      */
     isLoading(): Observable<boolean> {
         return this.store.select(fromRoot.selectStrategyUIState).pipe(
-            map(state => state && state.loading)
+            map(state => state && state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

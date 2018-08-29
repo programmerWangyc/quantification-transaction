@@ -16,7 +16,7 @@ export const ROBOT_OPERATE_MAP: RobotOperateMap[] = [
 @Injectable()
 export class RobotConstantService extends ConstantService {
 
-    ROBOT_OPERATE_MAP = ROBOT_OPERATE_MAP;
+    readonly ROBOT_OPERATE_MAP = ROBOT_OPERATE_MAP;
 
     constructor() {
         super();

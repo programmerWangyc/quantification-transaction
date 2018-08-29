@@ -35,11 +35,11 @@
                 margin: 0 0 16px 0;
                 padding: $padding;
             }
-            mat-nav-list {
-                padding: $padding;
+            nz-list-item {
+                margin: $padding;
+                padding: 0;
             }
             a {
-                border-bottom: 1px solid #dee2e6;
                 color: #8fa4ae;
                 height: 32px;
                 line-height: 32px;
@@ -67,4 +67,8 @@
     #entrance {
         padding: 50px $content-padding;
     }
+}
+
+:host::ng-deep .ant-list-item-content {
+    margin-bottom: 0;
 }

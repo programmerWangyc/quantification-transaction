@@ -21,7 +21,6 @@ import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { PublicService } from './public.service';
 import { TipService } from './tip.service';
-import { UtilService } from './util.service';
 
 export interface GroupPlatform extends Platform {
     group: string;
@@ -55,7 +54,6 @@ export class PlatformService extends BaseService {
         private store: Store<fromRoot.AppState>,
         private error: ErrorService,
         private process: ProcessService,
-        private util: UtilService,
         private translate: TranslateService,
         private tip: TipService,
         private publicService: PublicService,
@@ -79,7 +77,7 @@ export class PlatformService extends BaseService {
      */
     launchDeletePlatform(platformObs: Observable<Platform>): Subscription {
         return this.process.processDeletePlatform(platformObs.pipe(
-            switchMap(platform => this.util.guardRiskOperate('DELETE_EXCHANGE_TIP', { name: platform.name }).pipe(
+            switchMap(platform => this.tip.guardRiskOperate('DELETE_EXCHANGE_TIP', { name: platform.name }).pipe(
                 mapTo({ id: platform.id })
             ))
         ));

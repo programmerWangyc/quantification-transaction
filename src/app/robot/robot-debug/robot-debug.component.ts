@@ -12,6 +12,7 @@ import { PlatformService } from '../../providers/platform.service';
 import { UtilService } from '../../providers/util.service';
 import { RobotLogService } from '../../providers/robot.log.service';
 import { RobotDebugFormModal, RobotOperateService } from '../../robot/providers/robot.operate.service';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Component({
     selector: 'app-robot-debug',
@@ -117,7 +118,7 @@ export class RobotDebugComponent implements BaseComponent {
 
         this.debugResult = this.robotOperate.getPluginRunResult();
 
-        this.isDebugging = this.robotOperate.isDebugLoading();
+        this.isDebugging = this.robotOperate.isLoading(RobotOperateType.debug);
     }
 
     launch() {

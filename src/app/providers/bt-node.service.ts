@@ -13,6 +13,7 @@ import { ProcessService } from './process.service';
 import { GroupedList, UtilService } from './util.service';
 import { HttpClient } from '@angular/common/http';
 import { last } from 'lodash';
+import { TipService } from './tip.service';
 
 export interface GroupedNode extends GroupedList<BtNode> {
     groupNameValue?: any;
@@ -29,6 +30,7 @@ export class BtNodeService extends BaseService {
         private process: ProcessService,
         private utilService: UtilService,
         private httpClient: HttpClient,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -180,7 +182,8 @@ export class BtNodeService extends BaseService {
      */
     isLoading(): Observable<boolean> {
         return this.getNodeUIState().pipe(
-            map(state => state.isLoading)
+            map(state => state.isLoading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

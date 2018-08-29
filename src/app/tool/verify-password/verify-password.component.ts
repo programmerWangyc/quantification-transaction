@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 
-import { Subject, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { NzModalRef } from 'ng-zorro-antd';
+import { Subject } from 'rxjs';
+import { map, takeWhile, distinctUntilChanged } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { EncryptService } from '../../providers/encrypt.service';
@@ -16,13 +17,17 @@ export class VerifyPasswordComponent extends BaseComponent {
 
     verify$: Subject<string> = new Subject();
 
-    subscription$$: Subscription;
-
     password: string;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     constructor(
         private authService: AuthService,
         private encryptService: EncryptService,
+        private modalRef: NzModalRef,
     ) {
         super();
     }
@@ -34,20 +39,41 @@ export class VerifyPasswordComponent extends BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.authService.launchVerifyPassword(this.verify$.pipe(
-            map(password => ({ password: this.encryptService.encryptPassword(password) }))
-        ))
-            .add(this.authService.storePwdTemporary(this.verify$));
+        const keepAlive = () => this.isAlive;
 
-        this.authService.handleVerifyPasswordError();
+        const verify = this.verify$.asObservable().pipe(
+            takeWhile(keepAlive)
+        );
+
+        this.authService.launchVerifyPassword(verify.pipe(
+            distinctUntilChanged(),
+            map(password => ({ password: this.encryptService.encryptPassword(password) }))
+        ));
+
+        this.authService.storePwdTemporary(verify);
+
+        this.authService.handleVerifyPasswordError(keepAlive);
+
+        this.authService.isVerifyPasswordSuccess().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(isSuccess => {
+            if (isSuccess) {
+                this.destroy(true);
+            } else {
+                this.password = null;
+            }
+        });
     }
 
     initialModel() {
 
     }
 
-    ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+    destroy(result: boolean) {
+        this.modalRef.close(result);
     }
 
+    ngOnDestroy() {
+        this.isAlive = false;
+    }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 
 import { Observable, Subscription } from 'rxjs';
 import { filter, mapTo, mergeMap, switchMapTo } from 'rxjs/operators';
@@ -11,7 +11,6 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import { AppState, selectSetWatchDogRequest, selectSetWatchDogResponse } from '../../store/index.reducer';
-import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 
 export enum SetWatchDogTip {
     CLOSE_ROBOT_MONITOR_CONFIRM,
@@ -42,11 +41,7 @@ export class WatchDogService extends BaseService {
                 mergeMap(target => {
                     const watchDogStatus = target.wd > 0 ? 0 : 1;
 
-                    return this.tip.confirmOperateTip(
-                        ConfirmComponent,
-                        { message: SetWatchDogTip[watchDogStatus], needTranslate: true }
-                    ).pipe(
-                        this.filterTruth(),
+                    return this.tip.guardRiskOperate(SetWatchDogTip[watchDogStatus]).pipe(
                         mapTo({ id: target.id, watchDogStatus })
                     );
                 })
@@ -60,7 +55,8 @@ export class WatchDogService extends BaseService {
      * @ignore
      */
     private getSetWatchDogResponse(): Observable<SetWDResponse> {
-        return this.store.select(selectSetWatchDogResponse).pipe(
+        return this.store.pipe(
+            select(selectSetWatchDogResponse),
             this.filterTruth()
         );
     }
@@ -71,7 +67,9 @@ export class WatchDogService extends BaseService {
     getLatestWatchDogState(): Observable<SetWDRequest> {
         return this.getSetWatchDogResponse().pipe(
             filter(res => res.result),
-            switchMapTo(this.store.select(selectSetWatchDogRequest))
+            switchMapTo(this.store.pipe(
+                select(selectSetWatchDogRequest)
+            ))
         );
     }
 

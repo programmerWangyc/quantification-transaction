@@ -7,6 +7,7 @@ import { RobotDetail } from '../../interfaces/response.interface';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Component({
     selector: 'app-robot-overview',
@@ -120,9 +121,9 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
     initialModel() {
         this.robot = this.robotService.getRobotDetail();
 
-        this.isStopLoading = this.robotOperate.isLoading('stop');
+        this.isStopLoading = this.robotOperate.isLoading(RobotOperateType.stop);
 
-        this.isRestartLoading = this.robotOperate.isLoading('restart');
+        this.isRestartLoading = this.robotOperate.isLoading(RobotOperateType.restart);
 
         this.operateBtnText = this.robotOperate.getOperateBtnText();
 

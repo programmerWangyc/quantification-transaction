@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatListModule } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
 import { ContactComponent } from './contact/contact.component';
@@ -16,7 +15,6 @@ import { SundryComponent } from './sundry/sundry.component';
     imports: [
         CommonModule,
         SharedModule,
-        MatListModule,
     ],
     declarations: [
         ContactComponent,

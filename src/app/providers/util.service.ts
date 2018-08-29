@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { TranslateService } from '@ngx-translate/core';
 
 import { isArray, isString } from 'lodash';
@@ -60,7 +59,6 @@ export class UtilService extends BaseService {
 
     constructor(
         private translate: TranslateService,
-        private nzModal: NzModalService,
     ) {
         super();
     }
@@ -120,24 +118,6 @@ export class UtilService extends BaseService {
             map(([total, page]) => ({ total, page: Math.ceil(total / page) })),
             switchMap(({ total, page }) => this.translate.get('PAGINATION_STATISTICS', { total, page })),
             distinctUntilChanged()
-        );
-    }
-
-    /**
-     * 确认是否要执行高危操作
-     */
-    guardRiskOperate(message: string, options: { [key: string]: any }): Observable<boolean> {
-        return this.translate.get(message, options).pipe(
-            mergeMap(content => {
-                const modal: NzModalRef = this.nzModal.confirm({
-                    nzContent: content,
-                    nzOnOk: () => modal.close(true),
-                });
-
-                return modal.afterClose.pipe(
-                    this.filterTruth()
-                );
-            })
         );
     }
 

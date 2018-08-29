@@ -1,7 +1,7 @@
-
 import { Injectable } from '@angular/core';
-import { ConstantService } from '../../providers/constant.service';
+
 import { Platform } from '../../interfaces/response.interface';
+import { ConstantService } from '../../providers/constant.service';
 import { Exchange } from '../exchange-select/exchange-select.component';
 import { ExchangeType } from '../exchange.config';
 

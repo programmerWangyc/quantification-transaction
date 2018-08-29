@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { intersectionWith, uniqBy } from 'lodash';
 import * as moment from 'moment';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
 import { filter, find, map, mergeMap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
@@ -14,14 +14,13 @@ import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
-import { UtilService } from '../../providers/util.service';
+import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
 import {
     ResetStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
     UpdateStrategySecretKeyStateAction
 } from '../../store/strategy/strategy.action';
 import { RequestParams } from '../../store/strategy/strategy.reducer';
-import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
@@ -30,12 +29,12 @@ import { StrategyConstantService } from './strategy.constant.service';
 export class StrategyService extends BaseService {
 
     constructor(
-        public store: Store<fromRoot.AppState>,
-        public error: ErrorService,
-        public process: ProcessService,
-        public utilService: UtilService,
-        public nzModal: NzModalService,
         public constant: StrategyConstantService,
+        public error: ErrorService,
+        public nzModal: NzModalService,
+        public process: ProcessService,
+        public store: Store<fromRoot.AppState>,
+        public tipService: TipService,
         public translate: TranslateService,
     ) {
         super();
@@ -54,7 +53,7 @@ export class StrategyService extends BaseService {
     launchOpStrategyToken(sourceObs: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
         return this.process.processOpStrategyToken(sourceObs.pipe(
             switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
-                : this.confirmLaunchOpStrategyToken(source).pipe(
+                : this.tipService.guardRiskOperate(source.opCode === OpStrategyTokenTypeAdapter.ADD ? 'GEN_SECRET_KEY_CONFIRM' : 'UPDATE_SECRET_KEY_CONFIRM').pipe(
                     map(_ => ({ strategyId: source.strategyId, opCode: this.constant.adaptedOpStrategyTokenType(source.opCode) }))
                 )
             )
@@ -194,7 +193,8 @@ export class StrategyService extends BaseService {
      */
     isLoading(): Observable<boolean> {
         return this.store.select(fromRoot.selectStrategyUIState).pipe(
-            map(state => state.loading)
+            map(state => state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 
@@ -270,22 +270,6 @@ export class StrategyService extends BaseService {
     getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
         return this.getStrategies().pipe(
             map(strategies => strategies.filter(predicate))
-        );
-    }
-
-    /**
-     * 确认用户是否需要对token进行操作；
-     * 除了获取不需要确认外，其它操作都需要用户确认；
-     */
-    private confirmLaunchOpStrategyToken(source: fromReq.OpStrategyTokenRequest): Observable<boolean> {
-        const modal: NzModalRef = this.nzModal.confirm({
-            nzContent: SimpleNzConfirmWrapComponent,
-            nzComponentParams: { content: source.opCode === OpStrategyTokenTypeAdapter.ADD ? 'GEN_SECRET_KEY_CONFIRM' : 'UPDATE_SECRET_KEY_CONFIRM' },
-            nzOnOk: () => modal.close(true),
-        });
-
-        return modal.afterClose.pipe(
-            this.filterTruth()
         );
     }
 

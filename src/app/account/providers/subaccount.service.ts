@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, Subscription, merge } from 'rxjs';
-import { mapTo, switchMap, takeWhile, map } from 'rxjs/operators/';
+import { merge, Observable, Subscription } from 'rxjs';
+import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
@@ -11,53 +12,20 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
-import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { TranslateService } from '@ngx-translate/core';
-
-export class AccountOperateBase extends BaseService {
-    label: string;
-
-    constructor(
-        public tipService: TipService,
-        public translate: TranslateService,
-        public confirmMsg: string,
-    ) {
-        super();
-        this.label = confirmMsg;
-    }
-
-    /**
-     * Combine action and operate label;
-     * @param operate Operate action;
-     */
-    private getTipMsg(operate: string): string {
-        return this.unwrap(this.translate.get(this.label, { operate: this.unwrap(this.translate.get(operate)) }));
-    }
-
-    /**
-     * @ignore
-     */
-    protected confirm<T>(params: T, msg: string): Observable<T> {
-        return this.tipService.confirmOperateTip(
-            ConfirmComponent,
-            { message: this.getTipMsg(msg), needTranslate: true },
-        ).pipe(
-            this.filterTruth(),
-            mapTo(params)
-        );
-    }
-}
 
 @Injectable()
-export class SubaccountService extends AccountOperateBase {
+export class SubaccountService extends BaseService {
+
+    private readonly confirmLabel = 'OPERATE_SUBACCOUNT_CONFIRM';
+
     constructor(
         private store: Store<fromRoot.AppState>,
         private process: ProcessService,
         private errorService: ErrorService,
-        public tipService: TipService,
-        public translate: TranslateService,
+        private tipService: TipService,
+        private translate: TranslateService,
     ) {
-        super(tipService, translate, 'OPERATE_SUBACCOUNT_CONFIRM');
+        super();
     }
 
     //  =======================================================Serve Request=======================================================
@@ -95,7 +63,9 @@ export class SubaccountService extends AccountOperateBase {
      */
     launchDeleteShadowMember(params: Observable<fromReq.DeleteShadowMemberRequest>): Subscription {
         return this.process.processDeleteShadowMember(params.pipe(
-            switchMap(({ memberId }) => this.confirm({ memberId }, 'DELETE'))
+            switchMap(({ memberId }) => this.tipService.guardRiskOperate(this.confirmLabel, { operate: this.unwrap(this.translate.get('DELETE')) }).pipe(
+                mapTo({ memberId })
+            ))
         ));
     }
 
@@ -104,7 +74,9 @@ export class SubaccountService extends AccountOperateBase {
      */
     launchLockShadowMember(params: Observable<fromReq.LockShadowMemberRequest>): Subscription {
         return this.process.processLockShadowMember(params.pipe(
-            switchMap(({ memberId, status }) => this.confirm({ memberId, status: Number(!status) }, status ? 'UNLOCK' : 'LOCK'))
+            switchMap(({ memberId, status }) => this.tipService.guardRiskOperate(this.confirmLabel, { operate: this.unwrap(this.translate.get(status ? 'UNLOCK' : 'LOCK')) }).pipe(
+                mapTo({ memberId, status: Number(!status) })
+            ))
         ));
     }
 
@@ -199,7 +171,8 @@ export class SubaccountService extends AccountOperateBase {
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectAccountUIState),
-            map(state => state.loading)
+            map(state => state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

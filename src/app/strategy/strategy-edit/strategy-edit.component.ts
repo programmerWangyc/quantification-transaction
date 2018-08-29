@@ -8,6 +8,7 @@ import { filter, map, mapTo } from 'rxjs/operators';
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { OpStrategyTokenType } from '../../interfaces/request.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { TipService } from '../../providers/tip.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
@@ -35,14 +36,15 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     privateSub$$: Subscription;
 
     constructor(
-        public route: ActivatedRoute,
-        public strategyService: StrategyOperateService,
+        public backtest: BacktestService,
+        public constant: StrategyConstantService,
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
-        public constant: StrategyConstantService,
-        public backtest: BacktestService,
+        public route: ActivatedRoute,
+        public strategyService: StrategyOperateService,
+        public tipService: TipService,
     ) {
-        super(route, strategyService, nodeService, nzModal, constant, backtest);
+        super(backtest, constant, nodeService, route, strategyService, tipService);
     }
 
     /**

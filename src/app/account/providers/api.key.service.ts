@@ -3,26 +3,29 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, Subscription } from 'rxjs';
-import { switchMap, takeWhile, map } from 'rxjs/operators/';
+import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
+import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
-import { AccountOperateBase } from './subaccount.service';
 
 @Injectable()
-export class ApiKeyService extends AccountOperateBase {
+export class ApiKeyService extends BaseService {
+
+    private readonly confirmLabel = 'OPERATE_API_KEY_CONFIRM';
+
     constructor(
         private store: Store<fromRoot.AppState>,
         private process: ProcessService,
         private errorService: ErrorService,
-        public tipService: TipService,
-        public translate: TranslateService,
+        private tipService: TipService,
+        private translate: TranslateService,
     ) {
-        super(tipService, translate, 'OPERATE_API_KEY_CONFIRM');
+        super();
     }
 
     //  =======================================================Serve Request=======================================================
@@ -46,7 +49,9 @@ export class ApiKeyService extends AccountOperateBase {
      */
     launchLockApiKey(params: Observable<fromReq.LockApiKeyRequest>): Subscription {
         return this.process.processLockApiKey(params.pipe(
-            switchMap(({ id, status }) => this.confirm({ id, status }, status ? 'UNLOCK' : 'LOCK'))
+            switchMap(({ id, status }) => this.tipService.guardRiskOperate(this.confirmLabel, { operate: this.unwrap(this.translate.get(status ? 'UNLOCK' : 'LOCK')) }).pipe(
+                mapTo({ id, status })
+            ))
         ));
     }
 
@@ -55,7 +60,9 @@ export class ApiKeyService extends AccountOperateBase {
      */
     launchDeleteApiKey(params: Observable<fromReq.DeletePlatformRequest>): Subscription {
         return this.process.processDeleteApiKey(params.pipe(
-            switchMap(({ id }) => this.confirm({ id }, 'DELETE'))
+            switchMap(({ id }) => this.tipService.guardRiskOperate(this.confirmLabel, { operate: this.unwrap(this.translate.get('DELETE')) }).pipe(
+                mapTo({ id })
+            ))
         ));
     }
 
@@ -83,7 +90,7 @@ export class ApiKeyService extends AccountOperateBase {
     /**
      * @ignore
      */
-    private getCreateApiKeyResposne(): Observable<fromRes.CreateApiKeyResponse> {
+    private getCreateApiKeyResponse(): Observable<fromRes.CreateApiKeyResponse> {
         return this.store.pipe(
             select(fromRoot.selectCreateApiKeResponse),
             this.filterTruth()
@@ -131,7 +138,7 @@ export class ApiKeyService extends AccountOperateBase {
      * @ignore
      */
     handleCreateApiKeyError(keepAlive: () => boolean): Subscription {
-        return this.errorService.handleResponseError(this.getCreateApiKeyResposne().pipe(
+        return this.errorService.handleResponseError(this.getCreateApiKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

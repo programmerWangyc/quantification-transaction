@@ -31,7 +31,7 @@ export class StrategyEffect extends BaseEffect {
 
     @Effect()
     delete$: Observable<ResponseAction> = this.getResponseAction(strategyActions.DELETE_STRATEGY, strategyActions.ResponseActions, isDeleteFail).pipe(
-        tap((action: strategyActions.DeleteStrategyFailAction | strategyActions.DeleteStrategySuccessAction) => isDeleteFail(action.payload) && this.tip.showTip('DELETE_ROBOT_RELATED_WITH_STRATEGY'))
+        tap((action: strategyActions.DeleteStrategyFailAction | strategyActions.DeleteStrategySuccessAction) => isDeleteFail(action.payload) && this.tip.messageError('DELETE_ROBOT_RELATED_WITH_STRATEGY'))
     );
 
     @Effect()

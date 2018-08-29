@@ -27,7 +27,7 @@ export class ChargeEffect extends BaseEffect {
         // TODO: 此处可能还少一个条件：这个payment必须是充值？
         switchMapTo(this.ws.messages.pipe(
             filter(msg => msg.event && (msg.event === ServerSendEventType.PAYMENT)),
-            tap(_ => this.tip.showTip('RECHARGE_SUCCESS')),
+            tap(_ => this.tip.messageSuccess('RECHARGE_SUCCESS')),
             map(msg => new chargeActions.ReceiveServerSendPaymentEventAction(<ServerSendPaymentMessage>msg.result))
         ))
     );

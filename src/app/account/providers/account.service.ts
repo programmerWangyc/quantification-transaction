@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { Observable, Subscription, of } from 'rxjs';
-import { map, switchMap, takeWhile, mapTo } from 'rxjs/operators/';
+import { isEmpty } from 'lodash';
+import { Observable, of, Subscription } from 'rxjs';
+import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
@@ -11,8 +12,6 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
-import { ConfirmComponent } from '../../tool/confirm/confirm.component';
-import { isEmpty } from 'lodash';
 
 @Injectable()
 export class AccountService extends BaseService {
@@ -53,11 +52,7 @@ export class AccountService extends BaseService {
      */
     launchUnbindSNS(params: Observable<fromReq.UnbindSNSRequest>): Subscription {
         return this.process.processUnbindSNS(params.pipe(
-            switchMap(_ => this.tipService.confirmOperateTip(
-                ConfirmComponent,
-                { message: 'CONFIRM_UNBIND_WECHAT', needTranslate: true },
-            )),
-            this.filterTruth()
+            switchMap(_ => this.tipService.guardRiskOperate('CONFIRM_UNBIND_WECHAT'))
         ));
     }
 
@@ -67,11 +62,7 @@ export class AccountService extends BaseService {
     launchBindGoogleAuth(params: Observable<fromReq.BindGoogleAuthRequest>): Subscription {
         return this.process.processBindGoogleAuth(
             params.pipe(
-                switchMap(({ code, key }) => isEmpty(key) ? this.tipService.confirmOperateTip(
-                    ConfirmComponent,
-                    { message: 'CONFIRM_UNBIND_GOOGLE_VERIFY_CODE', needTranslate: true }
-                ).pipe(
-                    this.filterTruth(),
+                switchMap(({ code, key }) => isEmpty(key) ? this.tipService.guardRiskOperate('CONFIRM_UNBIND_GOOGLE_VERIFY_CODE').pipe(
                     mapTo({ code, key })
                 ) : of({ code, key }))
             )

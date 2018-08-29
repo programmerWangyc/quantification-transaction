@@ -1,57 +1,35 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatSnackBar, MatSnackBarRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
-import { NzMessageDataOptions, NzMessageService, NzNotificationService } from 'ng-zorro-antd';
+import { isBoolean } from 'lodash';
+import {
+    ModalOptions, NzMessageDataOptions, NzMessageService, NzModalRef, NzModalService, NzNotificationService
+} from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
-import { ConfirmOperateTipData } from '../interfaces/app.interface';
-import { CustomSnackBarComponent } from '../tool/tool.components';
+import { BaseService } from '../base/base.service';
 import { ApiActions } from '../store/index.action';
 
 @Injectable()
-export class TipService {
-
-    private confirmConfig = {
-        panelClass: ['radius'],
-        minWidth: 520,
-        position: { top: '50px' },
-    };
+export class TipService extends BaseService {
 
     private NZ_NOTIFICATION_CONFIG = {
         nzTop: '48px',
         nzRight: '50%',
-        nzDuration: 3000,
+        nzDuration: 5000,
         nzMaxStack: 3,
         nzPauseOnHover: true,
         nzAnimate: true,
     };
 
     constructor(
-        private snackBar: MatSnackBar,
-        private dialog: MatDialog,
         private notification: NzNotificationService,
         private translate: TranslateService,
         private message: NzMessageService,
-    ) { }
-
-
-    /**
-     * angular material related methods;
-     */
-    showTip(data: string, duration = 3000): MatSnackBarRef<CustomSnackBarComponent> {
-        return this.snackBar.openFromComponent(CustomSnackBarComponent, {
-            data,
-            duration,
-            verticalPosition: 'top',
-        });
-    }
-
-    confirmOperateTip(component: any, data: ConfirmOperateTipData): Observable<boolean> {
-        return this.dialog
-            .open(component, { data, ...this.confirmConfig })
-            .afterClosed();
+        private nzModal: NzModalService,
+    ) {
+        super();
     }
 
     /**
@@ -82,6 +60,12 @@ export class TipService {
         this.translate.get(msg, params).subscribe(content => this.message.info(content, option));
     }
 
+    notificationInfo(msg: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
+        const labels = title ? [msg, title] : [msg];
+
+        this.translate.get(labels).subscribe(res => this.notification.info(res[title] || '', res[msg], option));
+    }
+
     /**
      * NzModalService secondary wrap.
      */
@@ -108,6 +92,7 @@ export class TipService {
 
         audio.play();
     }
+
     /**
      * @ignore
      */
@@ -119,6 +104,53 @@ export class TipService {
                 this.messageError(failMsg);
             }
         };
+    }
+
+    /**
+     * Close loading state if timeout as the same time show tip message for user;
+     * @param input loading state or error message object
+     */
+    loadingSlowlyTip = (input: boolean | object): boolean => {
+        if (isBoolean(input)) {
+            return input;
+        } else {
+            this.notificationInfo('LOADING_LONG_TIME_NOTIFICATION', 'SLOW_NET_WORK');
+            return false;
+        }
+    }
+
+    /**
+     * 确认是否要执行高危操作
+     * @param message to be translated message;
+     * @param options Translate params;
+     */
+    guardRiskOperate(message: string, options: { [key: string]: any } = {}, config: ModalOptions = {}): Observable<boolean> {
+        return this.translate.get(message, options).pipe(
+            mergeMap(content => {
+                const modal: NzModalRef = this.nzModal.confirm(Object.assign({
+                    nzContent: content,
+                    nzOnOk: () => modal.close(true),
+                }, config));
+
+                return modal.afterClose.pipe(
+                    this.filterTruth()
+                );
+            })
+        );
+    }
+
+    /**
+     * 验证密码成功后的通知流；和exchange。form.service上的方法一样，因为循环引用懒得优化
+     */
+    securityVerify(component: any): Observable<boolean> {
+        const modal = this.nzModal.confirm({
+            nzContent: component,
+            nzTitle: this.unwrap(this.translate.get('SECURITY_VERIFY')),
+            nzOkText: null,
+            nzCancelText: null,
+        });
+
+        return modal.afterClose;
     }
 }
 

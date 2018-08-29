@@ -3,9 +3,8 @@ import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from '@ang
 import { from, of } from 'rxjs';
 import { find, map, mergeMap } from 'rxjs/operators';
 
-import { TipService } from '../providers/tip.service';
-import { ConfirmComponent } from '../tool/confirm/confirm.component';
 import { DeactivateGuard } from '../interfaces/app.interface';
+import { TipService } from '../providers/tip.service';
 
 export interface CanDeactivateComponent {
     canDeactivate(): DeactivateGuard[];
@@ -36,7 +35,7 @@ export class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
                 map(can => ({ can, message: guard.message }))
             )),
             find(guard => !guard.can),
-            mergeMap(item => !item ? of(true) : this.tip.confirmOperateTip(ConfirmComponent, { message: item.message, needTranslate: true }))
+            mergeMap(item => !item ? of(true) : this.tip.guardRiskOperate(item.message))
         );
     }
 }

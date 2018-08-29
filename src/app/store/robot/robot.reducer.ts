@@ -32,6 +32,7 @@ export enum RobotOperateType {
     restart = 'restart',
     delete = 'delete',
     public = 'public',
+    debug = 'debug',
 }
 
 interface RequestParams {
@@ -68,7 +69,7 @@ interface UIState {
     currentProfitChartPage: number;
     currentRunningLogPage: number;
     currentStrategyChartPage: number;
-    debugLoading: boolean;
+    debugRobotLoading: boolean;
     loading: boolean;
     logsLoading: boolean;
     publicRobotLoading: boolean;
@@ -141,7 +142,7 @@ const initialUIState: UIState = {
     currentProfitChartPage: 0,
     currentRunningLogPage: 0,
     currentStrategyChartPage: 0,
-    debugLoading: false,
+    debugRobotLoading: false,
     loading: false,
     logsLoading: false,
     publicRobotLoading: false,
@@ -223,11 +224,8 @@ export function reducer(state = initialState, action: actions.Actions): State {
         }
 
         // robot detail
-        case actions.GET_ROBOT_DETAIL: {
-            const requestParams = { ...state.requestParams, robotDetail: action.payload };
-
-            return { ...state, requestParams, UIState: { ...state.UIState, loading: true } };
-        }
+        case actions.GET_ROBOT_DETAIL:
+            return { ...state, requestParams: { ...state.requestParams, robotDetail: action.payload }, UIState: { ...state.UIState, loading: true } };
 
         case actions.GET_ROBOT_DETAIL_FAIL:
             return { ...state, robotDetailRes: action.payload, robotArgs: { ...state.robotArgs, strategyArgs: null, templateArgs: null }, UIState: { ...state.UIState, loading: false } };
@@ -398,11 +396,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // run plugin
         case actions.RUN_PLUGIN:
-            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload }, UIState: { ...state.UIState, debugLoading: true } };
+            return { ...state, requestParams: { ...state.requestParams, pluginRun: action.payload }, UIState: { ...state.UIState, debugRobotLoading: true } };
 
         case actions.RUN_PLUGIN_FAIL:
         case actions.RUN_PLUGIN_SUCCESS:
-            return { ...state, pluginRunRes: action.payload, UIState: { ...state.UIState, debugLoading: false } };
+            return { ...state, pluginRunRes: action.payload, UIState: { ...state.UIState, debugRobotLoading: false } };
 
         // ==============================================Local action=====================================================
 

@@ -39,7 +39,7 @@ export class BacktestEffect extends BaseEffect {
 
     @Effect()
     stopBacktest$: Observable<ResponseAction> = this.getResponseAction(backtestActions.STOP_BACKTEST_TASK, backtestActions.ResponseActions, isStopBacktestFail).pipe(
-        tap((action: backtestActions.StopBacktestSuccessAction | backtestActions.StopBacktestFailAction) => !isStopBacktestFail(action.payload) && this.tip.showTip('STOP_BACKTEST_SUCCESS'))
+        tap((action: backtestActions.StopBacktestSuccessAction | backtestActions.StopBacktestFailAction) => !isStopBacktestFail(action.payload) && this.tip.messageSuccess('STOP_BACKTEST_SUCCESS'))
     );
 
     /**

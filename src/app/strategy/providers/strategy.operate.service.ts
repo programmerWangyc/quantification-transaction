@@ -11,7 +11,6 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
-import { UtilService } from '../../providers/util.service';
 import * as fromRoot from '../../store/index.reducer';
 import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
 import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
@@ -30,16 +29,15 @@ export class StrategyOperateService extends StrategyService {
     private genKey$: Subject<[ShareStrategyStateSnapshot, number]> = new Subject();
 
     constructor(
-        public store: Store<fromRoot.AppState>,
-        public error: ErrorService,
-        public process: ProcessService,
-        public utilService: UtilService,
-        public nzModal: NzModalService,
-        public translate: TranslateService,
         public constant: StrategyConstantService,
+        public error: ErrorService,
+        public nzModal: NzModalService,
+        public process: ProcessService,
+        public store: Store<fromRoot.AppState>,
         public tip: TipService,
+        public translate: TranslateService,
     ) {
-        super(store, error, process, utilService, nzModal, constant, translate);
+        super(constant, error, nzModal, process, store, tip, translate);
     }
 
     //  =======================================================Serve Request=======================================================
@@ -73,7 +71,7 @@ export class StrategyOperateService extends StrategyService {
      */
     launchDeleteStrategy(paramsObs: Observable<fromRes.Strategy>): Subscription {
         return this.process.processDeleteStrategy(paramsObs.pipe(
-            switchMap((params: fromRes.Strategy) => this.utilService.guardRiskOperate('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
+            switchMap((params: fromRes.Strategy) => this.tip.guardRiskOperate('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
                 mapTo({ id: params.id })
             ))
         ));
@@ -90,7 +88,7 @@ export class StrategyOperateService extends StrategyService {
 
     //  =======================================================Date acquisition=======================================================
 
-    getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
+    private getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
         return this.store.select(fromRoot.selectShareStrategyResponse).pipe(
             this.filterTruth()
         );

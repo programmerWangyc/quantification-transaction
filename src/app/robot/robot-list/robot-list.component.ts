@@ -9,6 +9,7 @@ import { PublicService } from '../../providers/public.service';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Component({
     selector: 'app-robot-list',
@@ -98,7 +99,7 @@ export class RobotListComponent extends BaseComponent {
             startWith([])
         );
 
-        this.isPublicLoading = this.robotOperate.getPublicRobotLoadingState();
+        this.isPublicLoading = this.robotOperate.isLoading(RobotOperateType.public);
 
         this.isLoading = this.robotService.isLoading();
 

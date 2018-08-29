@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
-import { MonoTypeOperatorFunction } from 'rxjs/internal/types';
-import { filter, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { MonoTypeOperatorFunction, Observer } from 'rxjs/internal/types';
+import { catchError, filter, switchMap, timeout } from 'rxjs/operators';
 
 export type CompareFn<T> = (pre: T, cur: T) => boolean;
 
@@ -25,10 +25,6 @@ export class BaseService {
         return [...acc, cur];
     }
 
-    print<T>(): MonoTypeOperatorFunction<T> {
-        return tap(v => console.log(v));
-    }
-
     compareAllValues<T>(): CompareFn<T> {
         return (previous: T, current: T) => {
             return Object.keys(current).every(key => previous[key] === current[key]);
@@ -44,6 +40,30 @@ export class BaseService {
             return (param1: T) => {
                 return fn(param1, param2);
             };
+        };
+    }
+
+    loadingTimeout<T>(callback: (value: any) => T, secondes = 5000): (source: Observable<T>) => Observable<T> {
+        return function (source: Observable<T>) {
+            return Observable.create((subscriber: Observer<T>) => {
+                const subscription = source.pipe(
+                    switchMap(state => state ? source.pipe(
+                        timeout(secondes),
+                        catchError(err => of(err))
+                    ) : of(state)),
+                ).subscribe(value => {
+                    try {
+                        subscriber.next(callback(value));
+                    } catch (err) {
+                        subscriber.error(err);
+                    }
+                },
+                    err => subscriber.error(err),
+                    () => subscriber.complete()
+                );
+
+                return subscription;
+            });
         };
     }
 

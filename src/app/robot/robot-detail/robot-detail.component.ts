@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
+
+import { of, Subscription, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
@@ -9,7 +10,6 @@ import { BtNodeService } from '../../providers/bt-node.service';
 import { PlatformService } from '../../providers/platform.service';
 import { PublicService } from '../../providers/public.service';
 import { RobotService } from '../../robot/providers/robot.service';
-
 
 @Component({
     selector: 'app-robot-detail',
@@ -60,7 +60,12 @@ export class RobotDetailComponent extends BaseComponent {
 
         this.paths = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name }];
 
-        this.isLoading = this.robotService.isLoading();
+        /**
+         * state: false ---> true ---> false;
+         */
+        this.isLoading = this.robotService.isLoading().pipe(
+            take(3)
+        );
     }
 
     /**

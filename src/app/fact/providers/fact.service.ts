@@ -10,6 +10,7 @@ import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
+import { TipService } from '../../providers/tip.service';
 
 @Injectable()
 export class FactService extends BaseService {
@@ -18,6 +19,7 @@ export class FactService extends BaseService {
         private store: Store<fromRoot.AppState>,
         private process: ProcessService,
         private error: ErrorService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -63,7 +65,8 @@ export class FactService extends BaseService {
     isLoading(type?: string): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotUiState),
-            map(state => type ? state[type] : state.loading)
+            map(state => type ? state[type] : state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

@@ -41,10 +41,9 @@ export class RobotCommandComponent extends FoldableBusinessComponent implements 
     initialModel() {
         this.commandArgs = this.robotOperate.getRobotCommandArgs();
 
-        this.hasArgs = this.commandArgs
-            .pipe(
-                map(args => !!args.length)
-            );
+        this.hasArgs = this.commandArgs.pipe(
+            map(args => !!args.length)
+        );
     }
 
     launch() {

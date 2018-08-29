@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import {
-    CommandRobotResponse, DeleteRobotResponse, RestartRobotResponse, ServerSendEventType, ServerSendRobotMessage
+    CommandRobotResponse, DeleteRobotResponse, RestartRobotResponse, ServerSendEventType, ServerSendRobotMessage, SaveRobotResponse
 } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { WebsocketService } from '../../providers/websocket.service';
@@ -46,7 +46,7 @@ export class RobotEffect extends BaseEffect {
 
     @Effect()
     modifyRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.MODIFY_ROBOT, robotActions.ResponseActions).pipe(
-        tap(action => !(<robotActions.ModifyRobotFailAction>action).payload.error && this.tip.showTip('ROBOT_CONFIG_UPDATE_SUCCESS'))
+        tap(action => !(<robotActions.ModifyRobotFailAction>action).payload.error && this.tip.messageSuccess('ROBOT_CONFIG_UPDATE_SUCCESS'))
     );
 
     @Effect()
@@ -54,12 +54,13 @@ export class RobotEffect extends BaseEffect {
         tap(this.tip.messageByResponse('COMMAND_ROBOT_SUCCESS_TIP', 'COMMAND_ROBOT_FAIL_TIP'))
     );
 
+    // 响应结果服务中处理。
     @Effect()
     deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail);
 
     @Effect()
-    saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions).pipe(
-        tap(this.tip.messageByResponse('CREATE_ROBOT_SUCCESS', 'CREATE_ROBOT_FAIL'))
+    saveRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.SAVE_ROBOT, robotActions.ResponseActions, isSaveRobotFail).pipe(
+        tap(this.tip.messageByResponse('CREATE_ROBOT_SUCCESS', 'CREATE_ROBOT_FAIL', res => res > 0))
     );
 
     @Effect()
@@ -113,4 +114,8 @@ export function isCommandRobotFail(response: CommandRobotResponse): boolean {
 
 export function isDeleteRobotFail(response: DeleteRobotResponse): boolean {
     return !!response.error || Math.abs(response.result) === 1;
+}
+
+export function isSaveRobotFail(response: SaveRobotResponse): boolean {
+    return !!response.error || response.result < 0;
 }

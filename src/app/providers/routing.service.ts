@@ -13,7 +13,9 @@ import { RouterStateUrl } from '../store/router/router.reducer';
 @Injectable()
 export class RoutingService extends BaseService {
 
-    constructor(private store: Store<AppState>) {
+    constructor(
+        private store: Store<AppState>
+    ) {
         super();
     }
 

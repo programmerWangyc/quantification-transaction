@@ -14,6 +14,7 @@ import { ProcessService } from '../../providers/process.service';
 import { GroupedList, UtilService } from '../../providers/util.service';
 import { ResetBBSTopicAction, ClearQiniuTokenAction, ClearBBSOperateStateAction } from '../../store/bbs/bbs.action';
 import * as fromRoot from '../../store/index.reducer';
+import { TipService } from '../../providers/tip.service';
 
 @Injectable()
 export class CommunityService extends UploadService {
@@ -22,6 +23,7 @@ export class CommunityService extends UploadService {
         private process: ProcessService,
         private error: ErrorService,
         private utilService: UtilService,
+        private tipService: TipService,
     ) {
         super();
     }
@@ -196,7 +198,8 @@ export class CommunityService extends UploadService {
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectBBSUiState),
-            map(state => state.loading)
+            map(state => state.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

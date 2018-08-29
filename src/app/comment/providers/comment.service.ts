@@ -15,10 +15,9 @@ import { TipService } from '../../providers/tip.service';
 import { ClearQiniuTokenAction } from '../../store/comment/comment.action';
 import { RequestParams } from '../../store/comment/comment.reducer';
 import * as fromRoot from '../../store/index.reducer';
-import { ConfirmComponent } from '../../tool/confirm/confirm.component';
 
 @Injectable()
-export class CommentService extends  UploadService {
+export class CommentService extends UploadService {
 
     constructor(
         private store: Store<fromRoot.AppState>,
@@ -51,8 +50,7 @@ export class CommentService extends  UploadService {
     launchDeleteComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
         return this.process.processDeleteComment(
             source.pipe(
-                switchMap(request => this.tipService.confirmOperateTip(ConfirmComponent, { message: 'CONFIRM_DELETE_COMMENT', needTranslate: true }).pipe(
-                    this.filterTruth(),
+                switchMap(request => this.tipService.guardRiskOperate('CONFIRM_DELETE_COMMENT').pipe(
                     mapTo(request)
                 ))
             )
@@ -170,7 +168,8 @@ export class CommentService extends  UploadService {
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectCommentUIState),
-            map(res => res.loading)
+            map(res => res.loading),
+            this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
     }
 

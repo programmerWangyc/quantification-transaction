@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, Subscription, of } from 'rxjs';
-import { delayWhen, filter, map, mergeMap, switchMap, take, delay } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { delay, delayWhen, filter, map, switchMap, takeWhile } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
@@ -15,7 +15,7 @@ import {
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
-import { CloseSecondaryVerifyAction, ClearLoginInfoAction } from '../../store/auth/login.action';
+import { ClearLoginInfoAction, CloseSecondaryVerifyAction } from '../../store/auth/login.action';
 import { ResetSetPasswordResponseAction } from '../../store/auth/password.action';
 import { ResetResetPasswordResponseAction } from '../../store/auth/reset.action';
 import { ResetSignupResponseAction, ToggleAgreeStateAction } from '../../store/auth/signup.action';
@@ -70,13 +70,14 @@ export class AuthService extends BaseService {
 
     // login
     private getLoginResponse(): Observable<LoginResponse> {
-        return this.store.select(selectLoginResponse).pipe(
+        return this.store.pipe(
+            select(selectLoginResponse),
             this.filterTruth()
         );
     }
 
     needVerification(): Observable<boolean> {
-        return this.store.select(selectNeedGoogleSecondaryVer);
+        return this.store.pipe(select(selectNeedGoogleSecondaryVer));
     }
 
     isLoginSuccess(): Observable<boolean> {
@@ -94,7 +95,8 @@ export class AuthService extends BaseService {
 
     // signup
     private getSignupResponse(): Observable<SignupResponse> {
-        return this.store.select(selectSignupResponse).pipe(
+        return this.store.pipe(
+            select(selectSignupResponse),
             this.filterTruth()
         );
     }
@@ -106,7 +108,7 @@ export class AuthService extends BaseService {
     }
 
     isAgree(): Observable<boolean> {
-        return this.store.select(selectAgreeState);
+        return this.store.pipe(select(selectAgreeState));
     }
 
     toggleAgreeState(state: Observable<boolean>): Subscription {
@@ -118,38 +120,33 @@ export class AuthService extends BaseService {
     }
 
     showSignupResponse(): Subscription {
-        return this.isSignupSuccess().pipe(
-            mergeMap(isSuccess => this.translate.get(isSuccess ? 'SIGNUP_SUCCESS_TIP' : 'SIGNUP_FAIL_TIP'))
-        )
-            .subscribe(message => this.tip.showTip(message));
+        return this.isSignupSuccess().subscribe(isSuccess => this.showMessage(isSuccess, 'SIGNUP_SUCCESS_TIP', 'SIGNUP_FAIL_TIP'));
     }
 
     // reset password
     private getResetPasswordResponse(): Observable<ResetPasswordResponse> {
-        return this.store.select(selectResetPasswordResponse).pipe(
-            filter(res => !!res)
+        return this.store.pipe(
+            select(selectResetPasswordResponse),
+            this.filterTruth()
         );
     }
 
     showResetPasswordResponse(): Subscription {
-        return this.getResetPasswordResponse().pipe(
-            mergeMap(res => this.translate.get(res.result ? 'EMAIL_VALID_TIP' : 'EMAIL_INVALID_TIP'))
-        )
-            .subscribe(message => this.tip.showTip(message, 60000));
+        return this.getResetPasswordResponse()
+            .subscribe(result => this.showMessage(result.result, 'EMAIL_VALID_TIP', 'EMAIL_INVALID_TIP'));
     }
 
     // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
-        return this.store.select(selectSetPwdResponse).pipe(
+        return this.store.pipe(
+            select(selectSetPwdResponse),
             this.filterTruth()
         );
     }
 
     showSetPasswordResponse(): Subscription {
-        return this.getSetPasswordResponse().pipe(
-            mergeMap(res => this.translate.get(res.result ? 'SET_PWD_SUCCESS_TIP' : 'SET_PWD_FAIL_TIP'))
-        )
-            .subscribe(message => this.tip.showTip(message));
+        return this.getSetPasswordResponse()
+            .subscribe(result => this.showMessage(result.result, 'SET_PWD_SUCCESS_TIP', 'SET_PWD_FAIL_TIP'));
     }
 
     resetSetPasswordResponse(): void {
@@ -158,16 +155,15 @@ export class AuthService extends BaseService {
 
     // verify password
     private getVerifyPasswordResponse(): Observable<VerifyPasswordResponse> {
-        return this.store.select(selectVerifyPwdResponse).pipe(
+        return this.store.pipe(
+            select(selectVerifyPwdResponse),
             this.filterTruth()
         );
     }
 
-    verifyPasswordSuccess(): Observable<boolean> {
+    isVerifyPasswordSuccess(): Observable<boolean> {
         return this.getVerifyPasswordResponse().pipe(
-            map(res => res.result),
-            // .do(success => !success && this.tip.showTip('PASSWORD_VERIFY_FAILED'))
-            this.filterTruth()
+            map(res => res.result)
         );
     }
 
@@ -175,9 +171,18 @@ export class AuthService extends BaseService {
      * 验证通过的密码
      */
     getTemporaryPwd(): Observable<string> {
-        return this.store.select(selectTemporaryPwd).pipe(
+        return this.store.pipe(
+            select(selectTemporaryPwd),
             this.filterTruth()
         );
+    }
+
+    private showMessage(isSuccess: boolean, successMsg: string, failMsg: string): void {
+        if (isSuccess) {
+            this.tip.messageSuccess(successMsg);
+        } else {
+            this.tip.messageError(failMsg);
+        }
     }
 
     //  =======================================================Local Action=======================================================
@@ -187,7 +192,9 @@ export class AuthService extends BaseService {
      */
     storePwdTemporary(pwdObs: Observable<string>): Subscription {
         return pwdObs.pipe(
-            delayWhen(_ => this.verifyPasswordSuccess())
+            delayWhen(_ => this.isVerifyPasswordSuccess().pipe(
+                this.filterTruth()
+            ))
         ).subscribe(pwd => {
             this.store.dispatch(new StorePwdTemporaryAction(pwd));
             this.clearPwdTemporary();
@@ -236,12 +243,12 @@ export class AuthService extends BaseService {
         return this.error.handleResponseError(this.getSetPasswordResponse());
     }
 
-    handleVerifyPasswordError(): Subscription {
+    handleVerifyPasswordError(keepAlive: () => boolean): Subscription {
         return this.error.handleError(
             this.getVerifyPasswordResponse().pipe(
+                takeWhile(keepAlive),
                 filter(res => !!res.error),
                 switchMap(res => this.translate.get(res.error)),
-                take(1)
             )
         );
     }

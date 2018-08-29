@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,6 +8,7 @@ import { BacktestService } from '../../backtest/providers/backtest.service';
 import { CategoryType, needArgsType } from '../../interfaces/request.interface';
 import { StrategyDetail } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { TipService } from '../../providers/tip.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
@@ -42,14 +42,14 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
     strategyDetail: Observable<StrategyDetail>;
 
     constructor(
+        public backtest: BacktestService,
+        public constant: StrategyConstantService,
+        public nodeService: BtNodeService,
         public route: ActivatedRoute,
         public strategyService: StrategyOperateService,
-        public nodeService: BtNodeService,
-        public nzModal: NzModalService,
-        public constant: StrategyConstantService,
-        public backtest: BacktestService,
+        public tipService: TipService,
     ) {
-        super(route, strategyService, nodeService, nzModal, constant, backtest);
+        super(backtest, constant, nodeService, route, strategyService, tipService);
     }
 
     /**

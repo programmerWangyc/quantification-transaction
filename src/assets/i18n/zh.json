@@ -847,5 +847,7 @@
     "BALANCE_EARLY_WARNING": "额度预警",
     "BALANCE_MIN_VALUE": "预警阈值",
     "BALANCE_EARLY_WARING_TIP":"当账户可用余额小于此值时, 您将会收到邮件与微信通知, 设置为0禁止用此功能, 没有充值或者更改此设置的情况下, 24小时内只通知一次。",
-    "REGISTER_CODE_MANAGEMENT": "注册码管理"
+    "REGISTER_CODE_MANAGEMENT": "注册码管理",
+    "SLOW_NET_WORK": "网络较慢",
+    "LOADING_LONG_TIME_NOTIFICATION": "数据加载缓慢，可能是当前网络状态较差，您可以选择继续等待以完成加载，或刷新浏览器尝试重新加载。"
 }

@@ -36,6 +36,7 @@ export class StrategyBaseGuard extends BaseGuard implements CanActivate {
         );
     }
 }
+
 @Injectable()
 export class StrategyGuard extends StrategyBaseGuard {
     constructor(

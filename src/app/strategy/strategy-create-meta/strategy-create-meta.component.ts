@@ -3,9 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import * as fileSaver from 'file-saver';
 import { isBoolean, isEmpty, negate } from 'lodash';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { from, merge, Observable, of, Subject, Subscription } from 'rxjs';
-import { filter, find, map, mapTo, mergeMap, startWith, switchMap, take } from 'rxjs/operators';
+import { find, map, mapTo, mergeMap, startWith, switchMap, take } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { CanDeactivateComponent } from '../../base/guard.service';
@@ -13,6 +12,7 @@ import { Breadcrumb, DeactivateGuard, VariableOverview } from '../../interfaces/
 import { CategoryType, needArgsType, SaveStrategyRequest } from '../../interfaces/request.interface';
 import { Strategy, StrategyDetail, StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
+import { TipService } from '../../providers/tip.service';
 import { StrategyMetaArg } from '../../strategy/add-arg/add-arg.component';
 import { ArgListComponent } from '../../strategy/arg-list/arg-list.component';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
@@ -22,7 +22,6 @@ import {
 } from '../../strategy/strategy-codemirror/strategy-codemirror.component';
 import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
-import { SimpleNzConfirmWrapComponent } from '../../tool/simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 
 export interface Tab {
     name: string;
@@ -185,12 +184,12 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     isTemplateCategorySelected: Observable<boolean>;
 
     constructor(
+        public backtestService: BacktestService,
+        public constant: StrategyConstantService,
+        public nodeService: BtNodeService,
         public route: ActivatedRoute,
         public strategyService: StrategyOperateService,
-        public nodeService: BtNodeService,
-        public nzModal: NzModalService,
-        public constant: StrategyConstantService,
-        public backtestService: BacktestService,
+        public tipService: TipService,
     ) {
     }
 
@@ -383,18 +382,9 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     protected confirmBeforeRequest(id: number): Observable<SaveStrategyRequest> {
         return this.getSaveParams().pipe(
             map(params => ({ ...params, id })),
-            switchMap(params => {
-                const modal: NzModalRef = this.nzModal.confirm({
-                    nzContent: SimpleNzConfirmWrapComponent,
-                    nzComponentParams: { content: 'STRATEGY_COPY_SAVE_CONFIRM' },
-                    nzOnOk: () => modal.close(true),
-                });
-
-                return modal.afterClose.pipe(
-                    filter(sure => !!sure),
-                    mapTo(params)
-                );
-            })
+            switchMap(params => this.tipService.guardRiskOperate('STRATEGY_COPY_SAVE_CONFIRM').pipe(
+                mapTo(params))
+            )
         );
     }
 

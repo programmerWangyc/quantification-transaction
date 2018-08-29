@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import { isBoolean, isEmpty, isNull, omit, isNumber } from 'lodash';
+import { isBoolean, isEmpty, isNull, isNumber, omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { filter, map, startWith, switchMap, switchMapTo, take, withLatestFrom } from 'rxjs/operators';
 
@@ -14,7 +14,6 @@ import { ExchangeService as GlobalExchangeService } from '../../providers/exchan
 import { PlatformService } from '../../providers/platform.service';
 import { PublicService } from '../../providers/public.service';
 import { TipService } from '../../providers/tip.service';
-import { AuthService } from '../../shared/providers/auth.service';
 import { ExchangeConfig } from '../../store/exchange/exchange.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { VerifyPasswordComponent } from '../../tool/verify-password/verify-password.component';
@@ -90,9 +89,8 @@ export class ExchangeFormService extends BaseService {
         private publicService: PublicService,
         private globalExchangeService: GlobalExchangeService,
         private platformService: PlatformService,
-        private authService: AuthService,
-        private encryptService: EncryptService,
         private tipService: TipService,
+        private encryptService: EncryptService,
     ) {
         super();
     }
@@ -366,10 +364,7 @@ export class ExchangeFormService extends BaseService {
         return this.store.pipe(
             select(fromRoot.selectTemporaryPwd),
             map(pwd => !!pwd),
-            switchMap(verified => verified ? of(true) : this.tipService.confirmOperateTip(VerifyPasswordComponent, { message: 'PASSWORD', needTranslate: true }).pipe(
-                this.filterTruth(),
-                switchMapTo(this.authService.verifyPasswordSuccess())
-            ))
+            switchMap(verified => verified ? of(true) : this.tipService.securityVerify(VerifyPasswordComponent))
         );
     }
 }
