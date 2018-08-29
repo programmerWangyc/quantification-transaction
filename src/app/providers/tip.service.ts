@@ -123,18 +123,21 @@ export class TipService extends BaseService {
      * 确认是否要执行高危操作
      * @param message to be translated message;
      * @param options Translate params;
+     * @param config  Modal options
+     * @param onlyTrue Whether the output observable only emit 'true' value;
      */
-    guardRiskOperate(message: string, options: { [key: string]: any } = {}, config: ModalOptions = {}): Observable<boolean> {
+    guardRiskOperate(message: string, options: { [key: string]: any } = {}, config: ModalOptions = {}, onlyTrue = true): Observable<boolean> {
         return this.translate.get(message, options).pipe(
             mergeMap(content => {
                 const modal: NzModalRef = this.nzModal.confirm(Object.assign({
                     nzContent: content,
                     nzOnOk: () => modal.close(true),
+                    nzOnCancel: () => modal.close(false),
                 }, config));
 
-                return modal.afterClose.pipe(
+                return onlyTrue ? modal.afterClose.pipe(
                     this.filterTruth()
-                );
+                ) : modal.afterClose;
             })
         );
     }

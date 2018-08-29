@@ -1,6 +1,8 @@
 <nz-layout id="dashboard">
     <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
-        <div class="logo">BotVS</div>
+        <div class="logo">
+            <a routerLink="/home">BotVS</a>
+        </div>
         <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'" id="side-container">
 
             <ng-container *ngFor="let nav of list">
@@ -42,17 +44,9 @@
                         {{'QUOTE_TOOLS' | translate}}
                     </a>
                     <ul nz-menu>
-                        <li nz-menu-item>
-                            <a href="https://quant.la/Tools/View/4/chart.html" target="__blank">
-                                <i class="anticon anticon-line-chart"></i>
-                                {{'QUOTE_CHART' | translate}}
-                            </a>
-                        </li>
-                        <li nz-menu-item>
-                            <a href="https://quant.la/Tools/View/3/formula.html" target="__blank">
-                                <i class="anticon anticon-tool"></i>
-                                {{'ANALYZING_TOOL' | translate}}
-                            </a>
+                        <li nz-menu-item *ngFor="let item of toolMenu">
+                            <i class="anticon" [ngClass]="'anticon-'+ item.icon"></i>
+                            {{ item.label| translate}}
                         </li>
                     </ul>
                 </nz-dropdown>

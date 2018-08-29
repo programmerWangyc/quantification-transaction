@@ -1,21 +1,7 @@
-<!-- Main Header -->
-<app-navbar *ngIf="beforeLogin | async"></app-navbar>
+<app-navbar *ngIf="!(isDashboard | async)"></app-navbar>
 
-<!-- Left side column. contains the logo and sidebar -->
-<!-- <app-menu></app-menu> -->
-
-<!-- Content Wrapper. Contains page content -->
-<div [ngClass]="{'main-content': beforeLogin | async}">
+<div [ngClass]="{'main-content': !(isDashboard | async)}">
     <router-outlet></router-outlet>
 </div>
 
-<!--Wrapper for content after login-->
-<!-- <router-outlet name="dashboard"></router-outlet> -->
-<!-- /.content-wrapper -->
-
-<!-- Main Footer -->
-<!-- <app-footer *ngIf="needFooter | async"></app-footer> -->
 <app-footer></app-footer>
-
-<!-- Control Sidebar -->
-<!-- <app-sidebar></app-sidebar> -->

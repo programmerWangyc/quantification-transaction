@@ -1,47 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Path } from '../../app.config';
-
-export interface Link {
-    path: string;
-    label: string;
-}
-
-const main: Link = {
-    path: Path.home,
-    label: 'HOME',
-};
-
-const square: Link = {
-    path: Path.square,
-    label: 'STRATEGY_SQUARE',
-};
-
-const factFinder: Link = {
-    path: Path.fact,
-    label: 'FACT_FINDER',
-};
-
-const community: Link = {
-    path: Path.community,
-    label: 'COMMUNITY',
-};
-
-const documentation: Link = {
-    path: Path.doc,
-    label: 'API_DOCUMENTATION',
-};
-
-const quoteChart: Link = {
-    path: 'https://quant.la/Tools/View/4/chart.html',
-    label: 'QUOTE_CHART',
-};
-
-const analyzing: Link = {
-    path: 'https://quant.la/Tools/View/3/formula.html',
-    label: 'ANALYZING_TOOL',
-};
+import {
+    analyzing, community, documentation, factFinder, main, NavItem, quoteChart, square
+} from '../../base/base.config';
+import { Observable } from 'rxjs';
+import { PublicService } from '../../providers/public.service';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-navbar',
@@ -53,7 +18,7 @@ export class NavbarComponent implements OnInit {
     /**
      * Head navigation
      */
-    navLinks: Link[] = [main, square, factFinder, community, documentation, quoteChart, analyzing];
+    navNavItems: NavItem[] = [main, square, factFinder, community, documentation, quoteChart, analyzing];
 
     /**
      * 搜索内容
@@ -65,21 +30,30 @@ export class NavbarComponent implements OnInit {
      */
     isCollapsed = true;
 
+    /**
+     * @ignore
+     */
+    isBeforeLogin: Observable<boolean>;
+
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        private publicService: PublicService,
     ) { }
 
     /**
      * @ignore
      */
     ngOnInit() {
+        this.isBeforeLogin = this.publicService.isLogin().pipe(
+            map(logged => !logged)
+        );
     }
 
     /**
      * @ignore
      */
-    navigateTo(target: Link): void {
+    navigateTo(target: NavItem): void {
         if (!target.path.startsWith('http')) {
             this.router.navigate([target.path], { relativeTo: this.activatedRoute });
         } else {

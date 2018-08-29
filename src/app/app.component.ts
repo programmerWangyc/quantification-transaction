@@ -7,7 +7,9 @@ import { en_US, NzI18nService } from 'ng-zorro-antd';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
+import { Path } from './app.config';
 import { PublicService } from './providers/public.service';
+import { RoutingService } from './providers/routing.service';
 
 @Component({
     selector: 'app-root',
@@ -24,13 +26,14 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    beforeLogin: Observable<boolean>;
+    isDashboard: Observable<boolean>;
 
     constructor(
         private translate: TranslateService,
         private pubService: PublicService,
         private router: Router,
         private nzI18nService: NzI18nService,
+        private routing: RoutingService,
     ) {
     }
 
@@ -61,8 +64,8 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private initialModel(): void {
-        this.beforeLogin = this.pubService.isLogin().pipe(
-            map(logged => !logged)
+        this.isDashboard = this.routing.getCurrentUrl().pipe(
+            map(path => path && path.includes(Path.dashboard))
         );
     }
 

@@ -4,13 +4,15 @@ import { ActionReducerMap, createSelector } from '@ngrx/store';
 import * as account from './account/account.reducer';
 import * as login from './auth/login.reducer';
 import * as pwd from './auth/password.reducer';
-import * as reset from './auth/reset.reducer'; import * as signup from './auth/signup.reducer';
+import * as reset from './auth/reset.reducer';
+import * as signup from './auth/signup.reducer';
 import * as verifyPwd from './auth/verify-password.reducer';
 import * as backtest from './backtest/backtest.reducer';
 import * as bbs from './bbs/bbs.reducer';
 import * as btNode from './bt-node/bt-node.reducer';
 import * as charge from './charge/charge.reducer';
 import * as comment from './comment/comment.reducer';
+import * as doc from './document/document.reducer';
 import * as exchange from './exchange/exchange.reducer';
 import * as message from './message/message.reducer';
 import * as platform from './platform/platform.reducer';
@@ -20,7 +22,6 @@ import { RouterStateUrl } from './router/router.reducer';
 import * as simulation from './simulation/simulation.reducer';
 import * as strategy from './strategy/strategy.reducer';
 import * as watchDog from './watch-dog/watch-dog.reducer';
-import * as doc from './document/document.reducer';
 
 export interface AppState {
     account: account.State;
@@ -96,7 +97,7 @@ export const selectPublicRequestParams = createSelector(getPubState, pub.getRequ
 const getRouteState = (state: AppState) => state.route;
 
 // router
-export const selectRouteState = createSelector(getRouteState, state => state.state);
+export const selectRouteState = createSelector(getRouteState, state => state && state.state);
 
 //  ===================================================Auth===================================================
 

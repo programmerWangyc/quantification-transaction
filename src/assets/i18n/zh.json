@@ -431,6 +431,7 @@
     "DELETE_ROBOT_SUCCESS_BUT_LOG": "删除成功，但无法与机器人关联的托管联系，请手动删除文件 {{id}}.db3!",
     "OPERATE_SUCCESS": "操作成功！",
     "OPERATE_FAIL": "操作失败！",
+    "CONFIRM_LEAVE_ROBOT_CREATION": "尚未完成机器人创建，确定要离开吗？",
 
     "AGENT": "托管者",
     "PUBLIC_AGENT": "公有托管者",

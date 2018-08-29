@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { SideNavItem, controlCenterModules, square, factFinder, community, documentation, charge, accountModules, message } from '../dashboard.component';
+import { NavItem, controlCenterModules, square, factFinder, community, documentation, charge, accountModules, message } from '../../base/base.config';
 
-interface Navigator extends SideNavItem { }
+interface Navigator extends NavItem { }
 
 @Component({
     selector: 'app-navigation',

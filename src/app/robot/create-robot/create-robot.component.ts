@@ -7,7 +7,7 @@ import { concat, Observable, of as observableOf, Subject, Subscription } from 'r
 import { map, reduce, takeWhile } from 'rxjs/operators';
 
 import { ExchangePairBusinessComponent } from '../../base/base.component';
-import { SelectedPair, VariableOverview, GroupedStrategy, SemanticArg } from '../../interfaces/app.interface';
+import { GroupedStrategy, SelectedPair, SemanticArg, VariableOverview } from '../../interfaces/app.interface';
 import { CategoryType, needArgsType, SaveRobotRequest } from '../../interfaces/request.interface';
 import { Platform } from '../../interfaces/response.interface';
 import { BtNodeService, GroupedNode } from '../../providers/bt-node.service';

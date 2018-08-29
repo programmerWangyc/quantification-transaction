@@ -9,14 +9,16 @@ import { Path } from '../../app.config';
 import { TipService } from '../../providers/tip.service';
 import { AppState, selectStrategyListByNameResponse, selectStrategyListResponse } from '../../store/index.reducer';
 import { BaseGuard } from '../../base/guard.service';
+import { RoutingService } from '../../providers/routing.service';
 
 export class StrategyBaseGuard extends BaseGuard implements CanActivate {
     constructor(
         public store: Store<AppState>,
         public router: Router,
         public tip: TipService,
+        public routing: RoutingService,
     ) {
-        super(tip);
+        super(tip, routing);
     }
 
     /**
@@ -43,7 +45,8 @@ export class StrategyGuard extends StrategyBaseGuard {
         public store: Store<AppState>,
         public router: Router,
         public tip: TipService,
+        public routing: RoutingService,
     ) {
-        super(store, router, tip);
+        super(store, router, tip, routing);
     }
 }

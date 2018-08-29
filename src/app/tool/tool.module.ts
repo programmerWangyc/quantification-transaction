@@ -26,7 +26,6 @@ import { RunningLogComponent } from './running-log/running-log.component';
 import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
-import { CustomSnackBarComponent } from './tool.components';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
 
 export function highchartsFactory() {
@@ -51,7 +50,6 @@ export function highchartsFactory() {
         TranslateModule,
     ],
     declarations: [
-        CustomSnackBarComponent,
         DIRECTIVES,
         ExchangePairComponent,
         FooterComponent,
@@ -72,7 +70,6 @@ export function highchartsFactory() {
         VerifyPasswordComponent,
     ],
     entryComponents: [
-        CustomSnackBarComponent,
         SimpleNzConfirmWrapComponent,
         StrategyRenewalComponent,
         VerifyPasswordComponent,

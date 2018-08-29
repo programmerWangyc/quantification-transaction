@@ -26,7 +26,7 @@
 
     <nav class="header" fxLayoutAlign="space-between center">
         <div fxLayoutAlign="space-between center" id="nav">
-            <a *ngFor="let link of navLinks"  (click)="navigateTo(link)">
+            <a *ngFor="let link of navNavItems" (click)="navigateTo(link)">
                 {{link.label | translate}}
             </a>
         </div>
@@ -36,21 +36,28 @@
                 <i class="anticon anticon-bars"></i>
             </button>
             <ul nz-menu [style.display]="isCollapsed ? 'none' : 'block'">
-                <li *ngFor="let link of navLinks" nz-menu-item>
+                <li *ngFor="let link of navNavItems" nz-menu-item>
                     <a (click)="navigateTo(link)">{{link.label | translate}}</a>
                 </li>
             </ul>
         </div>
 
         <div id="auth" fxLayoutAlign="space-between center">
-            <button nz-button nzType="primary" routerLink="/auth/login" routerLinkActive="active" fxLayoutAlign="center center">
+            <button *ngIf="isBeforeLogin | async; else back" nz-button nzType="primary" routerLink="/auth/login" fxLayoutAlign="center center">
                 <i class="anticon anticon-login"></i>
                 <span>{{'LOGIN' | translate}}</span>
             </button>
-            <button nz-button routerLink="auth/signup" routerLinkActive="active" fxLayoutAlign="center center">
+            <button nz-button routerLink="auth/signup" fxLayoutAlign="center center">
                 <i class="anticon anticon-user-add"></i>
                 <span>{{'SIGNUP' | translate}}</span>
             </button>
         </div>
     </nav>
 </header>
+
+<ng-template #back>
+    <button nz-button routerLink="/dashboard" nzType="primary" fxLayoutAlign="center center">
+        <i class="anticon anticon-enter"></i>
+        <span>{{'CONTROL_CENTER' | translate}}</span>
+    </button>
+</ng-template>

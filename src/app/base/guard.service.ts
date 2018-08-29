@@ -4,6 +4,7 @@ import { from, of } from 'rxjs';
 import { find, map, mergeMap } from 'rxjs/operators';
 
 import { DeactivateGuard } from '../interfaces/app.interface';
+import { RoutingService } from '../providers/routing.service';
 import { TipService } from '../providers/tip.service';
 
 export interface CanDeactivateComponent {
@@ -13,6 +14,7 @@ export interface CanDeactivateComponent {
 export class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
     constructor(
         public tip: TipService,
+        public routing: RoutingService,
     ) { }
 
     /**
@@ -35,7 +37,7 @@ export class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
                 map(can => ({ can, message: guard.message }))
             )),
             find(guard => !guard.can),
-            mergeMap(item => !item ? of(true) : this.tip.guardRiskOperate(item.message))
+            mergeMap(item => !item ? of(true) : this.tip.guardRiskOperate(item.message, null, null, false))
         );
     }
 }

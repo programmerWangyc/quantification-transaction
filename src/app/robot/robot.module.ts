@@ -21,6 +21,7 @@ import { routing } from './robot.routing';
 import { RobotComponent } from './robot/robot.component';
 import { StrategyArgComponent } from './strategy-arg/strategy-arg.component';
 import { RobotStrategyService } from './providers/robot.strategy.service';
+import { RobotGuard } from './providers/guard.service';
 
 @NgModule({
     imports: [
@@ -33,27 +34,28 @@ import { RobotStrategyService } from './providers/robot.strategy.service';
         DeleteRobotComponent,
         PIPES,
         RobotCommandComponent,
+        RobotComponent,
         RobotConfigComponent,
+        RobotCreationComponent,
+        RobotDebugComponent,
         RobotDebuggerComponent,
+        RobotDetailComponent,
         RobotDurationComponent,
         RobotListComponent,
         RobotOverviewComponent,
         StrategyArgComponent,
-        RobotComponent,
-        RobotCreationComponent,
-        RobotDebugComponent,
-        RobotDetailComponent,
     ],
 
     entryComponents: [
-        DeleteRobotComponent,
         CreateRobotComponent,
+        DeleteRobotComponent,
     ],
 
     providers: [
-        RobotService,
-        RobotOperateService,
         RobotConstantService,
+        RobotGuard,
+        RobotOperateService,
+        RobotService,
         RobotStrategyService,
     ],
 })

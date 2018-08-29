@@ -11,6 +11,7 @@ import { MessageEffect } from './message/message.effect';
 import { PlatformEffect } from './platform/platform.effect';
 import { PublicEffect } from './public/public.effect';
 import { RobotEffect } from './robot/robot.effect';
+import { RouterEffect } from './router/router.effect';
 import { SimulationEffect } from './simulation/simulation.effect';
 import { StrategyEffect } from './strategy/strategy.effect';
 import { WatchDogEffect } from './watch-dog/watch-dog.effect';
@@ -22,6 +23,7 @@ export const EFFECTS = [
     DocumentEffect,
     ExchangeEffect,
     PublicEffect,
+    RouterEffect,
 ];
 
 export const DASHBOARD_EFFECTS = [

@@ -6,13 +6,15 @@ import { StrategyBaseGuard } from '../../strategy/providers/guard.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/index.reducer';
 import { Router } from '@angular/router';
+import { RoutingService } from '../../providers/routing.service';
 
 @Injectable()
 export class ChargeGuard extends BaseGuard {
     constructor(
-        public tip: TipService
+        public tip: TipService,
+        public routing: RoutingService,
     ) {
-        super(tip);
+        super(tip, routing);
     }
 }
 
@@ -22,7 +24,8 @@ export class StrategyGuard extends StrategyBaseGuard {
         public store: Store<AppState>,
         public router: Router,
         public tip: TipService,
+        public routing: RoutingService,
     ) {
-        super(store, router, tip);
+        super(store, router, tip, routing);
     }
 }
