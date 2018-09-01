@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { startWith } from 'rxjs/internal/operators/startWith';
+import { map, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { TableStatistics } from '../../interfaces/app.interface';
 import { Robot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
-import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Component({
     selector: 'app-robot-list',
@@ -73,6 +75,21 @@ export class RobotListComponent extends BaseComponent {
      */
     isSubAccount: Observable<boolean>;
 
+    /**
+     * 数量统计
+     */
+    statisticsParams: Observable<TableStatistics>;
+
+    /**
+     * @ignore
+     */
+    pageSize = 20;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private robotService: RobotService,
         private robotOperate: RobotOperateService,
@@ -104,33 +121,56 @@ export class RobotListComponent extends BaseComponent {
         this.isLoading = this.robotService.isLoading();
 
         this.isSubAccount = this.pubService.isSubAccount();
+
+        this.statisticsParams = this.data.pipe(
+            map(data => this.robotService.getTableStatistics(data.length, this.pageSize))
+        );
     }
 
     /**
      * @ignore
      */
     launch() {
-        this.subscription$$ = this.robotOperate.handlePublicRobotError()
-            .add(this.robotService.handleRobotListError())
-            .add(this.robotOperate.handleRobotRestartError())
-            .add(this.robotOperate.handleDeleteRobotError())
-            .add(this.robotOperate.handleRobotStopError())
-            .add(this.watchDogService.handleSetWatchDogError())
-            .add(this.robotOperate.launchPublicRobot(this.publicRobot$))
-            .add(this.publicRobot$.subscribe(robot => this.currentPublicRobot = robot))
-            .add(this.robotOperate.launchRestartRobot(this.restartRobot$, false))
-            .add(this.robotOperate.launchStopRobot(this.stopRobot$))
-            .add(this.robotOperate.launchDeleteRobot(this.deleteRobot$))
-            .add(this.robotOperate.monitorDeleteRobotResult())
-            .add(this.watchDogService.launchSetWatchDog(this.setRobotWD$))
-            .add(this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState()))
-            .add(this.robotService.launchRobotList(of({ start: -1, limit: -1, status: -1 })));
+        const keepAlive = () => this.isAlive;
+
+        this.robotOperate.handlePublicRobotError(keepAlive);
+
+        this.robotService.handleRobotListError(keepAlive);
+
+        this.robotOperate.handleRobotRestartError(keepAlive);
+
+        this.robotOperate.handleDeleteRobotError(keepAlive);
+
+        this.robotOperate.handleRobotStopError(keepAlive);
+
+        this.watchDogService.handleSetWatchDogError(keepAlive);
+
+        const publicRobotObs = this.publicRobot$.asObservable().pipe(
+            takeWhile(keepAlive)
+        );
+
+
+        publicRobotObs.subscribe(robot => this.currentPublicRobot = robot);
+
+        this.subscription$$ = this.robotOperate.launchPublicRobot(publicRobotObs)
+            .add(this.robotOperate.launchRestartRobot(this.restartRobot$.asObservable(), false))
+            .add(this.robotOperate.launchStopRobot(this.stopRobot$.asObservable()))
+            .add(this.robotOperate.launchDeleteRobot(this.deleteRobot$.asObservable()))
+            .add(this.watchDogService.launchSetWatchDog(this.setRobotWD$.asObservable()));
+
+        this.robotOperate.updateRobotWDState(this.watchDogService.getLatestWatchDogState(keepAlive));
+
+        this.robotService.launchRobotList(of({ start: -1, limit: -1, status: -1 }));
+
+        this.robotOperate.monitorDeleteRobotResult(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.robotOperate.resetRobotOperate();
 
         this.subscription$$.unsubscribe();

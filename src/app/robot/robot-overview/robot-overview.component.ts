@@ -5,9 +5,9 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { RobotDetail } from '../../interfaces/response.interface';
 import { WatchDogService } from '../../shared/providers/watch-dog.service';
+import { RobotOperateType } from '../../store/robot/robot.reducer';
 import { RobotOperateService } from '../providers/robot.operate.service';
 import { RobotService } from '../providers/robot.service';
-import { RobotOperateType } from '../../store/robot/robot.reducer';
 
 @Component({
     selector: 'app-robot-overview',
@@ -84,6 +84,11 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
      */
     buttonSize = 'small';
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private robotService: RobotService,
         private robotOperate: RobotOperateService,
@@ -107,12 +112,15 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
      * @ignore
      */
     launch() {
-        this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$)
-            .add(this.robotOperate.launchStopRobot(this.stop$))
-            .add(this.watchDogService.launchSetWatchDog(this.watchDog$))
-            // .add(this.robotOperate.handleRobotRestartError()
-            .add(this.robotOperate.handleRobotStopError())
-            .add(this.watchDogService.handleSetWatchDogError());
+        const keepAlive = () => this.isAlive;
+
+        this.subscription$$ = this.robotOperate.launchRestartRobot(this.restart$.asObservable())
+            .add(this.robotOperate.launchStopRobot(this.stop$.asObservable()))
+            .add(this.watchDogService.launchSetWatchDog(this.watchDog$.asObservable()));
+
+        this.robotOperate.handleRobotStopError(keepAlive);
+
+        this.watchDogService.handleSetWatchDogError(keepAlive);
     }
 
     /**
@@ -136,6 +144,8 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
 
         this.robotService.resetRobotDetail();

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, mergeMapTo } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take, takeWhile } from 'rxjs/operators';
 
 import { CommentService } from '../../comment/providers/comment.service';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -26,11 +26,6 @@ export class FactRobotComponent extends CommentBaseComponent implements OnInit {
      * @ignore
      */
     paths: Breadcrumb[];
-
-    /**
-     * @ignore
-     */
-    subscription$$: Subscription;
 
     /**
      * @ignore
@@ -92,7 +87,8 @@ export class FactRobotComponent extends CommentBaseComponent implements OnInit {
      */
     private privateLaunch() {
         const idObs = this.activatedRoute.paramMap.pipe(
-            map(param => +param.get('id'))
+            map(param => +param.get('id')),
+            take(1)
         );
 
         const isMainAccount = this.publicService.isSubAccount().pipe(
@@ -100,7 +96,9 @@ export class FactRobotComponent extends CommentBaseComponent implements OnInit {
             distinctUntilChanged(),
         );
 
-        const requestById = idObs.pipe(map(id => ({ id })));
+        const requestById = idObs.pipe(
+            map(id => ({ id }))
+        );
 
         const isMain = isMainAccount.pipe(
             mergeMapTo(idObs.pipe(
@@ -108,20 +106,29 @@ export class FactRobotComponent extends CommentBaseComponent implements OnInit {
             ))
         );
 
-        this.subscription$$ = this.robotService.launchRobotDetail(requestById)
-            .add(this.btNodeService.launchGetNodeList(isMain))
-            .add(this.platformService.launchGetPlatformList(isMain))
-            .add(this.robotService.handleRobotDetailError())
-            .add(this.btNodeService.handleNodeListError())
-            .add(this.platformService.handlePlatformListError());
+        const keepAlive = () => this.isAlive;
+
+        this.robotService.launchRobotDetail(requestById);
+
+        this.btNodeService.launchGetNodeList(isMain.pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.platformService.launchGetPlatformList(isMain.pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.robotService.handleRobotDetailError(keepAlive);
+
+        this.btNodeService.handleNodeListError(keepAlive);
+
+        this.platformService.handlePlatformListError(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
-
         this.isAlive = false;
     }
 }

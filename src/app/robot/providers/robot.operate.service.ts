@@ -10,11 +10,11 @@ import {
     combineLatest, from as observableFrom, merge, Observable, of as observableOf, of, Subscription, zip
 } from 'rxjs';
 import {
-    filter, map, mapTo, mergeMap, mergeMapTo, reduce, startWith, switchMap, switchMapTo, take, tap, withLatestFrom
+    filter, map, mapTo, mergeMap, mergeMapTo, reduce, startWith, switchMap, switchMapTo, take, tap, withLatestFrom, takeWhile
 } from 'rxjs/operators';
 
 import { VariableType } from '../../app.config';
-import { SelectedPair, TemplateVariableOverview, VariableOverview } from '../../interfaces/app.interface';
+import { SelectedPair, TemplateVariableOverview, VariableOverview, keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -198,40 +198,35 @@ export class RobotOperateService extends RobotBaseService {
     // publish robot
     private getPublicRobotResponse(): Observable<fromRes.PublicRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectPublicRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectPublicRobotResponse)
         );
     }
 
     // restart robot
     private getRestartRobotResponse(): Observable<fromRes.RestartRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectRestartRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectRestartRobotResponse)
         );
     }
 
     // stop robot
     private getStopRobotResponse(): Observable<fromRes.StopRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectStopRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectStopRobotResponse)
         );
     }
 
     // robot args
     getRobotStrategyArgs(): Observable<VariableOverview[]> {
         return this.store.pipe(
-            select(fromRoot.selectRobotStrategyArgs),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectRobotStrategyArgs),
             map(args => args.map(item => this.setSelectDefaultValue(item)))
         );
     }
 
     getRobotTemplateArgs(): Observable<TemplateVariableOverview[]> {
         return this.store.pipe(
-            select(fromRoot.selectRobotTemplateArgs),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectRobotTemplateArgs),
             mergeMap(templates => observableFrom(templates).pipe(
                 map(tpl => ({ ...tpl, variables: tpl.variables.map(item => this.setSelectDefaultValue(item)) })),
                 reduce((acc, cur) => [...acc, cur], [])
@@ -242,8 +237,7 @@ export class RobotOperateService extends RobotBaseService {
 
     getRobotCommandArgs(): Observable<VariableOverview[]> {
         return this.store.pipe(
-            select(fromRoot.selectRobotCommandArgs),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectRobotCommandArgs),
             map(args => args.map(item => this.setSelectDefaultValue(item)))
         );
     }
@@ -303,18 +297,17 @@ export class RobotOperateService extends RobotBaseService {
                     map(item => item.name)
                 )
             )
-        )
-            .subscribe(([args, name]) => {
-                const data = JSON.stringify({
-                    timestamp: new Date().getTime(),
-                    period: kLinePeriodId,
-                    args: JSON.parse(args),
-                });
-
-                const exportName = `export_${name}_${moment().format('YYMMDDhhmmss')}.json`;
-
-                fileSaver.saveAs(new Blob([data], { type: 'application/json;charset=utf8;' }), exportName);
+        ).subscribe(([args, name]) => {
+            const data = JSON.stringify({
+                timestamp: new Date().getTime(),
+                period: kLinePeriodId,
+                args: JSON.parse(args),
             });
+
+            const exportName = `export_${name}_${moment().format('YYMMDDhhmmss')}.json`;
+
+            fileSaver.saveAs(new Blob([data], { type: 'application/json;charset=utf8;' }), exportName);
+        });
     }
 
     importArgs(result: { [key: string]: any }): void {
@@ -339,20 +332,18 @@ export class RobotOperateService extends RobotBaseService {
     // robot command
     private getCommandRobotResponse(): Observable<fromRes.CommandRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectCommandRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectCommandRobotResponse)
         );
     }
 
     // delete robot
     private getDeleteRobotResponse(): Observable<fromRes.DeleteRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteRobotResponse)
         );
     }
 
-    monitorDeleteRobotResult(): Subscription {
+    monitorDeleteRobotResult(keeAlive: () => boolean): Subscription {
         return this.getDeleteRobotResponse().pipe(
             filter(res => !isDeleteRobotFail(res)),
             map(res => res.result),
@@ -362,7 +353,8 @@ export class RobotOperateService extends RobotBaseService {
                     filter(params => !!params && !!params.deleteRobot),
                     map(state => state.deleteRobot.id)
                 )
-            )
+            ),
+            takeWhile(keeAlive)
         ).subscribe(([result, id]) => {
             if (this.deleteRobotLogFail(result)) {
                 this.tipService.messageError('DELETE_ROBOT_SUCCESS_BUT_LOG', { id });
@@ -379,8 +371,7 @@ export class RobotOperateService extends RobotBaseService {
     // plugin run
     private getPluginRunResponse(): Observable<fromRes.PluginRunResult> {
         return this.store.pipe(
-            select(fromRoot.selectPluginRunResponse),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectPluginRunResponse),
             map(res => JSON.parse(res.result))
         );
     }
@@ -610,34 +601,41 @@ export class RobotOperateService extends RobotBaseService {
 
     //  =======================================================Error Handle=======================================================
 
-    handlePublicRobotError(): Subscription {
-        return this.error.handleResponseError(this.getPublicRobotResponse());
+    handlePublicRobotError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getPublicRobotResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleRobotRestartError(): Subscription {
+    handleRobotRestartError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleError(
             this.getRestartRobotResponse().pipe(
-                map(res => res.error || this.error.getRestartRobotError(res.result))
+                map(res => res.error || this.error.getRestartRobotError(res.result)),
+                takeWhile(keepAlive)
             )
         );
     }
 
-    handleRobotStopError(): Subscription {
+    handleRobotStopError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleError(
             this.getStopRobotResponse().pipe(
-                map(res => res.error || this.error.getStopRobotError(res.result))
+                map(res => res.error || this.error.getStopRobotError(res.result)),
+                takeWhile(keepAlive)
             )
         );
     }
 
-    handleCommandRobotError(): Subscription {
-        return this.error.handleResponseError(this.getCommandRobotResponse());
+    handleCommandRobotError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getCommandRobotResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleDeleteRobotError(): Subscription {
+    handleDeleteRobotError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleError(
             this.getDeleteRobotResponse().pipe(
-                map(res => res.error || this.error.getDeleteRobotError(res.result))
+                map(res => res.error || this.error.getDeleteRobotError(res.result)),
+                takeWhile(keepAlive)
             )
         );
     }

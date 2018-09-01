@@ -7,14 +7,15 @@ import { Observable, Subscription, zip } from 'rxjs';
 import { map, take, takeWhile } from 'rxjs/operators';
 
 import { UploadService } from '../../base/upload.component';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
-import { GroupedList, UtilService } from '../../providers/util.service';
-import { ResetBBSTopicAction, ClearQiniuTokenAction, ClearBBSOperateStateAction } from '../../store/bbs/bbs.action';
-import * as fromRoot from '../../store/index.reducer';
 import { TipService } from '../../providers/tip.service';
+import { GroupedList, UtilService } from '../../providers/util.service';
+import { ClearBBSOperateStateAction, ClearQiniuTokenAction, ResetBBSTopicAction } from '../../store/bbs/bbs.action';
+import * as fromRoot from '../../store/index.reducer';
 
 @Injectable()
 export class CommunityService extends UploadService {
@@ -96,8 +97,7 @@ export class CommunityService extends UploadService {
      */
     private getBBSPlaneListResponse(): Observable<fromRes.GetBBSPlaneListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBBSPlaneListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBBSPlaneListResponse)
         );
     }
 
@@ -115,8 +115,7 @@ export class CommunityService extends UploadService {
      */
     private getBBSNodeListResponse(): Observable<fromRes.GetBBSNodeListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBBSNodeListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBBSNodeListResponse)
         );
     }
 
@@ -141,8 +140,7 @@ export class CommunityService extends UploadService {
      */
     private getBBSTopicListBySlugResponse(): Observable<fromRes.GetBBSTopicListBySlugResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBBSTopicListBySlugResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBBSTopicListBySlugResponse)
         );
     }
 
@@ -169,8 +167,7 @@ export class CommunityService extends UploadService {
      */
     private getBBSTopicByIdResponse(): Observable<fromRes.GetBBSTopicResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBBSTopicByIdResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBBSTopicByIdResponse)
         );
     }
 
@@ -208,8 +205,7 @@ export class CommunityService extends UploadService {
      */
     private getAddBBSTopicResponse(): Observable<fromRes.AddBBSTopicResponse> {
         return this.store.pipe(
-            select(fromRoot.selectAddBBSTopicResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectAddBBSTopicResponse)
         );
     }
 
@@ -227,8 +223,7 @@ export class CommunityService extends UploadService {
      */
     getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBBSQiniuTokenResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBBSQiniuTokenResponse)
         );
     }
 
@@ -275,7 +270,7 @@ export class CommunityService extends UploadService {
     /**
      * @ignore
      */
-    handleBBSPlaneListError(keepAlive: () => boolean): Subscription {
+    handleBBSPlaneListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getBBSPlaneListResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -284,7 +279,7 @@ export class CommunityService extends UploadService {
     /**
      * @ignore
      */
-    handleBBSNodeListError(keepAlive: () => boolean): Subscription {
+    handleBBSNodeListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getBBSNodeListResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -293,7 +288,7 @@ export class CommunityService extends UploadService {
     /**
      * @ignore
      */
-    handleBBSTopicListBySlugError(keepAlive: () => boolean): Subscription {
+    handleBBSTopicListBySlugError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getBBSTopicListBySlugResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -302,7 +297,7 @@ export class CommunityService extends UploadService {
     /**
      * @ignore
      */
-    handleBBSTopicByIdResponse(keepAlive: () => boolean): Subscription {
+    handleBBSTopicByIdResponse(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getBBSTopicByIdResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -311,7 +306,7 @@ export class CommunityService extends UploadService {
     /**
      * @ignore
      */
-    handleAddBBSTopicResponse(keepAlive: () => boolean): Subscription {
+    handleAddBBSTopicResponse(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getAddBBSTopicResponse().pipe(
             takeWhile(keepAlive)
         ));

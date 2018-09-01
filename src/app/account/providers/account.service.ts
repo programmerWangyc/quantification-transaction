@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { isEmpty } from 'lodash';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -83,8 +84,7 @@ export class AccountService extends BaseService {
      */
     private getChangePasswordResponse(): Observable<fromRes.ChangePasswordResponse> {
         return this.store.pipe(
-            select(fromRoot.selectChangePasswordResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectChangePasswordResponse)
         );
     }
 
@@ -102,8 +102,7 @@ export class AccountService extends BaseService {
      */
     private getChangeNicknameResponse(): Observable<fromRes.ChangeNickNameResponse> {
         return this.store.pipe(
-            select(fromRoot.selectChangeNicknameResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectChangeNicknameResponse)
         );
     }
 
@@ -121,8 +120,7 @@ export class AccountService extends BaseService {
      */
     private getGoogleAuthKeyResponse(): Observable<fromRes.GetGoogleAuthKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGoogleAuthKeyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGoogleAuthKeyResponse)
         );
     }
 
@@ -149,8 +147,7 @@ export class AccountService extends BaseService {
      */
     private getUnbindSNSResponse(): Observable<fromRes.UnbindSNSResponse> {
         return this.store.pipe(
-            select(fromRoot.selectUnbindSNSResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectUnbindSNSResponse)
         );
     }
 
@@ -168,8 +165,7 @@ export class AccountService extends BaseService {
      */
     private getBindGoogleAuthKeyResponse(): Observable<fromRes.BindGoogleAuthResponse> {
         return this.store.pipe(
-            select(fromRoot.selectBindGoogleAuthResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectBindGoogleAuthResponse)
         );
     }
 
@@ -187,8 +183,7 @@ export class AccountService extends BaseService {
      */
     private getRegisterCodeResponse(): Observable<fromRes.GetRegisterCodeResponse> {
         return this.store.pipe(
-            select(fromRoot.selectRegisterCodeResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectRegisterCodeResponse)
         );
     }
 
@@ -211,7 +206,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleChangePasswordError(keepAlive: () => boolean): Subscription {
+    handleChangePasswordError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getChangePasswordResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -220,7 +215,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleChangeNicknameError(keepAlive: () => boolean): Subscription {
+    handleChangeNicknameError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getChangeNicknameResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -229,7 +224,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleGoogleAuthKeyError(keepAlive: () => boolean): Subscription {
+    handleGoogleAuthKeyError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getGoogleAuthKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -238,7 +233,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleUnbindSNSError(keepAlive: () => boolean): Subscription {
+    handleUnbindSNSError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getUnbindSNSResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -247,7 +242,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleBindGoogleAuthError(keepAlive: () => boolean): Subscription {
+    handleBindGoogleAuthError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getBindGoogleAuthKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -256,7 +251,7 @@ export class AccountService extends BaseService {
     /**
      * @ignore
      */
-    handleGetRegisterCodeError(keepAlive: () => boolean): Subscription {
+    handleGetRegisterCodeError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getRegisterCodeResponse().pipe(
             takeWhile(keepAlive)
         ));

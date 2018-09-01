@@ -382,6 +382,7 @@
     "DOCKER_ON": "托管于",
     "OPEN_ROBOT_MONITOR_CONFIRM": "打开监控后，如果机器人非手工操作退出，邮箱与绑定的微信将收到通知，确定要打开吗?",
     "CLOSE_ROBOT_MONITOR_CONFIRM": "关闭监控后，如果机器人不正常退出，将不会收到任何通知，确定要关闭吗 ?",
+    "NO_ROBOTS": "尚未创建过机器人",
 
     "ROBOT_NAME": "机器人名称",
     "ROBOT_NAME_REQUIRED": "请输入机器人名称",
@@ -513,6 +514,7 @@
     "REGISTER_CODE": "注册码",
     "PURCHASE_ADDRESS": "购买地址",
     "REMIND_STORE_TIP": "请妥善保存以上信息！",
+    "NO_STRATEGIES": "尚未添加策略",
 
     "GET_SOURCE_CODE": "获取源码",
     "SHARE_SOURCE_CODE_INNER": "内部分享源码",
@@ -719,6 +721,7 @@
     "TRADE_SERVER": "交易服务器",
     "LOW_COMMISSION_ACCOUNT_OPENING": "合作单位低佣金开户",
     "INPUT_TIP": "请输入{{label}}",
+    "NO_EXCHANGES": "尚未添加交易所",
 
     "TRADE_ACCOUNT": "交易帐号",
     "TRADE_PASSWORD": "交易密码",

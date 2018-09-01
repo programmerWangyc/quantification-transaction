@@ -4,12 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { intersectionWith, uniqBy } from 'lodash';
 import * as moment from 'moment';
-import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
-import { filter, find, map, mergeMap, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { filter, find, map, mergeMap, switchMap, take, withLatestFrom, takeWhile } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { VariableOverview } from '../../interfaces/app.interface';
+import { VariableOverview, keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -20,7 +19,6 @@ import {
     ResetStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
     UpdateStrategySecretKeyStateAction
 } from '../../store/strategy/strategy.action';
-import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
 import { OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
@@ -29,13 +27,12 @@ import { StrategyConstantService } from './strategy.constant.service';
 export class StrategyService extends BaseService {
 
     constructor(
-        public constant: StrategyConstantService,
-        public error: ErrorService,
-        public nzModal: NzModalService,
-        public process: ProcessService,
-        public store: Store<fromRoot.AppState>,
-        public tipService: TipService,
-        public translate: TranslateService,
+        private constant: StrategyConstantService,
+        private error: ErrorService,
+        private process: ProcessService,
+        private store: Store<fromRoot.AppState>,
+        private tipService: TipService,
+        private translate: TranslateService,
     ) {
         super();
     }
@@ -73,17 +70,8 @@ export class StrategyService extends BaseService {
      * 获取策略列表接口的响应数据；
      */
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
-        return this.store.select(fromRoot.selectStrategyListResponse).pipe(
-            this.filterTruth()
-        );
-    }
-
-    /**
-     * store 中的请求参数;
-     */
-    protected getRequestParams(): Observable<RequestParams> {
-        return this.store.select(fromRoot.selectStrategyRequestParams).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectStrategyListResponse)
         );
     }
 
@@ -97,8 +85,8 @@ export class StrategyService extends BaseService {
     }
 
     private getOpStrategyTokenResponse(): Observable<fromRes.OpStrategyTokenResponse> {
-        return this.store.select(fromRoot.selectOpStrategyTokenResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectOpStrategyTokenResponse)
         );
     }
 
@@ -114,16 +102,15 @@ export class StrategyService extends BaseService {
     updateStrategySecretKeyState(id: number): Subscription {
         return this.getOpStrategyTokenResponse().pipe(
             map(res => !!res.result)
-        )
-            .subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
+        ).subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
     }
 
     /**
      * 获取策略详情的响应；
      */
     private getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
-        return this.store.select(fromRoot.selectStrategyDetailResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectStrategyDetailResponse)
         );
     }
 
@@ -192,7 +179,8 @@ export class StrategyService extends BaseService {
      * 是否正在加载数据；
      */
     isLoading(): Observable<boolean> {
-        return this.store.select(fromRoot.selectStrategyUIState).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectStrategyUIState),
             map(state => state.loading),
             this.loadingTimeout(this.tipService.loadingSlowlyTip)
         );
@@ -209,7 +197,8 @@ export class StrategyService extends BaseService {
     }
 
     getBacktestConfig(): Observable<string> {
-        return this.store.select(fromRoot.selectBacktestUIState).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectBacktestUIState),
             map(state => {
                 const { timeOptions, platformOptions } = state;
 
@@ -297,21 +286,27 @@ export class StrategyService extends BaseService {
     /**
      * @ignore
      */
-    handleStrategyListError(): Subscription {
-        return this.error.handleResponseError(this.getStrategyListResponse());
+    handleStrategyListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getStrategyListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleOpStrategyTokenError(): Subscription {
-        return this.error.handleResponseError(this.getOpStrategyTokenResponse());
+    handleOpStrategyTokenError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getOpStrategyTokenResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleStrategyDetailError(): Subscription {
-        return this.error.handleResponseError(this.getStrategyDetailResponse());
+    handleStrategyDetailError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getStrategyDetailResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

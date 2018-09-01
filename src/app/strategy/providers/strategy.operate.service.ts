@@ -4,20 +4,21 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable, Subject, Subscription, zip } from 'rxjs';
-import { distinctUntilKeyChanged, filter, map, mapTo, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilKeyChanged, filter, map, mapTo, switchMap, takeWhile, tap, withLatestFrom } from 'rxjs/operators';
 
+import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
+import { RequestParams } from '../../store/strategy/strategy.reducer';
 import { GenKeyPanelComponent } from '../gen-key-panel/gen-key-panel.component';
 import { InnerShareConfirmComponent, InnerShareFormModel } from '../inner-share-confirm/inner-share-confirm.component';
 import { ConfirmType, ShareConfirmComponent } from '../share-confirm/share-confirm.component';
 import { ShareStrategyStateSnapshot } from '../strategy.interface';
-import { StrategyConstantService } from './strategy.constant.service';
-import { StrategyService } from './strategy.service';
 
 export enum GenKeyType {
     COPY_CODE,
@@ -25,23 +26,26 @@ export enum GenKeyType {
 }
 
 @Injectable()
-export class StrategyOperateService extends StrategyService {
+export class StrategyOperateService extends BaseService {
+
     private genKey$: Subject<[ShareStrategyStateSnapshot, number]> = new Subject();
 
     constructor(
-        public constant: StrategyConstantService,
-        public error: ErrorService,
-        public nzModal: NzModalService,
-        public process: ProcessService,
-        public store: Store<fromRoot.AppState>,
-        public tip: TipService,
-        public translate: TranslateService,
+        private error: ErrorService,
+        private nzModal: NzModalService,
+        private process: ProcessService,
+        private store: Store<fromRoot.AppState>,
+        private tip: TipService,
+        private translate: TranslateService,
     ) {
-        super(constant, error, nzModal, process, store, tip, translate);
+        super();
     }
 
     //  =======================================================Serve Request=======================================================
 
+    /**
+     * @ignore
+     */
     launchShareStrategy(paramsObs: Observable<ShareStrategyStateSnapshot>): Subscription {
         return this.process.processShareStrategy(paramsObs.pipe(
             switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent).pipe(
@@ -49,10 +53,12 @@ export class StrategyOperateService extends StrategyService {
                 filter(confirmType => confirmType !== ConfirmType.INNER),
                 mapTo({ id: params.id, type: params.type })
             ))
-        ))
-            .add(this.launchGenKey());
+        )).add(this.launchGenKey());
     }
 
+    /**
+     * @ignore
+     */
     launchGenKey(): Subscription {
         return this.process.processGenKey(this.genKey$.pipe(
             switchMap(([params]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
@@ -77,6 +83,9 @@ export class StrategyOperateService extends StrategyService {
         ));
     }
 
+    /**
+     * @ignore
+     */
     launchSaveStrategy(paramsObs: Observable<fromReq.SaveStrategyRequest>): Subscription {
         return this.process.processSaveStrategy(
             paramsObs.pipe(
@@ -88,9 +97,12 @@ export class StrategyOperateService extends StrategyService {
 
     //  =======================================================Date acquisition=======================================================
 
+    /**
+     * @ignore
+     */
     private getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
-        return this.store.select(fromRoot.selectShareStrategyResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectShareStrategyResponse)
         );
     }
 
@@ -107,13 +119,12 @@ export class StrategyOperateService extends StrategyService {
         ).pipe(
             map(([_1, _2]) => true),
             withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN']))
-        )
-            .subscribe(([_1, translated]) => this.nzModal.success({ nzContent: translated.PUBLISH_STRATEGY_RELATED_ROBOT_TIP, nzOkText: translated.I_KNOWN }));
+        ).subscribe(([_1, translated]) => this.nzModal.success({ nzContent: translated.PUBLISH_STRATEGY_RELATED_ROBOT_TIP, nzOkText: translated.I_KNOWN }));
     }
 
     private getGenKeyResponse(): Observable<fromRes.GenKeyResponse> {
-        return this.store.select(fromRoot.selectGenKeyResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectGenKeyResponse)
         );
     }
 
@@ -128,30 +139,38 @@ export class StrategyOperateService extends StrategyService {
                 ),
                 this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE'])
             )
-        )
-            .subscribe(([code, req, label]) => {
-                const { strategyId, type } = req;
+        ).subscribe(([code, req, label]) => {
+            const { strategyId, type } = req;
 
-                this.nzModal.success({
-                    nzContent: GenKeyPanelComponent,
-                    nzComponentParams: { type, strategyId, code },
-                    nzOkText: label.I_KNOWN,
-                    nzCancelText: null,
-                    nzTitle: type === GenKeyType.COPY_CODE ? label.COPY_CODE : label.REGISTER_CODE,
-                    nzWidth: '30vw',
-                });
+            this.nzModal.success({
+                nzContent: GenKeyPanelComponent,
+                nzComponentParams: { type, strategyId, code },
+                nzOkText: label.I_KNOWN,
+                nzCancelText: null,
+                nzTitle: type === GenKeyType.COPY_CODE ? label.COPY_CODE : label.REGISTER_CODE,
+                nzWidth: '30vw',
             });
+        });
     }
 
     private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {
-        return this.store.select(fromRoot.selectDeleteStrategyResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectDeleteStrategyResponse)
         );
     }
 
     private getSaveStrategyResponse(): Observable<fromRes.SaveStrategyResponse> {
-        return this.store.select(fromRoot.selectSaveStrategyResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectSaveStrategyResponse)
+        );
+    }
+
+    /**
+     * store 中的请求参数;
+     */
+    private getRequestParams(): Observable<RequestParams> {
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectStrategyRequestParams)
         );
     }
 
@@ -159,7 +178,6 @@ export class StrategyOperateService extends StrategyService {
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
         const { type, currentType } = param;
-
 
         const modal = this.nzModal.create({
             nzContent: component,
@@ -174,19 +192,27 @@ export class StrategyOperateService extends StrategyService {
 
     //  =======================================================Error handler=======================================================
 
-    handleShareStrategyError(): Subscription {
-        return this.error.handleResponseError(this.getShareStrategyResponse());
+    handleShareStrategyError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getShareStrategyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleGenKeyError(): Subscription {
-        return this.error.handleResponseError(this.getGenKeyResponse());
+    handleGenKeyError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getGenKeyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleDeleteStrategyError(): Subscription {
-        return this.error.handleResponseError(this.getDeleteStrategyResponse());
+    handleDeleteStrategyError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getDeleteStrategyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleSaveStrategyError(): Subscription {
-        return this.error.handleResponseError(this.getSaveStrategyResponse());
+    handleSaveStrategyError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSaveStrategyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

@@ -18,12 +18,10 @@ export class ErrorService {
     ) { }
 
     handleResponseError(source: Observable<ResponseState>, params = {}): Subscription {
-        return source
-            .pipe(
-                filter(data => !!data.error),
-                map(data => data.error)
-            )
-            .subscribe(data => this.tipService.messageError(data, params));
+        return source.pipe(
+            filter(data => !!data.error),
+            map(data => data.error)
+        ).subscribe(data => this.tipService.messageError(data, params));
     }
 
     handleError(source: Observable<string>, paramsObs = of({})): Subscription {
@@ -32,8 +30,7 @@ export class ErrorService {
                 filter(str => !!str)
             ),
             paramsObs
-        )
-            .subscribe(([data, params]) => this.tipService.messageError(data, params));
+        ).subscribe(([data, params]) => this.tipService.messageError(data, params));
     }
 
     getRestartRobotError(status: number | string): string {

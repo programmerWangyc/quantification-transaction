@@ -1,5 +1,5 @@
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
-    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="10" [nzNoResult]="'NO_PRIVATE_AGENT' | translate">
+    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta" [nzNoResult]="'NO_PRIVATE_AGENT' | translate">
         <thead>
             <tr>
                 <th *ngFor="let item of tableHead" bt-text-center>{{item | translate}}</th>
@@ -41,3 +41,7 @@
         </tbody>
     </nz-table>
 </nz-spin>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+</ng-template>

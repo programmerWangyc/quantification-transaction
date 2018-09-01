@@ -91,6 +91,12 @@ export class CommentBaseComponent {
                 map(request => ({ ...request, topic: BtCommentType.square }))
             )
         );
+
+        this.commentService.handleCommentListError(keepAlive);
+
+        this.commentService.handleSubmitCommentError(keepAlive);
+
+        this.commentService.handleQiniuTokenError(keepAlive);
     }
 
     /**

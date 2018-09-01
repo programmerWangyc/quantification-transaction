@@ -108,6 +108,11 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      */
     isAlive = true;
 
+    /**
+     * @ignore
+     */
+    isLoading: Observable<boolean>;
+
     constructor(
         private fb: FormBuilder,
         private platformService: PlatformService,
@@ -154,21 +159,45 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     launch() {
         const keepAlive = () => this.isAlive;
 
-        this.subscription$$ = this.platformService.getPlatformList().subscribe(list => this.platforms = list)
-            .add(this.strategyService.getStrategyArgs(this.strategy.valueChanges).subscribe(args => this.selectedStrategyArgs = args))
-            .add(this.strategyService.handleStrategyListError())
-            .add(this.btNodeService.handleNodeListError())
-            .add(this.platformService.handlePlatformListError())
-            .add(this.btNodeService.launchGetNodeList(observableOf(true)))
-            .add(this.platformService.launchGetPlatformList(observableOf(true)))
-            .add(this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all })));
+        this.platformService.getPlatformList().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(list => this.platforms = list);
 
-        this.robotService.launchCreateRobot(this.create$.pipe(
-            takeWhile(keepAlive),
-            map(form => this.createSaveParams(form))
-        ));
+        this.strategyService.getStrategyArgs(this.strategy.valueChanges).pipe(
+            takeWhile(keepAlive)
+        ).subscribe(args => this.selectedStrategyArgs = args);
+
+        this.btNodeService.launchGetNodeList(observableOf(true));
+
+        this.platformService.launchGetPlatformList(observableOf(true));
+
+        this.strategyService.launchStrategyList(observableOf({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.all }));
+
+        this.subscription$$ = this.robotService.launchCreateRobot(
+            this.create$.pipe(
+                map(form => this.createSaveParams(form)),
+                takeWhile(keepAlive)
+            )
+        );
+
+        this.robotService.isSaveRobotSuccess().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(isSuccess => {
+            if (isSuccess) {
+                this.form.reset();
+                this.selectedPairs = [];
+            }
+        });
+
+        this.isLoading = this.robotService.isLoading();
 
         this.robotService.handleSaveRobotError(keepAlive);
+
+        this.strategyService.handleStrategyListError(keepAlive);
+
+        this.btNodeService.handleNodeListError(keepAlive);
+
+        this.platformService.handlePlatformListError(keepAlive);
     }
 
     /**

@@ -7,14 +7,15 @@
 
             <ng-container *ngFor="let nav of list">
 
-                <li *ngIf="nav.subNav;else elseBlock" [nzOpen]="isActive(nav)" nz-submenu>
+                <li *ngIf="nav.subNav;else elseBlock" [nzOpen]="nav.selected" nz-submenu>
                     <span title>
                         <i class="anticon" [ngClass]="'anticon-'+ nav.icon"></i>
                         <span>{{nav.label | translate}}</span>
                     </span>
 
                     <ul>
-                        <li *ngFor="let item of nav.subNav" (click)="navigateTo(item)" nz-menu-item [ngClass]="{'ant-menu-item-selected': isPath(item.path)}">
+                        <li *ngFor="let item of nav.subNav" (click)="navigateTo(item)" [nzSelected]="item.selected"
+                            nz-menu-item>
                             <i class="anticon" [ngClass]="'anticon-'+item.icon"></i>
                             <span>{{item.label | translate}}</span>
                         </li>
@@ -22,7 +23,7 @@
                 </li>
 
                 <ng-template #elseBlock>
-                    <li [ngClass]="{'ant-menu-item-selected': isPath(nav.path)}" (click)="navigateTo(nav)" nz-menu-item>
+                    <li (click)="navigateTo(nav)" [nzSelected]="nav.selected" nz-menu-item>
                         <span title>
                             <i class="anticon" [ngClass]="'anticon-'+nav.icon"></i>
                             <span>{{nav.label | translate}}</span>
@@ -36,7 +37,8 @@
 
     <nz-layout>
         <nz-header [ngClass]="{'head-collapsed': isCollapsed}">
-            <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed" (click)="isCollapsed=!isCollapsed"></i>
+            <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed"
+                (click)="isCollapsed=!isCollapsed"></i>
             <section fxLayoutAlign="end center">
                 <nz-dropdown>
                     <a nz-dropdown>
@@ -44,16 +46,17 @@
                         {{'QUOTE_TOOLS' | translate}}
                     </a>
                     <ul nz-menu>
-                        <li nz-menu-item *ngFor="let item of toolMenu">
+                        <li nz-menu-item *ngFor="let item of toolMenu" fxLayoutAlign="start center">
                             <i class="anticon" [ngClass]="'anticon-'+ item.icon"></i>
-                            {{ item.label| translate}}
+                            <a [href]="item.path" target="__blank">{{ item.label| translate}}</a>
                         </li>
                     </ul>
                 </nz-dropdown>
 
                 <button nz-button (click)="changeLanguage$.next(true)">{{language | async | translate}}</button>
 
-                <nz-avatar [nzText]="username | async" nz-popover nzPlacement="bottom" [nzTitle]="welcomeTpl" [nzContent]="userInfoTpl"></nz-avatar>
+                <nz-avatar [nzText]="username | async" nz-popover nzPlacement="bottom" [nzTitle]="welcomeTpl"
+                    [nzContent]="userInfoTpl"></nz-avatar>
             </section>
         </nz-header>
 

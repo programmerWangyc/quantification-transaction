@@ -85,10 +85,9 @@ export class RobotDebuggerComponent implements OnInit {
     }
 
     get selectedPlatform(): Observable<Platform> {
-        return this.platformService.getPlatformList()
-            .pipe(
-                map(list => list.find(item => item.id === this.platform.value))
-            );
+        return this.platformService.getPlatformList().pipe(
+            map(list => list.find(item => item.id === this.platform.value))
+        );
     }
 
     ngOnDestroy() { }

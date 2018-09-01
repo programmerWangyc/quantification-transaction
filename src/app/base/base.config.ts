@@ -4,6 +4,7 @@ export interface NavItem {
     icon?: string;
     label: string;
     path: string;
+    selected?: boolean;
 }
 
 export interface SideNav extends NavItem {

@@ -2,8 +2,8 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NzModalService } from 'ng-zorro-antd';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -11,6 +11,7 @@ import { TipService } from '../../providers/tip.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
+import { StrategyService } from '../providers/strategy.service';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
 
 @Component({
@@ -33,7 +34,7 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
     /**
      * @ignore
      */
-    save$$: Subscription;
+    isAlive = true;
 
     constructor(
         public backtest: BacktestService,
@@ -41,10 +42,11 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
         public route: ActivatedRoute,
-        public strategyService: StrategyOperateService,
+        public strategyOptService: StrategyOperateService,
+        public strategyService: StrategyService,
         public tipService: TipService,
     ) {
-        super(backtest, constant, nodeService, route, strategyService, tipService);
+        super(backtest, constant, nodeService, route, strategyOptService, strategyService, tipService);
     }
 
     /**
@@ -58,52 +60,32 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         this.addCurrentPath('COPY');
 
         this.initialPrivateModel();
-
-        this.initialPrivateLaunch();
     }
 
     /**
      * @ignore
      */
     initialPrivateModel() {
-        this.templates = combineLatest(
-            this.strategyService.getCurrentDependance(),
-            this.language
-        ).pipe(
-            map(([templates, language]) => templates.filter(item => item.language === language)),
-        );
+        this.templates = this.getTemplateDependance(this.strategyService.getCurrentDependance());
 
-        this.needShowTemplateDependance = combineLatest(
-            this.templates.pipe(
-                map(list => !!list.length)
-            ),
-            this.isTemplateCategorySelected.pipe(
-                filter(sure => !sure)
-            )
-        ).pipe(
-            map(([hasTemplates, isNotTemplateCategory]) => hasTemplates && isNotTemplateCategory)
-        );
-    }
-
-    /**
-     * @ignore
-     */
-    initialPrivateLaunch() {
+        this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
     }
 
     /**
      * @ignore
      */
     ngAfterViewInit() {
-        this.save$$ = this.strategyService.launchSaveStrategy(this.confirmBeforeRequest(-1 - this.strategyId));
+        this.strategyOptService.launchSaveStrategy(this.confirmBeforeRequest(-1 - this.strategyId).pipe(
+            takeWhile(() => this.isAlive)
+        ));
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
 
-        this.save$$.unsubscribe();
+        this.subscription$$.unsubscribe();
     }
 }

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { of, Subscription, Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -26,7 +26,7 @@ export class RobotDetailComponent extends BaseComponent {
     /**
      * @ignore
      */
-    subscription$$: Subscription;
+    isAlive = true;
 
     /**
      * @ignore
@@ -96,21 +96,33 @@ export class RobotDetailComponent extends BaseComponent {
 
         this.robotService.launchSubscribeRobot(requestById);
 
-        this.subscription$$ = this.robotService.monitorServerSendRobotStatus()
-            .add(this.btNodeService.launchGetNodeList(isMain))
-            .add(this.platformService.launchGetPlatformList(isMain))
-            .add(this.robotService.handleRobotDetailError())
-            .add(this.robotService.handleSubscribeRobotError())
-            .add(this.btNodeService.handleNodeListError())
-            .add(this.platformService.handlePlatformListError());
+        const keepAlive = () => this.isAlive;
+
+        this.robotService.monitorServerSendRobotStatus(keepAlive);
+
+        this.btNodeService.launchGetNodeList(isMain.pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.platformService.launchGetPlatformList(isMain.pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.robotService.handleRobotDetailError(keepAlive);
+
+        this.robotService.handleSubscribeRobotError(keepAlive);
+
+        this.btNodeService.handleNodeListError(keepAlive);
+
+        this.platformService.handlePlatformListError(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
-        this.robotService.launchSubscribeRobot(of({ id: 0 }));
+        this.isAlive = false;
 
-        this.subscription$$.unsubscribe();
+        this.robotService.launchSubscribeRobot(of({ id: 0 }));
     }
 }

@@ -1,19 +1,20 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
+import { last } from 'lodash';
 import { Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, takeWhile } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
+import { keepAliveFn } from '../interfaces/app.interface';
 import { BtNode, DeleteNodeResponse, GetNodeListResponse } from '../interfaces/response.interface';
 import { UIState } from '../store/bt-node/bt-node.reducer';
 import * as fromRoot from '../store/index.reducer';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
-import { GroupedList, UtilService } from './util.service';
-import { HttpClient } from '@angular/common/http';
-import { last } from 'lodash';
 import { TipService } from './tip.service';
+import { GroupedList, UtilService } from './util.service';
 
 export interface GroupedNode extends GroupedList<BtNode> {
     groupNameValue?: any;
@@ -96,8 +97,8 @@ export class BtNodeService extends BaseService {
      * Get node list response.
      */
     private getNodeListResponse(): Observable<GetNodeListResponse> {
-        return this.store.select(fromRoot.selectBtNodeListResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectBtNodeListResponse)
         );
     }
 
@@ -163,8 +164,7 @@ export class BtNodeService extends BaseService {
      */
     private getDeleteNodeResponse(): Observable<DeleteNodeResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteNodeResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteNodeResponse)
         );
     }
 
@@ -192,8 +192,7 @@ export class BtNodeService extends BaseService {
      */
     getNodeHash(): Observable<string> {
         return this.store.pipe(
-            select(fromRoot.selectNodeHashResponse),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectNodeHashResponse),
             map(res => res.result)
         );
     }
@@ -219,15 +218,19 @@ export class BtNodeService extends BaseService {
     /**
      * Handle the error of node list request.
      */
-    handleNodeListError(): Subscription {
-        return this.error.handleResponseError(this.getNodeListResponse());
+    handleNodeListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getNodeListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleDeleteNodeError(): Subscription {
-        return this.error.handleResponseError(this.getDeleteNodeResponse());
+    handleDeleteNodeError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getDeleteNodeResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }
 

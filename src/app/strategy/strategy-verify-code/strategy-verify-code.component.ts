@@ -57,12 +57,10 @@ export class StrategyVerifyCodeComponent implements BaseComponent {
     launch() {
         const keepAlive = () => this.isAlive;
 
-        this.publicService.launchVerifyKey(this.verify$
-            .pipe(
-                map(verifyCode => ({ strategyId: this.id, verifyCode })),
-                takeWhile(keepAlive)
-            )
-        );
+        this.publicService.launchVerifyKey(this.verify$.asObservable().pipe(
+            map(verifyCode => ({ strategyId: this.id, verifyCode })),
+            takeWhile(keepAlive)
+        ));
 
         this.publicService.isVerifyKeySuccess(keepAlive)
             .subscribe(isSuccess => this.handleVerifySuccess(isSuccess));

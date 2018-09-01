@@ -15,6 +15,8 @@ export class IntroComponent extends BaseComponent {
 
     subscription$$: Subscription;
 
+    isAlive = true;
+
     constructor(
         private exchangeService: ExchangeService,
         private publicService: PublicService,
@@ -27,17 +29,24 @@ export class IntroComponent extends BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.publicService.launchGetSettings(SettingTypes.index)
-            .add(this.exchangeService.launchExchangeList())
-            .add(this.publicService.handleSettingsError())
-            .add(this.exchangeService.handleExchangeListError());
+        const keepAlive = () => this.isAlive;
+
+        this.subscription$$ = this.publicService.launchGetSettings(SettingTypes.index);
+
+        this.exchangeService.launchExchangeList();
+
+        this.publicService.handleSettingsError(keepAlive);
+
+        this.exchangeService.handleExchangeListError(keepAlive);
     }
 
     initialModel() {
     }
 
     ngOnDestroy() {
+        this.isAlive = false;
 
+        this.subscription$$.unsubscribe();
     }
 
 }

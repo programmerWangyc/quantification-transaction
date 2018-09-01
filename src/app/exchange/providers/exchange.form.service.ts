@@ -138,8 +138,7 @@ export class ExchangeFormService extends BaseService {
      */
     private generateFormedExchange(): Observable<FormedExchange[]> {
         return this.store.pipe(
-            select(fromRoot.selectExchangeListResponse),
-            this.filterTruth(),
+            this.selectTruth(fromRoot.selectExchangeListResponse),
             map(res => res.result.exchanges.map(exchange => {
                 const meta = <ExchangeMetaData[]>exchange.meta;
 
@@ -204,7 +203,6 @@ export class ExchangeFormService extends BaseService {
      * 给标签的默认值加后缀
      */
     private addSuffixForFlag(name: string, platforms: Platform[]): string {
-
         if (isEmpty(platforms)) {
             return name;
         } else {

@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import * as fileSaver from 'file-saver';
 import { isBoolean, isEmpty, negate } from 'lodash';
-import { from, merge, Observable, of, Subject, Subscription } from 'rxjs';
-import { find, map, mapTo, mergeMap, startWith, switchMap, take } from 'rxjs/operators';
+import { from, merge, Observable, of, Subject, Subscription, concat, combineLatest } from 'rxjs';
+import { first, map, mapTo, mergeMap, startWith, switchMap, take } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
 import { CanDeactivateComponent } from '../../base/guard.service';
@@ -20,14 +20,17 @@ import { StrategyOperateService } from '../../strategy/providers/strategy.operat
 import {
     CodeContent, FileContent, StrategyCodemirrorComponent
 } from '../../strategy/strategy-codemirror/strategy-codemirror.component';
-import { StrategyDependanceComponent } from '../../strategy/strategy-dependance/strategy-dependance.component';
+import { StrategyDependanceComponent, TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
+import { StrategyService } from '../providers/strategy.service';
 
 export interface Tab {
     name: string;
     icon: string;
     active: boolean;
 }
+
+export type CommonStrategy = Strategy | StrategyListByNameStrategy | StrategyDetail;
 
 @Component({
     selector: 'app-strategy-create-meta',
@@ -67,7 +70,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
      * Strategy data;
      */
-    strategy: Observable<Strategy | StrategyListByNameStrategy>;
+    strategy: Observable<CommonStrategy>;
 
     /**
      * Strategy name;
@@ -183,12 +186,18 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
      */
     isTemplateCategorySelected: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         public backtestService: BacktestService,
         public constant: StrategyConstantService,
         public nodeService: BtNodeService,
         public route: ActivatedRoute,
-        public strategyService: StrategyOperateService,
+        public strategyOptService: StrategyOperateService,
+        public strategyService: StrategyService,
         public tipService: TipService,
     ) {
     }
@@ -246,25 +255,26 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         this.strategyId = +this.route.snapshot.paramMap.get('id');
 
         /**
-         * 这里的信息没有从detail里取，因为通过编辑或复制按钮进来时，从list上来取这些信息时更快，不需要等后台响应就可以拿到。
-         */
-        this.strategy = merge(
-            this.strategyService.getStrategies() as Observable<StrategyListByNameStrategy[]>,
-            this.strategyService.getMarketStrategyList(),
-        ).pipe(
-            mergeMap(list => from(list)),
-            find(item => item.id === this.strategyId)
-        );
-
-        /**
          * 当前策略的详细信息由响应数据提供。
          */
         this.strategyDetail = this.strategyService.getStrategyDetail();
 
         /**
+         * 首先从list上来取这些信息时更快，不需要等后台响应就可以拿到。
+         * 如果从没有拉过这两个list的页面进来时，可能找不到这个数据，需要用详情响应数据；
+         */
+        this.strategy = merge(
+            this.strategyService.getStrategies(),
+            this.strategyService.getMarketStrategyList(),
+        ).pipe(
+            mergeMap(list => concat(from(list), this.strategyDetail)),
+            first(item => item.id === this.strategyId),
+        );
+
+        /**
          * 主要是提供给参数列表组件使用，它的数据来源于响应中已有的参数及AddArgComponent输出的数据。
-         * !FIXME: 直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
-         * 类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
+         * *直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
+         * *类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
          */
         this.args = merge(
             this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg())).pipe(
@@ -325,33 +335,39 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
      */
     protected launch(isBacktest: boolean): void {
         const id = this.route.paramMap.pipe(
-            map(data => ({ id: +data.get('id') }))
+            map(data => ({ id: +data.get('id') })),
+            take(1)
         );
 
+        const keepAlive = () => this.isAlive;
+
         if (isBacktest) {
-            this.subscription$$ = this.strategyService.handleStrategyDetailError()
-                .add(this.strategyService.launchStrategyDetail(id));
+            this.strategyService.launchStrategyDetail(id);
         } else {
-            this.subscription$$ = this.strategyService.handleStrategyDetailError()
-                .add(this.strategyService.handleStrategyListError())
-                .add(this.strategyService.handleSaveStrategyError())
+            // 响应用户导出文件的操作
+            this.subscription$$ = this.export$.asObservable()
+                .subscribe(content => this.exportFile(content));
 
-                // 响应用户导出文件的操作
-                .add(this.export$.subscribe(content => this.exportFile(content)))
-                // 获取当前策略详情
-                .add(this.strategyService.launchStrategyDetail(id))
-                // 只获取属于模板类库的策略
-                .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg })))
+            // 获取当前策略详情
+            this.strategyService.launchStrategyDetail(id);
 
-                .add(this.nodeService.launchGetNodeList(of(true)));
+            this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg }));
+
+            this.nodeService.launchGetNodeList(of(true));
+
+            this.strategyService.handleStrategyListError(keepAlive);
+
+            this.strategyOptService.handleSaveStrategyError(keepAlive);
         }
+
+        this.strategyService.handleStrategyDetailError(keepAlive);
     }
 
     /**
      * Get save strategy request params;
      */
     protected getSaveParams(): Observable<SaveStrategyRequest> {
-        return this.save$.pipe(
+        return this.save$.asObservable().pipe(
             map(content => {
                 const req = isBoolean(content) ?
                     {
@@ -461,5 +477,31 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         } else {
             return [];
         }
+    }
+
+    /**
+     * @ignore
+     */
+    protected getTemplateDependance(source: Observable<TemplateRefItem[]>): Observable<TemplateRefItem[]> {
+        return combineLatest(
+            source,
+            this.language
+        ).pipe(
+            map(([templates, language]) => templates.filter(item => item.language === language))
+        );
+    }
+
+    /**
+     * 策略创建和复制时需要用到
+     */
+    protected isShowTemplateDependance(templates: Observable<TemplateRefItem[]>): Observable<boolean> {
+        return combineLatest(
+            templates.pipe(
+                map(list => !!list.length)
+            ),
+            this.isTemplateCategorySelected,
+        ).pipe(
+            map(([hasTemplates, isTemplateCategory]) => hasTemplates && !isTemplateCategory)
+        );
     }
 }

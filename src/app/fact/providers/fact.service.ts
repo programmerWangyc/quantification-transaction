@@ -11,6 +11,7 @@ import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
 import * as fromRoot from '../../store/index.reducer';
 import { TipService } from '../../providers/tip.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 
 @Injectable()
 export class FactService extends BaseService {
@@ -40,8 +41,7 @@ export class FactService extends BaseService {
      */
     private getPublicRobotListResponse(): Observable<fromRes.GetPublicRobotListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectPublicRobotListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectPublicRobotListResponse)
         );
     }
 
@@ -75,7 +75,7 @@ export class FactService extends BaseService {
     /**
      * @ignore
      */
-    handlePublicRobotListError(keepAlive: () => boolean): Subscription {
+    handlePublicRobotListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getPublicRobotListResponse().pipe(
             takeWhile(keepAlive)
         ));

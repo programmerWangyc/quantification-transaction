@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, of, Subject, Subscription } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { TableStatistics } from '../../interfaces/app.interface';
 import { Platform } from '../../interfaces/response.interface';
 import { PlatformService } from '../../providers/platform.service';
 
@@ -37,16 +37,20 @@ export class ExchangeListComponent extends BaseComponent {
     /**
      * 数量统计
      */
-    statistics: Observable<boolean>;
+    statisticsParams: Observable<TableStatistics>;
 
     /**
      * page size
      */
     pageSize = 20;
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private platform: PlatformService,
-        private translate: TranslateService,
     ) {
         super();
     }
@@ -68,8 +72,8 @@ export class ExchangeListComponent extends BaseComponent {
 
         this.isLoading = this.platform.isPlatformLoading();
 
-        this.statistics = this.list.pipe(
-            mergeMap(data => this.translate.get('PAGINATION_STATISTICS', { total: data.length, page: Math.ceil(data.length / this.pageSize) }))
+        this.statisticsParams = this.list.pipe(
+            map(data => this.platform.getTableStatistics(data.length, this.pageSize))
         );
     }
 
@@ -77,15 +81,21 @@ export class ExchangeListComponent extends BaseComponent {
      * @ignore
      */
     launch() {
-        this.subscription$$ = this.platform.handlePlatformListError()
-            .add(this.platform.launchDeletePlatform(this.delete$))
-            .add(this.platform.launchGetPlatformList(of(true)));
+        const keepAlive = () => this.isAlive;
+
+        this.subscription$$ = this.platform.launchDeletePlatform(this.delete$.asObservable());
+
+        this.platform.launchGetPlatformList(of(true));
+
+        this.platform.handlePlatformListError(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 

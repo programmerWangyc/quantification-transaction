@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
-import { Observable, Subscription, merge } from 'rxjs';
-import { takeWhile, map, distinctUntilChanged } from 'rxjs/operators/';
+import { merge, Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
 import * as fromReq from '../../interfaces/request.interface';
@@ -72,8 +72,7 @@ export class MessageService extends BaseService {
      */
     private getMessageResponse(): Observable<fromRes.GetMessageResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetMessageResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetMessageResponse)
         );
     }
 
@@ -104,8 +103,7 @@ export class MessageService extends BaseService {
      */
     private getAPMMessageResponse(): Observable<fromRes.GetAPMMessageResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetAPMMessageResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetAPMMessageResponse)
         );
     }
 
@@ -124,8 +122,7 @@ export class MessageService extends BaseService {
      */
     private getBBSNotifyResponse(): Observable<fromRes.GetBBSNotifyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetBBSNotifyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetBBSNotifyResponse)
         );
     }
 
@@ -143,8 +140,7 @@ export class MessageService extends BaseService {
      */
     private getDeleteMessageResponse(): Observable<fromRes.DeleteMessageResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteMessageResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteMessageResponse)
         );
     }
 
@@ -153,8 +149,7 @@ export class MessageService extends BaseService {
      */
     private getDeleteAPMMessageResponse(): Observable<fromRes.DeleteAPMMessageResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteAPMMessageResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteAPMMessageResponse)
         );
     }
 
@@ -163,8 +158,7 @@ export class MessageService extends BaseService {
      */
     private getDeleteBBSNotifyResponse(): Observable<fromRes.DeleteBBSNotifyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteBBSNotifyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteBBSNotifyResponse)
         );
     }
 

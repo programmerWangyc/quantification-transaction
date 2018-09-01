@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Router } from '@angular/router';
 
 import { Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, tap, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { LoginRequest } from '../../interfaces/request.interface';
@@ -27,6 +27,11 @@ export class LoginComponent extends BaseComponent {
      * @ignore
      */
     subscription$$: Subscription;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     /**
      * @ignore
@@ -96,19 +101,30 @@ export class LoginComponent extends BaseComponent {
      */
     launch(): void {
         this.subscription$$ = this.authService.launchLogin(
-            this.login$.pipe(
-                map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) }))))
-            .add(this.authService.isLoginSuccess().pipe(
-                filter(success => success)
-            ).subscribe(_ => this.router.navigateByUrl('/dashboard')))
-            .add(this.username.valueChanges.subscribe(_ => this.authService.closeSecondaryVerify()))
-            .add(this.authService.handleLoginError());
+            this.login$.asObservable().pipe(
+                map(data => ({ ...data, password: this.encrypt.encryptPassword(data.password) })))
+        );
+
+        const keepAlive = () => this.isAlive;
+
+        this.authService.isLoginSuccess().pipe(
+            filter(success => success),
+            takeWhile(keepAlive)
+        ).subscribe(_ => this.router.navigateByUrl('/dashboard'))
+
+        this.authService.handleLoginError(keepAlive);
+
+        this.username.valueChanges.pipe(
+            takeWhile(keepAlive)
+        ).subscribe(_ => this.authService.closeSecondaryVerify());
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 

@@ -13,6 +13,7 @@ import { ProcessService } from '../../providers/process.service';
 import { PublicService } from '../../providers/public.service';
 import * as fromRoot from '../../store/index.reducer';
 import { TipService } from '../../providers/tip.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 
 @Injectable()
 export class DocumentService extends BaseService {
@@ -48,8 +49,7 @@ export class DocumentService extends BaseService {
      */
     private getDocumentResponse(): Observable<GetBBSTopicResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDocumentResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDocumentResponse)
         );
     }
 
@@ -99,7 +99,7 @@ export class DocumentService extends BaseService {
     /**
      * @ignore
      */
-    handleGetDocumentError(keepAlive: () => boolean): Subscription {
+    handleGetDocumentError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getDocumentResponse().pipe(
             takeWhile(keepAlive)
         ));

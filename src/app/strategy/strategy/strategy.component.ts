@@ -65,6 +65,11 @@ export class StrategyComponent implements BaseComponent {
      */
     search: FormControl = new FormControl();
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private strategyService: StrategyService,
         private btNodeService: BtNodeService,
@@ -105,16 +110,12 @@ export class StrategyComponent implements BaseComponent {
      * @ignore
      */
     launch() {
-        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$);
+        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$.asObservable());
 
-        this.subscription$$ = this.strategyService.handleStrategyListError()
-            .add(this.btNodeService.handleNodeListError())
-            .add(this.platformService.handlePlatformListError())
-            .add(this.strategyOperate.handleShareStrategyError())
-            .add(this.strategyOperate.handleGenKeyError())
-            .add(this.strategyOperate.handleDeleteStrategyError())
-            .add(this.strategyOperate.launchDeleteStrategy(this.delete$))
-            .add(this.strategyOperate.launchShareStrategy(this.share$))
+        const keepAlive = () => this.isAlive;
+
+        this.subscription$$ = this.strategyOperate.launchDeleteStrategy(this.delete$.asObservable())
+            .add(this.strategyOperate.launchShareStrategy(this.share$.asObservable()))
             .add(this.strategyOperate.remindPublishRobot())
             .add(this.strategyOperate.remindStoreGenKeyResult())
             .add(renewalByCode.subscribe(({ name, username, email, id }) => this.nzModal.create({
@@ -122,16 +123,33 @@ export class StrategyComponent implements BaseComponent {
                 nzComponentParams: { name, author: username, email, id },
                 nzFooter: null,
             })))
-            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.charge, Path.rent, strategy.id], { relativeTo: this.activatedRoute.parent })))
-            .add(this.btNodeService.launchGetNodeList(of(true)))
-            .add(this.platformService.launchGetPlatformList(of(true)))
-            .add(this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none })));
+            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.charge, Path.rent, strategy.id], { relativeTo: this.activatedRoute.parent })));
+
+        this.btNodeService.launchGetNodeList(of(true));
+
+        this.platformService.launchGetPlatformList(of(true));
+
+        this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none }));
+
+        this.strategyService.handleStrategyListError(keepAlive);
+
+        this.btNodeService.handleNodeListError(keepAlive);
+
+        this.platformService.handlePlatformListError(keepAlive);
+
+        this.strategyOperate.handleShareStrategyError(keepAlive);
+
+        this.strategyOperate.handleGenKeyError(keepAlive);
+
+        this.strategyOperate.handleDeleteStrategyError(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 }

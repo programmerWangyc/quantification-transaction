@@ -1,12 +1,35 @@
 import { Observable, of } from 'rxjs';
 import { MonoTypeOperatorFunction, Observer } from 'rxjs/internal/types';
 import { catchError, filter, switchMap, timeout } from 'rxjs/operators';
+import { TableStatistics } from '../interfaces/app.interface';
+import { MemoizedSelector, select, Store } from '@ngrx/store';
+import { AppState } from '../store/index.reducer';
 
 export type CompareFn<T> = (pre: T, cur: T) => boolean;
 
+export function getTableStatistics(total: number, pageSize: number): TableStatistics {
+    return {
+        total,
+        page: Math.ceil(total / pageSize),
+    };
+}
+
 export class BaseService {
+
+    /**
+     * 统计表格数据
+     */
+    getTableStatistics = getTableStatistics;
+
     isTruth(predicate: any): boolean {
         return !!predicate;
+    }
+
+    selectTruth<T>(selector: MemoizedSelector<AppState, T>): (store: Store<AppState>) => Observable<T> {
+        return (store: Store<AppState>) => store.pipe(
+            select(selector),
+            this.filterTruth()
+        );
     }
 
     filterTruth<T>(): MonoTypeOperatorFunction<T> {
@@ -43,6 +66,9 @@ export class BaseService {
         };
     }
 
+    /**
+     * Custom operator
+     */
     loadingTimeout<T>(callback: (value: any) => T, secondes = 5000): (source: Observable<T>) => Observable<T> {
         return function (source: Observable<T>) {
             return Observable.create((subscriber: Observer<T>) => {

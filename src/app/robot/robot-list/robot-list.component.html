@@ -1,5 +1,5 @@
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <nz-table #nzTable [nzData]="data | async" [nzPageSize]="10" [nzShowSizeChanger]="true">
+    <nz-table #nzTable [nzData]="data | async" [nzPageSize]="pageSize" [nzShowTotal]="sta" [nzNoResult]="'NO_ROBOTS' | translate">
         <thead>
             <tr>
                 <th bt-text-center nzWidth="15%">{{'NAME' | translate}}</th>
@@ -17,7 +17,6 @@
                     <a [routerLink]="[robot.id, robot.name]">{{robot.name}}</a>
                 </td>
                 <td bt-text-direction direction="left">
-                    <!--FIXME: 懒加载会造成第一次跳转失败，strategy模块加载过后正常-->
                     <a [routerLink]="['../../strategy/edit', robot.strategy_id]">{{robot.strategy_name}}</a>
                 </td>
                 <td>{{robot.status | robotStatus | translate}}</td>
@@ -47,3 +46,7 @@
         </tbody>
     </nz-table>
 </nz-spin>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+</ng-template>

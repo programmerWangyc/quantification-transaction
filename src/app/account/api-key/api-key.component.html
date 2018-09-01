@@ -7,7 +7,7 @@
     </button>
 </div>
 
-<nz-table #nzTable [nzData]="list | async" [nzPageSize]="20">
+<nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta">
     <thead>
         <tr>
             <th bt-text-center nzWidth="30%">{{'ACCESS_KEY' | translate}}</th>
@@ -33,3 +33,7 @@
         </tr>
     </tbody>
 </nz-table>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+</ng-template>

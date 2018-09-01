@@ -5,6 +5,8 @@ import { Path } from '../../app.config';
 import { StrategyShareType } from '../../interfaces/request.interface';
 import { Strategy, StrategyPublicState } from '../../interfaces/response.interface';
 import { ShareStrategyStateSnapshot } from '../strategy.interface';
+import { TableStatistics } from '../../interfaces/app.interface';
+import { getTableStatistics } from '../../base/base.service';
 
 @Component({
     selector: 'app-strategy-list',
@@ -20,7 +22,21 @@ export class StrategyListComponent implements OnInit {
     /**
      * Strategy list
      */
-    @Input() list: Strategy[] = [];
+    @Input() set list(input: Strategy[]) {
+        if (!!input) {
+            this._list = input;
+
+            this.statisticsParams = getTableStatistics(input.length, this.pageSize);
+        }
+    }
+
+    private _list: Strategy[] = [];
+
+    get list(): Strategy[] {
+        return this._list;
+    }
+
+    statisticsParams: TableStatistics = { total: 0, page: 0 };
 
     /**
      * 删除
@@ -36,6 +52,11 @@ export class StrategyListComponent implements OnInit {
      * 分享
      */
     @Output() share: EventEmitter<ShareStrategyStateSnapshot> = new EventEmitter();
+
+    /**
+     * @ignore
+     */
+    pageSize = 20;
 
     constructor(
         private router: Router,
@@ -90,5 +111,4 @@ export class StrategyListComponent implements OnInit {
     createKey(strategy: Strategy): void {
         console.log(strategy);
     }
-
 }

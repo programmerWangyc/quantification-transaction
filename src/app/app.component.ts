@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { en_US, NzI18nService } from 'ng-zorro-antd';
 import { Observable, Subscription } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, takeWhile } from 'rxjs/operators';
 
 import { Path } from './app.config';
 import { PublicService } from './providers/public.service';
@@ -22,6 +22,11 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     subscription$$: Subscription;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
 
     /**
      * @ignore
@@ -52,10 +57,16 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private launch() {
+        const keepAlive = () => this.isAlive;
+
         this.subscription$$ = this.pubService.updateInformation()
-            .add(this.pubService.getLanguage().subscribe(lang => this.translate.use(lang)))
-            .add(this.pubService.handlePublicError())
             .add(this.pubService.saveReferrer());
+
+        this.pubService.getLanguage().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(lang => this.translate.use(lang));
+
+        this.pubService.handlePublicError(keepAlive);
 
         this.directTo();
     }
@@ -101,6 +112,8 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 }

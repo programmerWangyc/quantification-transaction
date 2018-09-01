@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -73,8 +74,7 @@ export class ApiKeyService extends BaseService {
      */
     private getApiKeyListResponse(): Observable<fromRes.GetApiKeyListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetApiKeyListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetApiKeyListResponse)
         );
     }
 
@@ -92,8 +92,7 @@ export class ApiKeyService extends BaseService {
      */
     private getCreateApiKeyResponse(): Observable<fromRes.CreateApiKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectCreateApiKeResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectCreateApiKeResponse)
         );
     }
 
@@ -102,8 +101,7 @@ export class ApiKeyService extends BaseService {
      */
     private getLockApiKeyResponse(): Observable<fromRes.LockApiKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectLockApiKeyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectLockApiKeyResponse)
         );
     }
 
@@ -112,8 +110,7 @@ export class ApiKeyService extends BaseService {
      */
     private getDeleteApikeyResponse(): Observable<fromRes.DeleteApiKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteApiKeyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteApiKeyResponse)
         );
     }
 
@@ -128,7 +125,7 @@ export class ApiKeyService extends BaseService {
     /**
      * @ignore
      */
-    handleApiKeyListError(keepAlive: () => boolean): Subscription {
+    handleApiKeyListError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getApiKeyListResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -137,7 +134,7 @@ export class ApiKeyService extends BaseService {
     /**
      * @ignore
      */
-    handleCreateApiKeyError(keepAlive: () => boolean): Subscription {
+    handleCreateApiKeyError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getCreateApiKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -146,7 +143,7 @@ export class ApiKeyService extends BaseService {
     /**
      * @ignore
      */
-    handleLockApiKeyError(keepAlive: () => boolean): Subscription {
+    handleLockApiKeyError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getLockApiKeyResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -155,7 +152,7 @@ export class ApiKeyService extends BaseService {
     /**
      * @ignore
      */
-    handleDeleteApiKeyError(keepAlive: () => boolean): Subscription {
+    handleDeleteApiKeyError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getDeleteApikeyResponse().pipe(
             takeWhile(keepAlive)
         ));

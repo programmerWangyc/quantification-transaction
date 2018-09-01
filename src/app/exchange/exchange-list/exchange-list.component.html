@@ -1,5 +1,5 @@
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
-    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta">
+    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize" [nzShowTotal]="sta" [nzNoResult]="'NO_EXCHANGES' | translate">
         <thead>
             <th bt-text-center nzWidth="20%">{{'FLAG' | translate}}</th>
             <th bt-text-center nzWidth="20%">{{'NAME' | translate}}</th>
@@ -42,9 +42,8 @@
             </tr>
         </tbody>
     </nz-table>
-
 </nz-spin>
 
 <ng-template #sta>
-    <div>{{statistics | async}}</div>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
 </ng-template>

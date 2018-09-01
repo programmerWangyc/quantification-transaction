@@ -24,6 +24,7 @@ import {
     AppState, selectAgreeState, selectLoginResponse, selectNeedGoogleSecondaryVer, selectResetPasswordResponse,
     selectSetPwdResponse, selectSignupResponse, selectTemporaryPwd, selectVerifyPwdResponse
 } from '../../store/index.reducer';
+import { keepAliveFn } from '../../interfaces/app.interface';
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -71,8 +72,7 @@ export class AuthService extends BaseService {
     // login
     private getLoginResponse(): Observable<LoginResponse> {
         return this.store.pipe(
-            select(selectLoginResponse),
-            this.filterTruth()
+            this.selectTruth(selectLoginResponse)
         );
     }
 
@@ -96,8 +96,7 @@ export class AuthService extends BaseService {
     // signup
     private getSignupResponse(): Observable<SignupResponse> {
         return this.store.pipe(
-            select(selectSignupResponse),
-            this.filterTruth()
+            this.selectTruth(selectSignupResponse)
         );
     }
 
@@ -108,7 +107,9 @@ export class AuthService extends BaseService {
     }
 
     isAgree(): Observable<boolean> {
-        return this.store.pipe(select(selectAgreeState));
+        return this.store.pipe(
+            select(selectAgreeState)
+        );
     }
 
     toggleAgreeState(state: Observable<boolean>): Subscription {
@@ -119,20 +120,24 @@ export class AuthService extends BaseService {
         this.store.dispatch(new ResetSignupResponseAction());
     }
 
-    showSignupResponse(): Subscription {
-        return this.isSignupSuccess().subscribe(isSuccess => this.showMessage(isSuccess, 'SIGNUP_SUCCESS_TIP', 'SIGNUP_FAIL_TIP'));
+    showSignupResponse(keepAlive: keepAliveFn): Subscription {
+        return this.isSignupSuccess().pipe(
+            takeWhile(keepAlive)
+        )
+            .subscribe(isSuccess => this.showMessage(isSuccess, 'SIGNUP_SUCCESS_TIP', 'SIGNUP_FAIL_TIP'));
     }
 
     // reset password
     private getResetPasswordResponse(): Observable<ResetPasswordResponse> {
         return this.store.pipe(
-            select(selectResetPasswordResponse),
-            this.filterTruth()
+            this.selectTruth(selectResetPasswordResponse)
         );
     }
 
-    showResetPasswordResponse(): Subscription {
-        return this.getResetPasswordResponse()
+    showResetPasswordResponse(keepAlive: keepAliveFn): Subscription {
+        return this.getResetPasswordResponse().pipe(
+            takeWhile(keepAlive)
+        )
             .subscribe(result => this.showMessage(result.result, 'EMAIL_VALID_TIP', 'EMAIL_INVALID_TIP'));
     }
 
@@ -144,8 +149,10 @@ export class AuthService extends BaseService {
         );
     }
 
-    showSetPasswordResponse(): Subscription {
-        return this.getSetPasswordResponse()
+    showSetPasswordResponse(keepAlive: keepAliveFn): Subscription {
+        return this.getSetPasswordResponse().pipe(
+            takeWhile(keepAlive)
+        )
             .subscribe(result => this.showMessage(result.result, 'SET_PWD_SUCCESS_TIP', 'SET_PWD_FAIL_TIP'));
     }
 
@@ -156,8 +163,7 @@ export class AuthService extends BaseService {
     // verify password
     private getVerifyPasswordResponse(): Observable<VerifyPasswordResponse> {
         return this.store.pipe(
-            select(selectVerifyPwdResponse),
-            this.filterTruth()
+            this.selectTruth(selectVerifyPwdResponse)
         );
     }
 
@@ -172,8 +178,7 @@ export class AuthService extends BaseService {
      */
     getTemporaryPwd(): Observable<string> {
         return this.store.pipe(
-            select(selectTemporaryPwd),
-            this.filterTruth()
+            this.selectTruth(selectTemporaryPwd)
         );
     }
 
@@ -227,23 +232,31 @@ export class AuthService extends BaseService {
 
     //  =======================================================Error Handle=======================================================
 
-    handleLoginError(): Subscription {
-        return this.error.handleResponseError(this.getLoginResponse());
+    handleLoginError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getLoginResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleSignupError(): Subscription {
-        return this.error.handleResponseError(this.getSignupResponse());
+    handleSignupError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSignupResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleResetPasswordError(): Subscription {
-        return this.error.handleResponseError(this.getResetPasswordResponse());
+    handleResetPasswordError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getResetPasswordResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleSetPasswordError(): Subscription {
-        return this.error.handleResponseError(this.getSetPasswordResponse());
+    handleSetPasswordError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSetPasswordResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
-    handleVerifyPasswordError(keepAlive: () => boolean): Subscription {
+    handleVerifyPasswordError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleError(
             this.getVerifyPasswordResponse().pipe(
                 takeWhile(keepAlive),

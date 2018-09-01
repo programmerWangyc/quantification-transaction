@@ -5,7 +5,8 @@ import { Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMapTo, take, takeWhile } from 'rxjs/operators';
 
 import {
-    account, charge, community, controlCenter, documentation, factFinder, message, SideNav, square, NavItem, analyzing, quoteChart
+    account, analyzing, charge, community, controlCenter, documentation, factFinder, message, NavItem, quoteChart,
+    SideNav, square
 } from '../base/base.config';
 import { PublicService } from '../providers/public.service';
 import { RoutingService } from '../providers/routing.service';
@@ -31,16 +32,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
      * @ignore
      */
     toolMenu: NavItem[] = [quoteChart, analyzing];
-
-    /**
-     * 当前展示的模块
-     */
-    private currentModule: string;
-
-    /**
-     * @ignore
-     */
-    private currentPath: string;
 
     /**
      * @ignore
@@ -92,13 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         this.routing.getCurrentUrl().pipe(
             takeWhile(keepAlive)
-        ).subscribe(url => {
-            const ary = url.split('/'); // ary : ['', 'dashboard', moduleName or moduleName / path, ...params etc.]
-
-            this.currentPath = url;
-
-            this.currentModule = ary[2];
-        });
+        ).subscribe(path => this.checkActivatedModule(path));
 
         this.publicService.handleLogoutError(keepAlive);
 
@@ -131,19 +116,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 模块是否处于激活状态
+     * @ignore
      */
-    isActive(source: SideNav): boolean {
-        return source.subNav.map(item => item.path.includes('/') ? item.path.split('/')[0] : item.path).includes(this.currentModule);
+    private isActive(path: string, currentPath: string): boolean {
+        const subPath = path.includes('/') ? path.split('/')[1] : path;
+
+        return currentPath.includes(subPath);
     }
 
     /**
      * @ignore
      */
-    isPath(path: string): boolean {
-        const subPath = path.includes('/') ? path.split('/')[1] : path;
+    private checkActivatedModule(currentPath: string): void {
+        this.list.forEach(group => {
+            if (group.subNav) {
+                group.subNav.forEach(item => item.selected = this.isActive(item.path, currentPath));
 
-        return this.currentPath.includes(subPath);
+                group.selected = group.subNav.some(item => item.selected);
+            } else {
+                group.selected = this.isActive(group.path, currentPath);
+            }
+        });
     }
 
     /**

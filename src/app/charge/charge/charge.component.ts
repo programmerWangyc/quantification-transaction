@@ -107,6 +107,11 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      */
     payMethodSelected: Observable<string>;
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private fb: FormBuilder,
         private chargeService: ChargeService
@@ -143,11 +148,15 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      */
     launch() {
         this.subscription$$ = this.chargeService.launchPaymentArg(
-            merge(this.pay$, this.getArgsIfWechat())
+            merge(
+                this.pay$.asObservable(),
+                this.getArgsIfWechat()
+            )
         )
             .add(this.chargeService.goToAlipayPage())
-            .add(this.chargeService.goToPayPal())
-            .add(this.chargeService.handlePaymentsArgsError());
+            .add(this.chargeService.goToPayPal());
+
+        this.chargeService.handlePaymentsArgsError(() => this.isAlive);
     }
 
     /**
@@ -188,6 +197,8 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 }

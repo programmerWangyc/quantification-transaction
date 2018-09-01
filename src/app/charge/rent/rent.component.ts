@@ -140,8 +140,9 @@ export class RentComponent extends ChargeBase implements BaseComponent {
             )
         )
             .add(this.chargeService.goToAlipayPage())
-            .add(this.chargeService.goToPayPal())
-            .add(this.chargeService.handlePaymentsArgsError());
+            .add(this.chargeService.goToPayPal());
+
+        this.chargeService.handlePaymentsArgsError(() => this.isAlive);
     }
 
     /**

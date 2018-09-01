@@ -1,4 +1,4 @@
-<nz-table #nzTable [nzData]="accounts" [nzPageSize]="20">
+<nz-table #nzTable [nzData]="accounts" [nzPageSize]="pageSize" [nzShowTotal]="sta">
     <thead>
         <tr>
             <th bt-text-center nzWidth="20%">{{'USERNAME' | translate}}</th>
@@ -30,3 +30,7 @@
         </tr>
     </tbody>
 </nz-table>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams"></div>
+</ng-template>

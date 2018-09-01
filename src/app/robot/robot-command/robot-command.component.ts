@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent, FoldableBusinessComponent } from '../../base/base.component';
 import { VariableOverview } from '../../interfaces/app.interface';
@@ -20,9 +20,11 @@ export class RobotCommandComponent extends FoldableBusinessComponent implements 
 
     hasArgs: Observable<boolean>;
 
-    subscription$$: Subscription;
+    subscription: Subscription;
 
     command$: Subject<VariableOverview> = new Subject();
+
+    isAlive = true;
 
     constructor(
         public render: Renderer2,
@@ -47,8 +49,13 @@ export class RobotCommandComponent extends FoldableBusinessComponent implements 
     }
 
     launch() {
-        this.subscription$$ = this.robotOperate.launchCommandRobot(this.command$)
-            .add(this.robotOperate.handleCommandRobotError());
+        const keepAlive = () => this.isAlive;
+
+        this.subscription = this.robotOperate.launchCommandRobot(this.command$.asObservable().pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.robotOperate.handleCommandRobotError(keepAlive);
     }
 
     argChange(arg: VariableOverview): void {
@@ -56,6 +63,8 @@ export class RobotCommandComponent extends FoldableBusinessComponent implements 
     }
 
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
+
+        this.subscription.unsubscribe();
     }
 }

@@ -4,9 +4,10 @@ import { select, Store } from '@ngrx/store';
 import { UploadFile } from 'ng-zorro-antd';
 import * as qiniu from 'qiniu-js';
 import { Observable, Subscription, zip } from 'rxjs';
-import { filter, map, mapTo, switchMap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mapTo, switchMap, takeWhile, withLatestFrom } from 'rxjs/operators';
 
 import { UploadService } from '../../base/upload.component';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -95,8 +96,7 @@ export class CommentService extends UploadService {
      */
     private getCommentListResponse(): Observable<fromRes.GetCommentListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectCommentListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectCommentListResponse)
         );
     }
 
@@ -114,8 +114,7 @@ export class CommentService extends UploadService {
      */
     private getSubmitCommentResponse(): Observable<fromRes.SubmitCommentResponse> {
         return this.store.pipe(
-            select(fromRoot.selectSubmitResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectSubmitResponse)
         );
     }
 
@@ -133,8 +132,7 @@ export class CommentService extends UploadService {
      */
     getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
         return this.store.pipe(
-            select(fromRoot.selectCommentQiniuTokenResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectCommentQiniuTokenResponse)
         );
     }
 
@@ -187,21 +185,27 @@ export class CommentService extends UploadService {
     /**
      * @ignore
      */
-    handleCommentListError(): Subscription {
-        return this.error.handleResponseError(this.getCommentListResponse());
+    handleCommentListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getCommentListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleSubmitCommentError(): Subscription {
-        return this.error.handleResponseError(this.getSubmitCommentResponse());
+    handleSubmitCommentError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSubmitCommentResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleQiniuTokenError(): Subscription {
-        return this.error.handleResponseError(this.getQiniuTokenResponse());
+    handleQiniuTokenError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getQiniuTokenResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

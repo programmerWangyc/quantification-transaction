@@ -20,6 +20,10 @@ export class ResetComponent extends BaseComponent {
 
     inputSize = 'large';
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
     constructor(
         private authService: AuthService,
     ) {
@@ -33,12 +37,18 @@ export class ResetComponent extends BaseComponent {
     initialModel() { }
 
     launch() {
-        this.subscription$$ = this.authService.launchRegain(this.resetPassword$)
-            .add(this.authService.showResetPasswordResponse())
-            .add(this.authService.handleResetPasswordError());
+        this.subscription$$ = this.authService.launchRegain(this.resetPassword$.asObservable());
+
+        const keepAlive = () => this.isAlive;
+
+        this.authService.showResetPasswordResponse(keepAlive);
+
+        this.authService.handleResetPasswordError(keepAlive);
     }
 
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
 
         this.authService.resetResetPasswordResponse();

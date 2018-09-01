@@ -21,6 +21,7 @@ import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import { PublicService } from './public.service';
 import { TipService } from './tip.service';
+import { keepAliveFn } from '../interfaces/app.interface';
 
 export interface GroupPlatform extends Platform {
     group: string;
@@ -291,28 +292,36 @@ export class PlatformService extends BaseService {
     /**
      * @ignore
      */
-    handlePlatformListError(): Subscription {
-        return this.error.handleResponseError(this.getPlatformListResponse());
+    handlePlatformListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getPlatformListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleDeletePlatformError(): Subscription {
-        return this.error.handleResponseError(this.getDeletePlatformResponse());
+    handleDeletePlatformError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getDeletePlatformResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handlePlatformDetailError(): Subscription {
-        return this.error.handleResponseError(this.getPlatformDetailResponse());
+    handlePlatformDetailError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getPlatformDetailResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleUpdatePlatformError(): Subscription {
-        return this.error.handleResponseError(this.getUpdatePlatformResponse());
+    handleUpdatePlatformError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getUpdatePlatformResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

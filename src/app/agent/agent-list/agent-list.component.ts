@@ -4,6 +4,7 @@ import { Observable, of, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
+import { TableStatistics } from '../../interfaces/app.interface';
 import { SettingTypes } from '../../interfaces/request.interface';
 import { BtNode, DockerSetting } from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -51,6 +52,21 @@ export class AgentListComponent extends BaseComponent {
      */
     isLoading: Observable<boolean>;
 
+    /**
+     * statisticsParams
+     */
+    statisticsParams: Observable<TableStatistics>;
+
+    /**
+     * @ignore
+     */
+    pageSize = 20;
+
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private nodeService: BtNodeService,
         private publicService: PublicService,
@@ -77,27 +93,38 @@ export class AgentListComponent extends BaseComponent {
         );
 
         this.isLoading = this.nodeService.isLoading();
+
+        this.statisticsParams = this.list.pipe(
+            map(list => this.nodeService.getTableStatistics(list.length, this.pageSize))
+        );
     }
 
     /**
      * @ignore
      */
     launch() {
-        this.subscription$$ = this.nodeService.handleNodeListError()
-            .add(this.nodeService.handleDeleteNodeError())
-            .add(this.wdService.launchSetWatchDog(this.setNodeWd$))
-            .add(this.nodeService.launchDeleteNode(this.delete$))
+        const keepAlive = () => this.isAlive;
+
+        this.subscription$$ = this.wdService.launchSetWatchDog(this.setNodeWd$.asObservable())
+            .add(this.nodeService.launchDeleteNode(this.delete$.asObservable()))
             .add(this.publicService.getSetting(SettingTypes.docker).pipe(
                 map(res => JSON.parse(res) as DockerSetting),
                 map(({ version }) => version)
-            ).subscribe(version => this.latestVersion = version))
-            .add(this.nodeService.launchGetNodeList(of(true)));
+            ).subscribe(version => this.latestVersion = version));
+
+        this.nodeService.launchGetNodeList(of(true));
+
+        this.nodeService.handleNodeListError(keepAlive);
+
+        this.nodeService.handleDeleteNodeError(keepAlive);
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 

@@ -6,16 +6,19 @@ import { find, map, mergeMap } from 'rxjs/operators';
 import { DeactivateGuard } from '../interfaces/app.interface';
 import { RoutingService } from '../providers/routing.service';
 import { TipService } from '../providers/tip.service';
+import { BaseService } from './base.service';
 
 export interface CanDeactivateComponent {
     canDeactivate(): DeactivateGuard[];
 }
 
-export class BaseGuard implements CanDeactivate<CanDeactivateComponent> {
+export class BaseGuard extends BaseService implements CanDeactivate<CanDeactivateComponent> {
     constructor(
         public tip: TipService,
         public routing: RoutingService,
-    ) { }
+    ) {
+        super();
+    }
 
     /**
      * 是否可以退出当前路由。

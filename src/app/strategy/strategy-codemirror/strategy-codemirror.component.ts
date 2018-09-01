@@ -245,7 +245,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
 
             if (theme && this.codeOptions.theme !== theme) this.codeOptions.theme = theme;
         }).add(
-            this.saveBacktest$.pipe(
+            this.saveBacktest$.asObservable().pipe(
                 switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null))
             ).subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
         );

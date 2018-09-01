@@ -7,8 +7,9 @@ import { Exchange, GetExchangeListResponse } from '../interfaces/response.interf
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
 import * as fromRoot from '../store/index.reducer';
-import { map } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { isEmpty } from 'lodash';
+import { keepAliveFn } from '../interfaces/app.interface';
 
 
 @Injectable()
@@ -37,8 +38,8 @@ export class ExchangeService extends BaseService {
      * exchange list 的响应应状态；
      */
     private getExchangeListResponse(): Observable<GetExchangeListResponse> {
-        return this.store.select(fromRoot.selectExchangeListResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectExchangeListResponse)
         );
     }
 
@@ -61,7 +62,9 @@ export class ExchangeService extends BaseService {
     /**
      * @ignore
      */
-    handleExchangeListError(): Subscription {
-        return this.error.handleResponseError(this.getExchangeListResponse());
+    handleExchangeListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getExchangeListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

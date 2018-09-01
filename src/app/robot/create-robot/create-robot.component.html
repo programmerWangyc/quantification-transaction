@@ -1,103 +1,107 @@
-<form nz-form [formGroup]="form">
+<nz-spin [nzSpinning]="isLoading | async">
+    <form nz-form [formGroup]="form">
 
-    <nz-form-item>
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'ROBOT_NAME' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <input formControlName="robotName" required nz-input [placeholder]="'ROBOT_NAME_REQUIRED' | translate">
-            <nz-form-explain *ngIf="robotName.invalid && (robotName.dirty || robotName.touched)">
-                <div *ngIf="!!robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
-            </nz-form-explain>
-        </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'ROBOT_NAME' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <input formControlName="robotName" required nz-input [placeholder]="'ROBOT_NAME_REQUIRED' | translate">
+                <nz-form-explain *ngIf="robotName.invalid && (robotName.dirty || robotName.touched)">
+                    <div *ngIf="!!robotName.errors.required">{{'ROBOT_NAME_REQUIRED' | translate}}</div>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'MANDATORY' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate">
-                <nz-option-group *ngFor="let agt of agents | async" [nzLabel]="agt.groupName | translate">
-                    <nz-option *ngFor="let item of agt.values" [nzLabel]="item | btNodeName" [nzValue]="item.id"></nz-option>
-                </nz-option-group>
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="strategy" [nzPlaceHolder]="'PLEASE_SELECT_STRATEGY' | translate">
-                <nz-option-group *ngFor="let strategy of strategies | async" [nzLabel]="strategy.groupName | translate">
-                    <nz-option *ngFor="let item of strategy.values" [nzLabel]="item | strategyName" [nzValue]="item.id"></nz-option>
-                </nz-option-group>
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item *ngIf="selectedStrategyArgs; let args">
-        <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY_ARGUMENTS' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <app-strategy-arg [title]="'ARGUMENTS' | translate" [args]="args.semanticArgs" (change)="argChange($event)"></app-strategy-arg>
-
-            <div *ngIf="args.semanticTemplateArgs">
-                <app-strategy-arg *ngFor="let template of args.semanticTemplateArgs" [title]="template.name" [args]="template.variables"
-                    (change)="argChange($event, template.name)"></app-strategy-arg>
-            </div>
-        </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'K_LINE_PERIOD' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="kLinePeriod" [nzPlaceHolder]="'PLEASE_SELECT_KLINE_PERIOD' | translate" required>
-                <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-            <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzShowSearch>
-                <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
-            </nz-select>
-            <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
-                <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
-            </nz-form-explain>
-        </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item class="group-select">
-        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'EXCHANGE_NAME' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" class="stock">
-            <nz-input-group nzCompact fxLayout="row">
-                <nz-select [(ngModel)]="isCustomStock" [ngModelOptions]="{standalone: true}">
-                    <nz-option [nzLabel]="'CUSTOM' | translate" [nzValue]="true"></nz-option>
-                    <nz-option [nzLabel]="'USE_EXIST' | translate" [nzValue]="false"></nz-option>
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'MANDATORY' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate">
+                    <nz-option-group *ngFor="let agt of agents | async" [nzLabel]="agt.groupName | translate">
+                        <nz-option *ngFor="let item of agt.values" [nzLabel]="item | btNodeName" [nzValue]="item.id"></nz-option>
+                    </nz-option-group>
                 </nz-select>
-                <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate" [nzDisabled]="!platform.value"
-                    fxFlex="1 0 auto">
-                    <nz-option *ngFor="let item of (selectedPlatform | async)?.stocks" [nzLabel]="item" [nzValue]="item"></nz-option>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <nz-select formControlName="strategy" [nzPlaceHolder]="'PLEASE_SELECT_STRATEGY' | translate">
+                    <nz-option-group *ngFor="let strategy of strategies | async" [nzLabel]="strategy.groupName | translate">
+                        <nz-option *ngFor="let item of strategy.values" [nzLabel]="item | strategyName" [nzValue]="item.id"></nz-option>
+                    </nz-option-group>
                 </nz-select>
-                <input *ngIf="isCustomStock" formControlName="stock" [disabled]="!platform.value" nz-input>
-            </nz-input-group>
-        </nz-form-control>
-    </nz-form-item>
-</form>
+            </nz-form-control>
+        </nz-form-item>
 
-<div nz-row>
-    <div nz-col [nzSm]="labelSm" [nzXs]="xs" class="add-pair" [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate">
-        <button nz-button (click)="addPair(platform.value, stock.value)">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
+        <nz-form-item *ngIf="selectedStrategyArgs; let args">
+            <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY_ARGUMENTS' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <app-strategy-arg [title]="'ARGUMENTS' | translate" [args]="args.semanticArgs" (change)="argChange($event)"></app-strategy-arg>
+
+                <div *ngIf="args.semanticTemplateArgs">
+                    <app-strategy-arg *ngFor="let template of args.semanticTemplateArgs" [title]="template.name" [args]="template.variables"
+                        (change)="argChange($event, template.name)"></app-strategy-arg>
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'K_LINE_PERIOD' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <nz-select formControlName="kLinePeriod" [nzPlaceHolder]="'PLEASE_SELECT_KLINE_PERIOD' | translate"
+                    required>
+                    <nz-option *ngFor="let item of periods" [nzLabel]="item.period | translate" [nzValue]="item.id"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+                <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate"
+                    nzShowSearch>
+                    <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
+                </nz-select>
+                <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
+                    <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="group-select">
+            <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'EXCHANGE_NAME' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs" class="stock">
+                <nz-input-group nzCompact fxLayout="row">
+                    <nz-select [(ngModel)]="isCustomStock" [ngModelOptions]="{standalone: true}">
+                        <nz-option [nzLabel]="'CUSTOM' | translate" [nzValue]="true"></nz-option>
+                        <nz-option [nzLabel]="'USE_EXIST' | translate" [nzValue]="false"></nz-option>
+                    </nz-select>
+                    <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate"
+                        [nzDisabled]="!platform.value" fxFlex="1 0 auto">
+                        <nz-option *ngFor="let item of (selectedPlatform | async)?.stocks" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    </nz-select>
+                    <input *ngIf="isCustomStock" formControlName="stock" [disabled]="!platform.value" nz-input>
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+
+    <div nz-row>
+        <div nz-col [nzSm]="labelSm" [nzXs]="xs" class="add-pair" [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate">
+            <button nz-button (click)="addPair(platform.value, stock.value)">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
+        </div>
+        <div nz-col [nzSm]="controlSm" [nzXs]="xs" fxLayout="row wrap">
+            <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
+        </div>
     </div>
-    <div nz-col [nzSm]="controlSm" [nzXs]="xs" fxLayout="row wrap">
-        <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
+
+    <div id="button-group" fxLayoutAlign="space-between center">
+        <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
+            {{'CREATE' | translate}}
+        </button>
+
+        <button nz-button (click)="goBack()">
+            {{'GO_BACK' | translate}}
+        </button>
     </div>
-</div>
-
-<div id="button-group" fxLayoutAlign="space-between center">
-    <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
-        {{'CREATE' | translate}}
-    </button>
-
-    <button nz-button (click)="goBack()">
-        {{'GO_BACK' | translate}}
-    </button>
-</div>
+</nz-spin>

@@ -27,6 +27,11 @@ export class PasswordComponent extends BaseComponent {
 
     inputSize = 'large';
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private encrypt: EncryptService,
         private fb: FormBuilder,
@@ -55,9 +60,13 @@ export class PasswordComponent extends BaseComponent {
             ).pipe(
                 map(([password, token]) => ({ password, token }))
             )
-        )
-            .add(this.authService.showSetPasswordResponse())
-            .add(this.authService.handleSetPasswordError());
+        );
+
+        const keepAlive = () => this.isAlive;
+
+        this.authService.showSetPasswordResponse(keepAlive);
+
+        this.authService.handleSetPasswordError(keepAlive);
     }
 
     createFrom(): void {
@@ -68,6 +77,8 @@ export class PasswordComponent extends BaseComponent {
     }
 
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
 
         this.authService.resetSetPasswordResponse();

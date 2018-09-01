@@ -18,7 +18,9 @@
 
     <app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
 
-    <div fxLayoutAlign="end center" id="bbs-pagination">
+    <div fxLayoutAlign="space-between center" class="pagination">
+        <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+
         <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true" [nzPageSizeOptions]="pageSizes"
             [(nzPageSize)]="limit" (nzPageSizeChange)="limit$.next($event)" (nzPageIndexChange)="page$.next($event)" [nzHideOnSinglePage]="true"></nz-pagination>
     </div>

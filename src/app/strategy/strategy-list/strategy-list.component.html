@@ -1,4 +1,4 @@
-<nz-table #nzTable [nzData]="list" [nzPageSize]="10" [nzShowSizeChanger]="true">
+<nz-table #nzTable [nzData]="list" [nzPageSize]="pageSize" [nzShowTotal]="sta" [nzNoResult]="'NO_STRATEGIES' | translate">
     <thead>
         <tr>
             <th *ngFor="let item of tableHead" bt-text-center>
@@ -23,7 +23,8 @@
                 </span>
                 <ng-template #notOwnerBlock>
                     <nz-tag *ngIf="strategy.is_deleted" [nzColor]="'gold'">{{'DELETED' | translate}}</nz-tag>
-                    <nz-tag *ngIf="!strategy.is_deleted && strategy.public !== 3" [nzColor]="'lime'">{{'INNER_PREMIUM' | translate}}</nz-tag>
+                    <nz-tag *ngIf="!strategy.is_deleted && strategy.public !== 3" [nzColor]="'lime'">{{'INNER_PREMIUM'
+                        | translate}}</nz-tag>
                 </ng-template>
             </td>
 
@@ -36,7 +37,8 @@
                     </span>
 
                     <ng-template #cancelBlock>
-                        <a (click)="cancel(strategy)">{{(strategy.public === 1 ? 'CANCEL_PUBLISH': 'CANCEL_SELL') | translate}}</a>
+                        <a (click)="cancel(strategy)">{{(strategy.public === 1 ? 'CANCEL_PUBLISH': 'CANCEL_SELL') |
+                            translate}}</a>
                     </ng-template>
 
                     <span *ngIf="strategy.public === 3">
@@ -46,7 +48,8 @@
                 </span>
 
                 <ng-template #buyerBlock>
-                    <span [nz-tooltip]="'EXPIRE_TIME' | translate: {time: strategy.expire_date}">{{strategy.expire_date | expireStatus | translate}}</span>
+                    <span [nz-tooltip]="'EXPIRE_TIME' | translate: {time: strategy.expire_date}">{{strategy.expire_date
+                        | expireStatus | translate}}</span>
                 </ng-template>
             </td>
 
@@ -77,3 +80,7 @@
         </tr>
     </tbody>
 </nz-table>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams"></div>
+</ng-template>

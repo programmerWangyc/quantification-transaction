@@ -388,11 +388,13 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // create robot
         case actions.SAVE_ROBOT:
-            return { ...state, requestParams: { ...state.requestParams, saveRobot: action.payload } };
+            return { ...state, requestParams: { ...state.requestParams, saveRobot: action.payload }, UIState: { ...state.UIState, loading: true } };
 
         case actions.SAVE_ROBOT_FAIL:
+            return { ...state, saveRobotRes: action.payload, UIState: { ...state.UIState, loading: false } };
+
         case actions.SAVE_ROBOT_SUCCESS:
-            return { ...state, saveRobotRes: action.payload };
+            return { ...state, saveRobotRes: action.payload, requestParams: { ...state.requestParams, saveRobot: null }, UIState: { ...state.UIState, loading: false } };
 
         // run plugin
         case actions.RUN_PLUGIN:

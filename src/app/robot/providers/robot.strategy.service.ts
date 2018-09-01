@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { isNumber, sortBy } from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
-import { SemanticArg, GroupedStrategy } from '../../interfaces/app.interface';
+import { GroupedStrategy, keepAliveFn, SemanticArg } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -42,8 +42,7 @@ export class RobotStrategyService extends BaseService {
      */
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectStrategyListResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectStrategyListResponse)
         );
     }
 
@@ -118,7 +117,9 @@ export class RobotStrategyService extends BaseService {
     /**
      * @ignore
      */
-    handleStrategyListError(): Subscription {
-        return this.error.handleResponseError(this.getStrategyListResponse());
+    handleStrategyListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getStrategyListResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

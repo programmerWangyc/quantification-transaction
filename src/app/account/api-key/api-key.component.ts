@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Breadcrumb } from '../../interfaces/app.interface';
+import { Breadcrumb, TableStatistics } from '../../interfaces/app.interface';
 import { Observable, of } from 'rxjs';
 import { ApiKeyService } from '../providers/api.key.service';
 import { ApiKey } from '../../interfaces/response.interface';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-api-key',
@@ -31,6 +32,10 @@ export class ApiKeyComponent implements OnInit, OnDestroy {
 
     list: Observable<ApiKey[]>;
 
+    pageSize = 20;
+
+    statisticsParams: Observable<TableStatistics>;
+
     constructor(
         private apiKeyService: ApiKeyService,
     ) { }
@@ -41,16 +46,21 @@ export class ApiKeyComponent implements OnInit, OnDestroy {
         this.launch();
     }
 
-    initialModel(): void {
+    launch(): void {
         const keepAlive = () => this.isAlive;
 
         this.apiKeyService.launchGetApiKeyList(of(null));
 
         this.apiKeyService.handleApiKeyListError(keepAlive);
+
     }
 
-    launch(): void {
+    initialModel(): void {
         this.list = this.apiKeyService.getApiKeyListResult();
+
+        this.statisticsParams = this.list.pipe(
+            map(data => this.apiKeyService.getTableStatistics(data.length, this.pageSize))
+        );
     }
 
     onCreate(): void {

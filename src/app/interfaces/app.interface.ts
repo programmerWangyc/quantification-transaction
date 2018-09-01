@@ -109,3 +109,10 @@ export interface SemanticArg {
     semanticArgs: VariableOverview[];
     semanticTemplateArgs: TemplateVariableOverview[];
 }
+
+export interface TableStatistics {
+    total: number;
+    page: number;
+}
+
+export type keepAliveFn = () => boolean;

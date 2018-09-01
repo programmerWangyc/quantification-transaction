@@ -1,4 +1,4 @@
-<nz-table #nestedTable [nzData]="robots" [nzPageSize]="50">
+<nz-table #nestedTable [nzData]="robots" [nzPageSize]="pageSize" [nzShowTotal]="sta">
     <thead>
         <tr>
             <th nzWidth="5%" nzShowExpand></th>
@@ -44,3 +44,7 @@
         </ng-template>
     </tbody>
 </nz-table>
+
+<ng-template #sta>
+    <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams"></div>
+</ng-template>

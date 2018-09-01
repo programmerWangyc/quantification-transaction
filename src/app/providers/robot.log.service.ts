@@ -55,8 +55,11 @@ export class RobotLogService extends BaseService {
         return this.process.processRobotLogs(
             data.pipe(
                 withLatestFrom(
-                    this.store.select(fromRoot.selectRobotDefaultLogParams),
-                    this.store.select(fromRoot.selectRobotLogRequestParameters).pipe(
+                    this.store.pipe(
+                        select(fromRoot.selectRobotDefaultLogParams)
+                    ),
+                    this.store.pipe(
+                        select(fromRoot.selectRobotLogRequestParameters),
                         map(req => req || {})
                     ),
                     (newParams, defaultParams, perviousParams) => ({ ...defaultParams, ...perviousParams, ...newParams })
@@ -113,13 +116,15 @@ export class RobotLogService extends BaseService {
     //  =======================================================Date Acquisition=======================================================
 
     private getRobotLogsResponse(): Observable<fromRes.GetRobotLogsResponse> {
-        return this.store.select(fromRoot.selectRobotLogsResponse).pipe(
-            this.filterTruth()
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectRobotLogsResponse)
         );
     }
 
     private getSyncRobotLogsResponse(): Observable<fromRes.GetRobotLogsResponse> {
-        return this.store.select(fromRoot.selectSyncRobotLogsResponse);
+        return this.store.pipe(
+            select(fromRoot.selectSyncRobotLogsResponse)
+        );
     }
 
     getRobotLogs(): Observable<fromRes.RobotLogs> {
@@ -136,7 +141,9 @@ export class RobotLogService extends BaseService {
     }
 
     getRobotLogDefaultParams(): Observable<fromReq.GetRobotLogsRequest> {
-        return this.store.select(fromRoot.selectRobotDefaultLogParams);
+        return this.store.pipe(
+            select(fromRoot.selectRobotDefaultLogParams)
+        );
     }
 
     getLogsTotal(key: string): Observable<number> {
@@ -159,7 +166,8 @@ export class RobotLogService extends BaseService {
      * @param type loading type
      */
     isLoading(type?: string): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotUiState).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectRobotUiState),
             map(state => type ? state[type] : state.loading)
         );
     }
@@ -226,13 +234,15 @@ export class RobotLogService extends BaseService {
 
     // monitoring message
     getRobotLogMonitorSoundState(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotLogMonitoringSound).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectRobotLogMonitoringSound),
             map(data => data.isMonitorOpen)
         );
     }
 
     getRobotLogMonitoringSoundTypes(): Observable<number[]> {
-        return this.store.select(fromRoot.selectRobotLogMonitoringSound).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectRobotLogMonitoringSound),
             map(data => data.logTypes)
         );
     }
@@ -290,7 +300,9 @@ export class RobotLogService extends BaseService {
     }
 
     getProfitMaxPoint(): Observable<number> {
-        return this.store.select(fromRoot.selectRobotProfitMaxPoint);
+        return this.store.pipe(
+            select(fromRoot.selectRobotProfitMaxPoint)
+        );
     }
 
     // TODO: start line
@@ -358,7 +370,8 @@ export class RobotLogService extends BaseService {
     }
 
     private canAddProfitPoint(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotProfitChartCurrentPage).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectRobotProfitChartCurrentPage),
             map(this.isFirstPage)
         );
     }
@@ -417,7 +430,9 @@ export class RobotLogService extends BaseService {
     }
 
     getStrategyMaxPoint(): Observable<number> {
-        return this.store.select(fromRoot.selectRobotStrategyMaxPoint);
+        return this.store.pipe(
+            select(fromRoot.selectRobotStrategyMaxPoint)
+        );
     }
 
     getStrategyUpdateTime(): Observable<string> {
@@ -539,7 +554,8 @@ export class RobotLogService extends BaseService {
     }
 
     private canUpdateStrategyChart(): Observable<boolean> {
-        return this.store.select(fromRoot.selectRobotStrategyChartCurrentPage).pipe(
+        return this.store.pipe(
+            select(fromRoot.selectRobotStrategyChartCurrentPage),
             map(this.isFirstPage)
         );
     }

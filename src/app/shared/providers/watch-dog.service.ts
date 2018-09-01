@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 
 import { Observable, Subscription } from 'rxjs';
-import { filter, mapTo, mergeMap, switchMapTo } from 'rxjs/operators';
+import { filter, mapTo, mergeMap, switchMapTo, takeWhile } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import { SetWDRequest } from '../../interfaces/request.interface';
 import { BtNode, Robot, RobotDetail, SetWDResponse } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -64,12 +65,13 @@ export class WatchDogService extends BaseService {
     /**
      * 获取机器狗的最新状态, 也就是设置响应成功后发出的请求状态；
      */
-    getLatestWatchDogState(): Observable<SetWDRequest> {
+    getLatestWatchDogState(keepAlive: keepAliveFn): Observable<SetWDRequest> {
         return this.getSetWatchDogResponse().pipe(
             filter(res => res.result),
             switchMapTo(this.store.pipe(
                 select(selectSetWatchDogRequest)
-            ))
+            )),
+            takeWhile(keepAlive)
         );
     }
 
@@ -80,7 +82,9 @@ export class WatchDogService extends BaseService {
     /**
      * @ignore
      */
-    handleSetWatchDogError(): Subscription {
-        return this.error.handleResponseError(this.getSetWatchDogResponse());
+    handleSetWatchDogError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSetWatchDogResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

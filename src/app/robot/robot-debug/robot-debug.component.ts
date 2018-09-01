@@ -71,6 +71,11 @@ export class RobotDebugComponent implements BaseComponent {
 
     isDebugging: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
+    isAlive = true;
+
     constructor(
         private nodeService: BtNodeService,
         private platformService: PlatformService,
@@ -93,16 +98,14 @@ export class RobotDebugComponent implements BaseComponent {
         this.hasAgents = this.agents.pipe(map(agents => !!agents.length));
 
         this.logs = combineLatest(
-            this.robotOperate.getPluginRunLogs()
-                .pipe(
-                    map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx)))
-                ),
+            this.robotOperate.getPluginRunLogs().pipe(
+                map(res => res.map((item, idx) => this.robotLog.transformDebugLogToRunningLog(item, idx)))
+            ),
             this.filter$
-        )
-            .pipe(
-                map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
-                startWith([])
-            );
+        ).pipe(
+            map(([logs, selectedTypes]) => selectedTypes.length ? logs.filter(log => includes(selectedTypes, log.logType)) : logs),
+            startWith([])
+        );
 
         this.pageSize = of(this.initialPageSize);
 
@@ -122,18 +125,24 @@ export class RobotDebugComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.robotOperate.launchDebugRobot(this.debug$
-            .pipe(
-                map(options => ({ options, content: this.content }))
-            )
-        )
-            .add(this.platformService.handlePlatformListError())
-            .add(this.nodeService.handleNodeListError())
-            .add(this.nodeService.launchGetNodeList(of(null)))
-            .add(this.platformService.launchGetPlatformList(of(null)));
+        this.subscription$$ = this.robotOperate.launchDebugRobot(this.debug$.asObservable().pipe(
+            map(options => ({ options, content: this.content }))
+        ));
+
+        this.nodeService.launchGetNodeList(of(null));
+
+        this.platformService.launchGetPlatformList(of(null));
+
+        const keepAlive = () => this.isAlive;
+
+        this.platformService.handlePlatformListError(keepAlive);
+
+        this.nodeService.handleNodeListError(keepAlive);
     }
 
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.subscription$$.unsubscribe();
     }
 }

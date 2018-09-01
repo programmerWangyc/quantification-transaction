@@ -7,7 +7,7 @@ import { distinctUntilChanged, filter, map, startWith, take, takeWhile, tap } fr
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
-import { EditorConfig, Referrer } from '../interfaces/app.interface';
+import { EditorConfig, Referrer, keepAliveFn } from '../interfaces/app.interface';
 import { SettingTypes, VerifyKeyRequest } from '../interfaces/request.interface';
 import {
     Broker, ChangeAlertThresholdSettingResponse, LogoutResponse, PublicResponse, ResponseState, VerifyKeyResponse
@@ -84,8 +84,7 @@ export class PublicService extends BaseService {
      */
     getSettingsResponse(): Observable<ResponseState> {
         return this.store.pipe(
-            select(fromRoot.selectSettingsResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectSettingsResponse),
         );
     }
 
@@ -172,7 +171,7 @@ export class PublicService extends BaseService {
 
     getError(): Observable<string> {
         return this.getPublicResponse().pipe(
-            filter(this.isTruth),
+            this.filterTruth(),
             map(res => res.error)
         );
     }
@@ -204,8 +203,7 @@ export class PublicService extends BaseService {
      */
     private getLogoutResponse(): Observable<LogoutResponse> {
         return this.store.pipe(
-            select(fromRoot.selectLogoutResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectLogoutResponse)
         );
     }
 
@@ -223,8 +221,7 @@ export class PublicService extends BaseService {
      */
     private getChangeAlertThresholdSettingResponse(): Observable<ChangeAlertThresholdSettingResponse> {
         return this.store.pipe(
-            select(fromRoot.selectChangeAlertThresholdSettingResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectChangeAlertThresholdSettingResponse)
         );
     }
 
@@ -233,15 +230,14 @@ export class PublicService extends BaseService {
      */
     private getVerifyKeyResponse(): Observable<VerifyKeyResponse> {
         return this.store.pipe(
-            select(fromRoot.selectVerifyKeyResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectVerifyKeyResponse)
         );
     }
 
     /**
      * @ignore
      */
-    isVerifyKeySuccess(keepAlive: () => boolean): Observable<boolean> {
+    isVerifyKeySuccess(keepAlive: keepAliveFn): Observable<boolean> {
         return this.getVerifyKeyResponse().pipe(
             map(res => res.result),
             takeWhile(keepAlive)
@@ -275,7 +271,7 @@ export class PublicService extends BaseService {
         return this.store.pipe(
             select(fromRoot.selectEditorConfig),
             map(res => res ? res : JSON.parse(localStorage.getItem(LocalStorageKey.editorConfig))),
-            filter(this.isTruth)
+            this.filterTruth()
         );
     }
 
@@ -314,8 +310,7 @@ export class PublicService extends BaseService {
     getReferrer(): Observable<Referrer> {
         return merge(
             this.store.pipe(
-                select(fromRoot.selectReferrer),
-                filter(referrer => !!referrer)
+                this.selectTruth(fromRoot.selectReferrer),
             ),
             this.getReferrerFromLocalStorage()
         );
@@ -424,21 +419,25 @@ export class PublicService extends BaseService {
     /**
      * @ignore
      */
-    handleSettingsError(): Subscription {
-        return this.error.handleResponseError(this.getSettingsResponse());
+    handleSettingsError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSettingsResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handlePublicError(): Subscription {
-        return this.error.handleError(this.getError());
+    handlePublicError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleError(this.getError().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleLogoutError(keepAlive: () => boolean): Subscription {
+    handleLogoutError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getLogoutResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -446,7 +445,7 @@ export class PublicService extends BaseService {
     /**
      * @ignore
      */
-    handleChangeAlertThresholdError(keepAlive: () => boolean): Subscription {
+    handleChangeAlertThresholdError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getChangeAlertThresholdSettingResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -455,7 +454,7 @@ export class PublicService extends BaseService {
     /**
      * @ignore
      */
-    handleVerifyKeyError(keepAlive: () => boolean): Subscription {
+    handleVerifyKeyError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getVerifyKeyResponse().pipe(
             takeWhile(keepAlive)
         ));

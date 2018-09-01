@@ -4,13 +4,13 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Observable, of, Subject } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
 
-import { FormTypeBaseComponent } from '../base/base';
 import { Breadcrumb } from '../../interfaces/app.interface';
+import { SaveShadowMemberRequest } from '../../interfaces/request.interface';
 import { ShadowMember } from '../../interfaces/response.interface';
 import { EncryptService } from '../../providers/encrypt.service';
 import { passwordValidator, usernameValidator } from '../../validators/validators';
+import { FormTypeBaseComponent } from '../base/base';
 import { SubaccountService } from '../providers/subaccount.service';
-import { SaveShadowMemberRequest } from '../../interfaces/request.interface';
 
 interface SubaccountForm {
     username: string;

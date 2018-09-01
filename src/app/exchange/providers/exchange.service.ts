@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
+import { isNumber } from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -11,7 +12,6 @@ import { ExchangeConfig, UIState } from '../../store/exchange/exchange.reducer';
 import * as fromRoot from '../../store/index.reducer';
 import { ExchangeType } from '../exchange.config';
 import { ExchangeConstantService } from './exchange.constant.service';
-import { isNumber } from 'lodash';
 
 @Injectable()
 export class ExchangeService extends BaseService {
@@ -29,8 +29,7 @@ export class ExchangeService extends BaseService {
      */
     private getExchangeUIState(): Observable<UIState> {
         return this.store.pipe(
-            select(fromRoot.selectExchangeUIState),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectExchangeUIState)
         );
     }
 

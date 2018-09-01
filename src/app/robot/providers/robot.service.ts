@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 
 import { includes } from 'lodash';
 import * as moment from 'moment';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
-import { filter, map, mapTo, mergeMap, switchMap, tap, withLatestFrom, takeWhile, take } from 'rxjs/operators';
+import { filter, map, mapTo, mergeMap, switchMap, take, takeWhile, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { BtNodeService } from '../../providers/bt-node.service';
@@ -16,7 +18,7 @@ import { PublicService } from '../../providers/public.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
 import { ResetRobotDetailAction, ResetRobotStateAction } from '../../store/robot/robot.action';
-import { TranslateService } from '@ngx-translate/core';
+import { isSaveRobotFail } from '../../store/robot/robot.effect';
 
 export class RobotBaseService extends BaseService {
 
@@ -32,8 +34,7 @@ export class RobotBaseService extends BaseService {
      */
     protected getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.pipe(
-            select(fromRoot.selectRobotDetailResponse),
-            filter(this.isTruth)
+            this.selectTruth(fromRoot.selectRobotDetailResponse)
         );
     }
 
@@ -117,6 +118,7 @@ export class RobotService extends RobotBaseService {
         return this.process.processSaveRobot(
             source.pipe(
                 switchMap(data => this.nodeService.isPublicNode(data.nodeId).pipe(
+                    take(1),
                     mergeMap(isPublic => isPublic ? this.tipService.guardRiskOperate('RECOMMENDED_USE_PRIVATE_NODE', {}, { nzOkText: this.unwrap(this.translate.get('GO_ON')) }).pipe(
                         mapTo(data)
                     ) : observableOf(data))
@@ -133,8 +135,7 @@ export class RobotService extends RobotBaseService {
      */
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
         return this.store.pipe(
-            select(fromRoot.selectRobotListData),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectRobotListData)
         );
     }
 
@@ -170,8 +171,7 @@ export class RobotService extends RobotBaseService {
      */
     private getRobotListResState(): Observable<fromRes.ResponseState> {
         return this.store.pipe(
-            select(fromRoot.selectRobotListResState),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectRobotListResState)
         );
     }
 
@@ -242,8 +242,7 @@ export class RobotService extends RobotBaseService {
      */
     private getSubscribeRobotResponse(): Observable<fromRes.SubscribeRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectSubscribeRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectSubscribeRobotResponse)
         );
     }
 
@@ -262,8 +261,7 @@ export class RobotService extends RobotBaseService {
      */
     private getServerSendRobotMessage(): Observable<fromRes.ServerSendRobotMessage> {
         return this.store.pipe(
-            select(fromRoot.selectServerSendRobotMessage),
-            filter(this.isTruth)
+            this.selectTruth(fromRoot.selectServerSendRobotMessage)
         );
     }
 
@@ -278,8 +276,16 @@ export class RobotService extends RobotBaseService {
 
     private getSaveRobotResponse(): Observable<fromRes.SaveRobotResponse> {
         return this.store.pipe(
-            select(fromRoot.selectSaveRobotResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectSaveRobotResponse)
+        );
+    }
+
+    /**
+     * 通知机器人创建成功
+     */
+    isSaveRobotSuccess(): Observable<boolean> {
+        return this.getSaveRobotResponse().pipe(
+            map(res => !isSaveRobotFail(res))
         );
     }
 
@@ -288,14 +294,15 @@ export class RobotService extends RobotBaseService {
     /**
      * @ignore
      */
-    monitorServerSendRobotStatus(): Subscription {
+    monitorServerSendRobotStatus(keepAlive: keepAliveFn): Subscription {
         const param = this.getServerSendRobotMessage().pipe(
             filter(data => data.status && this.isOverStatus(data)),
             switchMap(data => this.getRobotDetail().pipe(
                 take(1),
                 map(({ id }) => ({ id })),
                 filter(({ id }) => id === data.id),
-            ))
+            )),
+            takeWhile(keepAlive)
         );
 
         return this.launchRobotDetail(param);
@@ -348,22 +355,28 @@ export class RobotService extends RobotBaseService {
     /**
      * @ignore
      */
-    handleRobotListError(): Subscription {
-        return this.error.handleResponseError(this.getRobotListResState());
+    handleRobotListError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getRobotListResState().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleRobotDetailError(): Subscription {
-        return this.error.handleResponseError(this.getRobotDetailResponse());
+    handleRobotDetailError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getRobotDetailResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handleSubscribeRobotError(): Subscription {
-        return this.error.handleResponseError(this.getSubscribeRobotResponse());
+    handleSubscribeRobotError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getSubscribeRobotResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**

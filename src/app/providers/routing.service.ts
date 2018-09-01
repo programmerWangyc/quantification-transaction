@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
 import { RouterInfo } from '../interfaces/app.interface';
@@ -24,8 +24,7 @@ export class RoutingService extends BaseService {
      */
     private getCurrentRouteState(): Observable<RouterStateUrl> {
         return this.store.pipe(
-            select(selectRouteState),
-            this.filterTruth()
+            this.selectTruth(selectRouteState)
         );
     }
 

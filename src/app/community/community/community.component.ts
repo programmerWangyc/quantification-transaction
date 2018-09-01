@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable, of, Subject, combineLatest } from 'rxjs';
-import { map, startWith, takeWhile, debounceTime } from 'rxjs/operators';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { debounceTime, map, startWith, takeWhile } from 'rxjs/operators';
 
-import { Breadcrumb } from '../../interfaces/app.interface';
-import { BBSNode, BBSPlane, BBSTopic } from '../../interfaces/response.interface';
+import { Breadcrumb, TableStatistics } from '../../interfaces/app.interface';
 import { GetBBSTopicListBySlugRequest } from '../../interfaces/request.interface';
-import { CommunityService } from '../providers/community.service';
+import { BBSNode, BBSPlane, BBSTopic } from '../../interfaces/response.interface';
 import { ConstantService } from '../../providers/constant.service';
+import { CommunityService } from '../providers/community.service';
 
 @Component({
     selector: 'app-community',
@@ -82,6 +82,11 @@ export class CommunityComponent implements OnInit {
      */
     isAlive = true;
 
+    /**
+     * @ignore
+     */
+    statisticsParams: Observable<TableStatistics>;
+
     constructor(
         private bbs: CommunityService,
         private constant: ConstantService,
@@ -115,6 +120,15 @@ export class CommunityComponent implements OnInit {
         this.limit = this.pageSizes[0];
 
         this.isLoading = this.bbs.isLoading();
+
+        this.statisticsParams = combineLatest(
+            this.total,
+            this.limit$.asObservable().pipe(
+                startWith(this.pageSizes[0])
+            )
+        ).pipe(
+            map(( [total, pageSize] ) => this.bbs.getTableStatistics(total, pageSize))
+        );
     }
 
     /**

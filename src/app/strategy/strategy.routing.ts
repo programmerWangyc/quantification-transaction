@@ -11,8 +11,9 @@ const routs: Routes = [
     { path: '', component: StrategyComponent },
     { path: 'add', component: StrategyAddComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
     { path: 'copy/:id', component: StrategyCopyComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
-    { path: 'edit/:id', component: StrategyEditComponent, canActivate: [StrategyGuard], canDeactivate: [StrategyGuard] },
-    // { path: 'backtest/:id', component: '' },
+     // 从机器人的列表中可以跳过来。如果用户只访问过机器人，此时转到edit页面时会被守卫拦截，所以把canActivated取消了。
+    { path: 'edit/:id', component: StrategyEditComponent,  canDeactivate: [StrategyGuard] },
+     // { path: 'backtest/:id', component: '' },
     { path: 'verify/:id/:codeType', component: StrategyVerifyCodeComponent },
 ];
 

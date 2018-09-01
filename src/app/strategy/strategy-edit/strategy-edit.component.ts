@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NzModalService } from 'ng-zorro-antd';
-import { combineLatest, merge, Observable, Subject, Subscription } from 'rxjs';
+import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, mapTo } from 'rxjs/operators';
 
 import { BacktestService } from '../../backtest/providers/backtest.service';
@@ -12,6 +12,7 @@ import { TipService } from '../../providers/tip.service';
 import { StrategyConstantService } from '../../strategy/providers/strategy.constant.service';
 import { StrategyOperateService } from '../../strategy/providers/strategy.operate.service';
 import { TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
+import { StrategyService } from '../providers/strategy.service';
 import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-create-meta.component';
 
 @Component({
@@ -35,16 +36,22 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
 
     privateSub$$: Subscription;
 
+    /**
+     * 是否需要显示模板依赖
+     */
+    needShowTemplateDependance: Observable<boolean>;
+
     constructor(
         public backtest: BacktestService,
         public constant: StrategyConstantService,
         public nodeService: BtNodeService,
         public nzModal: NzModalService,
         public route: ActivatedRoute,
-        public strategyService: StrategyOperateService,
+        public strategyOptService: StrategyOperateService,
+        public strategyService: StrategyService,
         public tipService: TipService,
     ) {
-        super(backtest, constant, nodeService, route, strategyService, tipService);
+        super(backtest, constant, nodeService, route, strategyOptService, strategyService, tipService);
     }
 
     /**
@@ -68,47 +75,46 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
 
-        this.templates = combineLatest(
-            this.strategyService.getStrategyDependance(),
-            this.language
-        ).pipe(
-            map(([templates, language]) => templates.filter(item => item.language === language))
-        );
+        this.templates = this.getTemplateDependance(this.strategyService.getStrategyDependance());
+
+        this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
     }
 
     /**
      * @ignore
      */
     launchPrivate() {
-        this.privateSub$$ = this.strategyService.handleOpStrategyTokenError()
-            /**
-             *  Besides user active acquisition, it needs to check the strategy whether has token already.
-             */
-            .add(this.strategyService.launchOpStrategyToken(
-                merge(
-                    this.strategyService.hasToken(this.strategyId).pipe(
-                        filter(has => has),
-                        mapTo(OpStrategyTokenType.GET)
-                    ),
-                    this.opToken$
-                ).pipe(
-                    map(opCode => ({ opCode, strategyId: this.strategyId }))
-                ))
-            )
+        /**
+         *  Besides user active acquisition, it needs to check the strategy whether has token already.
+         */
+        this.privateSub$$ = this.strategyService.launchOpStrategyToken(
+            merge(
+                this.strategyService.hasToken(this.strategyId).pipe(
+                    filter(has => has),
+                    mapTo(OpStrategyTokenType.GET)
+                ),
+                this.opToken$
+            ).pipe(
+                map(opCode => ({ opCode, strategyId: this.strategyId }))
+            ))
             .add(this.strategyService.updateStrategySecretKeyState(this.strategyId));
+
+        this.strategyService.handleOpStrategyTokenError(() => this.isAlive);
     }
 
     /**
      * @ignore
      */
     ngAfterViewInit() {
-        this.privateSub$$.add(this.strategyService.launchSaveStrategy(this.getSaveParams()));
+        this.privateSub$$.add(this.strategyOptService.launchSaveStrategy(this.getSaveParams()));
     }
 
     /**
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.strategyService.resetState();
 
         this.subscription$$.unsubscribe();

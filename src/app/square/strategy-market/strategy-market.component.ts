@@ -2,20 +2,20 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, concat, Observable, of, Subject } from 'rxjs';
-import { map, startWith, takeWhile, take } from 'rxjs/operators';
+import { map, startWith, take, takeWhile } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
+import { TableStatistics } from '../../interfaces/app.interface';
 import { CategoryType, GetStrategyListByNameRequest } from '../../interfaces/request.interface';
 import { StrategyListByNameStrategy } from '../../interfaces/response.interface';
 import { PAGE_SIZE_SELECT_VALUES } from '../../providers/constant.service';
-import { UtilService } from '../../providers/util.service';
+import { PublicService } from '../../providers/public.service';
 import { Category, STRATEGY_CATEGORIES } from '../../strategy/providers/strategy.constant.service';
 import { StrategyVisibilityType } from '../../strategy/strategy.config';
-import { SquareService, StrategyInfo } from '../providers/square.service';
-import { NzModalService } from 'ng-zorro-antd';
-import { PublicService } from '../../providers/public.service';
 import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-renewal.component';
+import { SquareService, StrategyInfo } from '../providers/square.service';
 
 export class SquareStrategyBase {
     constructor(
@@ -132,11 +132,6 @@ export class StrategyMarketComponent extends SquareStrategyBase implements OnIni
     currentPage = 1;
 
     /**
-     * 统计数据
-     */
-    statistics: Observable<string>;
-
-    /**
      * @ignore
      */
     tableHead: string[] = ['NAME', 'AUTHOR', 'LANGUAGE', 'STRATEGY_TYPE', 'COPY_COUNT', 'LATEST_MODIFY', 'OPERATE'];
@@ -146,9 +141,13 @@ export class StrategyMarketComponent extends SquareStrategyBase implements OnIni
      */
     isLoading: Observable<boolean>;
 
+    /**
+     * @ignore
+     */
+    statisticsParams: Observable<TableStatistics>;
+
     constructor(
         private squareService: SquareService,
-        private utilService: UtilService,
         public router: Router,
         public activatedRoute: ActivatedRoute,
         public nzModal: NzModalService,
@@ -183,9 +182,14 @@ export class StrategyMarketComponent extends SquareStrategyBase implements OnIni
 
         this.total = this.squareService.getMarketStrategyTotal();
 
-        this.statistics = this.utilService.getPaginationStatistics(this.total, this.pageSize);
-
         this.isLoading = this.squareService.isLoading();
+
+        this.statisticsParams = combineLatest(
+            this.total,
+            this.pageSize
+        ).pipe(
+            map(([total, pageSize]) => this.publicService.getTableStatistics(total, pageSize))
+        );
     }
 
     /**

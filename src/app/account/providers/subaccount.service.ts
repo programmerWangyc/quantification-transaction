@@ -6,6 +6,7 @@ import { merge, Observable, Subscription } from 'rxjs';
 import { map, mapTo, switchMap, takeWhile } from 'rxjs/operators/';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -87,8 +88,7 @@ export class SubaccountService extends BaseService {
      */
     private getAccountResponse(): Observable<fromRes.GetAccountResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetAccountResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetAccountResponse)
         );
     }
 
@@ -106,8 +106,7 @@ export class SubaccountService extends BaseService {
      */
     private getShadowMemberResponse(): Observable<fromRes.GetShadowMemberResponse> {
         return this.store.pipe(
-            select(fromRoot.selectGetShadowMemberResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectGetShadowMemberResponse)
         );
     }
 
@@ -148,8 +147,7 @@ export class SubaccountService extends BaseService {
      */
     private getDeleteShadowMemberResponse(): Observable<fromRes.DeleteShadowMemberResponse> {
         return this.store.pipe(
-            select(fromRoot.selectDeleteShadowMemberResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectDeleteShadowMemberResponse)
         );
     }
 
@@ -158,8 +156,7 @@ export class SubaccountService extends BaseService {
      */
     private getLockShadowMemberResponse(): Observable<fromRes.LockShadowMemberResponse> {
         return this.store.pipe(
-            select(fromRoot.selectLockShadowMemberResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectLockShadowMemberResponse)
         );
     }
 
@@ -185,7 +182,7 @@ export class SubaccountService extends BaseService {
     /**
      * @ignore
      */
-    handleAccountError(keepAlive: () => boolean): Subscription {
+    handleAccountError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getAccountResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -194,7 +191,7 @@ export class SubaccountService extends BaseService {
     /**
      * @ignore
      */
-    handleGetShadowMemberError(keepAlive: () => boolean): Subscription {
+    handleGetShadowMemberError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getShadowMemberResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -203,7 +200,7 @@ export class SubaccountService extends BaseService {
     /**
      * @ignore
      */
-    handlesSaveShadowMemberError(keepAlive: () => boolean): Subscription {
+    handlesSaveShadowMemberError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getAddAndUpdateShadowMemberResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -212,7 +209,7 @@ export class SubaccountService extends BaseService {
     /**
      * @ignore
      */
-    handleDeleteShadowMemberError(keepAlive: () => boolean): Subscription {
+    handleDeleteShadowMemberError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getDeleteShadowMemberResponse().pipe(
             takeWhile(keepAlive)
         ));
@@ -221,7 +218,7 @@ export class SubaccountService extends BaseService {
     /**
      * @ignore
      */
-    handleLockShadowMemberError(keepAlive: () => boolean): Subscription {
+    handleLockShadowMemberError(keepAlive: keepAliveFn): Subscription {
         return this.errorService.handleResponseError(this.getLockShadowMemberResponse().pipe(
             takeWhile(keepAlive)
         ));

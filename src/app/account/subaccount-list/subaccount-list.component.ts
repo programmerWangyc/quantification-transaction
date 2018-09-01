@@ -4,10 +4,14 @@ import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+import { getTableStatistics } from '../../base/base.service';
+import { TableStatistics } from '../../interfaces/app.interface';
 import { SaveShadowMemberRequest } from '../../interfaces/request.interface';
 import { ShadowMember } from '../../interfaces/response.interface';
 import { ModifySubaccountPasswordComponent } from '../modify-subaccount-password/modify-subaccount-password.component';
-import { ModifySubaccountPermissionComponent } from '../modify-subaccount-permission/modify-subaccount-permission.component';
+import {
+    ModifySubaccountPermissionComponent
+} from '../modify-subaccount-permission/modify-subaccount-permission.component';
 
 @Component({
     selector: 'app-subaccount-list',
@@ -20,7 +24,19 @@ export class SubaccountListComponent implements OnInit {
     /**
      * @ignore
      */
-    @Input() accounts: ShadowMember[];
+    @Input() set accounts(input: ShadowMember[]) {
+        if (!!input) {
+            this._accounts = input;
+
+            this.statisticsParams = getTableStatistics(input.length, this.pageSize);
+        }
+    }
+
+    private _accounts: ShadowMember[] = [];
+
+    get accounts(): ShadowMember[] {
+        return this._accounts;
+    }
 
     /**
      * @ignore
@@ -44,6 +60,16 @@ export class SubaccountListComponent implements OnInit {
         'anticon-check-circle-o success',
         'anticon-close-circle-o fail',
     ];
+
+    /**
+     * @ignore
+     */
+    statisticsParams: TableStatistics = { total: 0, page: 0 };
+
+    /**
+     * @ignore
+     */
+    pageSize = 20;
 
     constructor(
         private nzModal: NzModalService,

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, Subscription } from 'rxjs';
-import { mergeMap, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { mergeMap, startWith, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PayOrder } from '../../interfaces/response.interface';
@@ -15,13 +15,13 @@ import { ChargeService } from '../providers/charge.service';
     styleUrls: ['./charge-history.component.scss'],
 })
 export class ChargeHistoryComponent implements BaseComponent {
-    subscription$$: Subscription;
-
     historyRecords: Observable<PayOrder[]>;
 
     tableHead: string[] = ['SEQUENCE_NUMBER', 'DATE', 'PAYMENT_METHOD', 'RECHARGE_AMOUNT'];
 
     statistics: Observable<string>;
+
+    isAlive = true;
 
     constructor(
         private chargeService: ChargeService,
@@ -44,14 +44,18 @@ export class ChargeHistoryComponent implements BaseComponent {
     }
 
     launch() {
-        this.subscription$$ = this.chargeService.launchPayOrders(this.chargeService.chargeAlreadySuccess().pipe(
-            startWith(true)
-        ))
-            .add(this.chargeService.handlePayOrdersError());
+        const keepAlive = () => this.isAlive;
+
+        this.chargeService.launchPayOrders(this.chargeService.chargeAlreadySuccess().pipe(
+            startWith(true),
+            takeWhile(keepAlive)
+        ));
+
+        this.chargeService.handlePayOrdersError(keepAlive);
     }
 
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
+        this.isAlive = false;
     }
 
 }

@@ -12,7 +12,8 @@
     <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize | async" [nzShowPagination]="false">
         <thead>
             <tr>
-                <th *ngFor="let item of tableHead first as isFirst;" [nzWidth]="isFirst ? '30%' : 'auto'" bt-text-center>
+                <th *ngFor="let item of tableHead first as isFirst;" [nzWidth]="isFirst ? '30%' : 'auto'"
+                    bt-text-center>
                     <span>{{item | translate}}</span>
                 </th>
             </tr>
@@ -28,7 +29,8 @@
                 <td bt-text-center>{{strategy.language | programLanguage | translate}}</td>
 
                 <td bt-text-center>
-                    <nz-tag [nzColor]="strategy.category | categoryColor">{{strategy.category | categoryName | translate}}</nz-tag>
+                    <nz-tag [nzColor]="strategy.category | categoryColor">{{strategy.category | categoryName |
+                        translate}}</nz-tag>
                 </td>
 
                 <td bt-text-center>
@@ -40,12 +42,14 @@
                 <td bt-text-center>
                     <!--1: 已公开，2:审核中，3:需要续费-->
                     <ng-container [ngSwitch]="strategy.public">
-                        <a *ngSwitchCase="1" [routerLink]="['../','strategy','copy', strategy.id]">{{'COPY' | translate}}</a>
+                        <a *ngSwitchCase="1" [routerLink]="['../../','strategy','copy', strategy.id]">{{'COPY' |
+                            translate}}</a>
                         <span *ngSwitchCase="2">
                             <span *ngIf="!strategy.is_buy; else renewalBlock">{{'PENDING_REVIEW' | translate}}</span>
                         </span>
                         <a *ngSwitchCase="3" (click)="buyStrategy(strategy)">
-                            <span *ngIf="!strategy.is_buy && !strategy_is_owner; else renewalBlock">{{'PURCHASE' | translate}}</span>
+                            <span *ngIf="!strategy.is_buy && !strategy_is_owner; else renewalBlock">{{'PURCHASE' |
+                                translate}}</span>
                         </a>
                         <a *ngSwitchDefault>--</a>
                     </ng-container>
@@ -59,8 +63,9 @@
     </nz-table>
 
     <div fxLayoutAlign="space-between center" class="pagination">
-        <div>{{statistics | async}}</div>
-        <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="offset$.next(currentPage)" [nzTotal]="total | async" [nzPageSize]="pageSize | async"
-            (nzPageSizeChange)="limit$.next($event)" [nzPageSizeOptions]="pageSizeSelectorValues" nzShowQuickJumper nzShowSizeChanger></nz-pagination>
+        <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+        <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="offset$.next(currentPage)" [nzTotal]="total | async"
+            [nzPageSize]="pageSize | async" (nzPageSizeChange)="limit$.next($event)" [nzPageSizeOptions]="pageSizeSelectorValues"
+            nzShowQuickJumper nzShowSizeChanger></nz-pagination>
     </div>
 </nz-spin>

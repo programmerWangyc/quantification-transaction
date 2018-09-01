@@ -34,7 +34,7 @@
             (save)="save$.next($event)" (download)="export$.next($event)"></app-strategy-codemirror>
     </div>
 
-    <div *ngIf="!(isTemplateCategorySelected | async); let isTplSelected" class="section">
+    <div *ngIf="needShowTemplateDependance | async" class="section">
         <h3>{{'TEMPLATE_REFERENCE' | translate}}</h3>
 
         <app-strategy-dependance [data]="templates | async"></app-strategy-dependance>

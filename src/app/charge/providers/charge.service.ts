@@ -2,9 +2,12 @@ import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import { merge, Observable, of as observableOf, Subscription } from 'rxjs';
-import { distinctUntilChanged, distinctUntilKeyChanged, filter, map, mapTo, withLatestFrom } from 'rxjs/operators';
+import {
+    distinctUntilChanged, distinctUntilKeyChanged, filter, map, mapTo, takeWhile, withLatestFrom
+} from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import {
     GetPaymentArgResponse, GetPayOrdersResponse, GetStrategyListResponse, PayOrder, Strategy
 } from '../../interfaces/response.interface';
@@ -50,8 +53,7 @@ export class ChargeService extends BaseService {
             data.pipe(withLatestFrom(
                 strategyIdObs,
                 ({ payMethod, charge }, strategyId) => ({ payMethod, chargeAmount: charge, strategyId })
-            )
-            )
+            ))
         );
     }
 
@@ -66,8 +68,7 @@ export class ChargeService extends BaseService {
      */
     private getPaymentArgsResponse(): Observable<GetPaymentArgResponse> {
         return this.store.pipe(
-            select(fromRoot.selectPaymentArgResponse),
-            this.filterTruth()
+            this.selectTruth(fromRoot.selectPaymentArgResponse)
         );
     }
 
@@ -109,8 +110,7 @@ export class ChargeService extends BaseService {
 
                 return form;
             })
-        )
-            .subscribe(form => this.renderer2.removeChild(document.body, form));
+        ).subscribe(form => this.renderer2.removeChild(document.body, form));
     }
 
     /**
@@ -135,8 +135,8 @@ export class ChargeService extends BaseService {
      * 获取支付订单的响应
      */
     private getPayOrdersResponse(): Observable<GetPayOrdersResponse> {
-        return this.store.select(fromRoot.selectPayOrdersResponse).pipe(
-            filter(this.isTruth)
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectPayOrdersResponse)
         );
     }
 
@@ -183,8 +183,8 @@ export class ChargeService extends BaseService {
      * 充值成功
      */
     chargeAlreadySuccess(): Observable<boolean> {
-        return this.store.select(fromRoot.selectServerSendRechargeMessage).pipe(
-            this.filterTruth(),
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectServerSendRechargeMessage),
             mapTo(true)
         );
     }
@@ -261,14 +261,18 @@ export class ChargeService extends BaseService {
     /**
      * @ignore
      */
-    handlePaymentsArgsError(): Subscription {
-        return this.error.handleResponseError(this.getPaymentArgsResponse());
+    handlePaymentsArgsError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getPaymentArgsResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 
     /**
      * @ignore
      */
-    handlePayOrdersError(): Subscription {
-        return this.error.handleResponseError(this.getPayOrdersResponse());
+    handlePayOrdersError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getPayOrdersResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }
