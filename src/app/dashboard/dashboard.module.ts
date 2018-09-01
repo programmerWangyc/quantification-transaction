@@ -7,6 +7,7 @@ import { DASHBOARD_EFFECTS } from '../store/index.effect';
 import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
 import { NavigationComponent } from './navigation/navigation.component';
+import { DashboardGuard } from './providers/guard.service';
 
 @NgModule({
     imports: [
@@ -18,6 +19,9 @@ import { NavigationComponent } from './navigation/navigation.component';
     declarations: [
         DashboardComponent,
         NavigationComponent,
+    ],
+    providers: [
+        DashboardGuard,
     ],
 })
 export class DashboardModule { }

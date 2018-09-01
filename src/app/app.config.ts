@@ -58,3 +58,8 @@ export enum BtCommentType {
     robot = 'R_',
     strategy = 'S_',
 }
+
+export enum LanguageMap {
+    zh = 'SIMPLE_CHINESE',
+    en = 'ENGLISH',
+}

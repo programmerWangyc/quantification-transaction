@@ -7,7 +7,6 @@ import { map, tap } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { BaseGuard } from '../../base/guard.service';
-import { RoutingService } from '../../providers/routing.service';
 import { TipService } from '../../providers/tip.service';
 import { AppState, selectStrategyListByNameResponse, selectStrategyListResponse } from '../../store/index.reducer';
 
@@ -16,9 +15,8 @@ export class StrategyBaseGuard extends BaseGuard implements CanActivate {
         public store: Store<AppState>,
         public router: Router,
         public tip: TipService,
-        public routing: RoutingService,
     ) {
-        super(tip, routing);
+        super(tip);
     }
 
     /**
@@ -49,8 +47,7 @@ export class StrategyGuard extends StrategyBaseGuard {
         public store: Store<AppState>,
         public router: Router,
         public tip: TipService,
-        public routing: RoutingService,
     ) {
-        super(store, router, tip, routing);
+        super(store, router, tip);
     }
 }

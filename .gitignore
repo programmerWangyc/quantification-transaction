@@ -51,3 +51,4 @@ build/
 .history/
 jsonToInterface.ts
 documentation/
+image-design/

@@ -4,11 +4,10 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router } from '@angula
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
+import { BaseGuard } from '../../base/guard.service';
 import { BBSTopicById } from '../../interfaces/response.interface';
 import { TipService } from '../../providers/tip.service';
 import { CommunityService } from './community.service';
-import { BaseGuard } from '../../base/guard.service';
-import { RoutingService } from '../../providers/routing.service';
 
 @Injectable()
 export class TopicResolver implements Resolve<BBSTopicById> {
@@ -64,8 +63,7 @@ export class TopicResolver implements Resolve<BBSTopicById> {
 export class FormContentGuard extends BaseGuard {
     constructor(
         public tipService: TipService,
-        public routing: RoutingService,
     ) {
-        super(tipService, routing);
+        super(tipService);
     }
 }

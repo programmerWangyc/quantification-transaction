@@ -2,6 +2,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DashboardComponent } from './dashboard.component';
 import { NavigationComponent } from './navigation/navigation.component';
+import { DashboardGuard } from './providers/guard.service';
 
 const routs: Routes = [
     {
@@ -25,6 +26,7 @@ const routs: Routes = [
             { path: 'account', loadChildren: '../account/account.module#AccountModule' },
             { path: 'message', loadChildren: '../message/message.module#MessageModule' },
         ],
+        canActivate: [DashboardGuard],
     },
 ];
 

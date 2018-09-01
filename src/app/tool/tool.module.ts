@@ -27,6 +27,7 @@ import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
+import { AvatarComponent } from './avatar/avatar.component';
 
 export function highchartsFactory() {
     const highStock = require('highcharts/highstock');
@@ -68,6 +69,7 @@ export function highchartsFactory() {
         SimpleNzConfirmWrapComponent,
         StrategyRenewalComponent,
         VerifyPasswordComponent,
+        AvatarComponent,
     ],
     entryComponents: [
         SimpleNzConfirmWrapComponent,

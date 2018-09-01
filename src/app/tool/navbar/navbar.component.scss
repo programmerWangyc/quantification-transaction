@@ -1,78 +1,76 @@
 @import '../../../theme/_variable.theme';
+$normal-color: #979fc6;
+$hover-color: #fff;
+$normal-bcg : #222944;
+$hover-bcg: #454d74;
+
 header {
     width: 100%;
     height: $header-height;
     box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
-    background: linear-gradient(to bottom, #fff 50%, #f7f7f7 50%);
+    background: #222944;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 999;
-    #header {
-        span {
-            height: 36px;
-            margin: 6px 0;
-        }
-        img {
-            width: 207px;
-            height: 32px;
-        }
-    }
-    section {
-        form {
-            border-radius: 2px;
-            display: inline-block;
-            width: 200px;
-        }
-        a {
-            color: #039be5;
-            margin-left: 16px;
-        }
-        &>i {
-            align-self: center;
-            margin-left: 12px;
-            font-size: 24px;
-            font-weight: 900;
-            transform: rotate(90deg);
-        }
-        .avatar {
-            margin: 8px 0 8px 8px;
-        }
-    }
-    nav {
-        height: $header-height/2;
-        a {
-            padding: 0 24px;
-            color: rgba($color: #000000, $alpha: .54);
-            white-space: nowrap;
-            &:hover {
-                color: #000000;
-            }
-        }
-        #auth {
-            width: 225px;
-        }
-        #menu {
-            button {
-                font-size: 16px;
-                width: 50px;
-            }
-            ul {
-                position: absolute;
-                top: 96px;
-                width: 200px;
-                text-align: center;
-                left: 0px;
-                border-bottom: 1px solid rgb(233, 233, 233);
-            }
-        }
-    }
-}
 
-.header {
-    width: 75%;
-    padding: 0 24px;
-    margin: 0 auto;
+    a {
+        color: $normal-color;
+        white-space: nowrap;
+
+        &:hover {
+            color: $hover-color;
+        }
+    }
+
+    #nav {
+        height: 100%;
+        a {
+            position: relative;
+            padding: 0 19px;
+            height: 100%;
+            line-height: 6;
+
+            &:first-child {
+                padding: 0 33px 0 19px;
+            }
+
+            .active {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 6px;
+                background: #484aff;
+                width: 100%;
+            }
+        }
+    }
+
+    #auth {
+        button {
+            margin: 0 22px 0 0;
+        }
+
+        nz-divider {
+            margin: 0 12px;
+        }
+    }
+
+    #menu {
+        button {
+            font-size: 16px;
+            width: 50px;
+        }
+
+        ul {
+            position: absolute;
+            top: 96px;
+            width: 200px;
+            text-align: center;
+            left: 0px;
+            border-bottom: 1px solid rgb(233, 233, 233);
+        }
+    }
 }
 
 #menu {
@@ -84,10 +82,25 @@ header {
         margin: 0;
         width: 100%;
     }
+
     #nav {
         display: none !important;
     }
+
     #menu {
         display: block;
+    }
+}
+
+.ant-dropdown-menu {
+    background-color: $normal-bcg;
+}
+
+.ant-dropdown-menu-item {
+    color: $normal-color;
+
+    &:hover {
+        background-color: $hover-bcg;
+        color: $hover-color;
     }
 }

@@ -1,63 +1,58 @@
-<header fxLayout="column">
-    <div id="header" class="header" fxLayoutAlign="space-between center">
-        <span fxLayout="row no-wrap" fxFlex="1 0 auto">
-            <img src="../../assets/images/botvs.png">
-        </span>
+<header fxLayoutAlign="space-evenly center">
+    <img src="../../assets/images/home/logo.png">
 
-        <section fxLayoutAlign="center">
-
-            <form fxLayoutAlign="center center">
-                <nz-input-group [nzAddOnBefore]="addOnBefore">
-                    <input [(ngModel)]="searchValue" [ngModelOptions]="{standalone: true}" [placeholder]="'SEARCH' | translate" nzSize="large"
-                        nz-input>
-                    <ng-template #addOnBefore>
-                        <i class="anticon anticon-search"></i>
-                    </ng-template>
-                </nz-input-group>
-            </form>
-
-            <a fxFlexAlign="center">{{'CONTROL_PANEL' | translate}}</a>
-
-            <i class="anticon anticon-ellipsis"></i>
-
-            <nz-avatar nzIcon="anticon anticon-user" nz-popover nzPlacement="right" [nzContent]="'NOT_LOGGED_IN' | translate" class="avatar"></nz-avatar>
-        </section>
+    <div id="nav" fxLayoutAlign="space-between center">
+        <a *ngFor="let link of navNavItems" (click)="navigateTo(link)">
+            {{link.label | translate}}
+            <i [ngClass]="{active: link.selected}" [@moduleState]="link.selected ? 'active' : 'inactive'"></i>
+        </a>
     </div>
 
-    <nav class="header" fxLayoutAlign="space-between center">
-        <div fxLayoutAlign="space-between center" id="nav">
-            <a *ngFor="let link of navNavItems" (click)="navigateTo(link)">
-                {{link.label | translate}}
+    <div id="menu">
+        <button nz-button nz-dropdown (click)="isCollapsed = !isCollapsed">
+            <i class="anticon anticon-bars"></i>
+        </button>
+        <ul nz-menu [style.display]="isCollapsed ? 'none' : 'block'">
+            <li *ngFor="let link of navNavItems" nz-menu-item>
+                <a (click)="navigateTo(link)">{{link.label | translate}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="auth" fxLayoutAlign="space-between center">
+        <button nz-button routerLink="/dashboard" fxLayoutAlign="center center">
+            <i class="anticon anticon-code-o"></i>
+            <span>{{'CONTROL_CENTER' | translate}}</span>
+        </button>
+
+        <ng-container *ngIf="isBeforeLogin | async; else account">
+            <a routerLink="/auth/login">
+                {{'LOGIN' | translate}}
             </a>
-        </div>
 
-        <div id="menu">
-            <button nz-button nz-dropdown (click)="isCollapsed = !isCollapsed">
-                <i class="anticon anticon-bars"></i>
-            </button>
-            <ul nz-menu [style.display]="isCollapsed ? 'none' : 'block'">
-                <li *ngFor="let link of navNavItems" nz-menu-item>
-                    <a (click)="navigateTo(link)">{{link.label | translate}}</a>
-                </li>
-            </ul>
-        </div>
+            <nz-divider nzType="vertical"></nz-divider>
 
-        <div id="auth" fxLayoutAlign="space-between center">
-            <button *ngIf="isBeforeLogin | async; else back" nz-button nzType="primary" routerLink="/auth/login" fxLayoutAlign="center center">
-                <i class="anticon anticon-login"></i>
-                <span>{{'LOGIN' | translate}}</span>
-            </button>
-            <button nz-button routerLink="auth/signup" fxLayoutAlign="center center">
-                <i class="anticon anticon-user-add"></i>
-                <span>{{'SIGNUP' | translate}}</span>
-            </button>
-        </div>
-    </nav>
+            <a routerLink="auth/signup">
+                {{'SIGNUP' | translate}}
+            </a>
+        </ng-container>
+
+    </div>
+
+    <nz-dropdown>
+        <a nz-dropdown>
+            <i class="anticon anticon-down"></i>
+            {{ language | async | translate}}
+        </a>
+        <ul nz-menu>
+            <li nz-menu-item (click)="language$.next('zh')">{{'SIMPLE_CHINESE' | translate}}</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="language$.next('en')">{{'ENGLISH' | translate}}</li>
+        </ul>
+    </nz-dropdown>
+
 </header>
 
-<ng-template #back>
-    <button nz-button routerLink="/dashboard" nzType="primary" fxLayoutAlign="center center">
-        <i class="anticon anticon-enter"></i>
-        <span>{{'CONTROL_CENTER' | translate}}</span>
-    </button>
+<ng-template #account>
+    <app-avatar [username]="username | async" (logout)="logout()"></app-avatar>
 </ng-template>
