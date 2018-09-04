@@ -1,5 +1,7 @@
 @import '../../theme/_variable.theme';
 @import './_dashboard';
+@import '../home/_home';
+
 #dashboard {
     .logo {
         font-size: 22px;
@@ -7,9 +9,19 @@
         height: $header-height;
         line-height: $header-height;
     }
+
+    #nav {
+        width: 30%;
+
+        a {
+            @include headerNav();
+        }
+    }
+
     nz-layout {
         background-color: #fff;
     }
+
     nz-header {
         background-color: $bcg-nav;
         position: fixed;
@@ -17,36 +29,43 @@
         left: 200px;
         width: calc(100% - 200px);
         z-index: 1000;
+        height: $header-height;
+
         section {
-            float: right;
             margin: 0 50px 0 0;
+
             a {
                 margin: 0 1em;
             }
+
             nz-avatar {
                 background-color: $blue;
             }
+
             button {
                 margin: 0 2em;
             }
         }
     }
+
     nz-sider {
         height: 100vh;
         background-color: $bcg-nav;
-        height: 100vh;
         position: fixed;
         left: 0;
         top: 0;
         z-index: 1000;
+
         ul {
-            height: calc(100% - 64px);
+            height: calc(100% - 84px);
             overflow-y: scroll;
         }
+
         #side-container {
             padding: 0 0 50px 0;
         }
     }
+
     nz-content {
         padding: 50px 100px;
     }

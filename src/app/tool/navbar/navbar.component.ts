@@ -1,33 +1,22 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable, of, Subject } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
 
-import { LanguageMap } from '../../app.config';
+import { LanguageMap, navAnimationTrigger } from '../../app.config';
 import {
     analyzing, community, documentation, factFinder, main, NavItem, quoteChart, square
 } from '../../base/base.config';
 import { PublicService } from '../../providers/public.service';
 import { RoutingService } from '../../providers/routing.service';
 
+
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss'],
-    animations: [
-        trigger('moduleState', [
-            state('inactive', style({
-                opacity: 0,
-            })),
-            state('active', style({
-                opacity: 1,
-            })),
-            transition('inactive => active', animate('300ms ease-in')),
-            transition('active => inactive', animate('300ms ease-out')),
-        ]),
-    ],
+    animations: [navAnimationTrigger()],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
 

@@ -5,16 +5,18 @@ import { Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMapTo, take, takeWhile } from 'rxjs/operators';
 
 import {
-    account, analyzing, charge, community, controlCenter, documentation, factFinder, message, NavItem, quoteChart,
+    account, analyzing, charge, community, robot, strategy, agent, exchange, documentation, factFinder, message, NavItem, quoteChart,
     SideNav, square
 } from '../base/base.config';
 import { PublicService } from '../providers/public.service';
 import { RoutingService } from '../providers/routing.service';
+import { navAnimationTrigger } from '../../app/app.config';
 
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
+    animations: [navAnimationTrigger()],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
@@ -26,7 +28,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     /**
      * 侧边栏列表
      */
-    list: SideNav[] = [controlCenter, square, factFinder, community, documentation, charge, account, message];
+    sideNav: SideNav[] = [robot, strategy, agent, exchange, charge, account, message];
+
+    /**
+     * @ignore
+     */
+    headNav: SideNav[] = [square, factFinder, community, documentation];
 
     /**
      * @ignore
@@ -128,7 +135,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private checkActivatedModule(currentPath: string): void {
-        this.list.forEach(group => {
+        const check = group => {
             if (group.subNav) {
                 group.subNav.forEach(item => item.selected = this.isActive(item.path, currentPath));
 
@@ -136,7 +143,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
             } else {
                 group.selected = this.isActive(group.path, currentPath);
             }
-        });
+        };
+
+        this.sideNav.forEach(check);
+
+        this.headNav.forEach(check);
     }
 
     /**

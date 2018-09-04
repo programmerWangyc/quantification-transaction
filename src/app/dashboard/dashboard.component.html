@@ -5,7 +5,7 @@
         </div>
         <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'" id="side-container">
 
-            <ng-container *ngFor="let nav of list">
+            <ng-container *ngFor="let nav of sideNav">
 
                 <li *ngIf="nav.subNav;else elseBlock" [nzOpen]="nav.selected" nz-submenu>
                     <span title>
@@ -36,9 +36,16 @@
     </nz-sider>
 
     <nz-layout>
-        <nz-header [ngClass]="{'head-collapsed': isCollapsed}">
-            <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed"
-                (click)="isCollapsed=!isCollapsed"></i>
+        <nz-header fxLayoutAlign="space-between center" [ngClass]="{'head-collapsed': isCollapsed}">
+            <div id="nav" fxLayoutAlign="space-between center">
+                <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed"
+                    (click)="isCollapsed=!isCollapsed"></i>
+                <a *ngFor="let link of headNav" (click)="navigateTo(link)">
+                    {{link.label | translate}}
+                    <i [ngClass]="{active: link.selected}" [@moduleState]="link.selected ? 'active' : 'inactive'"></i>
+                </a>
+            </div>
+
             <section fxLayoutAlign="end center">
                 <nz-dropdown>
                     <a nz-dropdown>

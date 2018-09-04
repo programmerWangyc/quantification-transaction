@@ -1,3 +1,5 @@
+import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
+
 export enum Path {
     account = 'account',
     add = 'add',
@@ -62,4 +64,17 @@ export enum BtCommentType {
 export enum LanguageMap {
     zh = 'SIMPLE_CHINESE',
     en = 'ENGLISH',
+}
+
+export function navAnimationTrigger(): AnimationTriggerMetadata {
+    return trigger('moduleState', [
+        state('inactive', style({
+            opacity: 0,
+        })),
+        state('active', style({
+            opacity: 1,
+        })),
+        transition('inactive => active', animate('300ms ease-in')),
+        transition('active => inactive', animate('300ms ease-out')),
+    ]);
 }

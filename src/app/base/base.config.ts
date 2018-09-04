@@ -41,18 +41,28 @@ export const documentation: SideNav = {
     icon: 'folder-open',
 };
 
-export const controlCenterModules: NavItem[] = [
-    { path: Path.robot, label: 'ROBOT', icon: 'android' },
-    { path: Path.strategy, label: 'STRATEGY_LIBRARY', icon: 'chrome' },
-    { path: Path.agent, label: 'AGENT', icon: 'apple' },
-    { path: Path.exchange, label: 'EXCHANGE', icon: 'windows' },
-];
+export const robot: SideNav = {
+    path: Path.robot,
+    label: 'ROBOT',
+    icon: 'android',
+};
 
-export const controlCenter: SideNav = {
-    path: '',
-    label: 'CONTROL_CENTER',
-    icon: 'appstore',
-    subNav: controlCenterModules,
+export const strategy: SideNav = {
+    path: Path.strategy,
+    label: 'STRATEGY_LIBRARY',
+    icon: 'chrome',
+};
+
+export const agent: SideNav = {
+    path: Path.agent,
+    label: 'AGENT',
+    icon: 'apple',
+};
+
+export const exchange: SideNav = {
+    path: Path.exchange,
+    label: 'EXCHANGE',
+    icon: 'windows',
 };
 
 export const charge: SideNav = {

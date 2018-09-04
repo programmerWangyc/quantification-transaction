@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NavItem, controlCenterModules, square, factFinder, community, documentation, charge, accountModules, message } from '../../base/base.config';
+
+import {
+    accountModules, agent, charge, community, documentation, exchange, factFinder, message, NavItem, robot, square,
+    strategy
+} from '../../base/base.config';
 
 interface Navigator extends NavItem { }
 
@@ -11,7 +15,10 @@ interface Navigator extends NavItem { }
 export class NavigationComponent implements OnInit {
 
     list: Navigator[] = [
-        ...controlCenterModules,
+        robot,
+        strategy,
+        agent,
+        exchange,
         square,
         factFinder,
         community,

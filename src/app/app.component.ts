@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, Route } from '@angular/router';
+import { Route, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as moment from 'moment';
 import { en_US, NzI18nService } from 'ng-zorro-antd';
-import { Observable, Subscription, merge } from 'rxjs';
-import { map, take, takeWhile, distinctUntilKeyChanged } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { distinctUntilKeyChanged, map, take, takeWhile } from 'rxjs/operators';
 
 import { Path } from './app.config';
 import { PublicService } from './providers/public.service';

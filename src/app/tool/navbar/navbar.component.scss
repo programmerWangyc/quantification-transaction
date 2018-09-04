@@ -1,4 +1,5 @@
 @import '../../../theme/_variable.theme';
+@import '../../home/_home';
 $normal-color: #979fc6;
 $hover-color: #fff;
 $normal-bcg : #222944;
@@ -25,24 +26,9 @@ header {
 
     #nav {
         height: 100%;
+
         a {
-            position: relative;
-            padding: 0 19px;
-            height: 100%;
-            line-height: 6;
-
-            &:first-child {
-                padding: 0 33px 0 19px;
-            }
-
-            .active {
-                position: absolute;
-                left: 0;
-                bottom: 0;
-                height: 6px;
-                background: #484aff;
-                width: 100%;
-            }
+            @include headerNav();
         }
     }
 

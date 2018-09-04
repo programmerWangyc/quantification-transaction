@@ -1,9 +1,7 @@
 @import '../../theme/_variable.theme';
 $prefix: 'login' !default;
+
 .#{$prefix} {
-    &-container {
-        // margin-top: -$header-height * 2);
-    }
     &-main {
         position: relative;
         margin: 0 auto;
@@ -19,6 +17,7 @@ $prefix: 'login' !default;
     overflow: hidden;
     box-shadow: 0 0 40px rgba(0, 0, 0, .05);
     margin: 20px auto;
+
     img {
         width: 100%;
     }

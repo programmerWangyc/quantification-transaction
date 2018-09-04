@@ -31,3 +31,23 @@ $screen-width-small: 1000px;
     height: 3px;
     background-color: #4647f2;
 }
+
+@mixin headerNav {
+    position: relative;
+    padding: 0 19px;
+    height: 100%;
+    line-height: 6;
+
+    &:first-child {
+        padding: 0 33px 0 19px;
+    }
+
+    .active {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 6px;
+        background: #484aff;
+        width: 100%;
+    }
+}
