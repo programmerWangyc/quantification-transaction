@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { Observable, of, Subject } from 'rxjs';
+import { map, takeWhile } from 'rxjs/operators';
+
+import { LanguageMap } from '../../app.config';
 import {
     analyzing, community, documentation, factFinder, main, NavItem, quoteChart, square
 } from '../../base/base.config';
-import { Observable, Subject, of } from 'rxjs';
 import { PublicService } from '../../providers/public.service';
-import { map, takeWhile, take } from 'rxjs/operators';
-import { LanguageMap } from '../../app.config';
 import { RoutingService } from '../../providers/routing.service';
-import { trigger, state, style, animate, transition } from '@angular/animations';
 
 @Component({
     selector: 'app-navbar',
@@ -110,25 +111,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
         ));
 
         this.routing.getCurrentUrl().pipe(
-            take(1)
-        ).subscribe(url => this.navNavItems.forEach(item => item.selected = url.includes(item.path)));
+            takeWhile(() => this.isAlive)
+        ).subscribe(url => {
+            this.navNavItems.forEach(item => item.selected = url.includes(item.path));
+        });
     }
 
     /**
      * @ignore
      */
     navigateTo(target: NavItem): void {
-        this.updateIndicator(target);
-
         if (!target.path.startsWith('http')) {
             this.router.navigate([target.path], { relativeTo: this.activatedRoute });
         } else {
             window.open(target.path);
         }
-    }
-
-    private updateIndicator(target: NavItem): void {
-        this.navNavItems.forEach(item => item.selected = item === target);
     }
 
     /**

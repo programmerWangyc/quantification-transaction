@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
 import { SelectivePreloadingStrategyService } from './providers/selective.preloading.strategy';
+import { AboutComponent } from './home/about/about.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -13,6 +14,7 @@ const appRoutes: Routes = [
     { path: 'doc', loadChildren: './document/document.module#DocumentModule', data: { preload: true } },
     { path: 'auth', loadChildren: './auth/auth.module#AuthModule', data: { preload: true } },
     { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule', data: { preload: true } },
+    { path: 'about', component: AboutComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', component: HomeComponent },
 ];

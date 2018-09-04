@@ -1,0 +1,9 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<article>
+    <p *ngFor="let paragraph of about">{{paragraph | translate}}</p>
+</article>
+
+<ul>
+    <li *ngFor="let item of contact">{{item | translate}}</li>
+</ul>

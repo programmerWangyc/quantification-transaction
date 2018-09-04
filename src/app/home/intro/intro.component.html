@@ -1,59 +1,28 @@
-<div id="intro" fxLayout="column">
-    <section>
-        <img src="../../../assets/images/botvs.png" alt="introduction">
-        <p>{{'INTRODUCTION_TITLE' | translate}}</p>
-    </section>
+<div id="intro" fxLayoutAlign="center center" fxLayout="column">
+    <img src="../../../assets/images/home/logo_zimu.png" alt="introduction">
+    <img src="../../../assets/images/home/banner_wenzi.png" alt="introduction">
 
     <section>
-        <div fxLayout="row nowrap">
-            <i class="anticon anticon-check"></i>
-            <span>{{'INTRODUCTION_LABEL' | translate}}</span>
-        </div>
-        <div fxLayout="row nowrap">
-            <i class="anticon anticon-check"></i>
-            <span>{{'INTRODUCTION_LABEL_2' | translate}}</span>
-        </div>
-        <div fxLayout="row nowrap">
-            <i class="anticon anticon-check"></i>
-            <span>{{'INTRODUCTION_LABEL_3' | translate}}</span>
-        </div>
-    </section>
+        <button nz-button nzType="primary" nzSize="large" nz-popover nzPlacement="left" [nzContent]="wechatQuant">
+            {{'QUANT_ONLINE' | translate}}
+        </button>
+        <ng-template #wechatQuant>
+            <img src="../../../assets/images/wechat_quant.jpg">
+        </ng-template>
 
-    <section>
-        <nz-popover>
-            <button nz-button [nzType]="'primary'" [nzSize]="'large'" nz-popover class="popover-button">
-                <i class="anticon anticon-global"></i>
-                {{'FOLLOW_WECHAT' | translate}}
-            </button>
-            <ng-template #nzTemplate>
-                <img src="../../../assets/images/wechat_quant.jpg">
-            </ng-template>
-        </nz-popover>
-
-        <nz-popover>
-            <button nz-button [nzType]="'default'" [nzSize]="'large'" nz-popover class="popover-button">
-                <i class="anticon anticon-qq" style="color: #1890ff"></i>
-                <a href="//shang.qq.com/wpa/qunwpa?idkey=bfd30dcc563a4a14687967b51d5b9d11c8d227a0adf82a08e8a4e6bc1c647050">{{'JOIN_QQ_GROUP' | translate}}</a>
-            </button>
-            <ng-template #nzTemplate>
-                <p>四群: 456221748 (可加此群)</p>
-                <p>
-                    三群: 469046711 (2000人群,
-                    <font color="red">已满</font>
-                    )
-                </p>
-                <p>
-                    二群: 608262365 (2000人群,
-                    <font color="red">已满</font>
-                    )
-                </p>
-                <p>
-                    主群: 309368835 (2000人群,
-                    <font color="red">已满</font>
-                    )
-                </p>
-            </ng-template>
-        </nz-popover>
+        <button nz-button nzSize="large" nz-popover nzPlacement="right" [nzContent]="qqGroup">
+            <a href="//shang.qq.com/wpa/qunwpa?idkey=bfd30dcc563a4a14687967b51d5b9d11c8d227a0adf82a08e8a4e6bc1c647050">{{'JOIN_QQ_GROUP'
+                | translate}}</a>
+        </button>
+        <ng-template #qqGroup>
+            <p *ngFor="let item of QQGroup">
+                <i class="anticon anticon-qq"></i>
+                {{item.name | translate}} : {{item.id}}
+            </p>
+        </ng-template>
     </section>
-    <div id="intro-bcg"></div>
 </div>
+
+<!--QQ group label, unused-->
+<!-- "QQ_GROUP_FULL": "{{name}}:{{id}}（2000人群，<font color='red'>已满</font>）",
+    "QQ_GROUP_CAN_JOIN": "{{name}}:{{id}}（可加此群）", -->

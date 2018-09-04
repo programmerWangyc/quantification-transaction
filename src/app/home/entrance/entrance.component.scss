@@ -1,74 +1,41 @@
-@import '../../../theme/_variable.theme';
 @import '../_home';
+
 #entrance {
-    padding: 50px $content-padding;
-    h1 {
+    padding: 128px 0;
+
+    h2 {
         color: #36474f;
-        margin-bottom: 30px;
-        font: $title-font;
+        margin: 0 0 55px 0;
     }
-    &>div {
-        padding: 24px 0 16px 0;
-    }
-    .entrance-list {
-        $padding: 2px 0 0 47px;
-        padding: 10px;
-        .entrance {
+
+    #entrance-container {
+        color: #fff;
+
+        h3 {
+            color: #fff;
             position: relative;
+
+            &:before {
+                @include indicator();
+                width: 20px;
+                height: 1px;
+                top: -14px;
+                background-color: #fff;
+            }
+        }
+
+        .entrance {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 230px;
+            height: 330px;
+            padding: 24px;
+
             i {
-                position: absolute;
-                top: 16px;
-                font-size: 30px;
-                color: $blue;
-            }
-            h3 {
-                margin: 16px 0 12px;
-                padding: $padding;
-                color: #455a64;
-                font-size: 20px;
-                font-weight: 500;
-            }
-            p {
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 28px;
-                margin: 0 0 16px 0;
-                padding: $padding;
-            }
-            nz-list-item {
-                margin: $padding;
-                padding: 0;
-            }
-            a {
-                color: #8fa4ae;
-                height: 32px;
-                line-height: 32px;
-            }
-            a:hover {
-                color: $blue !important;
+                margin: 82px 0 34px 0;
+                font-size: 32px;
             }
         }
     }
-
-    #view-all {
-        margin-top: 40px;
-        color: #0273d4
-    }
-}
-@media screen and (max-width: $screen-width-middle) {
-    #entrance {
-        padding: 50px 0;
-    }
-}
-@media screen and (max-width: $screen-width-small) {
-    .entrance-list {
-        width: 100%;
-    }
-    #entrance {
-        padding: 50px $content-padding;
-    }
-}
-
-:host::ng-deep .ant-list-item-content {
-    margin-bottom: 0;
 }

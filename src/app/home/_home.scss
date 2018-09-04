@@ -4,6 +4,7 @@ $title-font: 400 40px/60px 'Google Sans',
 sans-serif;
 $screen-width-middle: 1450px;
 $screen-width-small: 1000px;
+
 @mixin section-bcg($bcg) {
     content: "";
     position: absolute;
@@ -19,4 +20,14 @@ $screen-width-small: 1000px;
     margin: 0 (-$container-margin);
     padding: 0 $container-margin;
     background: $bcg;
+}
+
+@mixin indicator() {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3em;
+    height: 3px;
+    background-color: #4647f2;
 }

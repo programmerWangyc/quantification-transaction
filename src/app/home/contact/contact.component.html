@@ -1,23 +1,21 @@
-<div id="contact-bcg">
-    <div
-        nz-row
-        id="contact"
-    >
-        <div
-            class="contact"
-            *ngFor="let item of list"
-            nz-col
-            [nzSpan]="8"
-            fxLayout="column"
-        >
-            <h3>{{item.title}}</h3>
-            <p>{{item.desc}}</p>
-            <a
-                href="javascript:void 0"
-                *ngFor="let icon of item.buttons"
-            >
-            </a>
-        </div>
+<div id="contact" fxLayout="column" fxLayoutAlign="center center">
+    <button nz-button nzType="primary" nzSize="large" routerLink="/auth/signup">{{'FREE_TRIAL' | translate}}</button>
 
-    </div>
+    <ul fxLayoutAlign="space-around center" id="contact-container">
+        <li fxLayoutAlign="center center" fxLayout="column">
+            <h4>关注 Google Cloud Platform</h4>
+            <div class="decorator"><i></i></div>
+            <p>在您最爱的社交网络上关注我们，随时掌握 Google Cloud Platform 的最新动态。</p>
+        </li>
+        <li fxLayoutAlign="center center" fxLayout="column">
+            <h4>关注 Google Cloud Platform</h4>
+            <div class="decorator"><i></i></div>
+            <p>在您最爱的社交网络上关注我们，随时掌握 Google Cloud Platform 的最新动态。</p>
+        </li>
+        <li fxLayoutAlign="center center" fxLayout="column">
+            <h4>关注 Google Cloud Platform</h4>
+            <div class="decorator"><i></i></div>
+            <p>在您最爱的社交网络上关注我们，随时掌握 Google Cloud Platform 的最新动态。</p>
+        </li>
+    </ul>
 </div>

@@ -1,23 +1,16 @@
-<section id="detail">
-    <h2 bt-text-center>{{'INTRO_DETAIL_TITLE' | translate}}</h2>
-    <div
-        nz-row
-        [nzGutter]="24"
-    >
-        <div
-            nz-col
-            [nzSpan]="8"
-            fxLayout="column"
-            fxLayoutAlign="center center"
-            *ngFor="let detail of list | async"
-            class="detail"
-        >
-            <img [src]="detail.src">
-            <div bt-text-center>
-                <h3 bt-text-center>{{ detail.title | translate}}</h3>
-                <p [innerHTML]="detail.detail"></p>
+<section id="detail" fxLayout="column" fxLayoutAlign="start center">
+    <h2 bt-text-center>
+        <div>Why do we choose us?</div>
+        {{'INTRO_DETAIL_TITLE' | translate}}
+    </h2>
+    <div  class="detail-container">
+        <div fxLayout="row" fxLayoutAlign="center center" *ngFor="let item of list" class="detail">
+            <img [src]="item.src">
+            <div fxLayoutAlign="center center" fxLayout="column">
+                <h3>{{item.title | translate}}</h3>
+                <p [innerHTML]="item.detail | translate | safeHtml"></p>
             </div>
         </div>
     </div>
-    <div class="border"></div>
+
 </section>

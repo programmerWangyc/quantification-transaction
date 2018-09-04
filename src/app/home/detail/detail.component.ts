@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
-import { from as observableFrom, Observable } from 'rxjs';
-import { map, mergeMap, reduce } from 'rxjs/operators';
+import { SafeHtml } from '@angular/platform-browser';
 
 interface Detail {
     title: string;
@@ -12,17 +9,17 @@ interface Detail {
 
 export const list = [
     {
-        src: '../../../assets/images/just-code.png',
+        src: '../../../assets/images/home/coding_online.png',
         title: 'INTRO_DETAIL_TITLE_1',
         detail: 'INTRO_DETAIL_1',
     },
     {
-        src: '../../../assets/images/future.png',
+        src: '../../../assets/images/home/cross_platform.png',
         title: 'INTRO_DETAIL_TITLE_2',
         detail: 'INTRO_DETAIL_2',
     },
     {
-        src: '../../../assets/images/analytics.png',
+        src: '../../../assets/images/home/free_flexible.png',
         title: 'INTRO_DETAIL_TITLE_3',
         detail: 'INTRO_DETAIL_3',
     },
@@ -35,24 +32,11 @@ export const list = [
 })
 export class DetailComponent implements OnInit {
 
-    list: Observable<Detail[]>;
+    list: Detail[] = list;
 
     constructor(
-        private translate: TranslateService,
-        private sanitizer: DomSanitizer,
     ) { }
 
     ngOnInit() {
-        this.list = observableFrom(list).pipe(
-            mergeMap(item => this.translate.get(item.detail).pipe(
-                map(str => ({ ...item, detail: this.sanitizer.bypassSecurityTrustHtml(str) }))
-            )
-            ),
-            reduce((acc, cur) => {
-                acc.push(cur);
-
-                return acc;
-            }, [])
-        );
     }
 }

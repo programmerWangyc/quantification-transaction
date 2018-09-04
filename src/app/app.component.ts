@@ -31,6 +31,11 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
+    padding: Observable<string>;
+
+    /**
+     * @ignore
+     */
     isDashboard: Observable<boolean>;
 
     constructor(
@@ -75,8 +80,20 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private initialModel(): void {
+        this.padding = this.routing.getCurrentUrl().pipe(
+            map(path => {
+                if (!path || path.includes(Path.home)) {
+                    return '84px 0 0 0';
+                } else if (path && path.includes(Path.dashboard)) {
+                    return '0';
+                } else {
+                    return '98px 164px 0 164px';
+                }
+            })
+        );
+
         this.isDashboard = this.routing.getCurrentUrl().pipe(
-            map(path => path && path.includes(Path.dashboard))
+            map(path => path && path.includes('dashboard'))
         );
     }
 

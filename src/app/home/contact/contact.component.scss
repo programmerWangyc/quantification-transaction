@@ -1,35 +1,67 @@
-@import '../../../theme/variable.theme';
 @import '../_home';
-#contact-bcg {
-    @include home-section-bcg(#666);
+
+@mixin squareBlock {
+    content: '';
+    width: 2px;
+    height: 3px;
+    background: #6555ec;
+    position: absolute;
+    top: 1px;
 }
+
 #contact {
-    padding: 0 $content-padding 40px;
-    position: relative;
-    .contact {
-        $color: #fff;
-        position: relative;
-        padding: 10px;
-        color: $color;
-        h3 {
-            color: $color;
-            margin: 32px 0 16px;
-            font-weight: 500;
-            font-size: 20px;
-            line-height: 25px;
+    padding: 50px 0;
+
+    button {
+        width: 200px;
+        margin: 0 0 78px 0;
+    }
+
+    .decorator {
+        width: 100%;
+        height: 1px;
+        background: #ececec;
+        margin: 20px 0 40px 0;
+        display: flex;
+        justify-content: center;
+
+        i {
+            width: 20%;
+            height: 5px;
+            background: #6555ec;
+            position: relative;
+            transform: translateY(-2px);
+
+            &::after {
+                @include squareBlock();
+                right: -2px;
+            }
+
+            &::before {
+                @include squareBlock();
+                left: -2px;
+            }
         }
-        p {
-            min-height: 60px;
-            margin: 16px 0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 85%;
+
+        li {
+            width: 342px;
         }
     }
 }
 
 @media screen and (max-width: $screen-width-small) {
-    #contact-bcg {
-        margin: 0;
-    }
-    .contact {
-        width: 100%;
+    #contact-container {
+        flex-direction: column !important;
+
+        li {
+            width: 100%;
+        }
     }
 }

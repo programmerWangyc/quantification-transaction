@@ -96,8 +96,15 @@ export interface LogoutResponse extends ResponseUnit<boolean> { }
 //  =======================================================Setting response=========================================================
 
 // get settings
+export interface Partner {
+    name: string;
+    url: string;
+    img: string;
+}
+
 export interface IndexSetting {
     showLogo: string;
+    links: Partner[];
 }
 
 /**

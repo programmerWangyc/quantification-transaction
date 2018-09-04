@@ -1,33 +1,3 @@
-<div
-    id="footer"
-    fxLayout="row"
-    fxLayoutAlign="start center"
-    *ngIf="isShow | async"
->
-    <nz-select
-        style="width: 120px;"
-        [(ngModel)]="selected"
-        (ngModelChange)="language$.next($event)"
-    >
-        <nz-option
-            nzLabel="简体中文"
-            nzValue="zh"
-        >
-        </nz-option>
-        <nz-option
-            nzLabel="English"
-            nzValue="en"
-        >
-        </nz-option>
-
-    </nz-select>
-    <ul fxLayout="row wrap" fxLayoutAlign="center center">
-        <li>
-            <a href>{{"GITHUB" | translate}}</a>
-        </li>
-        <li>
-            <a href>{{"ABOUT_US" | translate}}</a>
-        </li>
-        <li><span>© 2015 - ∞ BotVS. 京ICP备15046776号</span></li>
-    </ul>
+<div id="footer" fxLayout="row" fxLayoutAlign="end center" *ngIf="isShow | async">
+    <span>© 2015 - ∞ BotVS. 京ICP备15046776号</span>
 </div>

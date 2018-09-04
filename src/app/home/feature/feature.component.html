@@ -1,26 +1,10 @@
-<div id="feature-bcg">
-    <div
-        nz-row
-        id="feature"
-    >
-        <div
-            *ngFor="let item of list"
-            nz-col
-            [nzSpan]="8"
-            fxLayoutAlign="start stretch"
-            fxLayout="column"
-            class="feature"
-        >
-            <div class="feature-border"></div>
+<div id="feature" fxLayoutAlign="center start">
+    <div id="feature-container">
+        <div *ngFor="let item of list" fxLayout="column" fxLayoutAlign="start center" class="feature">
+            <img [src]="item.img">
+            <p class="keyword_en">{{item.keywordEn}}</p>
             <h3>{{item.keyword | translate}}</h3>
             <p>{{item.label | translate}}</p>
-            <a
-                href="javascript:void 0"
-                class="detail"
-            >
-                {{'FIND_OUT_DETAILS' | translate}}
-                <i class="anticon anticon-right-circle"></i>
-            </a>
         </div>
     </div>
 </div>

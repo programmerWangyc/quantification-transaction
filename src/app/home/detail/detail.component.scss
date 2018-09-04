@@ -1,40 +1,83 @@
 @import '../_home';
-#detail {
-    padding: 50px $content-padding;
-    h2 {
-        color: #36474f;
-        margin-bottom: 30px;
-        font: $title-font;
-    }
-    .detail {
-        padding: 24px 0;
-        h3 {
-            color: #455a64;
-            font-size: 20px;
-            margin: 16px 0 12px;
-        }
-        div {
-            line-height: 35px;
-            width: 100%;
-        }
-        p {
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 28px;
-            margin: 0 0 16px 0;
-            color: #4a5960;
-        }
-    }
-}
+$transformX: 20%;
 
-@media screen and (max-width: $screen-width-middle) {
-    #detail {
-        padding: 50px 5%;
+#detail {
+    background-image: url('../../../assets/images/home/dot_bcg.png');
+
+    h2 {
+        margin: 92px 0 46px 0;
+
+        div {
+            color: #b8b8b8;
+        }
+    }
+
+    .detail-container {
+        margin-bottom: 220px;
+        display: flex;
+
+        .detail {
+            position: relative;
+
+            div {
+                width: 408px;
+                height: 353px;
+                background: #fff;
+                clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+            }
+
+            &:nth-child(1) {
+                transform: translateX($transformX);
+            }
+
+            &:nth-child(2) {
+                transform: translateY(50%);
+            }
+
+            &:nth-child(3) {
+                transform: translateX(-$transformX);
+            }
+
+            img {
+                position: absolute;
+                left: 50%;
+                top: 0;
+                transform: translate(-50%, -50%);
+                z-index: 999;
+            }
+
+            h3 {
+                position: relative;
+                transform: translateY(-75%);
+
+                &::after {
+                    @include indicator();
+                    bottom: -6px;
+                }
+            }
+
+            div {
+                position: relative;
+
+                p {
+                    position: absolute;
+                    bottom: 5em;
+                    width: 70%;
+                    text-align: center;
+                }
+            }
+        }
     }
 }
 
 @media screen and (max-width: $screen-width-small) {
-    .detail {
-        width: 100%;
+    .detail-container {
+        flex-direction: column;
+        margin-bottom: 0 !important;
+
+        .detail {
+            margin: 5em 0;
+            transform: translate(0, 0) !important;
+        }
     }
 }

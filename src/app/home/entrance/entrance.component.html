@@ -1,27 +1,11 @@
-<div id="entrance">
-    <h1 bt-text-center>{{'INTRO_ENTRANCE_TITLE' | translate}}</h1>
-    <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="8" *ngFor="let entrance of list" class="entrance-list">
-            <div fxLayout="column" class="entrance">
-                <i [class]="entrance.icon"></i>
-                <h3>{{entrance.title | translate}}</h3>
-                <p>{{entrance.subtitle | translate}}</p>
-                <nz-list [nzDataSource]="entrance.list" nzSize="small" nzItemLayout='vertical' [nzRenderItem]="item">
-                    <ng-template #item let-item>
-                        <nz-list-item [nzContent]="content"></nz-list-item>
-
-                        <ng-template #content>
-                            <a  (click)="goTo(item)">{{item.label | translate}}</a>
-                        </ng-template>
-                    </ng-template>
-                </nz-list>
-            </div>
+<div id="entrance" fxLayoutAlign="center center" fxLayout="column">
+    <h2>{{'INTRO_ENTRANCE_TITLE' | translate}}</h2>
+    <div id="entrance-container" fxLayout="row">
+        <div *ngFor="let entrance of list" class="entrance" [@inOut]="entrance.selected ? 'active' : 'inactive'" (mouseenter)="entrance.selected = true" (mouseleave)="entrance.selected = false" [style.backgroundImage]="'url(' + entrance.backgroundImag+ ')'">
+            <i class="anticon" [ngClass]="'anticon-' + entrance.icon"></i>
+            <h3>{{entrance.label | translate}}</h3>
+            <p>{{entrance.description | translate}}</p>
+            <a [hidden]="!entrance.selected" nz-button nzType="primary" (click)="navigateTo(entrance); entrance.selected = false;">{{'VIEW_DETAIL' | translate}}</a>
         </div>
     </div>
-    <p bt-text-center id="view-all">
-        <a>
-            <span>{{'VIEW_ALL_PRODUCTS' | translate}}</span>
-            <i class="anticon anticon-right-circle"></i>
-        </a>
-    </p>
 </div>

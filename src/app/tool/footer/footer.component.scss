@@ -1,22 +1,22 @@
+@import '../../home/_home';
+
 #footer {
-    padding: 0 10%;
-    height: 64px;
-    background-color: #455a64;
-    ul {
-        margin: 0 50px;
-        color: #fff;
-        li {
-            list-style: none;
-            padding: 0 16px;
-            a {
-                color: inherit;
-                white-space: nowrap;
-            }
-            span {
-                font-size: 12px;
-                white-space: nowrap;
-                color: #000;
-            }
+    padding: 0 15%;
+    height: 42px;
+    color: #828585;
+    background-color: #4a5154;
+
+    span {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: $screen-width-small) {
+    #footer {
+        padding: 0 2em;
+
+        span {
+            width: 100%;
         }
     }
 }

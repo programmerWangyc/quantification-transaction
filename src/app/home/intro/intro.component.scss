@@ -1,66 +1,17 @@
-@import '../../../theme/variable.theme';
-@import '../_home';
-$icon-font-size: 24px;
 #intro {
-    padding: 0 $content-padding 30px;
-    position: relative;
-    section {
-        z-index: 100;
-        font-size: 16px;
-        &:first-child {
-            margin: 48px 0 30px 0;
-            p {
-                font: normal normal 300 45px/112% "Google Sans", sans-serif; // 字体；
-                margin: -20px 0 0 0;
-                color: $blue;
-                white-space: nowrap;
-            }
-        }
-        &:nth-child(2) {
-            margin: 0 0 24px 0;
-            i {
-                font-size: $icon-font-size;
-                margin: 0 12px 0 0;
-                color: $blue;
-            }
-            span {
-                color: $gray
-            }
-        }
-    }
-    .popover-button {
-        width: 160px;
-        height: 48px;
-        margin: 10px;
-        i {
-            margin: 0 16px 0 0;
-        }
-    }
-}
+    background-image: url('../../../assets/images/home/banner.png');
+    padding: 130px 0 65px 0;
 
-#intro-bcg {
-    background: url("../../../assets/images/bcg_intro.png") center center no-repeat;
-    bottom: 0;
-    height: 352px;
-    position: absolute;
-    right: $container-margin;
-    width: 488px;
-    z-index: 1;
-}
-
-@media screen and (max-width: $screen-width-middle) {
-    #intro-bcg {
-        right: -$container-margin;
+    img:first-child {
+        margin: 0 0 21px 0;
     }
-}
 
-@media screen and (max-width: $screen-width-small) {
-    section:first-child {
-        p {
-            font-size: 30px !important;
-        }
+    img:nth-child(2) {
+        margin: 0 0 61px 0;
     }
-    #intro-bcg {
-        display: none;
+
+    button {
+        margin: 0 15px;
+        width: 9em;
     }
 }

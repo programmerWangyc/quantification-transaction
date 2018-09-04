@@ -314,8 +314,12 @@
     "INTRODUCTION_LABEL": "云端部署 在线编程",
     "INTRODUCTION_LABEL_2": "跨平台 跨品种",
     "INTRODUCTION_LABEL_3": "免费灵活 策略可简可繁",
-    "FOLLOW_WECHAT": "宽客在线",
+    "QUANT_ONLINE": "宽客在线",
     "JOIN_QQ_GROUP": "加入QQ群",
+    "MAIN_QQ_GROUP": "主群",
+    "SECONDARY_QQ_GROUP": "二群",
+    "THIRD_QQ_GROUP": "三群",
+    "FOURTH_QQ_GROUP": "四群",
 
     "INTRO_DES_KEYWORD_1": "专注",
     "INTRO_DESCRIPTION_1": "匠人品质，匠心（jiàng xīn）是汉语词语，匠：灵巧，巧妙。匠心，指能工巧匠的心思，常指文学艺术方面创造性的构思。见唐 王士源 《<孟浩然集>序》：“文不按古，匠心独妙。”",
@@ -330,11 +334,12 @@
     "INTRO_DETAIL_TITLE_1": "云端部署 在线编程",
     "INTRO_DETAIL_TITLE_2": "跨平台 跨品种",
     "INTRO_DETAIL_TITLE_3": "免费灵活 策略可简可繁",
-    "INTRO_DETAIL_1": "稳定高可扩展的云平台<br>让您的交易策略，随时随地都在掌控之中<br>策略支持：<font color=red><b>JavaScript&nbsp;Python&nbsp;C++</b></font>",
-    "INTRO_DETAIL_2": "统一了所有市场为一套API接口<br><font color='red'>跨平台，策略分享与出售，实盘围观，量化社区</font><br>助您获得华尔街专业量化机构的装备",
-    "INTRO_DETAIL_3": "<font color='red'>唯一</font>支持三大金融市场的量化平台<br>策略回测框架让您专注策略实现的算法逻辑<br>无需关注底层细节架构",
+    "INTRO_DETAIL_1": "稳定高可扩展的云平台<br>让您的交易策略，随时随地都在掌控之中<br>策略支持：JavaScript、Python、C++",
+    "INTRO_DETAIL_2": "统一了所有市场为一套API接口<br>跨平台，策略分享与出售，实盘围观，量化社区助您获得华尔街专业量化机构的装备",
+    "INTRO_DETAIL_3": "唯一支持三大金融市场的量化平台<br>策略回测框架让您专注策略实现的算法逻辑<br>无需关注底层细节架构",
 
     "INTRO_ENTRANCE_TITLE": "构建和部署所需的一切",
+    "VIEW_DETAIL": "查看详情",
 
     "STRATEGY_SUBTITLE": "各种各样的策略，听过的，没听过的都有",
     "GENERAL_STRATEGY": "通用策略",
@@ -349,7 +354,6 @@
     "ENGLISH": "English",
     "SIMPLE_CHINESE": "简体中文",
     "ABOUT_US": "关于我们",
-    "GITHUB": "Github",
     "SEARCH": "搜索",
     "FIND_OUT_DETAILS": "了解详情",
     "VIEW_ALL_PRODUCTS": "查看所有产品",
@@ -853,5 +857,19 @@
     "BALANCE_EARLY_WARING_TIP":"当账户可用余额小于此值时, 您将会收到邮件与微信通知, 设置为0禁止用此功能, 没有充值或者更改此设置的情况下, 24小时内只通知一次。",
     "REGISTER_CODE_MANAGEMENT": "注册码管理",
     "SLOW_NET_WORK": "网络较慢",
-    "LOADING_LONG_TIME_NOTIFICATION": "数据加载缓慢，可能是当前网络状态较差，您可以选择继续等待以完成加载，或刷新浏览器尝试重新加载。"
+    "LOADING_LONG_TIME_NOTIFICATION": "数据加载缓慢，可能是当前网络状态较差，您可以选择继续等待以完成加载，或刷新浏览器尝试重新加载。",
+
+    "PARTNER": "合作伙伴",
+    "QUICK_LINKS": "快速链接",
+    "ZHI_HU": "知乎专栏",
+
+    "COMPANY_INTRODUCE_P1": "BotVS量化交易平台, 后启用新域名(fmz.com改成为发明者) 由 北京天恒金诚科技有限公司 为量化爱好者（宽客）量身打造的云平台，我们为您提供精准的回测功能、高速实盘交易接口、易用的API文档、由易入难的策略库，便于您快速实现、使用自己的量化交易策略。",
+    "COMPANY_INTRODUCE_P2": "我们在性能和安全上有严苛的要求, 在线式平台集成了策略开发、测试、优化、模拟、实盘交易的完整流程。支持高频交易策略、各种套利策略，以及支持多数据、多品种、多周期混合策略, 支持国内商品期货与外盘商品期货, 也支持超过25家的数字货币交易平台。",
+    "COMPANY_INTRODUCE_P3": "我们的创始团队具有丰富的金融、互联网从业经验，既有功底深厚的程序员，也有多年从事基金、期货、证券行业的金融精英，还有BAT的技术大牛，我们致力于打造最高效、易用的量化交易平台。",
+
+    "COMPANY_INFO_P1": "QQ群：608262365, 309368835,469046711,456221748",
+    "COMPANY_INFO_P2": "邮箱：hi@botvs.com",
+    "COMPANY_INFO_P3": "电话：0371-55530101",
+    "COMPANY_INFO_P4": "总部：北京市昌平区沙河镇松兰堡村西B座205 (北京天恒金诚科技有限公司)",
+    "COMPANY_INFO_P5": "研发：郑州市二七区二七万达12A座 (BotVS研发中心)"
 }

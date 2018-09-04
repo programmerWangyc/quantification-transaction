@@ -1,71 +1,77 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-interface Entrance {
-    icon: string;
-    title: string;
-    subtitle: string;
-    list: Direct[];
-    route: string;
+import { community, documentation, factFinder, quoteChart, SideNav, square } from '../../base/base.config';
+
+interface Entrance extends SideNav {
+    description: string;
+    backgroundImag: string;
 }
-
-interface Direct {
-    label: string;
-    param: string;
-}
-
-export const list: Entrance[] = [
-    {
-        icon: 'anticon anticon-shopping-cart',
-        title: 'STRATEGY_SQUARE',
-        subtitle: 'STRATEGY_SUBTITLE',
-        list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square',
-    },
-    {
-        icon: 'anticon anticon-play-circle-o',
-        title: 'FACT_FINDER',
-        subtitle: 'STRATEGY_SUBTITLE',
-        list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square',
-    },
-    {
-        icon: 'anticon anticon-aliwangwang-o',
-        title: 'COMMUNITY',
-        subtitle: 'STRATEGY_SUBTITLE',
-        list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square',
-    },
-    {
-        icon: 'anticon anticon-folder',
-        title: 'API_DOCUMENTATION',
-        subtitle: 'STRATEGY_SUBTITLE',
-        list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square',
-    },
-    {
-        icon: 'anticon anticon-tool',
-        title: 'TOOLS',
-        subtitle: 'STRATEGY_SUBTITLE',
-        list: [{ label: 'GENERAL_STRATEGY', param: '' }, { label: 'COMMODITY_FUTURES', param: '' }, { label: 'STOCK_SECURITY', param: '' }, { label: 'DIGITAL_CURRENCY', param: '' }, { label: 'TEMPLATE_LIBRARY', param: '' }],
-        route: 'square',
-    },
-];
 
 @Component({
     selector: 'app-entrance',
     templateUrl: './entrance.component.html',
     styleUrls: ['./entrance.component.scss'],
+    animations: [
+        trigger('inOut', [
+            state('inactive', style({
+                transform: 'scale(1)',
+                boxShadow: 'none',
+                zIndex: 1,
+            })),
+            state('active', style({
+                transform: 'scale(1.3)',
+                boxShadow: '0px 0px 15px 1px #505050',
+                zIndex: 999,
+            })),
+            transition('inactive => active', animate('300ms ease-in')),
+            transition('active => inactive', animate('300ms ease-out')),
+        ]),
+    ],
 })
 export class EntranceComponent implements OnInit {
 
-    list = list;
+    list: Entrance[] = [
+        {
+            ...square,
+            description: 'STRATEGY_SUBTITLE',
+            backgroundImag: '../../../assets/images/home/square_bcg.png',
+        },
+        {
+            ...factFinder,
+            description: 'STRATEGY_SUBTITLE',
+            backgroundImag: '../../../assets/images/home/fact_bcg.png',
+        },
+        {
+            ...community,
+            description: 'STRATEGY_SUBTITLE',
+            backgroundImag: '../../../assets/images/home/community_bcg.png',
+        },
+        {
+            ...documentation,
+            description: 'STRATEGY_SUBTITLE',
+            backgroundImag: '../../../assets/images/home/document_bcg.png',
+        },
+        {
+            ...quoteChart,
+            description: 'STRATEGY_SUBTITLE',
+            backgroundImag: '../../../assets/images/home/tools_bcg.png',
+        },
+    ];
 
-    constructor() { }
+    constructor(
+        private router: Router,
+    ) { }
 
     ngOnInit() {
     }
 
-    goTo(target: Direct): void {
-        console.log(target);
+    navigateTo(target: Entrance): void {
+        if (!target.path.startsWith('http')) {
+            this.router.navigate([target.path]);
+        } else {
+            window.open(target.path);
+        }
     }
 }
