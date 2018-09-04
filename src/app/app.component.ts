@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, Route } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as moment from 'moment';
 import { en_US, NzI18nService } from 'ng-zorro-antd';
-import { Observable, Subscription } from 'rxjs';
-import { map, take, takeWhile } from 'rxjs/operators';
+import { Observable, Subscription, merge } from 'rxjs';
+import { map, take, takeWhile, distinctUntilKeyChanged } from 'rxjs/operators';
 
 import { Path } from './app.config';
 import { PublicService } from './providers/public.service';
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    isDashboard: Observable<boolean>;
+    hideNav: Observable<boolean>;
 
     constructor(
         private translate: TranslateService,
@@ -80,21 +80,28 @@ export class AppComponent implements OnInit, OnDestroy {
      * @ignore
      */
     private initialModel(): void {
-        this.padding = this.routing.getCurrentUrl().pipe(
-            map(path => {
-                if (!path || path.includes(Path.home)) {
-                    return '84px 0 0 0';
-                } else if (path && path.includes(Path.dashboard)) {
+        const source = this.routing.getCurrentRouteState().pipe(
+            distinctUntilKeyChanged('url')
+        );
+        this.padding = source.pipe(
+            map(({ url, routeConfig }) => {
+                if (this.isNavHidden(url, routeConfig)) {
                     return '0';
+                } else if (!url || url.includes(Path.home)) {
+                    return '84px 0 0 0';
                 } else {
                     return '98px 164px 0 164px';
                 }
             })
         );
 
-        this.isDashboard = this.routing.getCurrentUrl().pipe(
-            map(path => path && path.includes('dashboard'))
+        this.hideNav = source.pipe(
+            map(({ url, routeConfig }) => this.isNavHidden(url, routeConfig))
         );
+    }
+
+    private isNavHidden(url: string, routeConfig: Route): boolean {
+        return routeConfig.path === '**' || url && url.includes(Path.dashboard);
     }
 
     /**

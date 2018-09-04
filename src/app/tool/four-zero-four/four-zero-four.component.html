@@ -1,0 +1,15 @@
+<main id="main-404-content">
+    <canvas id="zodiac"></canvas>
+    <div class="col-twelve">
+        <h1 class="kern-this">404 Error.</h1>
+        <p>{{'FOUR_ZERO_FOUR_TIP' | translate}}</p>
+    </div>
+
+    <ul fxLayoutAlign="end center">
+        <li *ngFor="let item of links">
+            <a [routerLink]="'/' + item.path">
+                <i class="anticon" [ngClass]="'anticon-' + item.icon"></i>
+            </a>
+        </li>
+    </ul>
+</main>

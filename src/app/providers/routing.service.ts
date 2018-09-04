@@ -22,7 +22,7 @@ export class RoutingService extends BaseService {
     /**
      * @ignore
      */
-    private getCurrentRouteState(): Observable<RouterStateUrl> {
+    getCurrentRouteState(): Observable<RouterStateUrl> {
         return this.store.pipe(
             this.selectTruth(selectRouteState)
         );
@@ -35,6 +35,12 @@ export class RoutingService extends BaseService {
         return this.getCurrentRouteState().pipe(
             map(state => state.url),
             distinctUntilChanged()
+        );
+    }
+
+    is404Page(): Observable<boolean> {
+        return this.getCurrentRouteState().pipe(
+            map(state => state.routeConfig.path === '**')
         );
     }
 

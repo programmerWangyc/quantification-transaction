@@ -871,5 +871,7 @@
     "COMPANY_INFO_P2": "邮箱：hi@botvs.com",
     "COMPANY_INFO_P3": "电话：0371-55530101",
     "COMPANY_INFO_P4": "总部：北京市昌平区沙河镇松兰堡村西B座205 (北京天恒金诚科技有限公司)",
-    "COMPANY_INFO_P5": "研发：郑州市二七区二七万达12A座 (BotVS研发中心)"
+    "COMPANY_INFO_P5": "研发：郑州市二七区二七万达12A座 (BotVS研发中心)",
+
+    "FOUR_ZERO_FOUR_TIP": "当前位置上没有发现任何内容，你可以尝试通过以下链接访问网站的其它内容。"
 }

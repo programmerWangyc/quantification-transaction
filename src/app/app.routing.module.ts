@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { SelectivePreloadingStrategyService } from './providers/selective.preloading.strategy';
 import { AboutComponent } from './home/about/about.component';
+import { FourZeroFourComponent } from './tool/four-zero-four/four-zero-four.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -16,7 +17,7 @@ const appRoutes: Routes = [
     { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule', data: { preload: true } },
     { path: 'about', component: AboutComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: '**', component: HomeComponent },
+    { path: '**', component: FourZeroFourComponent },
 ];
 
 @NgModule({

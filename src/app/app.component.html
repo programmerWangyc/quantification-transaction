@@ -1,4 +1,4 @@
-<app-navbar *ngIf="!(isDashboard | async)"></app-navbar>
+<app-navbar *ngIf="!(hideNav | async)"></app-navbar>
 
 <div [style.padding]="padding | async">
     <router-outlet></router-outlet>

@@ -14,6 +14,7 @@ export interface SideNav extends NavItem {
 export const main: NavItem = {
     path: Path.home,
     label: 'HOME',
+    icon: 'home',
 };
 
 export const square: SideNav = {
