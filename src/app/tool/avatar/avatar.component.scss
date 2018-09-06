@@ -1,0 +1,20 @@
+@import '../../../theme/_variable.theme';
+
+a {
+    margin: 0 1em;
+    &:last-child {
+        color: color(warning);
+    }
+}
+
+nz-divider {
+    margin: 12px 0 ;
+}
+
+nz-avatar {
+    background-color: color(primary);
+}
+
+button {
+    margin: 0 2em;
+}

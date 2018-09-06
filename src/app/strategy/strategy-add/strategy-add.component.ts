@@ -37,11 +37,6 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
      */
     strategyDetail: Observable<StrategyDetail>;
 
-    /**
-     * @ignore
-     */
-    isAlive = true;
-
     constructor(
         public backtest: BacktestService,
         public constant: StrategyConstantService,

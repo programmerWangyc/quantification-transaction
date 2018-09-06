@@ -4,14 +4,22 @@ $warn: #f04134;
 $green: #87d068;
 $weakBlue: #e6f7ff;
 $yellow: #faad14;
-
 /////
 $container-margin: 164px;
 $content-padding: 10%;
-$title-font: 400 40px/60px 'Google Sans', sans-serif;
+$title-font: 400 40px/60px 'Google Sans',
+sans-serif;
 $screen-width-middle: 1450px;
 $screen-width-small: 1000px;
-
 ////
 $header-height: 6rem;
 $bcg-nav: #f7f7f7;
+////
+$color: (primary: #1890ff,
+accent: #87d068,
+warning: #f04134,
+);
+
+@function color($type) {
+    @return map-get($color, $type);
+}

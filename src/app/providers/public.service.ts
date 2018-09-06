@@ -165,7 +165,7 @@ export class PublicService extends BaseService {
      */
     isLogin(): Observable<boolean> {
         return this.getToken().pipe(
-            map(token => !!token && token.length > 0),
+            map(token => !!token && token.length > 0)
         );
     }
 
@@ -398,20 +398,13 @@ export class PublicService extends BaseService {
             take(1)
         ).subscribe(isLogoutSuccess => {
             if (isLogoutSuccess) {
-                localStorage.clear();
-
                 this.store.dispatch(new ClearLoginInfoAction());
+
+                this.store.dispatch(new ResetLogoutResponseAction());
             } else {
                 // nothing to do;
             }
         });
-    }
-
-    /**
-     * 用户退出后清除logout的响应信息，否则在未关闭窗口时再次登录会被重定向到home页面
-     */
-    clearLogoutInfo(): void {
-        this.store.dispatch(new ResetLogoutResponseAction());
     }
 
     //  =======================================================Error Handle=======================================================

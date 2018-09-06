@@ -118,8 +118,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.LOGOUT_FAIL:
             return { ...state, logoutRes: action.payload };
 
-        case actions.LOGOUT_SUCCESS:
+        case actions.LOGOUT_SUCCESS: {
+            localStorage.clear();
+
             return { ...state, logoutRes: action.payload, publicRes: null };
+        }
 
         // change alert threshold setting
         case actions.CHANGE_ALERT_THRESHOLD_SETTING:

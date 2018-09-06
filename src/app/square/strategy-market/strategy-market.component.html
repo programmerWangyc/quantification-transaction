@@ -41,8 +41,9 @@
 
                 <td bt-text-center>
                     <!--1: 已公开，2:审核中，3:需要续费-->
+                    <!---->
                     <ng-container [ngSwitch]="strategy.public">
-                        <a *ngSwitchCase="1" [routerLink]="['../../','strategy','copy', strategy.id]">{{'COPY' |
+                        <a *ngSwitchCase="1" (click)="copyStrategy(strategy)">{{'COPY' |
                             translate}}</a>
                         <span *ngSwitchCase="2">
                             <span *ngIf="!strategy.is_buy; else renewalBlock">{{'PENDING_REVIEW' | translate}}</span>

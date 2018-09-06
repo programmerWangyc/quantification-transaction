@@ -31,6 +31,7 @@ import { routing } from './strategy.routing';
 import { StrategyComponent } from './strategy/strategy.component';
 import { VerifyGenKeyComponent } from './verify-gen-key/verify-gen-key.component';
 import { BacktestModule } from '../backtest/backtest.module';
+import { StrategyBacktestComponent } from './strategy-backtest/strategy-backtest.component';
 
 @NgModule({
     imports: [
@@ -62,6 +63,7 @@ import { BacktestModule } from '../backtest/backtest.module';
         StrategyCreateMetaComponent,
         StrategyEditComponent,
         StrategyVerifyCodeComponent,
+        StrategyBacktestComponent,
     ],
     providers: [
         StrategyConstantService,

@@ -59,7 +59,7 @@
 
             <td>
                 <!-- 没有click事件的 a 标签都需要向下跳转-->
-                <a href="javascript: void 0" (click)="delete.next(strategy)">{{'DELETE' | translate}}</a>
+                <a (click)="delete.next(strategy)">{{'DELETE' | translate}}</a>
 
                 <nz-divider nzType="vertical"></nz-divider>
 
@@ -70,10 +70,9 @@
                 </span>
 
                 <ng-template #elseBlock>
-                    <a href="javascript: void 0" (click)="renewal.next(strategy)">{{'RENEWAL' | translate}}</a>
+                    <a (click)="renewal.next(strategy)">{{'RENEWAL' | translate}}</a>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <!--TODO: 直接进回测的功能没写完-->
-                    <a href="javascript: void 0">{{'BACKTEST' | translate}}</a>
+                    <a [routerLink]="['backtest', strategy.id]" >{{'BACKTEST' | translate}}</a>
                 </ng-template>
 
             </td>

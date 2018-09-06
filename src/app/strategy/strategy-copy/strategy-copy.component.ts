@@ -31,11 +31,6 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
      */
     needShowTemplateDependance: Observable<boolean>;
 
-    /**
-     * @ignore
-     */
-    isAlive = true;
-
     constructor(
         public backtest: BacktestService,
         public constant: StrategyConstantService,

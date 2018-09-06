@@ -29,13 +29,24 @@ export class SquareStrategyBase {
      * 购买策略
      */
     buyStrategy(strategy: StrategyListByNameStrategy): void {
+        this.direct(() => this.directToBuy(strategy));
+    }
+
+    /**
+     * 复制策略
+     */
+    copyStrategy(strategy: StrategyListByNameStrategy): void {
+        this.direct(() => this.directToCopy(strategy));
+    }
+
+    private direct(navigate: () => void): void {
         this.publicService.isLogin().pipe(
             take(1)
         ).subscribe(isLogged => {
             if (isLogged) {
-                this.directToBuy(strategy);
+                navigate();
             } else {
-                this.router.navigate(['auth', 'login'], { relativeTo: this.activatedRoute.root });
+                this.router.navigate([Path.auth, Path.login], { relativeTo: this.activatedRoute.root });
             }
         });
     }
@@ -55,6 +66,15 @@ export class SquareStrategyBase {
                 nzFooter: null,
             });
         }
+    }
+
+    /**
+     * @ignore
+     */
+    private directToCopy(strategy: StrategyInfo): void {
+        const { id } = strategy;
+
+        this.router.navigate([Path.dashboard, Path.strategy, Path.copy, id], { relativeTo: this.activatedRoute.root });
     }
 }
 

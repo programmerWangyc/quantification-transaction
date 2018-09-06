@@ -1,10 +1,23 @@
+@import '../../theme/_variable.theme';
 $container-margin: 164px;
 $content-padding: 10%;
 $title-font: 400 40px/60px 'Google Sans',
 sans-serif;
 $screen-width-middle: 1450px;
 $screen-width-small: 1000px;
+////
+$screen-width: (xs: 480px,
+sm: 768px,
+md: 992px,
+lg: 1200px,
+xl: 1600px,
+);
 
+@function screenWidth($width) {
+    @return map-get($map: $screen-width, $key: $width);
+}
+
+/* mixin */
 @mixin section-bcg($bcg) {
     content: "";
     position: absolute;
@@ -32,22 +45,12 @@ $screen-width-small: 1000px;
     background-color: #4647f2;
 }
 
-@mixin headerNav {
-    position: relative;
-    padding: 0 19px;
-    height: 100%;
-    line-height: 6;
-
-    &:first-child {
-        padding: 0 33px 0 19px;
-    }
-
-    .active {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 6px;
-        background: #484aff;
-        width: 100%;
-    }
+@mixin dotBcg {
+    background: #f1f1f1;
+    background-image: radial-gradient(rgba(228, 228, 228, 1) 14%, transparent 10%),
+        radial-gradient(rgba(228, 228, 228, 1) 14%, transparent 10%),
+        radial-gradient(rgba(228, 228, 228, 1) 14%, transparent 10%),
+        radial-gradient(rgba(228, 228, 228, 1) 14%, transparent 10%);
+    background-size: 10px 10px;
+    background-position: 0px 0px, 5px 0px, 0px 5px, 5px 5px;
 }

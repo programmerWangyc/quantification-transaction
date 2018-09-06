@@ -37,33 +37,26 @@
 
     <nz-layout>
         <nz-header fxLayoutAlign="space-between center" [ngClass]="{'head-collapsed': isCollapsed}">
-            <div id="nav" fxLayoutAlign="space-between center">
+            <div>
                 <i class="anticon trigger" [class.anticon-menu-fold]="!isCollapsed" [class.anticon-menu-unfold]="isCollapsed"
                     (click)="isCollapsed=!isCollapsed"></i>
-                <a *ngFor="let link of headNav" (click)="navigateTo(link)">
-                    {{link.label | translate}}
-                    <i [ngClass]="{active: link.selected}" [@moduleState]="link.selected ? 'active' : 'inactive'"></i>
-                </a>
+                <app-nav-menu [links]="headNav" (navigate)="navigateTo($event)"></app-nav-menu>
             </div>
 
-            <section fxLayoutAlign="end center">
+            <section fxLayoutAlign="space-between center">
+                <app-avatar [username]="username | async" (logout)="logout()"></app-avatar>
+
                 <nz-dropdown>
                     <a nz-dropdown>
                         <i class="anticon anticon-down"></i>
-                        {{'QUOTE_TOOLS' | translate}}
+                        {{ language | async | translate}}
                     </a>
                     <ul nz-menu>
-                        <li nz-menu-item *ngFor="let item of toolMenu" fxLayoutAlign="start center">
-                            <i class="anticon" [ngClass]="'anticon-'+ item.icon"></i>
-                            <a [href]="item.path" target="__blank">{{ item.label| translate}}</a>
-                        </li>
+                        <li nz-menu-item (click)="language$.next('zh')">{{'SIMPLE_CHINESE' | translate}}</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="language$.next('en')">{{'ENGLISH' | translate}}</li>
                     </ul>
                 </nz-dropdown>
-
-                <button nz-button (click)="changeLanguage$.next(true)">{{language | async | translate}}</button>
-
-                <nz-avatar [nzText]="username | async" nz-popover nzPlacement="bottom" [nzTitle]="welcomeTpl"
-                    [nzContent]="userInfoTpl"></nz-avatar>
             </section>
         </nz-header>
 
@@ -72,22 +65,3 @@
         </nz-content>
     </nz-layout>
 </nz-layout>
-
-<ng-template #welcomeTpl>
-    <h6>
-        {{'HELLO' | translate}}: {{username | async}}
-    </h6>
-</ng-template>
-
-<ng-template #userInfoTpl>
-    <div fxLayout="column" id="user-info-tpl">
-        <a [routerLink]="['account']">
-            <i class="anticon anticon-setting"></i>
-            {{'ACCOUNT_MANAGEMENT' | translate}}
-        </a>
-        <a (click)="logout()" style="font-size: 12px; color: red">
-            <i class="anticon anticon-logout"></i>
-            {{'LOGOUT' | translate}}
-        </a>
-    </div>
-</ng-template>

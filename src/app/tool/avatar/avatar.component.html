@@ -7,15 +7,15 @@
 </ng-template>
 
 <ng-template #userInfoTpl>
-    <div fxLayout="column" id="user-info-tpl">
+    <div fxLayout="column">
         <a [routerLink]="['account']">
             <i class="anticon anticon-setting"></i>
             {{'ACCOUNT_MANAGEMENT' | translate}}
         </a>
 
-        <nz-divider nzType="vertical"></nz-divider>
+        <nz-divider></nz-divider>
 
-        <a (click)="logout.next(true)" style="font-size: 12px; color: red">
+        <a (click)="logout.next(true)">
             <i class="anticon anticon-logout"></i>
             {{'LOGOUT' | translate}}
         </a>

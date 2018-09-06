@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { isNumber, sortBy } from 'lodash';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { map, takeWhile, withLatestFrom } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import { GroupedStrategy, keepAliveFn, SemanticArg } from '../../interfaces/app.interface';
@@ -28,9 +28,6 @@ export class RobotStrategyService extends BaseService {
 
     //  =======================================================Serve Request=======================================================
 
-    /**
-     * 请求策略列表
-     */
     launchStrategyList(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
         return this.process.processStrategyList(source);
     }
@@ -76,13 +73,11 @@ export class RobotStrategyService extends BaseService {
      * 获取策略参数
      */
     getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
-        return combineLatest(
-            this.getStrategies(),
-            strategyId.pipe(
-                this.filterTruth()
-            )
+        return strategyId.pipe(
+            this.filterTruth(),
+            withLatestFrom(this.getStrategies())
         ).pipe(
-            map(([strategies, id]) => {
+            map(([id, strategies]) => {
                 const { semanticArgs, semanticTemplateArgs } = strategies.find(item => item.id === id);
 
                 const noArgs = !semanticArgs.length && !semanticTemplateArgs;

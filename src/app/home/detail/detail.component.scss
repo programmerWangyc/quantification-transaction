@@ -2,7 +2,7 @@
 $transformX: 20%;
 
 #detail {
-    background-image: url('../../../assets/images/home/dot_bcg.png');
+    @include dotBcg();
 
     h2 {
         margin: 92px 0 46px 0;

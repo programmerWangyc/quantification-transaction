@@ -1,13 +1,9 @@
 <header fxLayoutAlign="space-evenly center">
     <img src="../../assets/images/home/logo.png">
 
-    <div id="nav" fxLayoutAlign="space-between center">
-        <a *ngFor="let link of navNavItems" (click)="navigateTo(link)">
-            {{link.label | translate}}
-            <i [ngClass]="{active: link.selected}" [@moduleState]="link.selected ? 'active' : 'inactive'"></i>
-        </a>
-    </div>
+    <app-nav-menu [links]="navNavItems" (navigate)="navigateTo($event)"></app-nav-menu>
 
+    <!--Reactive structure-->
     <div id="menu">
         <button nz-button nz-dropdown (click)="isCollapsed = !isCollapsed">
             <i class="anticon anticon-bars"></i>
@@ -36,7 +32,6 @@
                 {{'SIGNUP' | translate}}
             </a>
         </ng-container>
-
     </div>
 
     <nz-dropdown>

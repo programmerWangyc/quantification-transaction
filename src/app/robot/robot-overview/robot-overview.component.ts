@@ -120,6 +120,8 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
 
         this.robotOperate.handleRobotStopError(keepAlive);
 
+        this.robotOperate.handleRobotRestartError(keepAlive);
+
         this.watchDogService.handleSetWatchDogError(keepAlive);
     }
 

@@ -1,11 +1,10 @@
-import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
 export enum Path {
     account = 'account',
     add = 'add',
     agent = 'agent',
-    auth = 'auth',
     analyze = 'analyze',
+    auth = 'auth',
     backtest = 'backtest',
     charge = 'charge',
     code = 'code',
@@ -20,12 +19,14 @@ export enum Path {
     google = 'google',
     home = 'home',
     key = 'key',
+    login = 'login',
     market = 'market',
     message = 'message',
     nickname = 'nickname',
     rent = 'rent',
     reset = 'reset',
     robot = 'robot',
+    signup = 'singup',
     simulation = 'simulation',
     square = 'square',
     strategy = 'strategy',
@@ -64,17 +65,4 @@ export enum BtCommentType {
 export enum LanguageMap {
     zh = 'SIMPLE_CHINESE',
     en = 'ENGLISH',
-}
-
-export function navAnimationTrigger(): AnimationTriggerMetadata {
-    return trigger('moduleState', [
-        state('inactive', style({
-            opacity: 0,
-        })),
-        state('active', style({
-            opacity: 1,
-        })),
-        transition('inactive => active', animate('300ms ease-in')),
-        transition('active => inactive', animate('300ms ease-out')),
-    ]);
 }

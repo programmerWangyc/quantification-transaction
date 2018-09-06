@@ -10,14 +10,6 @@
         line-height: $header-height;
     }
 
-    #nav {
-        width: 30%;
-
-        a {
-            @include headerNav();
-        }
-    }
-
     nz-layout {
         background-color: #fff;
     }
@@ -33,18 +25,7 @@
 
         section {
             margin: 0 50px 0 0;
-
-            a {
-                margin: 0 1em;
-            }
-
-            nz-avatar {
-                background-color: $blue;
-            }
-
-            button {
-                margin: 0 2em;
-            }
+            width: 10%;
         }
     }
 
@@ -71,21 +52,14 @@
     }
 }
 
-#user-info-tpl {
-    a {
-        margin: 10px 0;
-    }
-}
-
 :host ::ng-deep .trigger {
-    font-size: 18px;
     line-height: $header-height;
     cursor: pointer;
     transition: color .3s;
 }
 
 :host ::ng-deep .trigger:hover {
-    color: $blue;
+    color: color(primary);
 }
 
 :host ::ng-deep .logo {

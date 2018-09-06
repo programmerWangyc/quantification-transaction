@@ -12,7 +12,7 @@ export class ExchangeComponent implements OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER', path: '../../' }, { name: 'EXCHANGE' }];
+    paths: Breadcrumb[] = [{ name: 'EXCHANGE' }];
 
     constructor(
         private router: Router,

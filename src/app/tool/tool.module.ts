@@ -10,10 +10,13 @@ import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
 import { QRCodeModule } from 'angular2-qrcode';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
+import { AvatarComponent } from './avatar/avatar.component';
 import { DIRECTIVES } from './directives/directives.import';
 import { ExchangePairComponent } from './exchange-pair/exchange-pair.component';
 import { FooterComponent } from './footer/footer.component';
+import { FourZeroFourComponent } from './four-zero-four/four-zero-four.component';
 import { IndicatorComponent } from './indicator/indicator.component';
+import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PIPES } from './pipes/index.pipe';
 import { RobotLogComponent } from './robot-log/robot-log.component';
@@ -27,8 +30,6 @@ import { ShareComponent } from './share/share.component';
 import { SimpleNzConfirmWrapComponent } from './simple-nz-confirm-wrap/simple-nz-confirm-wrap.component';
 import { StrategyRenewalComponent } from './strategy-renewal/strategy-renewal.component';
 import { VerifyPasswordComponent } from './verify-password/verify-password.component';
-import { AvatarComponent } from './avatar/avatar.component';
-import { FourZeroFourComponent } from './four-zero-four/four-zero-four.component';
 
 export function highchartsFactory() {
     const highStock = require('highcharts/highstock');
@@ -52,11 +53,14 @@ export function highchartsFactory() {
         TranslateModule,
     ],
     declarations: [
+        AvatarComponent,
         DIRECTIVES,
         ExchangePairComponent,
         FooterComponent,
+        FourZeroFourComponent,
         IndicatorComponent,
         NavbarComponent,
+        NavMenuComponent,
         PIPES,
         RobotInfoComponent,
         RobotInnerTableComponent,
@@ -70,8 +74,6 @@ export function highchartsFactory() {
         SimpleNzConfirmWrapComponent,
         StrategyRenewalComponent,
         VerifyPasswordComponent,
-        AvatarComponent,
-        FourZeroFourComponent,
     ],
     entryComponents: [
         SimpleNzConfirmWrapComponent,
@@ -79,11 +81,13 @@ export function highchartsFactory() {
         VerifyPasswordComponent,
     ],
     exports: [
+        AvatarComponent,
         DIRECTIVES,
         ExchangePairComponent,
         FooterComponent,
         IndicatorComponent,
         NavbarComponent,
+        NavMenuComponent,
         PIPES,
         RobotInfoComponent,
         RobotInnerTableComponent,

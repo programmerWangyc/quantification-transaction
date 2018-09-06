@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { isString } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
 import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
-import { map, partition, startWith } from 'rxjs/operators';
+import { map, partition, startWith, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -28,7 +28,7 @@ export class StrategyComponent implements BaseComponent {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER', path: '../../' }, { name: 'STRATEGY_LIBRARY' }];
+    paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY' }];
 
     /**
      * @ignore
@@ -110,20 +110,11 @@ export class StrategyComponent implements BaseComponent {
      * @ignore
      */
     launch() {
-        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$.asObservable());
-
-        const keepAlive = () => this.isAlive;
-
+        /**
+         * Api request
+         */
         this.subscription$$ = this.strategyOperate.launchDeleteStrategy(this.delete$.asObservable())
-            .add(this.strategyOperate.launchShareStrategy(this.share$.asObservable()))
-            .add(this.strategyOperate.remindPublishRobot())
-            .add(this.strategyOperate.remindStoreGenKeyResult())
-            .add(renewalByCode.subscribe(({ name, username, email, id }) => this.nzModal.create({
-                nzContent: StrategyRenewalComponent,
-                nzComponentParams: { name, author: username, email, id },
-                nzFooter: null,
-            })))
-            .add(renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.charge, Path.rent, strategy.id], { relativeTo: this.activatedRoute.parent })));
+            .add(this.strategyOperate.launchShareStrategy(this.share$.asObservable()));
 
         this.btNodeService.launchGetNodeList(of(true));
 
@@ -131,6 +122,33 @@ export class StrategyComponent implements BaseComponent {
 
         this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none }));
 
+        /**
+         * Payment entrance;
+         */
+        const keepAlive = () => this.isAlive;
+
+        const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$.asObservable().pipe(
+            takeWhile(keepAlive)
+        ));
+
+        renewalByCode.subscribe(({ name, username, email, id }) => this.nzModal.create({
+            nzContent: StrategyRenewalComponent,
+            nzComponentParams: { name, author: username, email, id },
+            nzFooter: null,
+        }));
+
+        renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.charge, Path.rent, strategy.id], { relativeTo: this.activatedRoute.parent }));
+
+        /**
+         * Api result tip
+         */
+        this.strategyOperate.remindPublishRobot(keepAlive);
+
+        this.strategyOperate.remindStoreGenKeyResult(keepAlive);
+
+        /**
+         * Error handle
+         */
         this.strategyService.handleStrategyListError(keepAlive);
 
         this.btNodeService.handleNodeListError(keepAlive);
@@ -151,5 +169,7 @@ export class StrategyComponent implements BaseComponent {
         this.isAlive = false;
 
         this.subscription$$.unsubscribe();
+
+        this.strategyService.resetState();
     }
 }

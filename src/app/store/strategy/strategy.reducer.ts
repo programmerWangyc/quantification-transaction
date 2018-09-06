@@ -194,7 +194,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // reset state
         case actions.RESET_STATE:
-            return { ...state, opStrategyTokenRes: null };
+            return { ...state, opStrategyTokenRes: null, genKeyRes: null, shareStrategyRes: null, deleteStrategyRes: null };
 
         // strategy dependance
         case actions.UPDATE_STRATEGY_DEPENDANCE_TEMPLATES:

@@ -1,0 +1,4 @@
+<a *ngFor="let link of links" (click)="navigate.next(link)">
+    {{link.label | translate}}
+    <i [ngClass]="{active: link.selected}" [@moduleState]="link.selected ? 'active' : 'inactive'"></i>
+</a>

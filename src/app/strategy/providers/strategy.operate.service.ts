@@ -106,7 +106,7 @@ export class StrategyOperateService extends BaseService {
         );
     }
 
-    remindPublishRobot(): Subscription {
+    remindPublishRobot(keepAlive: keepAliveFn): Subscription {
         return zip(
             this.getShareStrategyResponse().pipe(
                 filter(res => res.result)
@@ -118,7 +118,8 @@ export class StrategyOperateService extends BaseService {
             )
         ).pipe(
             map(([_1, _2]) => true),
-            withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN']))
+            withLatestFrom(this.translate.get(['PUBLISH_STRATEGY_RELATED_ROBOT_TIP', 'I_KNOWN'])),
+            takeWhile(keepAlive)
         ).subscribe(([_1, translated]) => this.nzModal.success({ nzContent: translated.PUBLISH_STRATEGY_RELATED_ROBOT_TIP, nzOkText: translated.I_KNOWN }));
     }
 
@@ -128,9 +129,9 @@ export class StrategyOperateService extends BaseService {
         );
     }
 
-    remindStoreGenKeyResult(): Subscription {
+    remindStoreGenKeyResult(keepAlive: keepAliveFn): Subscription {
         return this.getGenKeyResponse().pipe(
-            filter(res => !!res.result),
+            this.filterTruth(),
             map(res => res.result),
             withLatestFrom(
                 this.getRequestParams().pipe(
@@ -138,19 +139,16 @@ export class StrategyOperateService extends BaseService {
                     filter(req => !!req)
                 ),
                 this.translate.get(['I_KNOWN', 'COPY_CODE', 'REGISTER_CODE'])
-            )
-        ).subscribe(([code, req, label]) => {
-            const { strategyId, type } = req;
-
-            this.nzModal.success({
-                nzContent: GenKeyPanelComponent,
-                nzComponentParams: { type, strategyId, code },
-                nzOkText: label.I_KNOWN,
-                nzCancelText: null,
-                nzTitle: type === GenKeyType.COPY_CODE ? label.COPY_CODE : label.REGISTER_CODE,
-                nzWidth: '30vw',
-            });
-        });
+            ),
+            takeWhile(keepAlive)
+        ).subscribe(([code, { strategyId, type }, label]) => this.nzModal.success({
+            nzContent: GenKeyPanelComponent,
+            nzComponentParams: { type, strategyId, code },
+            nzOkText: label.I_KNOWN,
+            nzCancelText: null,
+            nzTitle: type === GenKeyType.COPY_CODE ? label.COPY_CODE : label.REGISTER_CODE,
+            nzWidth: '30vw',
+        }));
     }
 
     private getDeleteStrategyResponse(): Observable<fromRes.DeleteStrategyResponse> {

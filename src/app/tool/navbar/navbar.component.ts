@@ -2,23 +2,85 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable, of, Subject } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
 
-import { LanguageMap, navAnimationTrigger } from '../../app.config';
+import { LanguageMap } from '../../app.config';
 import {
     analyzing, community, documentation, factFinder, main, NavItem, quoteChart, square
 } from '../../base/base.config';
+import { keepAliveFn } from '../../interfaces/app.interface';
 import { PublicService } from '../../providers/public.service';
 import { RoutingService } from '../../providers/routing.service';
+
+export class NavBaseComponent {
+    /**
+     * @ignore
+     */
+    language$: Subject<string> = new Subject();
+
+    /**
+     * @ignore
+     */
+    language: Observable<string>;
+
+    /**
+     * @ignore
+     */
+    username: Observable<string>;
+
+    constructor(
+        public router: Router,
+        public publicService: PublicService,
+        public activatedRoute: ActivatedRoute,
+        public routing: RoutingService,
+    ) { }
+
+    protected launch(keepAlive: keepAliveFn, monitor: (url: string) => void) {
+        this.publicService.updateLanguage(this.language$.asObservable().pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.routing.getCurrentUrl().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(url => monitor(url));
+
+        this.publicService.handleLogoutError(keepAlive);
+    }
+
+    protected initialModel(): void {
+        this.language = this.publicService.getLanguage().pipe(
+            map(lan => LanguageMap[lan])
+        );
+
+        this.username = this.publicService.getCurrentUser();
+    }
+
+    /**
+     * @ignore
+     */
+    navigateTo(target: NavItem): void {
+        if (!target.path.startsWith('http')) {
+            this.router.navigate([target.path], { relativeTo: this.activatedRoute });
+        } else {
+            window.open(target.path);
+        }
+    }
+
+    /**
+     * @ignore
+     */
+    logout(): void {
+        this.publicService.launchLogout(of(null));
+    }
+}
 
 
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss'],
-    animations: [navAnimationTrigger()],
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent extends NavBaseComponent implements OnInit, OnDestroy {
 
     /**
      * Head navigation
@@ -43,85 +105,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
     /**
      * @ignore
      */
-    language$: Subject<string> = new Subject();
-
-    /**
-     * @ignore
-     */
-    language: Observable<string>;
-
-    /**
-     * @ignore
-     */
     isAlive = true;
 
-    /**
-     * @ignore
-     */
-    username: Observable<string>;
-
     constructor(
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private publicService: PublicService,
-        private routing: RoutingService,
-    ) { }
+        public router: Router,
+        public activatedRoute: ActivatedRoute,
+        public publicService: PublicService,
+        public routing: RoutingService,
+    ) {
+        super(router, publicService, activatedRoute, routing);
+    }
 
     /**
      * @ignore
      */
     ngOnInit() {
+        const monitor = (url: string) => this.navNavItems.forEach(item => item.selected = url.includes(item.path));
+
         this.initialModel();
 
-        this.launch();
-    }
-
-    /**
-     * @ignore
-     */
-    initialModel(): void {
         this.isBeforeLogin = this.publicService.isLogin().pipe(
-            map(logged => !logged)
+            map(logged => !logged),
+            distinctUntilChanged()
         );
 
-        this.language = this.publicService.getLanguage().pipe(
-            map(lan => LanguageMap[lan])
-        );
-
-        this.username = this.publicService.getCurrentUser();
-    }
-
-    /**
-     * @ignore
-     */
-    launch(): void {
-        this.publicService.updateLanguage(this.language$.asObservable().pipe(
-            takeWhile(() => this.isAlive)
-        ));
-
-        this.routing.getCurrentUrl().pipe(
-            takeWhile(() => this.isAlive)
-        ).subscribe(url => {
-            this.navNavItems.forEach(item => item.selected = url.includes(item.path));
-        });
-    }
-
-    /**
-     * @ignore
-     */
-    navigateTo(target: NavItem): void {
-        if (!target.path.startsWith('http')) {
-            this.router.navigate([target.path], { relativeTo: this.activatedRoute });
-        } else {
-            window.open(target.path);
-        }
-    }
-
-    /**
-     * @ignore
-     */
-    logout(): void {
-        this.publicService.launchLogout(of(null));
+        this.launch(() => this.isAlive, monitor);
     }
 
     /**

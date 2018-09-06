@@ -9,7 +9,7 @@ header {
     width: 100%;
     height: $header-height;
     box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
-    background: #222944;
+    background: $normal-bcg;
     position: fixed;
     top: 0;
     left: 0;
@@ -24,12 +24,8 @@ header {
         }
     }
 
-    #nav {
+    app-nav-menu {
         height: 100%;
-
-        a {
-            @include headerNav();
-        }
     }
 
     #auth {
@@ -69,7 +65,7 @@ header {
         width: 100%;
     }
 
-    #nav {
+    app-nav-menu {
         display: none !important;
     }
 

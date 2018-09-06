@@ -1,0 +1,35 @@
+<app-indicator [paths]="paths"></app-indicator>
+
+<nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
+    <nz-tabset>
+        <nz-tab *ngFor="let tab of tabs; index as idx" [nzTitle]="titleTemplate">
+            <ng-template #titleTemplate>
+                <i class="anticon" [ngClass]="tab.icon"></i>{{ tab.name | translate }}
+            </ng-template>
+            <div [ngSwitch]="idx">
+                <div *ngSwitchCase="0">
+                    <ng-content *ngTemplateOutlet="backtestTpl"></ng-content>
+                </div>
+                <div *ngSwitchCase="1">
+                    <ng-content *ngTemplateOutlet="descriptionTpl"></ng-content>
+                </div>
+                <div *ngSwitchCase="2">
+                    <ng-content *ngTemplateOutlet="manualTpl"></ng-content>
+                </div>
+                <div *ngSwitchDefault>template not found</div>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</nz-spin>
+
+<ng-template #backtestTpl>
+    <app-backtest-simulation [category]="category | async" [language]="language | async"></app-backtest-simulation>
+</ng-template>
+
+<ng-template #descriptionTpl>
+    <markdown [data]="description | async | toMarkdown"></markdown>
+</ng-template>
+
+<ng-template #manualTpl>
+    <markdown [data]="manual | async | toMarkdown"></markdown>
+</ng-template>
