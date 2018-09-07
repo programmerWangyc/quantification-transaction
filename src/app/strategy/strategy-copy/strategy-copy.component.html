@@ -21,7 +21,7 @@
 
 <ng-template #edit>
     <div class="section">
-        <app-strategy-des [strategy]="strategy | async" (catChange)="category$.next($event)" (langChange)="language$.next($event)"
+        <app-strategy-des [strategy]="strategy | async" isCopy="true" (catChange)="category$.next($event)" (langChange)="language$.next($event)"
             (nameUpdate)="name$.next($event)"></app-strategy-des>
     </div>
 

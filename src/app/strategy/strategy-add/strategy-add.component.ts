@@ -65,7 +65,7 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
     /**
      * @ignore
      */
-    initialPrivateModel() {
+    private initialPrivateModel() {
         this.templates = this.getTemplateDependance(this.strategyService.getAvailableDependance(true));
 
         this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
@@ -74,7 +74,7 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
     /**
      * @ignore
      */
-    privateLaunch() {
+    private privateLaunch() {
         const keepAlive = () => this.isAlive;
 
         this.export$.asObservable().pipe(
@@ -105,7 +105,5 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
      */
     ngOnDestroy() {
         this.isAlive = false;
-
-        this.subscription$$.unsubscribe();
     }
 }

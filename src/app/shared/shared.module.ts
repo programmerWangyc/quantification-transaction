@@ -3,6 +3,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxDnDModule } from '@swimlane/ngx-dnd';
 
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { FileUploadModule } from 'ng2-file-upload';
@@ -18,6 +19,7 @@ import { WatchDogService } from './providers/watch-dog.service';
         FlexLayoutModule,
         FormsModule,
         NgZorroAntdModule,
+        NgxDnDModule,
         ReactiveFormsModule,
         ToolModule,
         TranslateModule,

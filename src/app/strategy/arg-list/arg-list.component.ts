@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { omit } from 'lodash';
 import { NzModalService } from 'ng-zorro-antd';
 
@@ -11,11 +12,11 @@ import { StrategyConstantService } from '../providers/strategy.constant.service'
 
 export interface EditableStrategyMetaArg extends StrategyMetaArg {
     editing?: boolean;
-    flag?: number;
+    symbol: Symbol;
 }
 
 export interface EditingArg {
-    index: number;
+    symbol: Symbol;
     originValue: EditableStrategyMetaArg;
 }
 
@@ -58,7 +59,7 @@ export class ArgListComponent implements OnInit {
     /**
      * 处于编辑状态的参数
      */
-    editingArgs: EditingArg[] = [];
+    private editingArgs: EditingArg[] = [];
 
     /**
      * 参数的可选类型
@@ -80,11 +81,11 @@ export class ArgListComponent implements OnInit {
     /**
      * 删除参数前的确认函数；
      */
-    delete(target: EditableStrategyMetaArg, index: number): void {
+    delete(target: EditableStrategyMetaArg): void {
         this.nzModal.confirm({
             nzContent: SimpleNzConfirmWrapComponent,
             nzComponentParams: { content: 'DELETE_STRATEGY_ARG_CONFIRM', params: { name: target.name } },
-            nzOnOk: this.deleteArg(index),
+            nzOnOk: this.deleteArg(target),
         });
     }
 
@@ -93,29 +94,28 @@ export class ArgListComponent implements OnInit {
      * @param target 参数
      * @param index 在列表中的位置
      */
-    startEdit(target: EditableStrategyMetaArg, index: number): void {
+    startEdit(target: EditableStrategyMetaArg): void {
         target.editing = true;
 
-        target.flag = Math.random();
-
-        this.editingArgs.push({ index, originValue: omit({ ...target }, 'editing') });
+        this.editingArgs.push({ symbol: target.symbol, originValue: omit({ ...target }, 'editing') });
     }
 
     /**
      * 取消参数的编辑状态
      * @param target 参数
-     * @param index 在列表中的位置
      */
-    cancelEdit(target: EditableStrategyMetaArg, index: number): void {
+    cancelEdit(target: EditableStrategyMetaArg): void {
         target.editing = false;
 
-        const idx = this.editingArgs.findIndex(item => item.originValue.flag === target.flag);
+        const editingIdx = this.editingArgs.findIndex(item => item.originValue.symbol === target.symbol);
 
         this.data = [...this.data];
 
-        this.data[index] = this.editingArgs[idx].originValue;
+        const dataIdx = this.data.findIndex(item => item.symbol === target.symbol);
 
-        this.editingArgs.splice(idx, 1);
+        this.data[dataIdx] = this.editingArgs[editingIdx].originValue;
+
+        this.editingArgs.splice(editingIdx, 1);
     }
 
     /**
@@ -126,9 +126,9 @@ export class ArgListComponent implements OnInit {
     saveEdit(target: EditableStrategyMetaArg): void {
         const positions: number[] = [];
 
-        this.data.forEach((item, idx) => item.flag !== target.flag && (item.name === target.name || item.des === target.des) && positions.push(idx));
+        this.data.forEach((item, idx) => item.symbol !== target.symbol && (item.name === target.name || item.des === target.des) && positions.push(idx));
 
-        const cleanEditingList = flag => this.editingArgs = this.editingArgs.filter(item => item.originValue.flag !== flag);
+        const cleanEditingList = symbol => this.editingArgs = this.editingArgs.filter(item => item.originValue.symbol !== symbol);
 
         if (positions.length > 0) {
             this.nzModal.confirm({
@@ -139,13 +139,13 @@ export class ArgListComponent implements OnInit {
 
                     target.editing = false;
 
-                    cleanEditingList(target.flag);
+                    cleanEditingList(target.symbol);
                 },
             });
         } else {
             target.editing = false;
 
-            cleanEditingList(target.flag);
+            cleanEditingList(target.symbol);
         }
     }
 
@@ -153,10 +153,10 @@ export class ArgListComponent implements OnInit {
      * 删除参数；
      * 柯里化前的函数；
      */
-    private deleteArg = index => () => {
-        this.removeArg.emit(this.data[index]);
+    private deleteArg = (target: EditableStrategyMetaArg) => () => {
+        this.removeArg.emit(target);
 
-        this.data = this.data.filter((_, idx) => idx !== index);
+        this.data = this.data.filter(item => item.symbol !== target.symbol);
     }
 
     /**
@@ -192,7 +192,7 @@ export class ArgListComponent implements OnInit {
         const index = this.data.findIndex(item => item.name === value.name || item.des === value.des);
 
         if (index < 0) {
-            this.data = [...this.data, value];
+            this.data = [...this.data, { ...value, symbol: Symbol() }];
         } else {
             /**
              * !FIXME: Hack, because of the ExpressionChangedAfterIsHasBeenCheckedError.
@@ -202,7 +202,7 @@ export class ArgListComponent implements OnInit {
                     nzContent: SimpleNzConfirmWrapComponent,
                     nzComponentParams: { content: 'REMOVE_VARIABLE_CONFIRM' },
                     nzOnOk: () => {
-                        this.data[index] = value;
+                        this.data[index] = { ...value, symbol: Symbol() };
                         this.data = [...this.data];
                     },
                 });
@@ -214,15 +214,15 @@ export class ArgListComponent implements OnInit {
      * 参数显示前的优化函数，主要用来去掉一些标识符；
      * @param arg 策略参数
      */
-    private optimizeArg(arg: StrategyMetaArg): StrategyMetaArg {
+    private optimizeArg(arg: StrategyMetaArg): EditableStrategyMetaArg {
         if (arg.type === VariableType.SELECT_TYPE) {
-            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.LIST_PREFIX) };
+            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.LIST_PREFIX), symbol: Symbol() };
         } else if (arg.type === VariableType.ENCRYPT_STRING_TYPE) {
-            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.ENCRYPT_PREFIX) };
+            return { ...arg, defaultValue: this.constant.withoutPrefix(arg.defaultValue, this.constant.ENCRYPT_PREFIX), symbol: Symbol() };
         } else if (arg.type === VariableType.BOOLEAN_TYPE) {
-            return { ...arg, set defaultValue(value: any) { this._defaultValue = !!value; }, get defaultValue() { return Number(this._defaultValue); }, _defaultValue: arg.defaultValue };
+            return { ...arg, set defaultValue(value: any) { this._defaultValue = !!value; }, get defaultValue() { return Number(this._defaultValue); }, _defaultValue: arg.defaultValue, symbol: Symbol() };
         } else {
-            return arg;
+            return { ...arg, symbol: Symbol() };
         }
     }
 

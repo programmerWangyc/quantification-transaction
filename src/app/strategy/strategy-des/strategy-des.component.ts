@@ -21,13 +21,17 @@ export class StrategyDesComponent implements OnInit {
     @Input() set strategy(value: Strategy) {
         if (!value) return;
 
-        this.strategyName = value.name + '(copy)';
+        this.strategyName = value.name;
 
         this.language = value.language;
 
         this.category = value.category;
 
         this.strategyService.updateSelectedLanguage(this.language);
+    }
+
+    @Input() set isCopy(input: boolean) {
+        this.strategyName = input ? this.strategyName + '(copy)' : this.strategyName;
     }
 
     /**

@@ -1,0 +1,26 @@
+@import '../../../theme/_variable.theme';
+
+tr td:first-child {
+    cursor: grab;
+}
+
+.gu-mirror {
+    border: 1px solid #e8e8e8;
+    background: color(primary);
+
+    td {
+        width: 15%;
+        text-align: center;
+        border-right: 1px solid #e8e8e8;
+        padding: 16px;
+        word-break: break-word;
+    }
+
+    td:first-child {
+        width: 300px; /* 鬼知道为什么这个地方是300px的时候是好的 */
+    }
+
+    td:last-child {
+        width: 20%;
+    }
+}

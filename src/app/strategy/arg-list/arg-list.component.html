@@ -10,9 +10,9 @@
             <th [nzWidth]="'20%'" bt-text-center>{{'OPERATE' | translate}}</th>
         </tr>
     </thead>
-    <tbody>
-        <tr nz-tbody-tr *ngFor="let item of nzTable.data; index as idx">
-            <td bt-text-center>{{idx + 1}}</td>
+    <tbody ngxDroppable [model]="data">
+        <tr nz-tbody-tr *ngFor="let item of nzTable.data; index as idx" ngxDraggable [model]="item">
+            <td bt-text-center ngxDragHandle>{{idx + 1}}</td>
             <ng-container *ngIf="!item.editing; else elseBlock">
                 <td bt-text-center>{{item.name}}</td>
                 <td bt-text-center>{{item.des}}</td>
@@ -92,16 +92,16 @@
                 </td>
 
                 <td bt-text-center>
-                    <a href="javascript: void 0" (click)="delete(item, idx)">{{'DELETE' | translate}}</a>
+                    <a href="javascript: void 0" (click)="delete(item)">{{'DELETE' | translate}}</a>
 
                     <nz-divider nzType="vertical"></nz-divider>
 
-                    <a href="javascript: void 0 " (click)="cancelEdit(item, idx)">{{'CANCEL' | translate}}</a>
+                    <a href="javascript: void 0 " (click)="cancelEdit(item)">{{'CANCEL' | translate}}</a>
 
                     <nz-divider nzType="vertical"></nz-divider>
 
                     <a href="javascript: void 0 " *ngIf="name.valid && des.valid && (item.type !== 3 || item.type === 3 && isSelectValueValid(item.defaultValue)); else forbiddenBlock"
-                        (click)="saveEdit(item, idx)">{{'SAVE' | translate}}</a>
+                        (click)="saveEdit(item)">{{'SAVE' | translate}}</a>
 
                     <ng-template #forbiddenBlock>
                         <span>{{'SAVE' | translate}}</span>

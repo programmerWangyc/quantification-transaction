@@ -17,6 +17,7 @@ import './assets/lz4';
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
 
+(window as any).global = window; // ngx-dnd
 
 /***************************************************************************************************
  * BROWSER POLYFILLS

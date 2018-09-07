@@ -64,7 +64,5 @@ export class StrategyBacktestComponent extends StrategyCreateMetaComponent imple
 
     ngOnDestroy() {
         this.isAlive = false;
-
-        this.subscription$$.unsubscribe();
     }
 }
