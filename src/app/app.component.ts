@@ -101,7 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     private isNavHidden(url: string, routeConfig: Route): boolean {
-        return routeConfig.path === '**' || url && url.includes(Path.dashboard);
+        return routeConfig && routeConfig.path === '**' || url && url.includes(Path.dashboard);
     }
 
     /**

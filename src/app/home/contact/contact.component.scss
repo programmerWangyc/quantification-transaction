@@ -56,7 +56,7 @@
     }
 }
 
-@media screen and (max-width: $screen-width-small) {
+@media screen and (max-width: screenWidth(md)) {
     #contact-container {
         flex-direction: column !important;
 

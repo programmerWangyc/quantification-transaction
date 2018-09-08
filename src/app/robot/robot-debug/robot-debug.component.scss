@@ -1,6 +1,5 @@
-@import "../../dashboard/_dashboard";
 .debugger {
-    @include head-section();
+    margin: 2em 0 1em 0;
 }
 
 nz-alert {

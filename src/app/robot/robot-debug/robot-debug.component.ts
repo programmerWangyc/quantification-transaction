@@ -22,7 +22,7 @@ import { RobotOperateType } from '../../store/robot/robot.reducer';
 export class RobotDebugComponent implements BaseComponent {
     subscription$$: Subscription;
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../' }, { name: 'DEBUG' }];
+    paths: Breadcrumb[] = [{ name: 'ROBOT', path: '../' }, { name: 'DEBUG' }];
 
     platforms: Observable<Platform[]>;
 

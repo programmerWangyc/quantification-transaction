@@ -70,7 +70,7 @@ $transformX: 20%;
     }
 }
 
-@media screen and (max-width: $screen-width-small) {
+@media screen and (max-width: screenWidth(md)) {
     .detail-container {
         flex-direction: column;
         margin-bottom: 0 !important;

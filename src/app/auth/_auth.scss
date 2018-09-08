@@ -28,7 +28,7 @@ $prefix: 'login' !default;
 }
 
 .redirect {
-    color: $blue;
+    color: color(primary);
     text-decoration: none;
 }
 

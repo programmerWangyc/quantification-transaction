@@ -6,10 +6,10 @@
 }
 
 .title {
-    background-color: $weakBlue;
+    background-color: color(primary);
     border-radius: 4px;
     text-indent: 1em;
-    color: $gray;
+    color: color(weak-bcg);
     min-height: 39px;
     line-height: 39px;
 }

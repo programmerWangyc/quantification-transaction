@@ -1,8 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/material.css";
-//use form angular2-markdown;
+/* use form angular2-markdown; */
 @import 'prismjs/themes/prism.css';
 @import '../node_modules/codemirror/theme/3024-day';
 @import '../node_modules/codemirror/theme/3024-night';
@@ -59,33 +58,35 @@
 @import '../node_modules/codemirror/theme/xq-light';
 @import '../node_modules/codemirror/theme/yeti';
 @import '../node_modules/codemirror/theme/zenburn';
-
+/* drag and drop */
 @import '../node_modules/@swimlane/ngx-dnd/release/index';
+
 html,
 body {
-    margin: 0;
+    width: 100%;
     height: 100%;
-    line-height: normal;
-    font-family: Roboto, sans-serif !important;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: rgba(0, 0, 0, .65) !important;
-    font-size: 14px !important;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
     line-height: 1.5;
 }
 
-$warn: #f44336;
-.form-error {
-    color: $warn;
-    font-size: 12px;
+/* reset style */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 }
 
 a {
     text-decoration: none;
+
     &:hover {
         text-decoration: none;
         color: inherit;

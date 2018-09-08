@@ -9,7 +9,7 @@ import { Breadcrumb } from '../../interfaces/app.interface';
 })
 export class ExchangeAddComponent implements OnInit {
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'EXCHANGE', path: '../' }, { name: 'ADD' }];
+    paths: Breadcrumb[] = [ { name: 'EXCHANGE', path: '../' }, { name: 'ADD' }];
 
     constructor(
     ) {

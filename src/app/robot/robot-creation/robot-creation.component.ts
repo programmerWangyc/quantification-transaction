@@ -15,7 +15,7 @@ import { CreateRobotComponent } from '../create-robot/create-robot.component';
 })
 export class RobotCreationComponent implements OnInit, CanDeactivateComponent {
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../' }, { name: 'CREATE_ROBOT' }];
+    paths: Breadcrumb[] = [{ name: 'ROBOT', path: '../' }, { name: 'CREATE_ROBOT' }];
 
     /**
      * @ignore

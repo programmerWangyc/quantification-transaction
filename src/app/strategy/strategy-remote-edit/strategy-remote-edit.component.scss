@@ -8,7 +8,7 @@ li {
     }
     span {
         &:first-child {
-            color: $gray;
+            color: color(weak-bcg);
             margin-right: 1em;
             &::after {
                 content: ':'
@@ -21,9 +21,9 @@ li {
 }
 
 .connect {
-   color: $green;
+   color: color(accent);
 }
 
 .disconnect {
-    color: $warn;
+    color: color(dangerous);
 }

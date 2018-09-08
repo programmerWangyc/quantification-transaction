@@ -43,7 +43,7 @@
     }
 }
 
-@media screen and (max-width: $screen-width-small) {
+@media screen and (max-width: screenWidth(md)) {
     #produce-bcg {
         margin: 0;
     }

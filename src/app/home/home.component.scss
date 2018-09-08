@@ -1,5 +1,5 @@
 @import './_home';
-@media screen and (max-width: $screen-width-small) {
+@media screen and (max-width: screenWidth(md)) {
     #home-container {
         margin: 0;
     }

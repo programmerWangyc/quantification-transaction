@@ -1,25 +1,25 @@
-$blue: #1890ff;
-$gray: #77909c;
-$warn: #f04134;
-$green: #87d068;
-$weakBlue: #e6f7ff;
-$yellow: #faad14;
-/////
-$container-margin: 164px;
-$content-padding: 10%;
-$title-font: 400 40px/60px 'Google Sans',
-sans-serif;
-$screen-width-middle: 1450px;
-$screen-width-small: 1000px;
-////
+/* global style config */
 $header-height: 6rem;
 $bcg-nav: #f7f7f7;
-////
+/* colors */
 $color: (primary: #1890ff,
 accent: #87d068,
-warning: #f04134,
+weak-bcg: #77909c,
+dangerous: #f04134,
 );
 
 @function color($type) {
     @return map-get($color, $type);
+}
+
+/* reactive breakpoint */
+$screen-width: (xs: 480px,
+sm: 768px,
+md: 992px,
+lg: 1200px,
+xl: 1600px,
+);
+
+@function screenWidth($width) {
+    @return map-get($map: $screen-width, $key: $width);
 }

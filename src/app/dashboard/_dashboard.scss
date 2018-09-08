@@ -1,15 +1,11 @@
 @import '../../theme/_variable.theme';
-$side-width: 240px;
-@mixin head-section {
-    margin: 2em 0 1em 0;
-}
 
 @mixin header-section {
     h3 {
         margin: 2em 0 1em 0;
     }
     ul {
-        background-color: $weakBlue;
+        background-color: color(primary);
         border-radius: 4px;
         padding: 1em;
         margin: 0;

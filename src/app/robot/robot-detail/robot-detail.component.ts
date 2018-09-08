@@ -58,7 +58,7 @@ export class RobotDetailComponent extends BaseComponent {
     initialModel() {
         const name = this.activatedRoute.snapshot.paramMap.get('name');
 
-        this.paths = [{ name: 'CONTROL_CENTER' }, { name: 'ROBOT', path: '../../' }, { name }];
+        this.paths = [{ name: 'ROBOT', path: '../../' }, { name }];
 
         /**
          * state: false ---> true ---> false;

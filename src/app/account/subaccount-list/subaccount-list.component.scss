@@ -1,8 +1,8 @@
 @import '../../../theme/_variable.theme';
 .success {
-    color: $green;
+    color: color(accent);
 }
 
 .fail {
-    color: $warn;
+    color: color(dangerous);
 }

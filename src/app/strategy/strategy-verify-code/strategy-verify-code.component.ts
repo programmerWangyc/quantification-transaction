@@ -18,7 +18,7 @@ import { GenKeyType } from '../../strategy/providers/strategy.operate.service';
 })
 export class StrategyVerifyCodeComponent implements BaseComponent {
 
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY', path: '../../../' }, { name: 'VERIFY_CODE' }];
+    paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY', path: '../../../' }, { name: 'VERIFY_CODE' }];
 
     verify$: Subject<string> = new Subject();
 

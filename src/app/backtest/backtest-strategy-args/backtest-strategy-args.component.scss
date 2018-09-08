@@ -1,12 +1,12 @@
 @import '../_backtest';
 @import '../../../theme/_variable.theme';
 .help {
-    color: $blue;
+    color: color(primary);
     margin: 0 0 0 1em;
 }
 
 .arg-title {
-    @include arg-title($weakBlue);
+    @include arg-title(color(primary));
 }
 
 form {

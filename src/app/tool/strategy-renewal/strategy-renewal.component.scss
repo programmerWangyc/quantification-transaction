@@ -5,7 +5,7 @@ p {
 }
 
 p {
-    color: $warn;
+    color: color(dangerous);
 }
 
 ul {
@@ -15,7 +15,7 @@ ul {
         list-style: none;
     }
     span {
-        color: $gray;
+        color: color(weak-bcg);
         &::after {
             content: ':'
         }
@@ -33,6 +33,6 @@ ul {
 }
 
 .title-icon {
-    color: $blue;
+    color: color(primary);
     margin: 0 5px 0 0;
 }

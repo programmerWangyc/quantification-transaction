@@ -49,7 +49,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY', path: '../../' }];
+    paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY', path: '../../' }];
 
     /**
      * @ignore

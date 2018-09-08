@@ -22,10 +22,11 @@
         width: calc(100% - 200px);
         z-index: 1000;
         height: $header-height;
+        padding: 0;
 
         section {
             margin: 0 50px 0 0;
-            width: 10%;
+            width: 15%;
         }
     }
 
@@ -56,6 +57,7 @@
     line-height: $header-height;
     cursor: pointer;
     transition: color .3s;
+    margin-right: 30px;
 }
 
 :host ::ng-deep .trigger:hover {

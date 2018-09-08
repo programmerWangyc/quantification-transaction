@@ -1,10 +1,10 @@
 @import '../../../theme/_variable.theme';
 .indicator {
     padding: 0 10px;
-    border-left: 3px solid $blue;
+    border-left: 3px solid color(primary);
     height: 24px;
     line-height: 24px;
-    color: $gray;
+    color: color(weak-bcg);
     margin-bottom: 2em;
     .indicator-split {
         position: relative;

@@ -14,7 +14,7 @@ export class StrategyRentComponent implements CanDeactivateComponent, OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'STRATEGY_LIBRARY' }, { name: 'STRATEGY_RENT' }];
+    paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY' }, { name: 'STRATEGY_RENT' }];
 
     constructor(
         private chargeService: ChargeService,

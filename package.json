@@ -10,7 +10,7 @@
         "lint": "ng lint",
         "e2e": "ng e2e",
         "debug": "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222",
-        "doc": "./node_modules/.bin/compodoc -p ./tsconfig.json"
+        "doc": "node  --max_old_space_size=2048 ./node_modules/.bin/compodoc -p ./tsconfig.json"
     },
     "private": true,
     "dependencies": {

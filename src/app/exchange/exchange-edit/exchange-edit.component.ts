@@ -22,7 +22,7 @@ export class ExchangeEditComponent extends BaseComponent {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'EXCHANGE', path: '../' }, { name: 'EDIT' }];
+    paths: Breadcrumb[] = [{ name: 'EXCHANGE', path: '../' }, { name: 'EDIT' }];
 
     constructor(
         private activateRoute: ActivatedRoute,

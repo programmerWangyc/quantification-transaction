@@ -2,7 +2,7 @@
 .exchange-pair {
     margin: 0 0 20px 0;
     .pairs {
-        border: 1px dashed $blue;
+        border: 1px dashed color(primary);
         border-radius: 4px;
         height: 32px;
         text-align: center;
@@ -19,12 +19,12 @@
             right: (-$size);
             background-color: #fff;
             border-radius: $size;
-            color: $warn;
+            color: color(dangerous);
         }
     }
 }
 
 .main-exchange {
-    background-color: $weakBlue;
-    color: $gray;
+    background-color: color(primary);
+    color: color(weak-bcg);
 }

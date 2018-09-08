@@ -2,7 +2,7 @@
 #share {
     .title {
         position: relative;
-        color: $gray;
+        color: color(weak-bcg);
         &::after {
             content: '';
             height: 1px;
@@ -10,7 +10,7 @@
             position: absolute;
             top: 50%;
             right: -1em;
-            background-color: $gray;
+            background-color: color(weak-bcg);
         }
         &::before {
             content: '';
@@ -19,7 +19,7 @@
             position: absolute;
             top: 50%;
             left: -1em;
-            background-color: $gray;
+            background-color: color(weak-bcg);
         }
     }
     button,

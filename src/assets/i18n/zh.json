@@ -359,7 +359,6 @@
     "VIEW_ALL_PRODUCTS": "查看所有产品",
     "FREE_TRIAL": "免费试用",
 
-    "CONTROL_CENTER": "控制台",
     "FIRMWARE_SIMULATION": "实盘仿真",
     "EXCHANGE": "交易所",
     "STRATEGY_LIBRARY": "策略库",
@@ -772,7 +771,7 @@
     "COMMENT_COUNT": "{{all}}条评论",
     "ATTACH_ATTACHMENT": "添加附件",
     "LOGIN_THEN_COMMENT": "登录并发表评论",
-    "CURRENT_ACCOUNT": "当用帐号",
+    "CURRENT_ACCOUNT": "当前帐号",
     "PLEASE_LOGIN": "请登录",
     "COMMIT_FAIL_TRY_AGAIN_LATER": "提交失败，请稍候再试。",
     "COMMIT_SUCCESS": "提交成功",

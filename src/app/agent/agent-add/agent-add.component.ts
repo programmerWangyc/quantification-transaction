@@ -10,7 +10,7 @@ export class AgentAddComponent implements OnInit {
     /**
      * @ignore
      */
-    paths: Breadcrumb[] = [{ name: 'CONTROL_CENTER' }, { name: 'AGENT', path: '../' }, { name: 'CREATE' }];
+    paths: Breadcrumb[] = [{ name: 'AGENT', path: '../' }, { name: 'CREATE' }];
 
     constructor() { }
 

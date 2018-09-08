@@ -11,7 +11,7 @@
     }
 }
 
-@media screen and (max-width: $screen-width-small) {
+@media screen and (max-width: screenWidth(md)) {
     #footer {
         padding: 0 2em;
 

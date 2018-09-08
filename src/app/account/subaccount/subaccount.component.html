@@ -43,7 +43,7 @@
             <nz-checkbox-group [(ngModel)]="robots" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateSingleChecked()"></nz-checkbox-group>
         </nz-form-control>
         <nz-form-explain>
-            <div *ngIf="noneSelectedRobot" class="form-error">{{'ROBOT_REQUIRED_ERROR' | translate}}</div>
+            <div *ngIf="noneSelectedRobot">{{'ROBOT_REQUIRED_ERROR' | translate}}</div>
         </nz-form-explain>
     </nz-form-item>
 
