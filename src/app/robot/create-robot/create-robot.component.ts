@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -40,12 +39,12 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     /**
      * @ignore
      */
-    labelSm = 6;
+    labelSm = 2;
 
     /**
      * @ignore
      */
-    controlSm = 14;
+    controlSm = 12;
 
     /**
      * @ignore
@@ -119,7 +118,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         private robotOperate: RobotOperateService,
         private btNodeService: BtNodeService,
         private strategyService: RobotStrategyService,
-        private location: Location,
         private robotService: RobotService,
         private encrypt: EncryptService,
         public eleRef: ElementRef,
@@ -254,13 +252,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
 
             if (index >= 0) this.selectedStrategyArgs.semanticArgs[index] = arg;
         }
-    }
-
-    /**
-     * @ignore
-     */
-    goBack() {
-        this.location.back();
     }
 
     /**

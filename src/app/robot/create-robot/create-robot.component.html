@@ -84,24 +84,21 @@
                 </nz-input-group>
             </nz-form-control>
         </nz-form-item>
+
+        <nz-form-item>
+            <button nz-button [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate" (click)="addPair(platform.value, stock.value)" class="add-pair">{{'ADD_EXCHANGE_PAIR'
+                | translate}}</button>
+            <nz-form-control>
+                <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control>
+                <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
+                    {{'CREATE' | translate}}
+                </button>
+            </nz-form-control>
+        </nz-form-item>
     </form>
-
-    <div nz-row>
-        <div nz-col [nzSm]="labelSm" [nzXs]="xs" class="add-pair" [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate">
-            <button nz-button (click)="addPair(platform.value, stock.value)">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
-        </div>
-        <div nz-col [nzSm]="controlSm" [nzXs]="xs" fxLayout="row wrap">
-            <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
-        </div>
-    </div>
-
-    <div id="button-group" fxLayoutAlign="space-between center">
-        <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
-            {{'CREATE' | translate}}
-        </button>
-
-        <button nz-button (click)="goBack()">
-            {{'GO_BACK' | translate}}
-        </button>
-    </div>
 </nz-spin>

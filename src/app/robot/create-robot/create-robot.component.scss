@@ -1,21 +1,12 @@
 form {
     margin: 50px 0 0 0;
+
     .group-select {
         display: flex;
         align-items: center;
     }
 }
 
-#button-group {
-    margin: 50px 0;
-    button:first-child {
-        min-width: 150px;
-    }
-}
-
 .add-pair {
-    text-align: right;
-    button {
-        margin: 0 1em 0 0;
-    }
+    margin: 0 0 10px 0;
 }

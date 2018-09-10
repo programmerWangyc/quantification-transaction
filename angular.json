@@ -22,6 +22,7 @@
                         ],
                         "styles": [
                             "src/styles.scss",
+                            "src/icon.scss",
                             "src/theme/ng-zorro-theme.less",
                             "node_modules/prismjs/themes/prism-okaidia.css"
                         ],

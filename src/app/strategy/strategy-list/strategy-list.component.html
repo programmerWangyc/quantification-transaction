@@ -1,9 +1,11 @@
 <nz-table #nzTable [nzData]="list" [nzPageSize]="pageSize" [nzShowTotal]="sta" [nzNoResult]="'NO_STRATEGIES' | translate">
     <thead>
         <tr>
-            <th *ngFor="let item of tableHead" bt-text-center>
-                <span>{{item | translate}}</span>
-            </th>
+            <th bt-text-center nzWidth="35%">{{'NAME' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'SHARE' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'CREATE_TIME' | translate}}</th>
+            <th bt-text-center nzWidth="15%">{{'LATEST_MODIFY' | translate}}</th>
+            <th bt-text-center nzWidth="20%">{{'OPERATE' | translate}}</th>
         </tr>
     </thead>
     <tbody>
@@ -72,7 +74,7 @@
                 <ng-template #elseBlock>
                     <a (click)="renewal.next(strategy)">{{'RENEWAL' | translate}}</a>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <a [routerLink]="['backtest', strategy.id]" >{{'BACKTEST' | translate}}</a>
+                    <a [routerLink]="['backtest', strategy.id]">{{'BACKTEST' | translate}}</a>
                 </ng-template>
 
             </td>

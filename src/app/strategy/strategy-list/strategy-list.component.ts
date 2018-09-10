@@ -14,10 +14,6 @@ import { getTableStatistics } from '../../base/base.service';
     styleUrls: ['./strategy-list.component.scss'],
 })
 export class StrategyListComponent implements OnInit {
-    /**
-     * @ignore
-     */
-    tableHead: string[] = ['NAME', 'SHARE', 'CREATE_TIME', 'LATEST_MODIFY', 'OPERATE'];
 
     /**
      * Strategy list

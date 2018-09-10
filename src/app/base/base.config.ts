@@ -44,25 +44,25 @@ export const documentation: SideNav = {
 export const robot: SideNav = {
     path: Path.robot,
     label: 'ROBOT',
-    icon: 'android',
+    icon: 'robot',
 };
 
 export const strategy: SideNav = {
     path: Path.strategy,
     label: 'STRATEGY_LIBRARY',
-    icon: 'chrome',
+    icon: 'library',
 };
 
 export const agent: SideNav = {
     path: Path.agent,
     label: 'AGENT',
-    icon: 'apple',
+    icon: 'agent',
 };
 
 export const exchange: SideNav = {
     path: Path.exchange,
     label: 'EXCHANGE',
-    icon: 'windows',
+    icon: 'exchange',
 };
 
 export const charge: SideNav = {
