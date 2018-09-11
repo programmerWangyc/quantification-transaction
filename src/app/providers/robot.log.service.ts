@@ -14,16 +14,16 @@ import { BaseService } from '../base/base.service';
 import { ChartUpdateIndicator } from '../interfaces/app.interface';
 import * as fromReq from '../interfaces/request.interface';
 import * as fromRes from '../interfaces/response.interface';
-import { ChartService } from './chart.service';
-import { ErrorService } from './error.service';
-import { ProcessService } from './process.service';
+import { RobotService } from '../robot/providers/robot.service';
+import { ServerSendRobotEventType } from '../robot/robot.config';
 import * as fromRoot from '../store/index.reducer';
 import {
     ChangeLogPageAction, ChangeProfitChartPageAction, ChangeStrategyChartPageAction, ModifyDefaultParamsAction,
     MonitorSoundTypeAction, ToggleMonitorSoundAction
 } from '../store/robot/robot.action';
-import { ServerSendRobotEventType } from '../robot/robot.config';
-import { RobotService } from '../robot/providers/robot.service';
+import { ChartService } from './chart.service';
+import { ErrorService } from './error.service';
+import { ProcessService } from './process.service';
 
 @Injectable()
 export class RobotLogService extends BaseService {
@@ -47,13 +47,16 @@ export class RobotLogService extends BaseService {
      * Launch get robot logs request.
      * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
      * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
-     * 前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点是会导致再一次的刷新。
-     * 第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
-     * 最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
+     * *前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点：1、是会导致再一次的刷新，2、默认参数的值变化需要额外添加新的流
+     * *发起请求，否则有可能被前一个参数覆盖。
+     * *第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
+     * *默认参数会被所有的接口调用者刷新store的状态，所以需要区分业务层的请求参数是否发生变化，确定是否需要发起请求
+     * *最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
      */
     launchRobotLogs(data: Observable<{ [key: string]: number }>, isSyncAction = false /* indicate the action is  sync action or not */): Subscription {
         return this.process.processRobotLogs(
             data.pipe(
+                distinctUntilChanged((pre, cur) => Object.keys(cur).every(key => pre[key] === cur[key])),
                 withLatestFrom(
                     this.store.pipe(
                         select(fromRoot.selectRobotDefaultLogParams)
@@ -250,14 +253,14 @@ export class RobotLogService extends BaseService {
     /**
      *  Request parameter of getRobotLogs, corresponding to 'logOffset' field.
      */
-    getLogOffset(): Observable<number> {
+    getLogPaginationInfo(): Observable<{ logOffset: number; logLimit: number; }> {
         return combineLatest(
             this.store.pipe(
                 select(fromRoot.selectRobotRunningLogCurrentPage)
             ),
             this.getRobotLogDefaultParams()
         ).pipe(
-            map(([page, { logLimit }]) => page * logLimit)
+            map(([page, { logLimit }]) => ({ logOffset: page * logLimit, logLimit }))
         );
     }
 
@@ -311,23 +314,22 @@ export class RobotLogService extends BaseService {
             map(robot => robot.start_time),
             distinctUntilChanged(),
             withLatestFrom(chartObs)
-        )
-            .subscribe(([startTime, chart]) => {
+        ).subscribe(([startTime, chart]) => {
 
-                const id = 'plot-line-1';
+            const id = 'plot-line-1';
 
-                const xAxisHead = chart.xAxis[0];
+            const xAxisHead = chart.xAxis[0];
 
-                xAxisHead.removePlotLine(id);
+            xAxisHead.removePlotLine(id);
 
-                xAxisHead.addPlotLine({
-                    color: '#FF0000',
-                    width: 2,
-                    dashStyle: 'hot',
-                    value: moment(startTime).unix() * 1000,
-                    id,
-                });
+            xAxisHead.addPlotLine({
+                color: '#FF0000',
+                width: 2,
+                dashStyle: 'hot',
+                value: moment(startTime).unix() * 1000,
+                id,
             });
+        });
     }
 
     addProfitPoints(chartObs: Observable<Highstock.ChartObject>): Subscription {
@@ -340,14 +342,13 @@ export class RobotLogService extends BaseService {
                 this.canAddProfitPoint()
             ),
             filter(([, , , can]) => can)
-        )
-            .subscribe(([points, maxPoints, chart]) => {
-                const needShift = points.length + chart.series[0].data.length > maxPoints;
+        ).subscribe(([points, maxPoints, chart]) => {
+            const needShift = points.length + chart.series[0].data.length > maxPoints;
 
-                points.forEach(item => chart.series[0].addPoint([item.time, item.profit], false, needShift));
+            points.forEach(item => chart.series[0].addPoint([item.time, item.profit], false, needShift));
 
-                chart.redraw();
-            });
+            chart.redraw();
+        });
     }
 
     getProfitChartTotal(): Observable<number> {
@@ -514,8 +515,7 @@ export class RobotLogService extends BaseService {
                 this.canUpdateStrategyChart()
             ),
             filter(([, , can]) => can)
-        )
-            .subscribe(([result, chartArr]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => chartArr[idx].redraw()));
+        ).subscribe(([result, chartArr]) => uniqBy(result, getChartIndex).map(getChartIndex).forEach(idx => chartArr[idx].redraw()));
     }
 
     private updateStrategyChartLabel(charts: Observable<Highcharts.ChartObject[]>): Observable<ChartUpdateIndicator[]> {
@@ -572,15 +572,8 @@ export class RobotLogService extends BaseService {
     }
     //  =======================================================Short cart method==================================================
 
-    // !FIXME: unused
-    isAlreadyRefreshed(): Observable<boolean> {
-        return this.getRobotLogs().pipe(
-            map(log => log.updateTime > 0)
-        );
-    }
-
     /**
-     *  Predicate whether the robot status need to refresh log automatically.
+     * Predicate whether the robot status need to refresh log automatically.
      */
     private isInValidStatusToSyncLogs(): Observable<boolean> {
         return this.robotService.getRobotDetail().pipe(
@@ -589,7 +582,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     *  Predicate whether the log can be synchronized.
+     * Predicate whether the log can be synchronized.
      */
     private canSyncLogs(): Observable<boolean> {
         return combineLatest(
@@ -607,7 +600,7 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     *  Whether need to sync log with server;
+     * Whether need to sync log with server;
      */
     private needSyncLogs(): Observable<boolean> {
         return this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_REFRESH).pipe(
@@ -619,17 +612,16 @@ export class RobotLogService extends BaseService {
     }
 
     /**
-     *
+     * Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
      * @param headLog The first data of the log that user actively pulls.
      * @param compareLog After the server notification, the program automatically obtains information.
-     *  Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
      */
     private isFresh(headLog: fromRes.RunningLog, compareLog: fromRes.RunningLog): boolean {
         return headLog ? headLog.date < compareLog.date : true;
     }
 
     /**
-     *  After the program automatically obtains logs, it updates the log information the user sees.;
+     * After the program automatically obtains logs, it updates the log information the user sees.;
      */
     private updateLogs(logs: fromRes.RunningLog[], newLogs: fromRes.RunningLog[]): fromRes.RunningLog[] {
         const result = newLogs.filter(item => this.isFresh(logs[0], item));

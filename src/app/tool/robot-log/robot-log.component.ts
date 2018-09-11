@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { includes } from 'lodash';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, skip, startWith } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
@@ -153,19 +153,14 @@ export class RobotLogComponent extends BaseComponent {
     launch() {
         const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
-        this.subscription$$ = this.robotLog.launchRobotLogs(id.pipe(
-            map(robotId => ({ robotId }))
-        ))
-            .add(this.robotLog.launchRobotLogs(
-                combineLatest(
-                    id,
-                    this.robotLog.getLogOffset()
-                ).pipe(
-                    map(([robotId, logOffset]) => ({ robotId, logOffset })),
-                    skip(1)
-                )
-            ))
-            // .add(this.robotLog.launchSyncLogsWhenServerRefreshed())
+        this.subscription$$ = this.robotLog.launchRobotLogs(
+            combineLatest(
+                id,
+                this.robotLog.getLogPaginationInfo(),
+            ).pipe(
+                map(([robotId, pagination]) => ({ robotId, ...pagination }))
+            )
+        )
             .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
             .add(this.robotLog.needPlayTipAudio().pipe(
                 filter(need => need)
@@ -173,7 +168,6 @@ export class RobotLogComponent extends BaseComponent {
             )
             .add(this.robotLog.handleRobotLogsError());
 
-        // !FIXME: 这行加到上面时在组件销毁时没有取消掉, 然后每次进入时就会多出一条同步信息的流。why?
         this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
     }
 

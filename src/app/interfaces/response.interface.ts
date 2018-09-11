@@ -64,7 +64,7 @@ export interface ServerSendRobotMessage {
 }
 
 export interface ServerSendPaymentMessage {
-    orderId?: string; // TODO: ensure field
+    orderId?: string; // !FIXME: ensure field
 }
 
 export interface ServerSendBacktestMessage<T> {

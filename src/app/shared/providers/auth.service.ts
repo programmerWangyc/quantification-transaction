@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, of, Subscription } from 'rxjs';
-import { delay, delayWhen, filter, map, switchMap, takeWhile } from 'rxjs/operators';
+import { delay, delayWhen, filter, map, switchMap, takeWhile, distinctUntilChanged } from 'rxjs/operators';
 
 import { BaseService } from '../../base/base.service';
 import {
@@ -108,7 +108,8 @@ export class AuthService extends BaseService {
 
     isAgree(): Observable<boolean> {
         return this.store.pipe(
-            select(selectAgreeState)
+            select(selectAgreeState),
+            distinctUntilChanged()
         );
     }
 

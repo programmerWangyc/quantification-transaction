@@ -187,11 +187,11 @@ export class BacktestSimulationComponent extends BaseComponent {
         this.subscription$$ = this.backtestService.handleGetTemplatesError()
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
-            .add(this.backtestService.updateRunningNode(this.runningNode$))
-            .add(this.backtestService.launchBacktest(this.startBacktest$))
-            .add(this.backtestService.launchOperateBacktest(this.stopBacktest$, BacktestIOType.stopTask, true))
-            .add(this.backtestService.stopRunWorker(this.stopBacktest$))
-            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$));
+            .add(this.backtestService.updateRunningNode(this.runningNode$.asObservable()))
+            .add(this.backtestService.launchBacktest(this.startBacktest$.asObservable()))
+            .add(this.backtestService.launchOperateBacktest(this.stopBacktest$.asObservable(), BacktestIOType.stopTask, true))
+            .add(this.backtestService.stopRunWorker(this.stopBacktest$.asObservable()))
+            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$.asObservable()));
     }
 
     /**
@@ -200,12 +200,10 @@ export class BacktestSimulationComponent extends BaseComponent {
      * @param floorKLinePeriod 底层 k 线周期的 Id；未传时将使用 k 线周期；
      */
     private fixKlinePeriod(klinePeriodId: number, floorKLinePeriod?: number): void {
-
         if (this.exchange.selectedPlatform === 'Futures_CTP') {
             this.forceFreeze = true;
 
             this.fixedKlinePeriodId$.next(this.constant.K_LINE_PERIOD.find(item => item.minutes === 24 * 60).id);
-
         } else {
             this.forceFreeze = false;
 

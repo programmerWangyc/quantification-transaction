@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, takeWhile } from 'rxjs/operators';
+import { Observable, of, Subject, Subscription } from 'rxjs';
+import { filter, map, take, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { EncryptService } from '../../providers/encrypt.service';
@@ -31,7 +31,6 @@ export interface SignupFormModel {
     styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent extends BaseComponent {
-
     labelSm = 6;
 
     labelSx = 24;
@@ -48,11 +47,7 @@ export class SignupComponent extends BaseComponent {
 
     isAgree = true;
 
-    tipPosition = 'after';
-
     inputSize = 'large';
-
-    toggleAgree$: Subject<boolean> = new Subject();
 
     isAlive = true;
 
@@ -90,22 +85,19 @@ export class SignupComponent extends BaseComponent {
             map(params => params['ref']),
             filter(ref => !!ref),
             takeWhile(keepAlive)
-        ).subscribe(this.publicService.refUser$$)
+        ).subscribe(this.publicService.refUser$$);
 
-        this.authService.isSignupSuccess()
-            .pipe(
-                filter(success => !!success),
-                takeWhile(keepAlive)
-            )
-            .subscribe(_ => this.router.navigateByUrl('/home'))
+        this.authService.isSignupSuccess().pipe(
+            filter(success => !!success),
+            takeWhile(keepAlive)
+        ).subscribe(_ => this.router.navigateByUrl('/home'));
 
         this.authService.showSignupResponse(keepAlive);
 
-        this.authService.isAgree()
-            .pipe(
-                takeWhile(keepAlive)
-            )
-            .subscribe(agree => this.isAgree = agree);
+        this.authService.isAgree().pipe(
+            takeWhile(keepAlive)
+        ).subscribe(agree => this.isAgree = agree);
+
         this.authService.handleSignupError(keepAlive);
 
         this.publicService.handleSettingsError(keepAlive);
@@ -143,7 +135,13 @@ export class SignupComponent extends BaseComponent {
             nzMaskClosable: false,
         });
 
-        this.authService.toggleAgreeState(modal.afterClose as Observable<boolean>);
+        this.authService.toggleAgreeState(modal.afterClose.pipe(
+            take(1)
+        ) as Observable<boolean>);
+    }
+
+    toggleAgree(isAgree: boolean): void {
+        this.authService.toggleAgreeState(of(isAgree));
     }
 
     ngOnDestroy() {

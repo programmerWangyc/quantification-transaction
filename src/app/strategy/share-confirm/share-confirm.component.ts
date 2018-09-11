@@ -81,7 +81,6 @@ export class ShareConfirmComponent implements OnInit {
 
         const [tip, opt] = ary;
 
-
         this.msg = this.translate.get(opt).pipe(
             mergeMap(operate => this.translate.get(tip, { operate }))
         );

@@ -296,7 +296,8 @@ export class RobotOperateService extends RobotBaseService {
                 this.getRobotDetail().pipe(
                     map(item => item.name)
                 )
-            )
+            ),
+            take(1)
         ).subscribe(([args, name]) => {
             const data = JSON.stringify({
                 timestamp: new Date().getTime(),

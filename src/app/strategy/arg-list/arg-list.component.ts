@@ -178,7 +178,6 @@ export class ArgListComponent implements OnInit {
 
 
     /**
-     * !FIXME: 模板变量没有引用到，所以加了这个方法，why?
      * Hack method;
      */
     isSelectValueValid(str: string): boolean {

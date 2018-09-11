@@ -6,13 +6,13 @@ export enum PaymentMethod {
 }
 
 // !FIXME: unused;
-export enum RentPaymentInfo {
-    timestamp,
-    strategyId,
-    rentPeriod,
-    uid,
-    paymentMethod,
-}
+// export enum RentPaymentInfo {
+//     timestamp,
+//     strategyId,
+//     rentPeriod,
+//     uid,
+//     paymentMethod,
+// }
 
 export enum ChargePaymentInfo {
     timestamp,

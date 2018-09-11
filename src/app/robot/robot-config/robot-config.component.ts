@@ -142,7 +142,7 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
     }
 
     exportArgs(): void {
-        this.robotOperate.exportArgs(this.kLinePeriod.value); // !FIXME: 未处理取消订阅
+        this.robotOperate.exportArgs(this.kLinePeriod.value);
     }
 
     importArgs(files: FileList): void {

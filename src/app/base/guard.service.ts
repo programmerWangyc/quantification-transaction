@@ -25,14 +25,6 @@ export class BaseGuard extends BaseService implements CanDeactivate<CanDeactivat
     canDeactivate(component: CanDeactivateComponent, _route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
         const guards = component.canDeactivate();
 
-        // !FIXME:  当焦点仍在 codemirror 中时，如果内容改变，切换路由会导致codemirror焦点的检测报错。
-        // const modal = this.nzModal.confirm({
-        //     nzContent: SimpleNzConfirmWrapComponent,
-        //     nzComponentParams: { content: 'DEPRECATE_UNSAVED_CHANGE_CONFIRM' },
-        //     nzOnOk: () => modal.close(true),
-        //     nzOnCancel: () => modal.close(false),
-        // });
-
         return from(guards).pipe(
             mergeMap(guard => guard.canDeactivate.pipe(
                 map(can => ({ can, message: guard.message }))

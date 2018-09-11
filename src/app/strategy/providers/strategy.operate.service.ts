@@ -59,7 +59,7 @@ export class StrategyOperateService extends BaseService {
     /**
      * @ignore
      */
-    launchGenKey(): Subscription {
+    private launchGenKey(): Subscription {
         return this.process.processGenKey(this.genKey$.pipe(
             switchMap(([params]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
                 map((form: InnerShareFormModel) => ({

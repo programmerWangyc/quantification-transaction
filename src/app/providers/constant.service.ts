@@ -189,23 +189,6 @@ export class ConstantService {
         return value.split(prefix)[1];
     }
 
-    // !FIXME: unused;
-    getArgCondition(value: string): any[] {
-        const condition = this.VARIABLE_NAME_REGEXPS
-            .map((reg, index) => {
-                const result = value.match(reg);
-
-                if (result && index === 0) return result.slice(2, 5);
-
-                if (result && index === 1) return [result[2].replace(/!/g, ''), result[2][0] === '!' ? '!=' : '==', '1'];
-
-                return null;
-            })
-            .find(item => !!item);
-
-        return condition || [];
-    }
-
     /**
      * 判定参数的生成函数；
      * @param argPrefix 判定的参数前缀；

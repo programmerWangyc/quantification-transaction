@@ -66,17 +66,16 @@
                                 <i class="anticon anticon-lock"></i>
                             </ng-template>
                         </nz-input-group>
-                        <nz-form-explain *ngIf="signupForm.hasError('mismatch', ['passwordInfo']) && (confirmPassword.dirty || confirmPassword.touched)"
-                            style="color: #f44336">
+                        <nz-form-explain *ngIf="signupForm.hasError('mismatch', ['passwordInfo']) && (confirmPassword.dirty || confirmPassword.touched)" >
                             <span>{{signupForm.getError('mismatch', ['passwordInfo']) | translate}}</span>
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
 
-                <button nz-button [nzType]="'primary'" type="submit" [disabled]="!signupForm.valid || !isAgree" style="height: 46px">{{'SIGNUP' | translate}}</button>
+                <button nz-button nzType="primary" type="submit" [disabled]="!signupForm.valid || !isAgree" style="height: 46px">{{'SIGNUP' | translate}}</button>
             </form>
 
-            <label id="agreement" nz-checkbox [(ngModel)]="isAgree" (ngModelChange)="toggleAgree$.next($event.checked)">
+            <label id="agreement" nz-checkbox [(ngModel)]="isAgree" (ngModelChange)="toggleAgree(isAgree)">
                 {{'AGREEMENT_TIP' | translate}}
                 <a (click)="showAgreement()" href="javascript:void 0" style="text-decoration: none;">{{'AGREEMENT' | translate}}</a>
             </label>

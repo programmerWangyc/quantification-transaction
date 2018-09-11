@@ -101,10 +101,7 @@ export class StrategyListComponent implements OnInit {
         this.share.next({ id: strategy.id, type: StrategyShareType.CANCEL_PUBLISH, currentType: strategy.public });
     }
 
-    /**
-     * TODO:
-     */
-    createKey(strategy: Strategy): void {
-        console.log(strategy);
+    genKey(strategy: Strategy): void {
+        this.share.next({ id: strategy.id, type: StrategyShareType.PUBLISH, currentType: strategy.public});
     }
 }

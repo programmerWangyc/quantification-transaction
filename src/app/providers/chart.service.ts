@@ -125,7 +125,7 @@ export class ChartService {
     }
 
     /**
-     *  Be careful, this function is very very very not pure. It will modify the options parameter in multi way.
+     * Be careful, this function is very very very impure. It will modify the options parameter in multi places.
      */
     getRobotStrategyLogsOptions(options: any[], logs: StrategyChartData[]): Highcharts.Options[] {
         const seriesSource = orderBy(logs, ['seriesIdx'], ['asc']).map(item => item.data);
