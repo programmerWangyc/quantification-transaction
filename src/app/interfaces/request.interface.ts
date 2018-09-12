@@ -393,7 +393,7 @@ export interface BacktestPutTaskCode {
 
 export type PutTaskCodeArg = [string, number | string | boolean, number];
 
-export type PutTaskCode = [string, PutTaskCodeArg[], string];
+export type PutTaskCode = [string | number, PutTaskCodeArg[], string];
 
 /**
  *  backtest Exchange field options;

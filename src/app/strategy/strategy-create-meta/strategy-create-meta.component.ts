@@ -23,6 +23,7 @@ import {
 import { StrategyDependanceComponent, TemplateRefItem } from '../../strategy/strategy-dependance/strategy-dependance.component';
 import { StrategyDesComponent } from '../../strategy/strategy-des/strategy-des.component';
 import { StrategyService } from '../providers/strategy.service';
+import { BacktestConfigInCode } from '../../backtest/backtest.interface';
 
 export interface Tab {
     name: string;
@@ -187,6 +188,11 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     isTemplateCategorySelected: Observable<boolean>;
 
     /**
+     * backtest config data in code
+     */
+    backtestConfig: Observable<BacktestConfigInCode>;
+
+    /**
      * @ignore
      */
     isAlive = true;
@@ -328,6 +334,8 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             map(name => isEmpty(name)),
             startWith(false)
         );
+
+        this.backtestConfig = this.strategyService.getBacktestConfigInCode();
     }
 
     /**
@@ -463,7 +471,7 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     private getArgs(): string {
         const args = this.strategyArgs.data.map(item => [item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
 
-        const commandArgs = this.strategyCommandArgs.data.map(item => [this.constant.COMMAND_PREFIX + item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
+        const commandArgs = this.strategyCommandArgs ? this.strategyCommandArgs.data.map(item => [this.constant.COMMAND_PREFIX + item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]) : [];
 
         return JSON.stringify([...args, ...commandArgs]);
     }
@@ -503,5 +511,11 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         ).pipe(
             map(([hasTemplates, isTemplateCategory]) => hasTemplates && !isTemplateCategory)
         );
+    }
+
+    storeCode() {
+        const code = this.codeMirror.codeContent;
+
+        this.strategyService.snapshotCode(code);
     }
 }

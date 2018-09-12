@@ -663,7 +663,7 @@ export class BacktestResultService extends BacktestBaseService {
 
         const returns = snapshot ? this.calculateProfit(snapshot, account) : 0;
 
-        const commission = snapshot.Commission;
+        const commission = snapshot ? snapshot.Commission : 0;
 
         const profitAndLose = subSnapshots.map(shot => ({ time: shot.time, profit: this.calculateProfit(shot, account) }));
 

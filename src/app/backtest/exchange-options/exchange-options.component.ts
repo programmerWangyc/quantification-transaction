@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
 
 import { of } from 'rxjs';
 
@@ -14,6 +14,24 @@ import { BacktestService } from '../providers/backtest.service';
     styleUrls: ['./exchange-options.component.scss'],
 })
 export class ExchangeOptionsComponent implements OnInit {
+
+    /**
+     * 代码中的设置
+     */
+    @Input() set config(input: BacktestSelectedPair[]) {
+        if (!input) return;
+
+        this.platformOptions = input;
+
+        this.backtestService.updatePlatformOptions(input);
+
+        this.selectedPairs = input.map(item => {
+            const { eid, name, stock } = item;
+
+            return { platformId: eid, platformName: name, stock };
+        });
+    }
+
     /**
      * Emit the k line period id which want to use;
      */

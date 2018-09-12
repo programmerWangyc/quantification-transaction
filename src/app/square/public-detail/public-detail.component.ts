@@ -92,7 +92,7 @@ export class PublicDetailComponent extends SquareStrategyBase implements OnInit,
      * @ignore
      */
     navigateTo(strategy: PublicStrategyDetail): void {
-        this.router.navigate([Path.strategy, Path.copy, strategy.id], { relativeTo: this.activatedRoute.parent });
+        this.router.navigate([Path.strategy, Path.copy, strategy.id], { relativeTo: this.activatedRoute.parent.parent });
     }
 
     /**

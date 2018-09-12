@@ -87,6 +87,9 @@ export class StrategyDesComponent implements OnInit {
         this.categories = this.constant.STRATEGY_CATEGORIES.slice(0, -1);
 
         this.languages = this.constant.SUPPORTED_LANGUAGE;
+
+        this.strategyService.updateSelectedLanguage(this.language);
+        // category 是没有在store中存储的，只是在最后要保存的时候由父组件从子组件下提取了值，但是它变化时会影响回测周期的设置
     }
 
     /**

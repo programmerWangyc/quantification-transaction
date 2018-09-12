@@ -133,3 +133,8 @@ export interface BacktestStrategyCharts {
     charts: Array<Highcharts.Options | Highstock.Options>;
     data: BacktestResultChartData[];
 }
+
+export interface BacktestConfigInCode {
+    timeConfig: BacktestTimeConfig;
+    platformOptions: BacktestSelectedPair[];
+}

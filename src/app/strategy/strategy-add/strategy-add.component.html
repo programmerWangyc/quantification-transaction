@@ -64,9 +64,9 @@
         <app-alternation-preview [param]="commandArgs | async" [removedArg]="removedCommandArg$ | async"></app-alternation-preview>
     </div>
 
-    <button nz-button [nzType]="'primary'" (click)="save$.next(true)" [disabled]="forbiddenSubmit | async">{{'CREATE_STRATEGY' | translate}}</button>
+    <button nz-button nzType="primary" (click)="save$.next(true)" [disabled]="forbiddenSubmit | async">{{'CREATE_STRATEGY' | translate}}</button>
 </ng-template>
 
 <ng-template #backtest>
-    <app-backtest-simulation [category]="category | async" [language]="language | async"></app-backtest-simulation>
+    <app-backtest-simulation [category]="category | async" [language]="language | async" (startBacktest)="storeCode($event)"></app-backtest-simulation>
 </ng-template>

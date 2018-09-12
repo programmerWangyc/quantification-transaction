@@ -9,6 +9,7 @@ import {
     switchMapTo, take, takeUntil, tap, withLatestFrom
 } from 'rxjs/operators';
 
+import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIORequest, BacktestIOType, SettingTypes } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -26,7 +27,6 @@ import { BacktestCode, BacktestSelectedPair, TimeRange } from '../backtest.inter
 import { BacktestComputingService } from './backtest.computing.service';
 import { AdvancedOptionConfig, BacktestConstantService } from './backtest.constant.service';
 import { BacktestParamService } from './backtest.param.service';
-import { VariableOverview } from '../../interfaces/app.interface';
 
 @Injectable()
 export class BacktestService extends BacktestParamService {
@@ -174,7 +174,7 @@ export class BacktestService extends BacktestParamService {
         );
 
         const blobObs = this.publicService.getSetting(SettingTypes.backtest_javascript).pipe(
-            this.filterTruth()
+            this.filterTruth(),
         );
 
         const cacheObs = this.getBacktestResult().pipe(
@@ -300,10 +300,10 @@ export class BacktestService extends BacktestParamService {
         const result = zip(
             this.store.pipe(
                 select(fromRoot.selectStrategyUIState),
-                map(state => state.selectedLanguage === Language.JavaScript),
+                map(state => state.selectedLanguage === Language.JavaScript)
             ),
-            this.getStrategyDetail().pipe(
-                map(strategy => strategy.is_owner)
+            this.getStrategyDetailResponse().pipe(
+                map(res => !res || res.result.strategy.is_owner)
             )
         ).pipe(
             map(([isJS, isOwner]) => isJS && isOwner),
@@ -490,6 +490,18 @@ export class BacktestService extends BacktestParamService {
      */
     updateSelectedKlinePeriod(id: number): void {
         this.store.dispatch(new Actions.UpdateSelectedKlinePeriodAction(id));
+
+        this.updateFloorKlinePeriod(this.getFloorKlinePeriodIdByKlinePeriodId(id));
+    }
+
+    private getFloorKlinePeriodIdByKlinePeriodId(id: number): number {
+        const index = this.constant.K_LINE_PERIOD.findIndex(item => item.id === id);
+
+        if (index < 3) {
+            return this.constant.K_LINE_PERIOD[0].id;
+        } else {
+            return this.constant.K_LINE_PERIOD[index - 1].id;
+        }
     }
 
     /**

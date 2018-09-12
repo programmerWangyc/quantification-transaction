@@ -105,5 +105,7 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
      */
     ngOnDestroy() {
         this.isAlive = false;
+
+        this.strategyService.resetState();
     }
 }

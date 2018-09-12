@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { KLinePeriod } from '../../providers/constant.service';
 import { TipService } from '../../providers/tip.service';
-import { TimeRange } from '../backtest.interface';
+import { TimeRange, BacktestTimeConfig } from '../backtest.interface';
 import { BacktestConstantService, BacktestPeriodConfig } from '../providers/backtest.constant.service';
 import { BacktestService } from '../providers/backtest.service';
 
@@ -29,9 +29,12 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
         this.disabledDate = this.disabledDateFactory();
 
-        this.range = [new Date(this.timeConfig.start), new Date(this.timeConfig.end)];
+        // 代码中没有回测设置时才更新时间
+        if (!this._config) {
+            this.range = [new Date(this.timeConfig.start), new Date(this.timeConfig.end)];
 
-        this.updateTimeRange();
+            this.updateTimeRange();
+        }
     }
 
     /**
@@ -82,11 +85,6 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
     @Output() timeRangeChange: EventEmitter<TimeRange> = new EventEmitter();
 
     /**
-     * Output k line period if changed;
-     */
-    @Output() klineChange: EventEmitter<number> = new EventEmitter();
-
-    /**
      * Disable k line period;
      */
     disablePeriod = false;
@@ -98,8 +96,34 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
 
     /**
      * Time range;
+     * 由代码中的注释进行设置
      */
     range: Date[] = [];
+
+    /**
+     * 代码设置回写
+     */
+    @Input() set config(input: BacktestTimeConfig) {
+        if (!input) return;
+
+        const { start, end, klinePeriodId } = input;
+
+        this.range = [start, end];
+
+        this.selectedPeriodId = klinePeriodId;
+
+        this.updateTimeRange();
+
+        this.updatePeriod(klinePeriodId);
+
+        this._config = input;
+    }
+
+    private _config: BacktestTimeConfig;
+
+    get config(): BacktestTimeConfig {
+        return this._config;
+    }
 
     /**
      * @ignore
@@ -182,8 +206,6 @@ export class TimeOptionsComponent implements OnInit, OnDestroy {
      * @param id k line period id;
      */
     updatePeriod(id: number): void {
-        this.klineChange.next(id);
-
         this.backtestService.updateSelectedKlinePeriod(id);
     }
 

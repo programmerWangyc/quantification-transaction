@@ -5,10 +5,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { intersectionWith, uniqBy } from 'lodash';
 import * as moment from 'moment';
 import { combineLatest, from, Observable, of, Subscription } from 'rxjs';
-import { filter, find, map, mergeMap, switchMap, take, withLatestFrom, takeWhile } from 'rxjs/operators';
+import { filter, find, map, mergeMap, switchMap, take, takeWhile, withLatestFrom } from 'rxjs/operators';
 
+import { BacktestConfigInCode, BacktestSelectedPair } from '../../backtest/backtest.interface';
 import { BaseService } from '../../base/base.service';
-import { VariableOverview, keepAliveFn } from '../../interfaces/app.interface';
+import { keepAliveFn, VariableOverview } from '../../interfaces/app.interface';
 import * as fromReq from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -16,11 +17,11 @@ import { ProcessService } from '../../providers/process.service';
 import { TipService } from '../../providers/tip.service';
 import * as fromRoot from '../../store/index.reducer';
 import {
-    ResetStateAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
+    ResetStateAction, SnapshotCodeAction, UpdateStrategyDependanceTemplatesAction, UpdateStrategyLanguageAction,
     UpdateStrategySecretKeyStateAction
 } from '../../store/strategy/strategy.action';
 import { TemplateRefItem } from '../strategy-dependance/strategy-dependance.component';
-import { OpStrategyTokenTypeAdapter } from '../strategy.config';
+import { Language, OpStrategyTokenTypeAdapter } from '../strategy.config';
 import { StrategyConstantService } from './strategy.constant.service';
 
 @Injectable()
@@ -196,7 +197,10 @@ export class StrategyService extends BaseService {
         );
     }
 
-    getBacktestConfig(): Observable<string> {
+    /**
+     * 需要保存的设置包括：1、时间范围 2、k线周期 3、交易对；
+     */
+    generateBacktestConfig(): Observable<string> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
             map(state => {
@@ -219,6 +223,57 @@ export class StrategyService extends BaseService {
                 }
             })
         );
+    }
+
+    /**
+     * 策略代码中的回测设置
+     */
+    getBacktestConfigInCode(): Observable<BacktestConfigInCode> {
+        return this.getStrategyDetail().pipe(
+            take(1),
+            map(strategy => {
+                if (!strategy.source) return null;
+
+                const { source, language } = strategy;
+
+                const reg = language === Language.Python ? this.constant.pyCommentReg : this.constant.jsCommentReg;
+
+                if (!reg.test(source)) return null;
+
+                const comment = source.match(reg)[0];
+
+                const info = comment.split('\n').slice(1, -1);
+
+                const timeReg = /\d{4}(-\d{2}){2}\s(\d{2}:){2}\d{2}/;
+
+                const start = info[0].match(timeReg)[0];
+
+                const end = info[1].match(timeReg)[0];
+
+                const klinePeriodReg = /\d{1,2}.*[^,]/;
+
+                const klinePeriodId = this.findKlineId(info[2].match(klinePeriodReg)[0]);
+
+                const platformOptions = info[3] ? JSON.parse(info[3].match(/\[.*\]/)[0]) as BacktestSelectedPair[] : null;
+
+                return { timeConfig: { start: new Date(start), end: new Date(end), klinePeriodId }, platformOptions };
+            }),
+            this.filterTruth()
+        );
+    }
+
+    private findKlineId(source: string): number {
+        let result = null;
+
+        from(this.constant.K_LINE_PERIOD).pipe(
+            mergeMap(item => this.translate.get(item.period).pipe(
+                map(period => ({ ...item, period }))
+            )),
+            find(item => item.period === source),
+            map(item => item.id)
+        ).subscribe(id => result = id);
+
+        return result;
     }
 
     /**
@@ -252,6 +307,10 @@ export class StrategyService extends BaseService {
 
     updateSelectedLanguage(language: number): void {
         this.store.dispatch(new UpdateStrategyLanguageAction(language));
+    }
+
+    snapshotCode(code: string): void {
+        this.store.dispatch(new SnapshotCodeAction(code));
     }
 
     //  =======================================================Shortcut methods=======================================================

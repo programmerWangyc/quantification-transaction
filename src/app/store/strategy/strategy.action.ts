@@ -473,6 +473,14 @@ export class UpdateStrategyLanguageAction implements Action {
     constructor(public payload: number) { }
 }
 
+export const SNAPSHOT_CODE = '[Strategy] SNAPSHOT_CODE';
+
+export class SnapshotCodeAction implements Action {
+    readonly type = SNAPSHOT_CODE;
+
+    constructor(public payload: string) { }
+}
+
 export type ApiActions = GetStrategyListRequestAction
     | DeleteStrategyFailAction
     | DeleteStrategyRequestAction
@@ -506,6 +514,7 @@ export type ApiActions = GetStrategyListRequestAction
 
 export type Actions = ApiActions
     | ResetStateAction
+    | SnapshotCodeAction
     | UpdateStrategyDependanceTemplatesAction
     | UpdateStrategyLanguageAction
     | UpdateStrategySecretKeyStateAction;

@@ -26,6 +26,7 @@ export interface UIState {
     loading: boolean;
     selectedLanguage: number;
     selectedTemplates: number[];
+    codeSnapshot: string;
 }
 
 export interface State {
@@ -194,7 +195,27 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         // reset state
         case actions.RESET_STATE:
-            return { ...state, opStrategyTokenRes: null, genKeyRes: null, shareStrategyRes: null, deleteStrategyRes: null };
+            return {
+                ...state,
+                opStrategyTokenRes: null,
+                genKeyRes: null,
+                shareStrategyRes: null,
+                deleteStrategyRes: null,
+                strategyDetailRes: null,
+                strategyListRes: null,
+                requestParams: {
+                    ...state.requestParams,
+                    strategyDetail: null,
+                    strategyList: null,
+                    opStrategyToken: null,
+                    deleteStrategy: null,
+                    shareStrategy: null,
+                },
+                UIState: {
+                    ...state.UIState,
+                    codeSnapshot: null,
+                },
+            };
 
         // strategy dependance
         case actions.UPDATE_STRATEGY_DEPENDANCE_TEMPLATES:
@@ -203,6 +224,10 @@ export function reducer(state = initialState, action: actions.Actions): State {
         // strategy language
         case actions.UPDATE_SELECTED_LANGUAGE:
             return { ...state, UIState: { ...state.UIState, selectedLanguage: action.payload } };
+
+        // code snapshot
+        case actions.SNAPSHOT_CODE:
+            return { ...state, UIState: { ...state.UIState, codeSnapshot: action.payload } };
 
         default:
             return state;

@@ -5,7 +5,8 @@
         <h4>{{'TIME' | translate}}</h4>
 
         <!--category 2: 股票证券-->
-        <app-time-options [category]="category" [fixedKlinePeriod]="fixedKlinePeriodId$ | async" [freeze]="category === 2 || forceFreeze"></app-time-options>
+        <app-time-options [category]="category" [fixedKlinePeriod]="fixedKlinePeriodId$ | async" [freeze]="category === 2 || forceFreeze"
+            [config]="backtestConfigInCode?.timeConfig"></app-time-options>
     </div>
 
     <div class="backtest backtest-item">
@@ -17,7 +18,7 @@
     <div class="backtest backtest-item">
         <h4>{{'PLATFORM' | translate}}</h4>
 
-        <app-exchange-options (fixKlinePeriod)="onExchange($event)"></app-exchange-options>
+        <app-exchange-options (fixKlinePeriod)="onExchange($event)" [config]="backtestConfigInCode?.platformOptions"></app-exchange-options>
     </div>
 
     <div class="backtest backtest-item" *ngIf="language === 1">
@@ -30,21 +31,22 @@
     <div class="backtest backtest-item">
         <h4>{{'ARGUMENTS' | translate}}</h4>
 
-        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate" [args]="strategyArgs | async"
-            [id]="strategyId | async"></app-backtest-strategy-args>
+        <app-backtest-strategy-args [title]="(category === 20 ? 'TEMPLATE_ARGUMENTS' : 'STRATEGY_ARGUMENTS') | translate"
+            [args]="strategyArgs | async" [id]="strategyId | async"></app-backtest-strategy-args>
 
-        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs" [isTemplate]="true"
-            [id]="item.id"></app-backtest-strategy-args>
+        <app-backtest-strategy-args *ngFor="let item of templates | async" [title]="item.name" [args]="item.semanticArgs"
+            [isTemplate]="true" [id]="item.id"></app-backtest-strategy-args>
     </div>
 
     <div class="backtest backtest-item" fxLayoutAlign="row center">
         <div class="command-btn-container">
-            <button nz-button [nzType]="'primary'" (click)="startBacktest$.next(true)" [disabled]="disableBacktest | async">
+            <button nz-button nzType="primary" (click)="startBacktest.next(true)" [disabled]="disableBacktest | async">
                 <i class="anticon anticon-spin anticon-loading" *ngIf="isBacktestLoading | async"></i>
                 {{backtestBtnText | async | translate}}
             </button>
 
-            <button nz-button *ngIf="isBacktestLoading | async " [nzType]="'danger'" (click)="stopBacktest$.next(true)" class="stop-btn">{{'STOP' | translate}}</button>
+            <button nz-button *ngIf="isBacktestLoading | async " nzType="danger" (click)="stopBacktest$.next(true)"
+                class="stop-btn">{{'STOP' | translate}}</button>
         </div>
     </div>
 </div>

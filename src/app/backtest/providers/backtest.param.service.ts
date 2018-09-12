@@ -19,6 +19,7 @@ import { BacktestLevel } from '../backtest.config';
 import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestBaseService } from './backtest.result.service';
+import { UIState } from '../../store/strategy/strategy.reducer';
 
 /**
  * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestService；
@@ -33,14 +34,26 @@ export class BacktestParamService extends BacktestBaseService {
 
     // =======================================================Data acquisition=======================================================
 
+    protected getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
+        return this.store.pipe(
+            select(fromRoot.selectStrategyDetailResponse),
+        );
+    }
+
     /**
      * 获取当前的策略，数据来源于 strategy reducer。
      */
     protected getStrategyDetail(): Observable<fromRes.StrategyDetail> {
-        return this.store.pipe(
-            select(fromRoot.selectStrategyDetailResponse),
+        return this.getStrategyDetailResponse().pipe(
             filter(res => !!res),
             map(res => res.result.strategy)
+        );
+    }
+
+    protected getStrategyUIState(): Observable<UIState> {
+        return this.store.pipe(
+            select(fromRoot.selectStrategyUIState),
+            this.filterTruth()
         );
     }
 
@@ -48,10 +61,24 @@ export class BacktestParamService extends BacktestBaseService {
      * 获取当前策略使用的编程语言
      */
     protected getSelectedLanguage(): Observable<number> {
-        return this.store.pipe(
-            select(fromRoot.selectStrategyUIState),
-            filter(res => !!res),
+        return this.getStrategyUIState().pipe(
             map(state => state.selectedLanguage)
+        );
+    }
+
+    protected getCodeSnapshot(): Observable<string> {
+        return this.getStrategyUIState().pipe(
+            map(state => state.codeSnapshot)
+        );
+    }
+
+    /**
+     * 获取当前策略所依赖的模板ID。
+     */
+    private getSelectedTemplateIds(): Observable<number[]> {
+        return this.getStrategyUIState().pipe(
+            map(state => state.selectedTemplates),
+            this.filterTruth()
         );
     }
 
@@ -107,16 +134,6 @@ export class BacktestParamService extends BacktestBaseService {
             }),
             mergeMap(tasks => from(tasks)),
             observableDelay(50)
-        );
-    }
-
-    /**
-     * 获取当前策略所依赖的模板ID。
-     */
-    private getSelectedTemplateIds(): Observable<number[]> {
-        return this.store.select(fromRoot.selectStrategyUIState).pipe(
-            map(res => res.selectedTemplates),
-            this.filterTruth()
         );
     }
 
@@ -206,14 +223,23 @@ export class BacktestParamService extends BacktestBaseService {
                 }))
             ),
             this.getSelectedTemplates(false),
-            this.getStrategyDetail()
+            this.getStrategyDetailResponse(),
+            this.getStrategyUIState()
         ).pipe(
-            map(([codes, templates, strategy]) => codes.map(code => {
+            map(([codes, templates, strategyRes, strategyUIState]) => codes.map(code => {
                 const { id, name, args } = code;
 
-                const sourceKey = !!strategy.is_owner ? 'source' : 'id'; // 用户不能看代码时统一传id。
+                let contentOrId: string | number = null;
 
-                const contentOrId = name === this.constant.MAIN_CODE_FLAG ? strategy[sourceKey] : templates.find(template => template.id === id)[sourceKey];
+                if (!!strategyRes) {
+                    const strategy = strategyRes.result.strategy;
+
+                    const sourceKey = strategy.is_owner ? 'source' : 'id';
+
+                    contentOrId = name === this.constant.MAIN_CODE_FLAG ? strategy[sourceKey] : templates.find(template => template.id === id)[sourceKey];
+                } else {
+                    contentOrId = strategyUIState.codeSnapshot;
+                }
 
                 return [contentOrId, args, name] as PutTaskCode;
             }))

@@ -246,7 +246,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
             if (theme && this.codeOptions.theme !== theme) this.codeOptions.theme = theme;
         }).add(
             this.saveBacktest$.asObservable().pipe(
-                switchMap(isOpen => isOpen ? this.strategyService.getBacktestConfig() : of(null))
+                switchMap(isOpen => isOpen ? this.strategyService.generateBacktestConfig() : of(null))
             ).subscribe(comment => !!comment && (this.codeContent = this.replaceComment(comment)))
         );
     }
@@ -386,7 +386,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
      * 生成注释
      * @param comment 注释内容
      */
-    createComment(comment: string): string {
+    private createComment(comment: string): string {
         if (this._language === Language.Python) {
             return `'''backtest\n${comment}\n'''`;
         } else {
@@ -398,7 +398,7 @@ export class StrategyCodemirrorComponent implements OnInit, OnDestroy {
      * 替换注释
      * @param comment 注释内容
      */
-    replaceComment(comment: string): string {
+    private replaceComment(comment: string): string {
         const reg = this._language === Language.Python ? this.constant.pyCommentReg : this.constant.jsCommentReg;
 
         const result = this.codeContent.match(reg);

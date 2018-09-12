@@ -82,5 +82,7 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         this.isAlive = false;
 
         this.subscription$$.unsubscribe();
+
+        this.strategyService.resetState();
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -12,6 +12,7 @@ import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
+import { BacktestConfigInCode } from '../backtest.interface';
 
 @Component({
     selector: 'app-backtest-simulation',
@@ -30,7 +31,8 @@ export class BacktestSimulationComponent extends BaseComponent {
         if (value === CategoryType.STOCK_SECURITY) {
             this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 24 * 60).id);
         } else {
-            this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 15).id, this.constant.K_LINE_PERIOD.find(item => item.minutes === 5).id);
+            // 暂时关了， 搞不清这个逻辑是从原来项目的哪个地方业的了
+            // this.fixKlinePeriod(this.constant.K_LINE_PERIOD.find(item => item.minutes === 15).id, this.constant.K_LINE_PERIOD.find(item => item.minutes === 5).id);
         }
     }
 
@@ -52,11 +54,18 @@ export class BacktestSimulationComponent extends BaseComponent {
     @Input() language: number = 0;
 
     /**
+     * backtest config in code;
+     */
+    @Input() backtestConfigInCode: BacktestConfigInCode;
+
+    /**
+     * ! FIXME 直接把 subject 输入了子组件
      * K line period value;
      */
     fixedKlinePeriodId$: Subject<number> = new Subject();
 
     /**
+     * ! FIXME 直接把 subject 输入了子组件
      * Floor k line period value;
      */
     fixedFloorKlinePeriodId$: Subject<number> = new Subject();
@@ -99,7 +108,7 @@ export class BacktestSimulationComponent extends BaseComponent {
     /**
      * Start backtest signal;
      */
-    startBacktest$: Subject<boolean> = new Subject();
+    @Output() startBacktest: EventEmitter<boolean> = new EventEmitter();
 
     /**
      * Whether to disable the backtest button.
@@ -175,7 +184,7 @@ export class BacktestSimulationComponent extends BaseComponent {
             map(res => res.isForbiddenBacktest)
         );
 
-        this.isPassedGuard = this.startBacktest$.pipe(
+        this.isPassedGuard = this.startBacktest.pipe(
             switchMapTo(this.backtestService.isBacktestArgsValid())
         );
     }
@@ -188,10 +197,10 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
             .add(this.backtestService.updateRunningNode(this.runningNode$.asObservable()))
-            .add(this.backtestService.launchBacktest(this.startBacktest$.asObservable()))
+            .add(this.backtestService.launchBacktest(this.startBacktest.asObservable()))
             .add(this.backtestService.launchOperateBacktest(this.stopBacktest$.asObservable(), BacktestIOType.stopTask, true))
             .add(this.backtestService.stopRunWorker(this.stopBacktest$.asObservable()))
-            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest$.asObservable()));
+            .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest.asObservable()));
     }
 
     /**
