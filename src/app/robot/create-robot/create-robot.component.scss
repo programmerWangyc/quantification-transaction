@@ -1,9 +1,12 @@
 form {
-    margin: 50px 0 0 0;
-
+    padding: 0 2rem;
     .group-select {
         display: flex;
         align-items: center;
+    }
+    .exchange-pair {
+        margin: 0;
+        padding: 0 3rem
     }
 }
 

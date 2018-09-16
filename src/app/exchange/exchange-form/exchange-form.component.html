@@ -3,36 +3,53 @@
     <form nz-form [formGroup]="form">
 
         <nz-form-item *ngFor="let field of group">
-            <nz-form-label [nzSm]="6" [nzXs]="24" *ngIf="isControlShow(field)" [nzRequired]="field.required">{{field.label | translate}}</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-form-label [nzSm]="3" [nzXs]="24" *ngIf="isControlShow(field)" [nzRequired]="field.required">{{field.label
+                | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="9" [nzXs]="24">
 
                 <ng-container [ngSwitch]="field.controlType">
                     <ng-container *ngSwitchCase="'checkbox'">
                         <label [formControlName]="field.key" nz-checkbox> </label>
                     </ng-container>
+
                     <ng-container *ngSwitchCase="'textarea'">
                         <textarea [formControlName]="field.key" rows="10" nz-input></textarea>
                     </ng-container>
+
+                    <ng-container *ngSwitchCase="'password'">
+                        <nz-input-group *ngIf="isControlShow(field)" nzAddOnAfterIcon="anticon anticon-lock">
+                            <input type="password" nz-input [formControlName]="field.key">
+                        </nz-input-group>
+                    </ng-container>
+
                     <ng-container *ngSwitchDefault>
-                        <input *ngIf="isControlShow(field)" [formControlName]="field.key" [type]="field.controlType" nz-input>
+                        <input *ngIf="isControlShow(field)" [formControlName]="field.key" [type]="field.controlType"
+                            nz-input>
                     </ng-container>
                 </ng-container>
 
                 <ng-container *ngIf="accessField(field.key) as control">
                     <nz-form-explain *ngIf="control.invalid && control.dirty || control.touched">
-                        <div *ngIf="!!control.getError('required'); else otherErrorBlock">{{'INPUT_TIP' | translate : getTipParams(field.label)}}</div>
+                        <div *ngIf="!!control.getError('required'); else otherErrorBlock">{{'INPUT_TIP' | translate :
+                            getTipParams(field.label)}}</div>
 
                         <ng-template #otherErrorBlock>
-                            <div *ngIf="control.getError('length') as length">{{'LENGTH_MUST_BE' | translate: getTipParams(field.label, {length: length} ) }}</div>
-                            <div *ngIf="control.getError('maxLength') as maxLength">{{'LENGTH_MUST_BE_LESS_THAN' | translate : getTipParams(field.label, {maxLength: maxLength})}}</div>
+                            <div *ngIf="control.getError('length') as length">{{'LENGTH_MUST_BE' | translate:
+                                getTipParams(field.label, {length: length} ) }}</div>
+                            <div *ngIf="control.getError('maxLength') as maxLength">{{'LENGTH_MUST_BE_LESS_THAN' |
+                                translate : getTipParams(field.label, {maxLength: maxLength})}}</div>
                         </ng-template>
                     </nz-form-explain>
                 </ng-container>
             </nz-form-control>
         </nz-form-item>
 
-        <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="generateConfig(form.value)" [disabled]="form.invalid">
-            {{(isEdit ? 'SAVE' : 'CREATE') | translate}}
-        </button>
+        <nz-form-item>
+            <nz-form-control [nzOffset]="2">
+                <button nz-button nzType="primary" (click)="generateConfig(form.value)" [disabled]="form.invalid">
+                    {{(isEdit ? 'SAVE' : 'CONFIRM') | translate}}
+                </button>
+            </nz-form-control>
+        </nz-form-item>
     </form>
 </ng-container>

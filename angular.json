@@ -22,9 +22,9 @@
                         ],
                         "styles": [
                             "src/styles.scss",
-                            "src/icon.scss",
                             "src/theme/ng-zorro-theme.less",
-                            "node_modules/prismjs/themes/prism-okaidia.css"
+                            "node_modules/prismjs/themes/prism-okaidia.css",
+                            "src/icon.scss"
                         ],
                         "scripts": [
                             "node_modules/marked/lib/marked.js",

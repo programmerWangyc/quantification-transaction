@@ -34,9 +34,8 @@
         </nz-form-item>
 
         <nz-form-item *ngIf="selectedStrategyArgs; let args">
-            <nz-form-label [nzSm]="labelSm" [nzXs]="xs">{{'STRATEGY_ARGUMENTS' | translate}}</nz-form-label>
-            <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
-                <app-strategy-arg [title]="'ARGUMENTS' | translate" [args]="args.semanticArgs" (change)="argChange($event)"></app-strategy-arg>
+            <nz-form-control>
+                <app-strategy-arg [title]="'STRATEGY_ARGUMENTS' | translate" [args]="args.semanticArgs" (change)="argChange($event)"></app-strategy-arg>
 
                 <div *ngIf="args.semanticTemplateArgs">
                     <app-strategy-arg *ngFor="let template of args.semanticTemplateArgs" [title]="template.name" [args]="template.variables"
@@ -85,18 +84,23 @@
             </nz-form-control>
         </nz-form-item>
 
-        <nz-form-item>
-            <button nz-button [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate" (click)="addPair(platform.value, stock.value)" class="add-pair">{{'ADD_EXCHANGE_PAIR'
-                | translate}}</button>
+        <nz-form-item *ngIf="selectedPairs.length" class="exchange-pair">
             <nz-form-control>
                 <app-exchange-pair [pairs]="selectedPairs" (remove)="removePair($event)"></app-exchange-pair>
             </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
-            <nz-form-control>
+            <nz-form-control [nzOffset]="labelSm">
+                <button nz-button [nz-tooltip]="'MAIN_EXCHANGE_TIP' | translate" (click)="addPair(platform.value, stock.value)"
+                    nzPlacement="right" class="add-pair">{{'ADD_EXCHANGE_PAIR' | translate}}</button>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control [nzOffset]="labelSm">
                 <button nz-button nzType="primary" (click)="create$.next(form.value)" [disabled]="form.invalid || !selectedPairs.length">
-                    {{'CREATE' | translate}}
+                    {{'CREATE_ROBOT' | translate}}
                 </button>
             </nz-form-control>
         </nz-form-item>

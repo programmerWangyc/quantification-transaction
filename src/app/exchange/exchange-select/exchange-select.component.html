@@ -1,4 +1,4 @@
-<div class="exchange-config">
+<div fxLayoutAlign="space-between center" class="exchange-config">
     <nz-radio-group [nzDisabled]="disableTypeChange" [formControl]="exchangeType">
         <label nz-radio-button [nzValue]="0">{{'TRADITIONAL_FUTURES' | translate}}</label>
         <label nz-radio-button [nzValue]="1">{{'E_SUNNY' | translate}}</label>
@@ -6,10 +6,10 @@
         <label nz-radio-button [nzValue]="3">{{'COMMON_PROTOCOL' | translate}}</label>
     </nz-radio-group>
 
-    <nz-tag *ngIf="exchangeType.value === 0 || exchangeType.value === 1" [nzColor]="'green'" (click)="goTo()">
+    <button nz-button nzType="warm" *ngIf="exchangeType.value === 0 || exchangeType.value === 1" (click)="goTo()">
         <i class="anticon anticon-rocket"></i>
         {{'LOW_COMMISSION_ACCOUNT_OPENING' | translate}}
-    </nz-tag>
+    </button>
 </div>
 
 <div class="exchange-config exchanges">

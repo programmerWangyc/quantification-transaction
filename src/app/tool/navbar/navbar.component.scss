@@ -1,28 +1,18 @@
 @import '../../../theme/_variable.theme';
 @import '../../home/_home';
-$normal-color: #979fc6;
-$hover-color: #fff;
-$normal-bcg : #222944;
-$hover-bcg: #454d74;
+@import '../../../theme/ng-zorro-extend/button/button';
 
 header {
     width: 100%;
     height: $header-height;
     box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
-    background: $normal-bcg;
+    background: color(dark-bcg);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 999;
 
-    a {
-        color: $normal-color;
-        white-space: nowrap;
-
-        &:hover {
-            color: $hover-color;
-        }
-    }
+    @include I18n();
 
     app-nav-menu {
         height: 100%;
@@ -59,6 +49,8 @@ header {
     display: none;
 }
 
+@include I18nDropdown();
+
 @media screen and (max-width: 1220px) {
     .header {
         margin: 0;
@@ -71,18 +63,5 @@ header {
 
     #menu {
         display: block;
-    }
-}
-
-.ant-dropdown-menu {
-    background-color: $normal-bcg;
-}
-
-.ant-dropdown-menu-item {
-    color: $normal-color;
-
-    &:hover {
-        background-color: $hover-bcg;
-        color: $hover-color;
     }
 }

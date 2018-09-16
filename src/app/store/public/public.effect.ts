@@ -66,6 +66,9 @@ export class PublicEffect extends BaseEffect {
     @Effect()
     strategyListByName$: Observable<ResponseAction> = this.getResponseAction(GET_STRATEGY_LIST_BY_NAME, strategyResponseActions);
 
+    @Effect()
+    accountSummary$: Observable<ResponseAction> = this.getResponseAction(pub.GET_ACCOUNT_SUMMARY, pub.ResponseActions);
+
     constructor(
         public ws: WebsocketService,
         public actions$: Actions,

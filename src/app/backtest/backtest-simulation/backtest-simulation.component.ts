@@ -1,18 +1,18 @@
-import { Component, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, startWith, switchMapTo } from 'rxjs/operators';
+import { map, startWith, switchMapTo, takeWhile } from 'rxjs/operators';
 
-import { ExchangeOptionsComponent } from '../exchange-options/exchange-options.component';
-import { BacktestConstantService } from '../providers/backtest.constant.service';
-import { BacktestService } from '../providers/backtest.service';
 import { BaseComponent } from '../../base/base.component';
 import { VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIOType, CategoryType } from '../../interfaces/request.interface';
 import { ServerSendEventType, TemplateSnapshot } from '../../interfaces/response.interface';
 import { PublicService } from '../../providers/public.service';
 import { BacktestConfigInCode } from '../backtest.interface';
+import { ExchangeOptionsComponent } from '../exchange-options/exchange-options.component';
+import { BacktestConstantService } from '../providers/backtest.constant.service';
+import { BacktestService } from '../providers/backtest.service';
 
 @Component({
     selector: 'app-backtest-simulation',
@@ -141,6 +141,8 @@ export class BacktestSimulationComponent extends BaseComponent {
      */
     forceFreeze = false;
 
+    isAlive = true;
+
     constructor(
         private backtestService: BacktestService,
         private constant: BacktestConstantService,
@@ -197,10 +199,15 @@ export class BacktestSimulationComponent extends BaseComponent {
             .add(this.backtestService.handleBacktestIOError())
             .add(this.backtestService.launchGetTemplates())
             .add(this.backtestService.updateRunningNode(this.runningNode$.asObservable()))
-            .add(this.backtestService.launchBacktest(this.startBacktest.asObservable()))
             .add(this.backtestService.launchOperateBacktest(this.stopBacktest$.asObservable(), BacktestIOType.stopTask, true))
             .add(this.backtestService.stopRunWorker(this.stopBacktest$.asObservable()))
             .add(this.backtestService.launchUpdateServerMsgSubscribeState(this.startBacktest.asObservable()));
+
+        const keepAlive = () => this.isAlive;
+
+        this.backtestService.launchBacktest(this.startBacktest.asObservable().pipe(
+            takeWhile(keepAlive)
+        ), keepAlive);
     }
 
     /**
@@ -240,6 +247,8 @@ export class BacktestSimulationComponent extends BaseComponent {
      * @ignore
      */
     ngOnDestroy() {
+        this.isAlive = false;
+
         this.publicService.updateServerMsgSubscribeState(ServerSendEventType.BACKTEST, false);
 
         this.backtestService.resetBacktestState();

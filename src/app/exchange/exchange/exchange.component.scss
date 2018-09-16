@@ -1,6 +1,22 @@
-.btn-group {
-    margin: 2em 0;
-    button {
-        margin-right: 2em;
+@import '../../../theme/_variable.theme';
+$prefix: 'exchange' !default;
+
+.#{$prefix}-head {
+    position: relative;
+
+    .operate {
+        @include operateBtnGroup();
+
+        a:not(:last-child) {
+            margin-right: 1em;
+        }
     }
+}
+
+.anticon-question-circle {
+    @include help();
+}
+
+.content {
+    @include commonContent();
 }

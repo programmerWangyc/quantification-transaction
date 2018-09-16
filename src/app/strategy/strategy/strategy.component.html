@@ -1,26 +1,39 @@
-<app-indicator [paths]="paths"></app-indicator>
+<div class="strategy-head">
+    <app-indicator [paths]="paths"></app-indicator>
+
+    <div fxLayoutAlign="space-between center" class="operate">
+        <a nz-button nzType="primary" routerLink="add">
+            <i class="anticon anticon-plus"></i>
+            {{'EDIT_NEW_STRATEGY' | translate}}
+        </a>
+
+        <a nz-button nzType="warm" routerLink="../../square">
+            <i class="anticon anticon-broadcast"></i>
+            {{'GO_TO_STRATEGY_SQUARE' | translate}}
+        </a>
+
+        <a nz-button routerLink="../../account/code">
+            <i class="anticon anticon-tags-o"></i>
+            {{'REGISTER_CODE_MANAGEMENT' | translate}}
+        </a>
+    </div>
+</div>
 
 <app-strategy-overview></app-strategy-overview>
 
-<div id="table-head">
-    <a nz-button [nzType]="'primary'" routerLink="add">
-        <i class="anticon anticon-plus"></i>
-        {{'EDIT_NEW_STRATEGY' | translate}}
-    </a>
-    <a nz-button [nzType]="'secondary'" routerLink="../../square">
-        <i class="anticon anticon-profile"></i>
-        {{'GO_TO_STRATEGY_SQUARE' | translate}}
-    </a>
-    <a nz-button [nzType]="'secondary'" routerLink="../../account/code">
-        <i class="anticon anticon-tags-o"></i>
-        {{'REGISTER_CODE_MANAGEMENT' | translate}}
-    </a>
-
-    <nz-input-group nzSuffixIcon="anticon anticon-search">
-        <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>
-    </nz-input-group>
-</div>
-
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
-    <app-strategy-list [list]="strategyList | async" (share)="share$.next($event)" (renewal)="renewal$.next($event)" (delete)="delete$.next($event)"></app-strategy-list>
+    <div class="content">
+        <h3 fxLayoutAlign="space-between center" class="content-head">
+            <span>{{'STRATEGY_LIST' | translate}}</span>
+
+            <nz-input-group nzSuffixIcon="anticon anticon-search">
+                <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>
+            </nz-input-group>
+        </h3>
+
+        <div class="table">
+            <app-strategy-list [list]="strategyList | async" (share)="share$.next($event)" (renewal)="renewal$.next($event)"
+                (delete)="delete$.next($event)"></app-strategy-list>
+        </div>
+    </div>
 </nz-spin>

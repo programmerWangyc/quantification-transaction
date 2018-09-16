@@ -1,9 +1,17 @@
+@import '../../../theme/ng-zorro-extend/steps/steps';
+
+.content {
+    background: #fff;
+    padding: 1rem 2rem;
+}
+
 img {
     width: 160px;
 }
 
 .unbind {
     margin: 0 0 1em 0;
+
     span {
         margin: 0 1em 0 0;
     }

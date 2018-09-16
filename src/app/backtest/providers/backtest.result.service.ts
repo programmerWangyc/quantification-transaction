@@ -478,6 +478,7 @@ export class BacktestResultService extends BacktestBaseService {
      */
     protected getYearDays(): Observable<number> {
         return this.getUIState().pipe(
+            filter(state => !!state.platformOptions),
             mergeMap(state => {
                 const ids = state.platformOptions.map(item => item.eid);
 

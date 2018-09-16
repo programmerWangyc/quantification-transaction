@@ -51,9 +51,9 @@ export class MessageComponent implements OnInit, OnDestroy {
      * @ignore
      */
     tabs: Tab[] = [
-        { name: 'INNER_MESSAGE', icon: 'anticon-message', count: 0 },
-        { name: 'PUSHED_MESSAGE', icon: 'anticon-notification', count: 0  },
-        { name: 'WARNING_MESSAGE', icon: 'anticon-warning', count: 0 },
+        { name: 'INNER_MESSAGE', icon: 'anticon-bell', count: 0 },
+        { name: 'PUSHED_MESSAGE', icon: 'anticon-push-message', count: 0  },
+        { name: 'WARNING_MESSAGE', icon: 'anticon-exclamation-circle-o', count: 0 },
     ];
 
     /**

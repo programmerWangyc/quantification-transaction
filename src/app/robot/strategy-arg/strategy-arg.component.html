@@ -1,9 +1,9 @@
 <h6 *ngIf="!!title" [ngClass]="titleClass">{{title | removeMD5 | templateName}}</h6>
 
 <form nz-form [nzLayout]="'horizontal'" fxLayout="row wrap">
-    <nz-form-item *ngFor="let item of args" style="width: 50%;">
+    <nz-form-item *ngFor="let item of args">
         <nz-form-label [nzSpan]="8">{{item.variableDes}}</nz-form-label>
-        <nz-form-control [nzSpan]="16">
+        <nz-form-control [nzSpan]="8">
 
             <div [ngSwitch]="item.variableTypeId">
                 <div *ngSwitchCase="1"> <!--boolean type-->

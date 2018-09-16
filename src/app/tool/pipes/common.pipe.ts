@@ -207,7 +207,7 @@ export class CategoryColorPipe implements PipeTransform {
     transform(input: number): string {
         switch (input) {
             case CategoryType.DIGITAL_CURRENCY:
-                return 'green';
+            return 'green';
 
             case CategoryType.COMMODITY_FUTURES:
                 return 'gold';

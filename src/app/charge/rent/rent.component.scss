@@ -1,5 +1,6 @@
 @import '../charge/charge.component';
 @import '../../../theme/_variable.theme';
+
 .auth {
     margin: 1em 0;
     white-space: nowrap;
@@ -7,6 +8,7 @@
 
 b {
     margin: 0 10px 0 5px;
+
     &::after {
         content: ':'
     }
@@ -15,3 +17,17 @@ b {
 .discount {
     color: color(accent);
 }
+
+.rent-period {
+    position: relative;
+
+    i {
+        @include help();
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+    }
+}
+
+@include paymentMethod();

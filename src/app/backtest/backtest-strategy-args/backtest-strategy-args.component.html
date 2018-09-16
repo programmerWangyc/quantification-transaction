@@ -10,53 +10,62 @@
                         <ng-container [ngSwitch]="item.variableTypeId">
 
                             <ng-container *ngSwitchCase="0">
-                                <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
-                                    [nzDisabled]="item.isOptimizing" [ngModelOptions]="{standalone: true}"></nz-input-number>
+                                <nz-input-number [nzDisabled]="item.isOptimizing" [(ngModel)]="item.variableValue"
+                                    (ngModelChange)="updateBacktestCodeContent()" [nzDisabled]="item.isOptimizing"
+                                    [ngModelOptions]="{standalone: true}"></nz-input-number>
 
-                                <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#2db7f5'" (nzCheckedChange)="checkOptimizingData(item)" style="margin: 0 0 0 7px;">{{'OPTIMIZE' | translate}}</nz-tag>
+                                <nz-tag nzMode="checkable" [nzChecked]="item.isOptimizing" [nzColor]="item.isOptimizing ? '#87d068' : '#6d86fc'"
+                                    (nzCheckedChange)="checkOptimizingData(item)" style="margin: 0 0 0 7px;">{{'OPTIMIZE'
+                                    | translate}}</nz-tag>
 
                                 <ng-container *ngIf="item.isOptimizing" #optimizeBlock>
                                     <nz-input-group [nzAddOnBefore]="'MAX' | translate" style="width: auto; margin: 0 2px;">
-                                        <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
-                                            [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.end" [nzStep]="item.optimize.step"
+                                            (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
+                                            style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
                                     <nz-input-group [nzAddOnBefore]="'MIN' | translate" style="width: auto; margin: 0 2px;">
-                                        <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
-                                            [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.begin" [nzStep]="item.optimize.step"
+                                            (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
+                                            style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
 
                                     <nz-input-group [nzAddOnBefore]="'STEP' | translate" style="width: auto;margin: 0 2px;">
-                                        <nz-input-number [(ngModel)]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
-                                            style="border-radius: 0 4px 4px 0;"></nz-input-number>
+                                        <nz-input-number [(ngModel)]="item.optimize.step" (ngModelChange)="updateBacktestCodeContent()"
+                                            [ngModelOptions]="{standalone: true}" style="border-radius: 0 4px 4px 0;"></nz-input-number>
                                     </nz-input-group>
                                 </ng-container>
                             </ng-container>
 
                             <ng-container *ngSwitchCase="1">
                                 <!--boolean type-->
-                                <label nz-checkbox [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"></label>
+                                <label nz-checkbox [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
+                                    [ngModelOptions]="{standalone: true}"></label>
                             </ng-container>
 
                             <ng-container *ngSwitchCase="3">
                                 <!--select type-->
-                                <nz-select [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true}"
-                                    [nzPlaceHolder]="'PLEASE_SELECT' | translate">
-                                    <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt" [nzValue]="opt"></nz-option>
+                                <nz-select [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
+                                    [ngModelOptions]="{standalone: true}" [nzPlaceHolder]="'PLEASE_SELECT' | translate">
+                                    <nz-option *ngFor="let opt of (item.originValue | variableToSelectList)" [nzLabel]="opt"
+                                        [nzValue]="opt"></nz-option>
                                 </nz-select>
                             </ng-container>
 
                             <ng-container *ngSwitchDefault>
                                 <!--string encryptString button-->
                                 <ng-container *ngIf="!isButton(item.originValue)">
-                                    <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue" (ngModelChange)="updateBacktestCodeContent()"
-                                        [ngModelOptions]="{standalone: true, updateOn: 'blur'}" nz-input>
+                                    <input [type]="item.variableTypeId | variableType" [(ngModel)]="item.variableValue"
+                                        (ngModelChange)="updateBacktestCodeContent()" [ngModelOptions]="{standalone: true, updateOn: 'blur'}"
+                                        nz-input>
                                 </ng-container>
                             </ng-container>
 
                         </ng-container>
                     </nz-form-control>
-                    <i *ngIf="!!item.variableComment && isHelpShow" class="anticon anticon-question-circle help" [nz-tooltip]="item.variableComment"></i>
+                    <i *ngIf="!!item.variableComment && isHelpShow" class="anticon anticon-question-circle"
+                        [nz-tooltip]="item.variableComment"></i>
                 </nz-form-item>
             </div>
         </div>

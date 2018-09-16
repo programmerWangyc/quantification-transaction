@@ -1,5 +1,13 @@
-head {
-    margin: 10px 0;
+@import '../../../theme/variable.theme';
+
+.content {
+    @include commonContent();
+    @include simpleContent();
+
+    .table {
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 .log-type {

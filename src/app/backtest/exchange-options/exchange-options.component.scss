@@ -1,4 +1,5 @@
 @import '../_backtest';
+
 .form-control {
     width: 12em;
 }
@@ -9,4 +10,14 @@ button {
 
 .exchange-pair {
     margin: 1em 0 0 0;
+}
+
+.anticon {
+    @include help();
+
+    margin: 0;
+}
+
+nz-form-item i {
+    line-height: 40px;
 }

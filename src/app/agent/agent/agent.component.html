@@ -1,12 +1,20 @@
-<app-indicator [paths]="paths"></app-indicator>
+<div class="agent-head">
+    <app-indicator [paths]="paths"></app-indicator>
 
-<div class="btn-group">
-    <button nz-button nzType="primary" (click)="navigateTo('add')">
-        <i class="anticon anticon-plus"></i>
-        {{'CREATE_AGENT' | translate}}
-    </button>
+    <div class="operate">
+        <button nz-button nzType="primary" (click)="navigateTo('add')">
+            <i class="anticon anticon-plus"></i>
+            {{'CREATE_AGENT' | translate}}
+        </button>
 
-    <i class="anticon anticon-question-circle" [nz-tooltip]="'AGENT_DEFINITION' | translate" style="color: #1890ff"></i>
+        <i class="anticon anticon-question-circle" [nz-tooltip]="'AGENT_DEFINITION' | translate"></i>
+    </div>
 </div>
 
-<app-agent-list></app-agent-list>
+<div class="content">
+    <h3 class="content-head">{{'AGENT_LIST' | translate}}</h3>
+
+    <div class="table">
+        <app-agent-list></app-agent-list>
+    </div>
+</div>

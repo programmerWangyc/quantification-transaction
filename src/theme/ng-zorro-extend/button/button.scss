@@ -1,0 +1,29 @@
+@import '../../_variable.theme';
+
+$prefix: 'ant-btn';
+
+$dark: color(dark-hover-bcg);
+$warm: color(warm-normal-bcg);
+
+.#{$prefix}-dark {
+    color: color(weak-normal-color);
+    background-color: $dark;
+    border-color: $dark;
+
+    &:hover {
+        color: color(weak-hover-color);
+        background-color: color(weak-hover-bcg);
+        border-color: color(normal-color);
+    }
+}
+
+.#{$prefix}-warm {
+    color: color(weak-hover-color);
+    background-color: $warm;
+    border-color: $warm;
+
+    &:hover {
+        color: lighten(color(weak-hover-color), 10%);
+        background-color: lighten($warm, 10%);
+    }
+}

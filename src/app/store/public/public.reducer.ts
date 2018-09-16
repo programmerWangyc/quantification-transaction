@@ -1,7 +1,7 @@
 import { LocalStorageKey } from '../../app.config';
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
 import { SettingsRequest, ChangeAlertThresholdSettingRequest } from '../../interfaces/request.interface';
-import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse, LogoutResponse, ChangeAlertThresholdSettingResponse } from '../../interfaces/response.interface';
+import { PublicResponse, ResponseState, ServerSendEventType, SettingsResponse, LogoutResponse, ChangeAlertThresholdSettingResponse, GetAccountSummaryResponse } from '../../interfaces/response.interface';
 import * as actions from './public.action';
 
 export interface Settings {
@@ -20,6 +20,7 @@ export interface RequestParams {
 }
 
 export interface State {
+    accountSummary: GetAccountSummaryResponse;
     changeAlertThresholdRes: ChangeAlertThresholdSettingResponse;
     editorConfig: EditorConfig;
     language: string;
@@ -61,6 +62,7 @@ const initialSubscribeState: { [key: string]: boolean } = {
 };
 
 export const initialState: State = {
+    accountSummary: null,
     changeAlertThresholdRes: null,
     editorConfig: editor || null,
     language: 'zh',
@@ -132,6 +134,11 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS:
             return { ...state, changeAlertThresholdRes: action.payload };
 
+        // get account summary
+        case actions.GET_ACCOUNT_SUMMARY_FAIL:
+        case actions.GET_ACCOUNT_SUMMARY_SUCCESS:
+            return { ...state, accountSummary: action.payload };
+
         // ==============================================ui state=========================================
 
         case actions.SET_REFERRER:
@@ -155,6 +162,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.RESET_LOGOUT_RESPONSE:
             return { ...state, logoutRes: null };
 
+        case actions.GET_ACCOUNT_SUMMARY:
         case actions.LOGOUT:
         default:
             return state;
@@ -197,3 +205,5 @@ export const getLogoutRes = (state: State) => state.logoutRes;
 export const getChangeAlertThresholdRes = (state: State) => state.changeAlertThresholdRes;
 
 export const getRequestParams = (state: State) => state.requestParams;
+
+export const getAccountSummaryResponse = (state: State) => state.accountSummary;

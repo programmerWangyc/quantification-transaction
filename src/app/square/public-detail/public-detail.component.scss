@@ -1,10 +1,22 @@
+@import '../../../theme/variable.theme';
+
 ul {
-    font-size: 12px;
-    list-style: none;
-    .subtitle {
-        padding: 0 1em 0 0;
-        b::after {
-            content: ':'
+    margin: 0;
+
+    li:not(:last-child) {
+        position: relative;
+        padding-right: 15px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 2px;
+            background: color(weak-bcg);
         }
     }
 }
@@ -13,10 +25,6 @@ ul {
     img {
         max-width: 100%;
     }
-}
-
-.share-bar {
-    padding: 2em 1em;
 }
 
 .operate-btn {

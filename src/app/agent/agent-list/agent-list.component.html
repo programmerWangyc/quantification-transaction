@@ -30,12 +30,14 @@
                 </td>
                 <td bt-text-center>
                     <a href="javascript: void 0" (click)="setNodeWd$.next(agent)">
-                        {{(!!agent.wd ? 'MONITOR' : 'CANCEL') | translate}}
+                        <i class="anticon" [ngClass]="!!agent.wd ? 'anticon-eye-o' : 'anticon-circle-o'"></i>
                     </a>
 
                     <nz-divider nzType="vertical"></nz-divider>
 
-                    <a href="javascript: void 0" (click)="delete$.next(agent)">{{'DELETE' | translate}}</a>
+                    <a href="javascript: void 0" (click)="delete$.next(agent)">
+                        <i class="anticon anticon-delete"></i>
+                    </a>
                 </td>
             </tr>
         </tbody>

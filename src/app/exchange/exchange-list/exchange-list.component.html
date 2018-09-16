@@ -22,18 +22,18 @@
                 </td>
 
                 <td>
-                    <span *ngFor="let stock of platform.stocks" class="pair">
-                        <nz-tag nzColor="cyan">
-                            {{stock}}
-                        </nz-tag>
-                    </span>
+                    <span *ngFor="let stock of platform.stocks" class="pair">{{stock}}</span>
                 </td>
 
                 <td bt-text-center>
                     <div *ngIf="platform.id !== -1; else elseBlock">
-                        <a (click)="delete$.next(platform)">{{'DELETE' | translate}}</a>
+                        <a (click)="delete$.next(platform)">
+                            <i class="anticon anticon-delete"></i>
+                        </a>
                         <nz-divider nzType="vertical"></nz-divider>
-                        <a [routerLink]="['edit', platform.id]">{{'EDIT' | translate}}</a>
+                        <a [routerLink]="['edit', platform.id]">
+                            <i class="anticon anticon-edit"></i>
+                        </a>
                     </div>
                     <ng-template #elseBlock>
                         <span>- -</span>

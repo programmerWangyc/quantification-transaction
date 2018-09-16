@@ -1,6 +1,10 @@
+@import '../../../theme/variable.theme';
+@import '../../../theme/ng-zorro-extend/radio-button/radio-button';
+
 .table-head {
     margin: 2em 0;
     position: relative;
+
     nz-input-group {
         position: absolute;
         right: 0;
@@ -10,4 +14,12 @@
 
 .pagination {
     margin: 10px 0;
+}
+
+.content {
+    @include simpleContent();
+}
+
+:host::ng-deep .ant-tag {
+    cursor: default;
 }

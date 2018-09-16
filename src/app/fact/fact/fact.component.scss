@@ -1,6 +1,20 @@
+@import '../../../theme/variable.theme';
+
+$prefix: 'fact';
+
+@import '../../exchange/exchange/exchange.component';
+
+.fact-robot {
+    margin: 0 0 $block-vertical-space 0;
+    @include simpleContent();
+}
+
 .search {
-    margin: 1em 0;
     nz-input-group {
         width: 200px;
     }
+}
+
+.content {
+    @include simpleContent();
 }

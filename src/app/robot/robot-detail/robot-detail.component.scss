@@ -1,4 +1,5 @@
 @import '../../../theme/_variable.theme';
+
 app-robot-overview,
 app-robot-config {
     width: 100%;
@@ -6,5 +7,10 @@ app-robot-config {
 }
 
 .part {
-    margin: 50px 0;
+    background: #fff;
+    margin: $block-vertical-space 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
 }

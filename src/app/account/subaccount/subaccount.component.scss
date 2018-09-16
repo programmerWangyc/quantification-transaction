@@ -1,3 +1,16 @@
+@import '../../../theme/variable.theme';
+
+form {
+    margin: $block-vertical-space 0;
+    padding: 1rem 2rem;
+    background: #fff;
+}
+
+.content {
+    @include commonContent();
+    padding: 1rem 2rem;
+}
+
 :host::ng-deep .ant-checkbox-wrapper {
     margin: 0 5px 5px 5px;
 }

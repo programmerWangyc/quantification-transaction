@@ -1,42 +1,43 @@
-<div fxLayoutAlign="space-around center" class="backtest-info">
+<div fxLayoutAlign="space-around space-evenly" class="backtest-info">
     <div fxLayoutAlign="space-between center">
-        <h5>{{'BACKTEST_TASK' | translate}}</h5>
+        <h4>{{'BACKTEST_TASK' | translate}}</h4>
         <span>{{processingTaskIndex | async}} / {{tasks | async}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>{{'PROGRESS' | translate}}</h5>
-        <nz-progress [nzPercent]="progress | async | number: '1.0-2'" nzType="circle" nzWidth="64"></nz-progress>
-    </div>
-
-    <div fxLayoutAlign="space-between center">
-        <h5>{{'TIME_CONSUMING' | translate}}</h5>
+        <h4>{{'TIME_CONSUMING' | translate}}</h4>
         <span>{{timeConsuming | async | number: '1.3-3' }}</span>
         <span>{{'SECOND' | translate}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>{{'TRANSACTIONS' | translate}}</h5>
+        <h4>{{'TRANSACTIONS' | translate}}</h4>
         <span>{{transactions | async}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>{{'STATUS' | translate}}</h5>
+        <h4>{{'STATUS' | translate}}</h4>
         <span>{{status | async | translate}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>{{'LOG' | translate}}</h5>
+        <h4>{{'LOG' | translate}}</h4>
         <span>{{logTotal | async}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>{{'ACCUMULATE_PROFIT' | translate}}</h5>
+        <h4>{{'ACCUMULATE_PROFIT' | translate}}</h4>
         <span>{{profit | async | number : '1.4-4'}}</span>
     </div>
 
     <div fxLayoutAlign="space-between center">
-        <h5>Tick</h5>
+        <h4>Tick</h4>
         <span>{{loadBytes | async | bytes}}</span>
     </div>
+
+    <div fxLayoutAlign="space-between center">
+        <h4>{{'PROGRESS' | translate}}</h4>
+        <nz-progress [nzPercent]="progress | async | number: '1.0-2'" nzSize="small"></nz-progress>
+    </div>
+
 </div>

@@ -1,4 +1,5 @@
 @import '../subaccount-list/subaccount-list.component';
-.button-container {
-    margin: 1em 0;
-}
+
+$prefix: 'api';
+
+@import '../../exchange/exchange/exchange.component';

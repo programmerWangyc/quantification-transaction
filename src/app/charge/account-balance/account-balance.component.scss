@@ -1,23 +1,33 @@
-@import '../_charge';
 @import '../../../theme/_variable.theme';
-h3 {
-    @include section-head();
-}
 
 ul {
-    background-color: color(primary);
-    border-radius: 4px;
-    padding: 1em;
+    padding: 1rem 2rem;
     margin: 0;
 }
 
 li {
     list-style: none;
     margin: 1em 0;
-    & span:first-child {
-        font-weight: 500;
+
+    &:first-child {
+        margin: 0;
+    }
+
+    & div:first-child {
+        margin: 0 4em 0 0;
+    }
+
+    & div span:first-child {
         &::after {
             content: ':'
         }
+
+        margin-right: 1rem;
+    }
+
+    & div span:last-child {
+        font-weight: 700;
+        font-size: 18px;
+        color: color(warm-normal-bcg);
     }
 }

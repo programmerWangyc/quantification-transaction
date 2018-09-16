@@ -13,7 +13,8 @@
             </nz-input-group>
             <nz-form-explain *ngIf="username.invalid && (username.dirty || username.touched)">
                 <div *ngIf="!!username.errors.required">{{'USERNAME_TIP' | translate}}</div>
-                <div *ngIf="!username.errors.required && !!username.errors.usernameFormat">{{form.getError('usernameFormat', 'username') | translate}}</div>
+                <div *ngIf="!username.errors.required && !!username.errors.usernameFormat">{{form.getError('usernameFormat',
+                    'username') | translate}}</div>
             </nz-form-explain>
         </nz-form-control>
     </nz-form-item>
@@ -29,7 +30,8 @@
             </nz-input-group>
             <nz-form-explain *ngIf="password.invalid && (password.dirty || password.touched)">
                 <div *ngIf="!!password.errors.required">{{'PASSWORD_REQUIRED_ERROR' | translate}}</div>
-                <div *ngIf="!password.errors.required && !!password.errors.passwordFormat">{{form.getError('passwordFormat', 'password') | translate}}</div>
+                <div *ngIf="!password.errors.required && !!password.errors.passwordFormat">{{form.getError('passwordFormat',
+                    'password') | translate}}</div>
             </nz-form-explain>
         </nz-form-control>
     </nz-form-item>
@@ -37,7 +39,8 @@
     <nz-form-item>
         <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'PERMISSION' | translate}}</nz-form-label>
         <nz-form-control>
-            <label nz-checkbox [(ngModel)]="allChecked" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAllChecked()" [nzIndeterminate]="indeterminate">
+            <label nz-checkbox [(ngModel)]="allChecked" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAllChecked()"
+                [nzIndeterminate]="indeterminate">
                 {{'SELECT_ALL' | translate}}
             </label>
             <nz-checkbox-group [(ngModel)]="robots" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateSingleChecked()"></nz-checkbox-group>
@@ -48,12 +51,20 @@
     </nz-form-item>
 
     <nz-form-item nz-row>
-        <nz-form-control [nzSpan]="14">
-            <button nz-button nzType="primary" type="submit" [disabled]="form.invalid || noneSelectedRobot">{{'CREATE' | translate}}</button>
+        <nz-form-control [nzSpan]="14" [nzOffset]="labelSm">
+            <button nz-button nzType="primary" type="submit" [disabled]="form.invalid || noneSelectedRobot">{{'CREATE'
+                | translate}}</button>
         </nz-form-control>
     </nz-form-item>
 </form>
 
-<nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <app-subaccount-list [accounts]="accounts | async" (lock)="onLock($event)" (delete)="onDelete($event)" (update)="onUpdateSubaccount($event)"></app-subaccount-list>
-</nz-spin>
+<div class="content">
+    <h3 class="content-head">{{'SUBACCOUNT_LIST' | translate}}</h3>
+
+    <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
+        <div class="table">
+            <app-subaccount-list [accounts]="accounts | async" (lock)="onLock($event)" (delete)="onDelete($event)"
+                (update)="onUpdateSubaccount($event)"></app-subaccount-list>
+        </div>
+    </nz-spin>
+</div>

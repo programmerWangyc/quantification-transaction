@@ -1,0 +1,25 @@
+@import '../../_variable.theme';
+
+$color: color(dark-bcg);
+
+:host::ng-deep .ant-steps-item-process .ant-steps-item-icon {
+    background: $color;
+    border-color: $color;
+}
+
+
+:host::ng-deep .ant-steps-item-finish {
+
+    &::after,
+    .ant-steps-item-tail::after,
+    .ant-steps-item-title::after {
+        background-color: $color;
+    }
+
+    .ant-steps-item-icon,
+    .ant-steps-icon {
+
+        border-color: $color;
+        color: $color
+    }
+}

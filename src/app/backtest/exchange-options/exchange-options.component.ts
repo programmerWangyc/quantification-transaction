@@ -97,6 +97,10 @@ export class ExchangeOptionsComponent implements OnInit {
      */
     private _takerFee: number;
 
+    span = 6;
+
+    gutter = 24;
+
     constructor(
         private constant: BacktestConstantService,
         private util: UtilService,

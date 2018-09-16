@@ -1,23 +1,24 @@
-<app-indicator [paths]="paths"></app-indicator>
+<div class="fact-head">
+    <app-indicator [paths]="paths"></app-indicator>
 
-<div fxLayoutAlign="end start" class="search">
-
-    <nz-input-group nzSuffixIcon="anticon anticon-search">
-        <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>
-    </nz-input-group>
-
+    <div class="operate">
+        <nz-input-group nzSuffixIcon="anticon anticon-search">
+            <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='search'>
+        </nz-input-group>
+    </div>
 </div>
 
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <app-fact-robot-table [robots]="robots | async"></app-fact-robot-table>
+    <div class="fact-robot">
+        <app-fact-robot-table [robots]="robots | async"></app-fact-robot-table>
+    </div>
 </nz-spin>
 
-<div fxLayoutAlign="space-between center">
-    <h2>{{'ALL_COMMENT' | translate}}</h2>
-    <span>{{total | async}}</span>
+<div class="content">
+    <app-comment-total [total]="total | async"></app-comment-total>
+
+    <app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+        [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+    <app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
 </div>
-
-<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
-    [buttonText]="'REVIEW'" [row]="10"></app-reply>
-
-<app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>

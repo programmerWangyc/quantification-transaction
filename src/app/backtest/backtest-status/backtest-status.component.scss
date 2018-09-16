@@ -1,15 +1,18 @@
-h5 {
-    margin: 0 2em 0 0;
+@import '../../../theme/variable.theme';
+
+h4 {
+    margin: 0 1em 0 0;
 }
 
-span {
-    font-size: 18px;
-}
-
-h5::after {
+h4::after {
     content: ':';
 }
 
 .backtest-info {
-    background: rgba(220, 245, 245, .2);
+    background: color(gray);
+    padding: 1rem 0;
+}
+
+nz-progress {
+    width: 100px;
 }

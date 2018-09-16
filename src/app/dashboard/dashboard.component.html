@@ -1,7 +1,7 @@
 <nz-layout id="dashboard">
     <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
         <div class="logo">
-            <a routerLink="/home">BotVS</a>
+            <img src="../../assets/images/home/logo.png" routerLink="/home">
         </div>
         <ul nz-menu [nzInlineCollapsed]="isCollapsed" [nzMode]="isCollapsed ? 'vertical':'inline'" id="side-container">
 
@@ -26,7 +26,13 @@
                     <li (click)="navigateTo(nav)" [nzSelected]="nav.selected" nz-menu-item>
                         <span title>
                             <i class="anticon" [ngClass]="'anticon-'+nav.icon"></i>
-                            <span>{{nav.label | translate}}</span>
+                            <span *ngIf="nav.label !== 'MESSAGE_CENTER'; else messageBlock">{{nav.label | translate}}</span>
+                            <ng-template #messageBlock>
+                                <span>{{nav.label | translate}}</span>
+                                <ng-container *ngIf="messageCount | async; let count">
+                                    <nz-badge [nzCount]="count"></nz-badge>
+                                </ng-container>
+                            </ng-template>
                         </span>
                     </li>
                 </ng-template>

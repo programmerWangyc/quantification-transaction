@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -16,7 +16,6 @@ import { CommentBaseComponent } from '../../square/square/square.component';
     selector: 'app-topic',
     templateUrl: './topic.component.html',
     styleUrls: ['./topic.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class TopicComponent extends CommentBaseComponent implements OnInit, OnDestroy {
 

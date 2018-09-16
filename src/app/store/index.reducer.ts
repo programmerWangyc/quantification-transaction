@@ -92,6 +92,9 @@ export const selectChangeAlertThresholdSettingResponse = createSelector(getPubSt
 // request params
 export const selectPublicRequestParams = createSelector(getPubState, pub.getRequestParams);
 
+// account summary
+export const selectAccountSummaryResponse = createSelector(getPubState, pub.getAccountSummaryResponse);
+
 // =====================================================router================================================
 
 const getRouteState = (state: AppState) => state.route;

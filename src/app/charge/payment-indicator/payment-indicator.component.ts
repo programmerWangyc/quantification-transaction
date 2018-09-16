@@ -33,11 +33,6 @@ export class PaymentIndicatorComponent implements OnInit {
     @Input() inputText = 'INPUT_AMOUNT';
 
     /**
-     * 组件标题
-     */
-    @Input() title = 'CHARGE_STEP';
-
-    /**
      * 支付进度状态描述
      */
     processState: Observable<string>;

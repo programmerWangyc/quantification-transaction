@@ -1,16 +1,31 @@
-<app-indicator [paths]="paths"></app-indicator>
+<div class="robot-head">
+    <app-indicator [paths]="paths"></app-indicator>
 
-<app-robot-duration></app-robot-duration>
+    <div fxLayoutAlign="space-between center" class="operate">
+        <span>{{info}}</span>
 
-<div class="button-group">
-    <button nz-button [nzType]="buttonType" (click)="navigateTo('add')">
-        <i class="anticon anticon-plus"></i>
-        {{'CREATE_ROBOT' | translate}}
-    </button>
-    <button nz-button [nzType]="buttonType" (click)="navigateTo('debug')">
-        <i class="anticon anticon-twitter"></i>
-        {{'DEBUG' | translate}}
-    </button>
+        <div class="button-group">
+            <button nz-button nzType="primary" (click)="navigateTo('add')">
+                <i class="anticon anticon-plus"></i>
+                {{'CREATE_ROBOT' | translate}}
+            </button>
+
+            <button nz-button nzType="warm" (click)="navigateTo('debug')">
+                <i class="anticon anticon-debug"></i>
+                {{'DEBUG' | translate}}
+            </button>
+        </div>
+    </div>
 </div>
 
-<app-robot-list></app-robot-list>
+<div class="duration">
+    <app-robot-duration (info)="onDurationInfo($event)"></app-robot-duration>
+</div>
+
+<div class="content">
+    <h3 class="content-head">{{'ROBOT_LIST' | translate}}</h3>
+
+    <div class="table">
+        <app-robot-list></app-robot-list>
+    </div>
+</div>

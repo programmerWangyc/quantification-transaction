@@ -18,7 +18,7 @@ import * as DocumentActions from '../store/document/document.action';
 import { GetExchangeListRequestAction } from '../store/exchange/exchange.action';
 import { AppState } from '../store/index.reducer';
 import * as PlatformActions from '../store/platform/platform.action';
-import { GetSettingsRequestAction, LogoutRequestAction, ChangeAlertThresholdSettingRequestAction } from '../store/public/public.action';
+import { GetSettingsRequestAction, LogoutRequestAction, ChangeAlertThresholdSettingRequestAction, GetAccountSummaryRequestAction } from '../store/public/public.action';
 import * as RobotActions from '../store/robot/robot.action';
 import * as SimulationActions from '../store/simulation/simulation.action';
 import * as StrategyActions from '../store/strategy/strategy.action';
@@ -44,6 +44,10 @@ export class ProcessService {
 
     processChangeAlertThresholdSetting(paramObs: Observable<Request.ChangeAlertThresholdSettingRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new ChangeAlertThresholdSettingRequestAction(params)));
+    }
+
+    processGetAccountSummary(paramObs: Observable<Request.GetAccountSummaryRequest>): Subscription {
+        return paramObs.subscribe(params => this.store.dispatch(new GetAccountSummaryRequestAction(params)));
     }
 
     //  ===================================================Auth===================================================

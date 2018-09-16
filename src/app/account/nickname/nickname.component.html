@@ -1,20 +1,23 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<form nz-form #nickForm="ngForm" nzLayout="inline" (ngSubmit)="nickname$.next(nickname)">
-    <nz-form-item>
-        <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'NICKNAME' | translate}}</nz-form-label>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>
-            <nz-input-group>
-                <input nz-input [(ngModel)]="nickname" [ngModelOptions]="{standalone: true}" required #spy="ngModel">
-            </nz-input-group>
-            <nz-form-explain *ngIf="spy.invalid && (spy.dirty || spy.touched)">
-                <div *ngIf="!!spy.errors.required">{{'PLEASE_INPUT_NICKNAME' | translate}}</div>
-            </nz-form-explain>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item nz-row>
-        <nz-form-control [nzSpan]="14">
-            <button nz-button nzType="primary" type="submit" [disabled]="nickForm.form.invalid || !nickname">{{'CONFIRM_MODIFY' | translate}}</button>
-        </nz-form-control>
-    </nz-form-item>
-</form>
+<div class="content">
+    <form nz-form #nickForm="ngForm" nzLayout="inline" (ngSubmit)="nickname$.next(nickname)">
+        <nz-form-item>
+            <nz-form-label [nzSm]="labelSm" [nzXs]="xs" nzRequired>{{'NICKNAME' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="controlSm" [nzXs]="xs" nzHasFeedback>
+                <nz-input-group>
+                    <input nz-input [(ngModel)]="nickname" [ngModelOptions]="{standalone: true}" required #spy="ngModel">
+                </nz-input-group>
+                <nz-form-explain *ngIf="spy.invalid && (spy.dirty || spy.touched)">
+                    <div *ngIf="!!spy.errors.required">{{'PLEASE_INPUT_NICKNAME' | translate}}</div>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-control [nzSpan]="14">
+                <button nz-button nzType="primary" type="submit" [disabled]="nickForm.form.invalid || !nickname">{{'CONFIRM_MODIFY'
+                    | translate}}</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>

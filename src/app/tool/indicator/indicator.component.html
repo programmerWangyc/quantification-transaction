@@ -1,4 +1,5 @@
-<div class="indicator">
+<div fxLayoutAlign="start center" class="breadcrumb">
+    <span *ngIf="showIndicator" class="indicator"></span>
     <nz-breadcrumb [nzSeparator]="iconTemplate">
         <nz-breadcrumb-item *ngFor="let item of paths">
             <span *ngIf="!item.path; else elseBlock">

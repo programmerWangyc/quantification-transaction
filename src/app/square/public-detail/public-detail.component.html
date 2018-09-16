@@ -1,39 +1,39 @@
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
     <div *ngIf="detail | async as data;">
-        <ul fxLayout="row-reverse">
-            <li class="subtitle">
-                <b>{{'STRATEGY_TYPE' | translate}}</b>
-                <i>{{data.category | categoryName | translate }}</i>
-            </li>
-            <li class="subtitle">
-                <b>{{'CREATE_TIME' | translate}}</b>
-                <i>{{data.date}}</i>
-            </li>
-            <li class="subtitle">
-                <b>{{'LATEST_MODIFY' | translate}}</b>
-                <i>{{data.last_modified}}</i>
-            </li>
+        <div fxLayoutAlign="space-between center">
+            <ul fxLayout="row">
+                <li class="subtitle">
+                    <i class="anticon anticon-user"></i>
+                    {{data.username}}
+                </li>
 
-            <li class="subtitle">
-                <b>{{'AUTHOR' | translate}}</b>
-                <i>{{data.username}}</i>
-            </li>
-        </ul>
+                <li class="subtitle">
+                    <i class="anticon anticon-clock-circle-o"></i>
+                    {{data.category | categoryName | translate }}
+                </li>
 
-        <div nz-row>
-            <div nz-col nzSpan="23">
-                <markdown *ngIf="data.description as des; else emptyBlock" [data]="des" class="content"></markdown>
-            </div>
+                <li class="subtitle">
+                    <i class="anticon anticon-clock-circle-o"></i>
+                    {{data.date}}
+                </li>
 
-            <div nz-col nzSpan="1" class="share-bar">
-                <app-share [topic]="data.name" [pictures]="pictures | async"></app-share>
-            </div>
+                <li class="subtitle">
+                    <i class="anticon anticon-clock-circle-o"></i>
+                    {{data.last_modified}}
+                </li>
+            </ul>
+
+            <app-share [topic]="data.name" [pictures]="pictures | async"></app-share>
         </div>
 
+        <markdown *ngIf="data.description as des; else emptyBlock" [data]="des" class="content"></markdown>
+
         <div class="operate-btn">
-            <button *ngIf="data.public === 1; else buyBlock" nz-button nzSize="large" nzType="primary" (click)="navigateTo(data)">{{'STRATEGY_COPY' | translate}}</button>
+            <button *ngIf="data.public === 1; else buyBlock" nz-button nzSize="large" nzType="primary" (click)="navigateTo(data)">{{'STRATEGY_COPY'
+                | translate}}</button>
             <ng-template #buyBlock>
-                <button nz-button (click)="buyStrategy(data)" nzSize="large" nzType="primary">{{'PURCHASE' | translate}}</button>
+                <button nz-button (click)="buyStrategy(data)" nzSize="large" nzType="primary">{{'PURCHASE' |
+                    translate}}</button>
             </ng-template>
         </div>
     </div>

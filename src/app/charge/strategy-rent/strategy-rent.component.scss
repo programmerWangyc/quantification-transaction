@@ -1,0 +1,5 @@
+@import '../../../theme/variable.theme';
+
+.content {
+    @include simpleContent();
+}

@@ -44,7 +44,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     /**
      * @ignore
      */
-    controlSm = 12;
+    controlSm = 8;
 
     /**
      * @ignore

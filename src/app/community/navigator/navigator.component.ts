@@ -1,6 +1,4 @@
-import {
-    ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { BBSNode, BBSPlane } from '../../interfaces/response.interface';
 
@@ -13,7 +11,6 @@ interface Plane extends BBSPlane {
     templateUrl: './navigator.component.html',
     styleUrls: ['./navigator.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
 })
 export class NavigatorComponent implements OnInit {
 

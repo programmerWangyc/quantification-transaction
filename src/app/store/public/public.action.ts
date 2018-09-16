@@ -1,9 +1,11 @@
 import { Action } from '@ngrx/store';
 
 import { EditorConfig, Referrer } from '../../interfaces/app.interface';
-import { ChangeAlertThresholdSettingRequest, LogoutRequest, SettingsRequest } from '../../interfaces/request.interface';
 import {
-    ChangeAlertThresholdSettingResponse, LogoutResponse, PublicResponse, SettingsResponse
+    ChangeAlertThresholdSettingRequest, GetAccountSummaryRequest, LogoutRequest, SettingsRequest
+} from '../../interfaces/request.interface';
+import {
+    ChangeAlertThresholdSettingResponse, GetAccountSummaryResponse, LogoutResponse, PublicResponse, SettingsResponse
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
@@ -141,6 +143,41 @@ export class LogoutSuccessAction extends Logout implements Action {
     constructor(public payload: LogoutResponse) { super(); }
 }
 
+// account summary
+export class GetAccountSummary extends ApiAction {
+    isSingleParams = false;
+
+    command = 'GetAccountSummary';
+
+    order = null;
+
+    noneParams = true;
+}
+
+export const GET_ACCOUNT_SUMMARY = '[Public] GET_ACCOUNT_SUMMARY';
+
+export class GetAccountSummaryRequestAction extends GetAccountSummary implements Action {
+    readonly type = GET_ACCOUNT_SUMMARY;
+
+    constructor(public payload: GetAccountSummaryRequest) { super(); }
+}
+
+export const GET_ACCOUNT_SUMMARY_FAIL = '[Public] GET_ACCOUNT_SUMMARY_FAIL';
+
+export class GetAccountSummaryFailAction extends GetAccountSummary implements Action {
+    readonly type = GET_ACCOUNT_SUMMARY_FAIL;
+
+    constructor(public payload: GetAccountSummaryResponse) { super(); }
+}
+
+export const GET_ACCOUNT_SUMMARY_SUCCESS = '[Public] GET_ACCOUNT_SUMMARY_SUCCESS';
+
+export class GetAccountSummarySuccessAction extends GetAccountSummary implements Action {
+    readonly type = GET_ACCOUNT_SUMMARY_SUCCESS;
+
+    constructor(public payload: GetAccountSummaryResponse) { super(); }
+}
+
 //  ===========================================Local action===================================
 
 export const SET_LANGUAGE = '[Public] SET_LANGUAGE';
@@ -187,6 +224,9 @@ export type ApiActions = GetSettingsRequestAction
     | ChangeAlertThresholdSettingSuccessAction
     | GetSettingsFailAction
     | GetSettingsSuccessAction
+    | GetAccountSummaryRequestAction
+    | GetAccountSummaryFailAction
+    | GetAccountSummarySuccessAction
     | LogoutFailAction
     | LogoutRequestAction
     | LogoutSuccessAction;
@@ -205,6 +245,8 @@ export const ResponseActions = {
     ChangeAlertThresholdSettingSuccessAction,
     GetSettingsFailAction,
     GetSettingsSuccessAction,
+    GetAccountSummaryFailAction,
+    GetAccountSummarySuccessAction,
     LogoutFailAction,
     LogoutSuccessAction,
 };

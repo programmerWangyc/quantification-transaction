@@ -1,5 +1,8 @@
+@import '../../../theme/variable.theme';
+
 .indicator {
     position: relative;
+
     .github {
         position: absolute;
         right: 0;
@@ -8,4 +11,12 @@
         font-size: 24px;
         color: black;
     }
+}
+
+.strategies {
+    margin: $block-vertical-space 0;
+}
+
+.content {
+    @include simpleContent();
 }

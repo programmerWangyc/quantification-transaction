@@ -462,6 +462,17 @@ export interface PluginRunResult {
 
 export interface PluginRunResponse extends ResponseUnit<string> { }
 
+// account summary
+export interface AccountSummary {
+    node: number;
+    platform: number;
+    premium_strategy: number;
+    strategy: number;
+    robot: number;
+}
+
+export interface GetAccountSummaryResponse extends ResponseUnit<AccountSummary> { }
+
 // ===================================================Agent=============================================
 
 // node list

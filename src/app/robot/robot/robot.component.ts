@@ -15,10 +15,7 @@ export class RobotComponent implements OnInit {
      */
     paths: Breadcrumb[] = [{ name: 'ROBOT' }];
 
-    /**
-     * @ignore
-     */
-    buttonType = 'primary';
+    info: string;
 
     constructor(
         private router: Router,
@@ -36,5 +33,12 @@ export class RobotComponent implements OnInit {
      */
     navigateTo(path: string): void {
         this.router.navigate([path], { relativeTo: this.activatedRoute });
+    }
+
+    /**
+     * @ignore
+     */
+    onDurationInfo(info: string): void {
+        this.info = info;
     }
 }

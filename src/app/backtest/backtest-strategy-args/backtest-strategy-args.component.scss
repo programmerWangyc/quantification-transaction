@@ -1,12 +1,11 @@
 @import '../_backtest';
-@import '../../../theme/_variable.theme';
-.help {
-    color: color(primary);
-    margin: 0 0 0 1em;
+
+.anticon {
+    @include help();
 }
 
 .arg-title {
-    @include arg-title(color(primary));
+    @include arg-title(color(weak-hover-bcg));
 }
 
 form {

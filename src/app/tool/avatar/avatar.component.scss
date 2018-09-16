@@ -1,20 +1,27 @@
 @import '../../../theme/_variable.theme';
+@import '../../home/home';
+
+.user-avatar {
+    color: color(weak-normal-color);
+    cursor: pointer;
+}
 
 a {
     margin: 0 1em;
-    &:last-child {
-        color: color(dangerous);
-    }
-}
-
-nz-divider {
-    margin: 12px 0 ;
 }
 
 nz-avatar {
-    background-color: color(primary);
+    background-color: color(dark-hover-bcg);
+    margin-right: 10px;
 }
 
-button {
-    margin: 0 2em;
+@include I18n();
+
+@include I18nDropdown();
+
+
+.ant-dropdown-menu-item:last-child {
+    a:hover {
+        color: color(dangerous);
+    }
 }

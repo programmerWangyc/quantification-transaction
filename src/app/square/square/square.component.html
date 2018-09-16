@@ -6,14 +6,15 @@
     </a>
 </div>
 
-<app-strategy-market></app-strategy-market>
-
-<div fxLayoutAlign="space-between center">
-    <h2>{{'ALL_COMMENT' | translate}}</h2>
-    <span>{{total | async}}</span>
+<div class="strategies">
+    <app-strategy-market></app-strategy-market>
 </div>
 
-<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
-    [buttonText]="'REVIEW'" [row]="10"></app-reply>
+<div class="content">
+    <app-comment-total [total]="total | async"></app-comment-total>
 
-<app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
+    <app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+        [buttonText]="'REVIEW'" [row]="10"></app-reply>
+
+    <app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
+</div>

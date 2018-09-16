@@ -361,11 +361,14 @@
 
     "FIRMWARE_SIMULATION": "实盘仿真",
     "EXCHANGE": "交易所",
+    "EXCHANGE_LIST": "交易所列表",
     "STRATEGY_LIBRARY": "策略库",
+    "STRATEGY_LIST": "策略列表",
     "ROBOT": "机器人",
+    "ROBOT_LIST": "机器人列表",
 
     "CREATE_ROBOT": "创建机器人",
-    "ROBOT_TOTAL": "机器人总数",
+    "ROBOT_CONFIG": "机器人参数设置",
     "CANCEL_PUBLISH_ROBOT_CONFIRM": "确定要取消公开这个机器人的交易日志吗?",
     "PUBLISH_ROBOT_CONFIRM": "确定要公开这个机器人的交易日志吗?",
     "RESTART_ROBOT_CONFIRM": "确定要重启这个机器人吗?",
@@ -438,6 +441,7 @@
     "CONFIRM_LEAVE_ROBOT_CREATION": "尚未完成机器人创建，确定要离开吗？",
 
     "AGENT": "托管者",
+    "AGENT_LIST": "托管者列表",
     "PUBLIC_AGENT": "公有托管者",
     "PRIVATE_AGENT": "私有托管者",
     "PLEASE_SELECT_STRATEGY": "请选择策略",
@@ -707,7 +711,7 @@
     "AGENT_CREATE_GUIDE": "请根据以下步骤完成创建",
     "PRIVATE_AGENT_INTRO": "布署的私有托管者不受 FMZ 服务器性能的影响，托管者直接与交易所进行通信，只在本地保存日志信息。",
     "YOUR_PASSWORD": "你的 FMZ 密码",
-    "SUBSCRIBE_WECHAT_TIP": "关注下方微信号(或搜索公众号botvs) 绑定后可查看机器人状态与接收策略推送消息！",
+    "SUBSCRIBE_WECHAT_TIP": "关注下方微信号(或搜索公众号botvs)。绑定后可查看机器人状态与接收策略推送消息！",
     "AGENT_LATEST_VERSION": "最新版本：{{version}}, 更新时间：{{time}}",
 
     "EXCHANGE_DEFINITION": "交易所指具体执行买卖交易的平台，一个策略可以连接多个交易所。没有列出的交易对可以在创建机器人时通过自定义交易对添加。",
@@ -799,7 +803,7 @@
     "MODIFY_NICKNAME_SUCCESS": "昵称修改成功",
     "MODIFY_NICKNAME_FAIL": "昵称修改失败",
     "BIND_WECHAT_TITLE_1": "添加微信号",
-    "BIND_WECHAT_STEP_1": "扫描右侧二维码或通过微信查找公众号 botvscom 关注官方公众号。",
+    "BIND_WECHAT_STEP_1": "扫描下方二维码或通过微信查找公众号 botvscom 关注官方公众号。",
     "BIND_WECHAT_TITLE_2": "发送消息",
     "BIND_WECHAT_STEP_2": "发送 URMQLBGG 八位字母即可绑定微信并接收策略推送消息。",
     "UNBIND_FAIL": "解绑失败",
@@ -837,6 +841,7 @@
     "PUSHED_MESSAGE": "推送消息",
     "WARNING_MESSAGE": "告警消息",
     "TOPIC_REPLIED": "{{username}} 回复主题 {{topic}}",
+    "SEND_TIME": "发送于：{{time}}",
     "CLEAR": "清空",
     "WECHAT_UNBOUND": "您还没有绑定微信, 无法接收推送与告警消息!",
     "IMMEDIATELY_BINDING": "立即绑定",
@@ -872,5 +877,8 @@
     "COMPANY_INFO_P4": "总部：北京市昌平区沙河镇松兰堡村西B座205 (北京天恒金诚科技有限公司)",
     "COMPANY_INFO_P5": "研发：郑州市二七区二七万达12A座 (BotVS研发中心)",
 
-    "FOUR_ZERO_FOUR_TIP": "当前位置上没有发现任何内容，你可以尝试通过以下链接访问网站的其它内容。"
+    "FOUR_ZERO_FOUR_TIP": "当前位置上没有发现任何内容，你可以尝试通过以下链接访问网站的其它内容。",
+    "GOOGLE_VERIFY_STEPS": "请根据以下步骤完成验证",
+    "SUBACCOUNT_LIST": "子帐户列表",
+    "API_INTERFACE_LIST": "API接口列表"
 }

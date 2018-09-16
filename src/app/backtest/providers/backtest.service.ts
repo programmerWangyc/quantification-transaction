@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 
 import { isEmpty, isNull, isNumber } from 'lodash';
 import { combineLatest, concat, interval, merge, never, Observable, of, Subscription, zip } from 'rxjs';
 import {
     distinct, distinctUntilChanged, filter, map, mapTo, mergeMap, mergeMapTo, partition, skip, startWith, switchMap,
-    switchMapTo, take, takeUntil, tap, withLatestFrom
+    switchMapTo, take, takeUntil, takeWhile, tap, withLatestFrom
 } from 'rxjs/operators';
 
-import { VariableOverview } from '../../interfaces/app.interface';
+import { keepAliveFn, VariableOverview } from '../../interfaces/app.interface';
 import { BacktestIORequest, BacktestIOType, SettingTypes } from '../../interfaces/request.interface';
 import * as fromRes from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
@@ -38,7 +37,6 @@ export class BacktestService extends BacktestParamService {
         private publicService: PublicService,
         private computeService: BacktestComputingService,
         public tipService: TipService,
-        private router: Router,
     ) {
         super(store, constant);
     }
@@ -49,33 +47,31 @@ export class BacktestService extends BacktestParamService {
      * 回测入口函数，会将用户发起的回测信号流拆分成服务端和客户端两条流，然后再将这两条流交给各自的回测流程。
      * @param start 用户发起的开始回测的信号
      */
-    launchBacktest(start: Observable<boolean>): Subscription {
+    launchBacktest(start: Observable<boolean>, keepAlive: keepAliveFn): Subscription[] {
         const [atLocal, atServer] = partition((isLocal: boolean) => isLocal)(this.isLocalBacktest(start));
 
-        const server$$ = this.startServerBacktest(atServer);
+        const server$$ = this.startServerBacktest(atServer, keepAlive);
 
-        const local$$ = this.startLocalBacktest(atLocal);
+        const local$$ = this.startLocalBacktest(atLocal, keepAlive);
 
         /**
          * 回测前的动作：根据参数配置项生成需要测试的任务；
          */
         const generateToBeTestedValue$$ = start.subscribe(_ => this.store.dispatch(new Actions.GenerateToBeTestedValuesAction()));
 
-        return generateToBeTestedValue$$
-            .add(local$$)
-            .add(server$$);
+        return [generateToBeTestedValue$$, local$$, server$$];
     }
 
     /**
      * 发起服务端回测
      * @param start 开始服务端回测的信号
      */
-    private startServerBacktest(start: Observable<boolean>): Subscription {
+    private startServerBacktest(start: Observable<boolean>, keepAlive: keepAliveFn): Subscription {
 
         // 回测任务完成，也就是收到服务端的消息之后，拉取回测结果
         return this.launchOperateBacktest(
             this.getServerSendBacktestMsg().pipe(
-                takeUntil(this.router.events)
+                takeWhile(keepAlive)
             ),
             BacktestIOType.getTaskResult
         )
@@ -167,7 +163,7 @@ export class BacktestService extends BacktestParamService {
     /**
      * 本地回测，在webworker中进行
      */
-    private startLocalBacktest(signal: Observable<boolean>): Subscription {
+    private startLocalBacktest(signal: Observable<boolean>, keepAlive: keepAliveFn): Subscription {
         const notify = concat(
             of(true),
             this.getBacktestIOResponse(Actions.BacktestOperateCallbackId.result),
@@ -196,6 +192,7 @@ export class BacktestService extends BacktestParamService {
         );
 
         return this.process.processWorkBacktest(this.guardBacktestStart(signal).pipe(
+            takeWhile(keepAlive),
             switchMapTo(params)
         ));
     }

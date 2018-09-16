@@ -1,5 +1,16 @@
+@import '../../../theme/_variable.theme';
+
+.content {
+    @include commonContent();
+}
+
+.form-wrap {
+    padding: 0 10%;
+    @include paymentMethod();
+}
+
 form {
-    margin: 2em 0;
+    margin: 2em auto;
 }
 
 .qr-code {
@@ -18,4 +29,8 @@ img {
 
 .scan-tip {
     margin: 0 0 0 1em;
+}
+
+:host::ng-deep .ant-steps {
+    padding: 0 10%;
 }

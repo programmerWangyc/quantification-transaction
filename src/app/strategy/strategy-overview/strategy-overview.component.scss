@@ -1,5 +1,6 @@
-@import '../../dashboard/_dashboard';
-@include header-section();
-a {
-    margin-left: 4em;
+@import '../../robot/robot-duration/robot-duration.component';
+
+ul {
+    width: 100%;
+    height: 70px;
 }

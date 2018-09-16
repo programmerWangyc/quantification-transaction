@@ -1,14 +1,17 @@
-#bbs-navigator {
-    position: relative;
-    .create-topic {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
+@import '../../../theme/variable.theme';
+
+.content {
+    @include simpleContent();
 }
 
-#bbs-search {
-    margin: 20px 0;
+#bbs-navigator {
+
+    margin: 0 0 2em 0;
+
+    .create-topic {
+        margin: 0 2em;
+    }
+
     nz-input-group {
         width: 200px;
     }

@@ -1,13 +1,11 @@
+@import '../../../theme/variable.theme';
+
+.content {
+    @include simpleContent();
+}
+
 img {
     max-width: 100%;
-}
-
-.ant-back-top {
-    right: 50px;
-}
-
-.ant-anchor {
-    margin: 100px 0;
 }
 
 .main-title {

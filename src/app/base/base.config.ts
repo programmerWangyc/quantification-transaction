@@ -72,14 +72,14 @@ export const charge: SideNav = {
 };
 
 export const accountModules: NavItem[] = [
-    { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'key' },
+    { path: Path.account + '/' + Path.reset, label: 'MODIFY_PWD', icon: 'modify-password' },
     { path: Path.account + '/' + Path.nickname, label: 'MODIFY_NICKNAME', icon: 'smile-o' },
     { path: Path.account + '/' + Path.wechat, label: 'BIND_WECHAT', icon: 'wechat' },
     { path: Path.account + '/' + Path.google, label: 'GOOGLE_VERIFY', icon: 'google' },
-    { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'usergroup-add' },
-    { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'key' },
-    { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'bell' },
-    { path: Path.account + '/' + Path.code, label: 'REGISTER_CODE', icon: 'tags-o' },
+    { path: Path.account + '/' + Path.usergroup, label: 'SUBACCOUNT_GROUP', icon: 'sub-account' },
+    { path: Path.account + '/' + Path.key, label: 'API_KEY', icon: 'interface' },
+    { path: Path.account + '/' + Path.warn, label: 'BALANCE_EARLY_WARNING', icon: 'warning' },
+    { path: Path.account + '/' + Path.code, label: 'REGISTER_CODE', icon: 'regist-code' },
 ];
 
 export const account: SideNav = {

@@ -6,12 +6,15 @@
 }
 
 .title {
-    background-color: color(primary);
+    background: $primary-3;
     border-radius: 4px;
     text-indent: 1em;
-    color: color(weak-bcg);
     min-height: 39px;
     line-height: 39px;
+}
+
+nz-form-item {
+    width: 33%;
 }
 
 button {

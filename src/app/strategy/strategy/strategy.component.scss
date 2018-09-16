@@ -1,12 +1,22 @@
-#table-head {
-    margin: 2em 0;
+@import '../../../theme/ng-zorro-extend/button/button';
+
+.strategy-head {
     position: relative;
-    a {
-        margin-right: 20px;
+
+    .operate {
+        @include operateBtnGroup();
+
+        a:not(:last-child) {
+            margin-right: 1em;
+        }
     }
+}
+
+.content {
+    @include commonContent();
+    margin: $block-vertical-space 0 0 0;
+
     nz-input-group {
-        position: absolute;
-        right: 0;
         width: 200px;
     }
 }

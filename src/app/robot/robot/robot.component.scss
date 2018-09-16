@@ -1,6 +1,28 @@
-.button-group {
-    margin: 50px 0;
-    button, a {
-        margin-right: 20px;
+@import '../../../theme/ng-zorro-extend/button/button';
+
+.robot-head {
+    position: relative;
+
+    .operate {
+        @include operateBtnGroup();
+
+        span {
+            margin: 0 2rem 0 0;
+            font-size: 12px;
+        }
     }
+
+    .button-group {
+        button:first-child {
+            margin-right: 1em;
+        }
+    }
+}
+
+.duration {
+    margin: $block-vertical-space 0;
+}
+
+.content {
+    @include commonContent();
 }

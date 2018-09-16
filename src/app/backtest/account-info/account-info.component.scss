@@ -1,3 +1,9 @@
+@import '../backtest';
+
+th i {
+    @include help();
+}
+
 td {
     text-align: center;
 }

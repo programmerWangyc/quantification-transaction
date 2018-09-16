@@ -55,7 +55,7 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
     ngOnInit() {
         this.initialModel(true);
 
-        this.addCurrentPath('CREATE', '../');
+        this.addCurrentPath('CREATE');
 
         this.initialPrivateModel();
 

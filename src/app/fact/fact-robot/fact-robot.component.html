@@ -23,10 +23,7 @@
     </div>
 
     <div class="part">
-        <div fxLayoutAlign="space-between center">
-            <h2>{{'ALL_COMMENT' | translate}}</h2>
-            <span>{{total | async}}</span>
-        </div>
+        <app-comment-total [total]="total | async"></app-comment-total>
 
         <app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
             [buttonText]="'REVIEW'" [row]="10"></app-reply>

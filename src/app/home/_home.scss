@@ -1,4 +1,5 @@
 @import '../../theme/_variable.theme';
+
 /* mixin */
 @mixin indicator() {
     content: '';
@@ -18,4 +19,34 @@
         radial-gradient(rgba(228, 228, 228, 1) 14%, transparent 10%);
     background-size: 10px 10px;
     background-position: 0px 0px, 5px 0px, 0px 5px, 5px 5px;
+}
+
+@mixin I18n {
+    a {
+        color: color(weak-normal-color);
+        white-space: nowrap;
+
+        &:hover {
+            color: color(weak-hover-color);
+        }
+    }
+}
+
+@mixin I18nDropdown {
+    .ant-dropdown-menu {
+        background-color: color(dark-bcg);
+    }
+
+    .ant-dropdown-menu-item-divider {
+        background: color(dark-hover-bcg);
+    }
+
+    .ant-dropdown-menu-item {
+        color: color(weak-normal-color);
+
+        &:hover {
+            background-color: color(dark-hover-bcg);
+            color: color(weak-hover-color);
+        }
+    }
 }

@@ -185,6 +185,9 @@ export interface PluginRunRequest {
     exchanges: ExchangePair[];
 }
 
+// overview api
+export interface GetAccountSummaryRequest { }
+
 // ===================================================Agent==============================================
 
 export interface GetNodeListRequest { }

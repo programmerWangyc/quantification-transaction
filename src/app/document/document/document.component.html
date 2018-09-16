@@ -1,7 +1,7 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <div nz-row>
+    <div nz-row class="content">
         <div nz-col nzSpan="20">
             <markdown [data]="doc | async | toMarkdown"></markdown>
         </div>

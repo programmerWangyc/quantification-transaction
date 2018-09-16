@@ -1,15 +1,28 @@
 @import '../../../theme/_variable.theme';
-.indicator {
+
+.breadcrumb {
     padding: 0 10px;
-    border-left: 3px solid color(primary);
-    height: 24px;
-    line-height: 24px;
+    height: 40px;
     color: color(weak-bcg);
-    margin-bottom: 2em;
-    .indicator-split {
-        position: relative;
-        &::after {
-            content: '>';
-        }
+    margin-bottom: $block-vertical-space;
+    position: relative;
+
+    &:before {
+        content: '';
+        background-color: #fff;
+        width: calc(100% + 50px);
+        position: absolute;
+        top: 0;
+        left: -26px;
+        height: 100%;
+        z-index: 0;
     }
+
+    nz-breadcrumb {
+        z-index: 1;
+    }
+}
+
+.indicator {
+    @include commonIndicator();
 }

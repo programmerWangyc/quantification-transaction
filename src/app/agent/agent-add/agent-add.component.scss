@@ -1,9 +1,17 @@
 @import '../../../theme/_variable.theme';
-.steps {
-    margin: 2em 1em;
-    i {
-        color: color(primary);
-        margin-left: 1em;
-        font-size: 14px;
-    }
+
+.content {
+    @include commonContent();
 }
+
+i {
+    @include help();
+}
+
+.bind-tip {
+    color: inherit;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+@import '../../../theme/ng-zorro-extend/steps/steps';

@@ -1,0 +1,10 @@
+@import '../../../theme/variable.theme';
+
+.content {
+    background: #fff;
+
+    h3 {
+        margin: 0;
+        padding: $block-vertical-space 1rem;
+    }
+}

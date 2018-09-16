@@ -1,72 +1,75 @@
 <nz-spin [nzTip]="'LOADING' | translate" [nzSpinning]="isLoading | async">
-    <div class="table-head">
-        <nz-radio-group [formControl]="categoryId">
-            <label nz-radio-button *ngFor="let item of categories" [nzValue]="item.id">{{item.name | translate}}</label>
-        </nz-radio-group>
+    <div class="content">
+        <div class="table-head">
+            <nz-radio-group [formControl]="categoryId">
+                <label nz-radio-button *ngFor="let item of categories" [nzValue]="item.id">{{item.name | translate}}</label>
+            </nz-radio-group>
 
-        <nz-input-group nzSuffixIcon="anticon anticon-search">
-            <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='keyword'>
-        </nz-input-group>
-    </div>
+            <nz-input-group nzSuffixIcon="anticon anticon-search">
+                <input type="text" nz-input [placeholder]="'DISPLAY_BY_KEYWORD' | translate" [formControl]='keyword'>
+            </nz-input-group>
+        </div>
 
-    <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize | async" [nzShowPagination]="false">
-        <thead>
-            <tr>
-                <th *ngFor="let item of tableHead first as isFirst;" [nzWidth]="isFirst ? '30%' : 'auto'"
-                    bt-text-center>
-                    <span>{{item | translate}}</span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let strategy of nzTable.data">
-                <td bt-text-direction direction="left">
-                    <a (click)="navigateTo(strategy)">{{strategy.name}}</a>
-                </td>
+        <nz-table #nzTable [nzData]="list | async" [nzPageSize]="pageSize | async" [nzShowPagination]="false">
+            <thead>
+                <tr>
+                    <th *ngFor="let item of tableHead first as isFirst;" [nzWidth]="isFirst ? '30%' : 'auto'"
+                        bt-text-center>
+                        <span>{{item | translate}}</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let strategy of nzTable.data">
+                    <td bt-text-direction direction="left">
+                        <a (click)="navigateTo(strategy)">{{strategy.name}}</a>
+                    </td>
 
-                <td bt-text-center>{{strategy.username}}</td>
+                    <td bt-text-center>{{strategy.username}}</td>
 
-                <td bt-text-center>{{strategy.language | programLanguage | translate}}</td>
+                    <td bt-text-center>{{strategy.language | programLanguage | translate}}</td>
 
-                <td bt-text-center>
-                    <nz-tag [nzColor]="strategy.category | categoryColor">{{strategy.category | categoryName |
-                        translate}}</nz-tag>
-                </td>
+                    <td bt-text-center>
+                        <nz-tag [nzColor]="strategy.category | categoryColor">{{strategy.category | categoryName |
+                            translate}}</nz-tag>
+                    </td>
 
-                <td bt-text-center>
-                    <span *ngIf="strategy.public === 1">{{strategy.forked || 0}}</span>
-                </td>
+                    <td bt-text-center>
+                        <span *ngIf="strategy.public === 1">{{strategy.forked || 0}}</span>
+                    </td>
 
-                <td bt-text-center>{{strategy.last_modified | fromNow}}</td>
+                    <td bt-text-center>{{strategy.last_modified | fromNow}}</td>
 
-                <td bt-text-center>
-                    <!--1: 已公开，2:审核中，3:需要续费-->
-                    <!---->
-                    <ng-container [ngSwitch]="strategy.public">
-                        <a *ngSwitchCase="1" (click)="copyStrategy(strategy)">{{'COPY' |
-                            translate}}</a>
-                        <span *ngSwitchCase="2">
-                            <span *ngIf="!strategy.is_buy; else renewalBlock">{{'PENDING_REVIEW' | translate}}</span>
-                        </span>
-                        <a *ngSwitchCase="3" (click)="buyStrategy(strategy)">
-                            <span *ngIf="!strategy.is_buy && !strategy_is_owner; else renewalBlock">{{'PURCHASE' |
-                                translate}}</span>
-                        </a>
-                        <a *ngSwitchDefault>--</a>
-                    </ng-container>
+                    <td bt-text-center>
+                        <!--1: 已公开，2:审核中，3:需要续费-->
+                        <!---->
+                        <ng-container [ngSwitch]="strategy.public">
+                            <a *ngSwitchCase="1" (click)="copyStrategy(strategy)">
+                                {{'COPY' | translate}}
+                            </a>
+                            <span *ngSwitchCase="2">
+                                <span *ngIf="!strategy.is_buy; else renewalBlock">{{'PENDING_REVIEW' | translate}}</span>
+                            </span>
+                            <a *ngSwitchCase="3" (click)="buyStrategy(strategy)">
+                                <span *ngIf="!strategy.is_buy && !strategy_is_owner; else renewalBlock">{{'PURCHASE' |
+                                    translate}}</span>
+                            </a>
+                            <a *ngSwitchDefault>--</a>
+                        </ng-container>
 
-                    <ng-template #renewalBlock>
-                        <span (click)="buyStrategy(strategy)">{{'RENEWAL' | translate}}</span>
-                    </ng-template>
-                </td>
-            </tr>
-        </tbody>
-    </nz-table>
+                        <ng-template #renewalBlock>
+                            <span (click)="buyStrategy(strategy)">{{'RENEWAL' | translate}}</span>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
 
-    <div fxLayoutAlign="space-between center" class="pagination">
-        <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
-        <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="offset$.next(currentPage)" [nzTotal]="total | async"
-            [nzPageSize]="pageSize | async" (nzPageSizeChange)="limit$.next($event)" [nzPageSizeOptions]="pageSizeSelectorValues"
-            nzShowQuickJumper nzShowSizeChanger></nz-pagination>
+        <div fxLayoutAlign="space-between center" class="pagination">
+            <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+            <nz-pagination [(nzPageIndex)]="currentPage" (nzPageIndexChange)="offset$.next(currentPage)" [nzTotal]="total | async"
+                [nzPageSize]="pageSize | async" (nzPageSizeChange)="limit$.next($event)" [nzPageSizeOptions]="pageSizeSelectorValues"
+                nzShowQuickJumper nzShowSizeChanger></nz-pagination>
+        </div>
     </div>
 </nz-spin>

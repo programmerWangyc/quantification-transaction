@@ -1,22 +1,21 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { NzModalService } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { filter, map, startWith, takeWhile } from 'rxjs/operators';
 
 import { Path } from '../../app.config';
 import { PublicStrategyDetail } from '../../interfaces/response.interface';
+import { PublicService } from '../../providers/public.service';
 import { UtilService } from '../../providers/util.service';
 import { SquareService } from '../providers/square.service';
 import { SquareStrategyBase } from '../strategy-market/strategy-market.component';
-import { NzModalService } from 'ng-zorro-antd';
-import { PublicService } from '../../providers/public.service';
 
 @Component({
     selector: 'app-public-detail',
     templateUrl: './public-detail.component.html',
     styleUrls: ['./public-detail.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class PublicDetailComponent extends SquareStrategyBase implements OnInit, OnDestroy {
 

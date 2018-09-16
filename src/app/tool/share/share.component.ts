@@ -22,7 +22,7 @@ export class ShareComponent implements OnInit {
     /**
      * @ignore
      */
-    @Input() direction = 'column';
+    @Input() direction = 'row';
 
     /**
      * @ignore

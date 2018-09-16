@@ -1,29 +1,31 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<div class="debugger" nz-row>
-    <app-robot-debugger (debug)="debug$.next($event)" [platforms]="platforms | async" [isDebugging]="isDebugging | async" [agents]="agents | async"
-        nz-col [nzSpan]="12"></app-robot-debugger>
+<div class="content">
 
-    <div nz-col [nzSpan]="12">
-        <nz-alert nzType="error" *ngIf="!(hasAgents | async)" [nzMessage]="'CAN_NOT_USE_FUNCTION' | translate" [nzDescription]="'NEED_LATEST_AGENT_VERSION' | translate"
-            nzShowIcon [nzCloseText]="'I_KNOWN' | translate">
-        </nz-alert>
-        <nz-alert nzType="info" [nzMessage]="'DEBUG_NEED_KNOWS' | translate" [nzDescription]="'DEBUG_TIPS' | translate" [nzCloseText]="'I_KNOWN' | translate"
-            nzShowIcon></nz-alert>
+    <nz-alert nzType="error" *ngIf="!(hasAgents | async)" [nzMessage]="'CAN_NOT_USE_FUNCTION' | translate"
+        [nzDescription]="'NEED_LATEST_AGENT_VERSION' | translate" nzShowIcon [nzCloseText]="'I_KNOWN' | translate">
+    </nz-alert>
+
+    <nz-alert nzType="info" [nzMessage]="'DEBUG_NEED_KNOWS' | translate" [nzDescription]="'DEBUG_TIPS' | translate"
+        [nzCloseText]="'I_KNOWN' | translate" nzShowIcon></nz-alert>
+
+    <div class="debugger">
+        <app-robot-debugger (debug)="debug$.next($event)" [platforms]="platforms | async" [isDebugging]="isDebugging | async"
+            [agents]="agents | async"></app-robot-debugger>
     </div>
-</div>
 
-<div id="codemirror">
-    <ngx-codemirror [(ngModel)]="content" [options]="editorOptions"></ngx-codemirror>
-</div>
+    <div id="codemirror">
+        <ngx-codemirror [(ngModel)]="content" [options]="editorOptions"></ngx-codemirror>
+    </div>
 
-<div class="debug-info">
-    <h3>{{'DEBUG_RESULT' | translate}}</h3>
-    <textarea row="6" nz-input [ngModel]="debugResult | async"></textarea>
-</div>
+    <div class="debug-info">
+        <h3>{{'DEBUG_RESULT' | translate}}</h3>
+        <textarea row="6" nz-input [ngModel]="debugResult | async"></textarea>
+    </div>
 
-<div class="debug-info">
-    <h3>{{'LOG_INFORMATION' | translate}}</h3>
-    <app-running-log [logs]="logs | async" [pageSize]="pageSize | async" [logTotal]="logTotal | async" [statistics]="statistics | async"
-        (pageSizeChange)="pageSize$.next($event)" (search)="filter$.next($event)"></app-running-log>
+    <div class="debug-info">
+        <h3>{{'LOG_INFORMATION' | translate}}</h3>
+        <app-running-log [logs]="logs | async" [pageSize]="pageSize | async" [logTotal]="logTotal | async" [statistics]="statistics | async"
+            (pageSizeChange)="pageSize$.next($event)" (search)="filter$.next($event)"></app-running-log>
+    </div>
 </div>

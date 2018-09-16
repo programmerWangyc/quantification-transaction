@@ -1,0 +1,5 @@
+@import '../../../theme/variable.theme';
+
+:host::ng-deep .ant-radio-button-wrapper-checked {
+    background: color(dark-bcg) !important;
+}

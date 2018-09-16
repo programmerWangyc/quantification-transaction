@@ -1,0 +1,13 @@
+@import '../../../theme/_variable.theme';
+
+.content {
+    background: #ffffff;
+    padding: 1rem 2rem;
+}
+
+.balance,
+.history {
+    margin: $block-vertical-space 0;
+
+    background: #ffffff;
+}

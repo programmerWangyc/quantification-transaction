@@ -1,1 +1,5 @@
 @import '../../robot/robot-detail/robot-detail.component';
+
+.part:last-child {
+    @include simpleContent();
+}

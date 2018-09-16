@@ -10,6 +10,7 @@ import {
 import { PublicService } from '../providers/public.service';
 import { RoutingService } from '../providers/routing.service';
 import { NavBaseComponent } from '../tool/navbar/navbar.component';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-dashboard',
@@ -36,6 +37,11 @@ export class DashboardComponent extends NavBaseComponent implements OnInit, OnDe
     /**
      * @ignore
      */
+    messageCount: Observable<number>;
+
+    /**
+     * @ignore
+     */
     isAlive = true;
 
     constructor(
@@ -53,9 +59,15 @@ export class DashboardComponent extends NavBaseComponent implements OnInit, OnDe
     ngOnInit() {
         this.initialModel();
 
+        this.privateInitialModel();
+
         this.launch(() => this.isAlive, this.checkActivatedModule);
 
         this.privateLaunch();
+    }
+
+    privateInitialModel() {
+        this.messageCount = this.publicService.getNotify();
     }
 
     privateLaunch(): void {

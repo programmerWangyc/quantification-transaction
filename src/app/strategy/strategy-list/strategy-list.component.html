@@ -61,20 +61,30 @@
 
             <td>
                 <!-- 没有click事件的 a 标签都需要向下跳转-->
-                <a (click)="delete.next(strategy)">{{'DELETE' | translate}}</a>
+                <a (click)="delete.next(strategy)">
+                    <i class="anticon anticon-delete"></i>
+                </a>
 
                 <nz-divider nzType="vertical"></nz-divider>
 
                 <span *ngIf="strategy.is_owner; else elseBlock">
-                    <a [routerLink]="['copy', strategy.id]">{{'COPY' | translate}}</a>
+                    <a [routerLink]="['copy', strategy.id]">
+                        <i class="anticon anticon-copy"></i>
+                    </a>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <a [routerLink]="['edit', strategy.id]">{{'EDIT' | translate}}</a>
+                    <a [routerLink]="['edit', strategy.id]">
+                        <i class="anticon anticon-edit"></i>
+                    </a>
                 </span>
 
                 <ng-template #elseBlock>
-                    <a (click)="renewal.next(strategy)">{{'RENEWAL' | translate}}</a>
+                    <a (click)="renewal.next(strategy)">
+                        <i class="anticon anticon-pay-circle-o"></i>
+                    </a>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <a [routerLink]="['backtest', strategy.id]">{{'BACKTEST' | translate}}</a>
+                    <a [routerLink]="['backtest', strategy.id]">
+                        <i class="anticon anticon-backtest"></i>
+                    </a>
                 </ng-template>
 
             </td>

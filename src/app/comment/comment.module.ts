@@ -8,6 +8,7 @@ import { CommentService } from './providers/comment.service';
 import { ReplyComponent } from './reply/reply.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { RouterModule } from '@angular/router';
+import { CommentTotalComponent } from './comment-total/comment-total.component';
 
 @NgModule({
     imports: [
@@ -20,11 +21,13 @@ import { RouterModule } from '@angular/router';
         CommentComponent,
         ReplyComponent,
         OperateCommentComponent,
+        CommentTotalComponent,
     ],
     exports: [
         CommentComponent,
         ReplyComponent,
         OperateCommentComponent,
+        CommentTotalComponent,
     ],
     providers: [
         CommentService,

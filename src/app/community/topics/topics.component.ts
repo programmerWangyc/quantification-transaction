@@ -42,6 +42,20 @@ export class TopicsComponent implements OnInit {
 
     username: string;
 
+    // iconMap: {
+    //     1: 'alternating',
+    //     2: 'official',
+    //     3: '',
+    //     4: '',
+    //     5: '',
+    //     6: '',
+    //     10: '',
+    //     11: '',
+    //     12: '',
+    //     13: '',
+    //     14: '',
+    // };
+
     constructor(
         private publicService: PublicService,
     ) { }

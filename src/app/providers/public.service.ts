@@ -7,10 +7,11 @@ import { distinctUntilChanged, filter, map, startWith, take, takeWhile, tap } fr
 
 import { LocalStorageKey } from '../app.config';
 import { BaseService } from '../base/base.service';
-import { EditorConfig, Referrer, keepAliveFn } from '../interfaces/app.interface';
+import { EditorConfig, keepAliveFn, Referrer } from '../interfaces/app.interface';
 import { SettingTypes, VerifyKeyRequest } from '../interfaces/request.interface';
 import {
-    Broker, ChangeAlertThresholdSettingResponse, LogoutResponse, PublicResponse, ResponseState, VerifyKeyResponse
+    AccountSummary, Broker, ChangeAlertThresholdSettingResponse, GetAccountSummaryResponse, LogoutResponse,
+    PublicResponse, ResponseState, VerifyKeyResponse
 } from '../interfaces/response.interface';
 import { ClearLoginInfoAction } from '../store/auth/login.action';
 import * as fromRoot from '../store/index.reducer';
@@ -75,6 +76,13 @@ export class PublicService extends BaseService {
      */
     launchVerifyKey(params: Observable<VerifyKeyRequest>): Subscription {
         return this.process.processVerifyKey(params);
+    }
+
+    /**
+     * @ignore
+     */
+    launchAccountSummary(params: Observable<any>): Subscription {
+        return this.process.processGetAccountSummary(params);
     }
 
     //  =======================================================Date acquisition=======================================================
@@ -201,6 +209,17 @@ export class PublicService extends BaseService {
     /**
      * @ignore
      */
+    getNotify(): Observable<number> {
+        return this.getPublicResponse().pipe(
+            this.filterTruth(),
+            map(res => res.notify),
+            distinctUntilChanged()
+        );
+    }
+
+    /**
+     * @ignore
+     */
     private getLogoutResponse(): Observable<LogoutResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectLogoutResponse)
@@ -282,6 +301,24 @@ export class PublicService extends BaseService {
         return this.store.pipe(
             select(fromRoot.selectServerMsgSubscribeState),
             map(res => res[msgType])
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getAccountSummaryResponse(): Observable<GetAccountSummaryResponse> {
+        return this.store.pipe(
+            this.selectTruth(fromRoot.selectAccountSummaryResponse)
+        );
+    }
+
+    /**
+     * @ignore
+     */
+    getAccountSummary(): Observable<AccountSummary> {
+        return this.getAccountSummaryResponse().pipe(
+            map(res => res.result)
         );
     }
 
@@ -449,6 +486,15 @@ export class PublicService extends BaseService {
      */
     handleVerifyKeyError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getVerifyKeyResponse().pipe(
+            takeWhile(keepAlive)
+        ));
+    }
+
+    /**
+     * @ignore
+     */
+    handleAccountSummaryError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getAccountSummaryResponse().pipe(
             takeWhile(keepAlive)
         ));
     }

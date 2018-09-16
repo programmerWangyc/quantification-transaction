@@ -15,6 +15,8 @@ export class IndicatorComponent implements OnInit {
      */
     @Input() paths: Breadcrumb[];
 
+    @Input() showIndicator = true;
+
     constructor() { }
 
     /**

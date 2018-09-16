@@ -1,21 +1,22 @@
-@import '../../theme/_variable.theme';
 @import './_dashboard';
 @import '../home/_home';
 
 #dashboard {
+    height: 100vh;
+
     .logo {
-        font-size: 22px;
         text-align: center;
         height: $header-height;
         line-height: $header-height;
-    }
 
-    nz-layout {
-        background-color: #fff;
+        img {
+            width: 80%;
+            cursor: pointer;
+        }
     }
 
     nz-header {
-        background-color: $bcg-nav;
+        background-color: color(dark-bcg);
         position: fixed;
         top: 0;
         left: 200px;
@@ -23,16 +24,18 @@
         z-index: 1000;
         height: $header-height;
         padding: 0;
+        color: color(weak-normal-color);
 
         section {
             margin: 0 50px 0 0;
             width: 15%;
         }
+
+        @include I18n();
     }
 
     nz-sider {
         height: 100vh;
-        background-color: $bcg-nav;
         position: fixed;
         left: 0;
         top: 0;
@@ -41,16 +44,23 @@
         ul {
             height: calc(100% - 84px);
             overflow-y: scroll;
-        }
 
-        #side-container {
-            padding: 0 0 50px 0;
+            li {
+                margin: 0;
+            }
         }
     }
 
     nz-content {
-        padding: 50px 100px;
+        padding: $dashboard-padding-vertical $dashboard-padding-horizontal 0 $dashboard-padding-horizontal;
     }
+}
+
+@include I18nDropdown();
+
+.head-collapsed {
+    left: 80px !important;
+    width: calc(100% - 80px) !important;
 }
 
 :host ::ng-deep .trigger {
@@ -58,17 +68,48 @@
     cursor: pointer;
     transition: color .3s;
     margin-right: 30px;
+    color: color(weak-normal-color);
 }
 
 :host ::ng-deep .trigger:hover {
-    color: color(primary);
+    color: #ffffff;
 }
 
-:host ::ng-deep .logo {
-    background: $bcg-nav;
+:host ::ng-deep .ant-menu-item {
+    color: color(weak-normal-color);
+
+    &:hover {
+        color: color(dark-hover-bcg);
+    }
+
+    &::after {
+        border-right-color: color(weak-normal-color);
+    }
 }
 
-.head-collapsed {
-    left: 80px !important;
-    width: calc(100% - 80px) !important;
+:host ::ng-deep .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background: color(dark-hover-bcg);
+    color: color(weak-hover-color);
+}
+
+@mixin submenu-arrow($color) {
+
+    .ant-menu-submenu-arrow::before,
+    .ant-menu-submenu-arrow::after {
+        background: linear-gradient(to right, $color, $color)
+    }
+}
+
+:host ::ng-deep .ant-menu-submenu-title {
+    $color1: color(weak-normal-color);
+    color: $color1;
+
+    &:hover {
+        $color2: color(dark-hover-bcg);
+        color: $color2;
+
+        @include submenu-arrow($color2);
+    }
+
+    @include submenu-arrow($color1);
 }

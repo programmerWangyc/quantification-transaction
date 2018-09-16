@@ -2,15 +2,30 @@
 $header-height: 6rem;
 $bcg-nav: #f7f7f7;
 /* colors */
-$color: (primary: #1890ff,
+$color: (primary: #6d86fc,
 accent: #87d068,
 weak-bcg: #77909c,
 dangerous: #f04134,
+weak-normal-color: #979fc6,
+weak-hover-color: #fff,
+weak-hover-bcg: #5d658c,
+normal-color: #4258bc,
+dark-bcg : #222944,
+dark-hover-bcg: #454d74,
+warm-normal-bcg: #fab521,
+warm-hover-bcg: #ffda6a,
+gray: #f3f4f7,
 );
 
 @function color($type) {
     @return map-get($color, $type);
 }
+
+$primary: color(primary);
+$primary-0: lighten($primary, 10%);
+$primary-1: lighten($primary, 15%);
+$primary-2: lighten($primary, 20%);
+$primary-3: lighten($primary, 25%);
 
 /* reactive breakpoint */
 $screen-width: (xs: 480px,
@@ -22,4 +37,76 @@ xl: 1600px,
 
 @function screenWidth($width) {
     @return map-get($map: $screen-width, $key: $width);
+}
+
+// dashboard
+$dashboard-padding-vertical: 20px;
+$dashboard-padding-horizontal: 24px;
+
+// layout value
+$block-vertical-space: 20px;
+
+
+@mixin commonIndicator {
+    width: 3px;
+    height: 50%;
+    background: color(primary);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+@mixin operateBtnGroup {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+}
+
+@mixin commonContent {
+    background: #fff;
+
+    h3 {
+        position: relative;
+        padding: $block-vertical-space 1rem;
+        margin: 0;
+
+        &::before {
+            content: '';
+            @include commonIndicator();
+        }
+    }
+
+    .table {
+        padding: 0 2rem;
+    }
+}
+
+@mixin simpleContent {
+    background: #fff;
+    padding: 1rem 2rem;
+}
+
+@mixin help {
+    opacity: .3;
+    margin-left: 1em;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+@mixin  paymentMethod {
+    .anticon-alipay-circle {
+        color: #1890ff;
+    }
+
+    .anticon-wechat-pay {
+        color: color(accent);
+    }
+
+    .anticon-paypal {
+        color: color(dark-bcg);
+    }
 }

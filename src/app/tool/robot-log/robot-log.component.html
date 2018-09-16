@@ -1,23 +1,28 @@
-<head fxLayoutAlign="space-between center">
-    <h3>{{'LOG_INFORMATION' | translate}}</h3>
-    <div>
-        <button nz-button [nzShape]="'circle'" [nzSize]="'small'" [disabled]="!isSoundOpen" [nz-tooltip]="'CLICK_TO_PLAY_AUDIO' | translate"
-            (click)="playAudio()">
-            <i class="anticon anticon-sound"></i>
-        </button>
-        <nz-switch [(ngModel)]="isSoundOpen" (ngModelChange)="updateSoundState(isSoundOpen)" [nz-tooltip]="'SOUND_REMAINING' | translate"
-            [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate" style="margin: 0 1em;">
-        </nz-switch>
-        <nz-select *ngIf="isSoundOpen" [nzMode]="'multiple'" [nzPlaceHolder]="'PLEASE_SELECT_LOG_TYPE' | translate" [(ngModel)]="monitoringSoundTypes"
-            (ngModelChange)="updateMonitoringTypes($event)" class="log-type">
-            <nz-option *ngFor="let item of soundTypes" [nzValue]="item" [nzLabel]="item | translate "></nz-option>
-        </nz-select>
-        <button nz-button [nzType]="'primary'" (click)="refresh$.next(true)" [nzLoading]="isLoading | async">
-            <i class="anticon anticon-reload" *ngIf="!(isLoading | async)"></i>
-            {{'REFRESH' | translate}}
-        </button>
-    </div>
-</head>
+<div class="content">
+    <head fxLayoutAlign="space-between center" class="content-head">
+        <h3>{{'LOG_INFORMATION' | translate}}</h3>
+        <div>
+            <button nz-button [nzShape]="'circle'" [nzSize]="'small'" [disabled]="!isSoundOpen" [nz-tooltip]="'CLICK_TO_PLAY_AUDIO' | translate"
+                (click)="playAudio()">
+                <i class="anticon anticon-sound"></i>
+            </button>
+            <nz-switch [(ngModel)]="isSoundOpen" (ngModelChange)="updateSoundState(isSoundOpen)" [nz-tooltip]="'SOUND_REMAINING' | translate"
+                [nzCheckedChildren]="'OPEN' | translate" [nzUnCheckedChildren]="'CLOSE' | translate" style="margin: 0 1em;">
+            </nz-switch>
+            <nz-select *ngIf="isSoundOpen" [nzMode]="'multiple'" [nzPlaceHolder]="'PLEASE_SELECT_LOG_TYPE' | translate"
+                [(ngModel)]="monitoringSoundTypes" (ngModelChange)="updateMonitoringTypes($event)" class="log-type">
+                <nz-option *ngFor="let item of soundTypes" [nzValue]="item" [nzLabel]="item | translate "></nz-option>
+            </nz-select>
+            <button nz-button [nzType]="'primary'" (click)="refresh$.next(true)" [nzLoading]="isLoading | async">
+                <i class="anticon anticon-reload" *ngIf="!(isLoading | async)"></i>
+                {{'REFRESH' | translate}}
+            </button>
+        </div>
+    </head>
 
-<app-running-log [logs]="logs | async" (search)="search$.next($event)" [statistics]="statistics | async" (pageChange)="changePage($event)"
-    (pageSizeChange)="onPageSizeChange($event)" [logTotal]="logTotal | async" [pageSize]="pageSize | async"></app-running-log>
+    <div class="table">
+        <app-running-log [logs]="logs | async" (search)="search$.next($event)" [statistics]="statistics | async"
+            (pageChange)="changePage($event)" (pageSizeChange)="onPageSizeChange($event)" [logTotal]="logTotal | async"
+            [pageSize]="pageSize | async"></app-running-log>
+    </div>
+</div>

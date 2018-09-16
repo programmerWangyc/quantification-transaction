@@ -1,27 +1,30 @@
 <app-indicator [paths]="paths"></app-indicator>
 
 <nz-spin [nzSpinning]="isLoading | async" [nzTip]="'LOADING' | translate">
-    <div id="bbs-navigator">
-        <app-navigator [nodes]="nodes | async" [planes]="planes | async" (select)="slugs$.next($event)"></app-navigator>
+    <div class="content">
+        <div fxLayoutAlign="space-between start" id="bbs-navigator">
+            <div fxLayout="row">
+                <app-navigator [nodes]="nodes | async" [planes]="planes | async" (select)="slugs$.next($event)"></app-navigator>
 
-        <button nz-button (click)="navigateTo()" class="create-topic">
-            <i class="anticon anticon-plus"></i>
-            {{'CREATE_TOPIC' | translate}}
-        </button>
-    </div>
+                <button nz-button (click)="navigateTo()" nzType="primary" class="create-topic">
+                    <i class="anticon anticon-plus"></i>
+                    {{'CREATE_TOPIC' | translate}}
+                </button>
+            </div>
 
-    <div fxLayoutAlign="end center" id="bbs-search">
-        <nz-input-group nzSuffixIcon="anticon anticon-search">
-            <input type="text" nz-input [placeholder]="'SEARCH_TOPIC' | translate" [formControl]="search">
-        </nz-input-group>
-    </div>
+            <nz-input-group nzSuffixIcon="anticon anticon-search">
+                <input type="text" nz-input [placeholder]="'SEARCH_TOPIC' | translate" [formControl]="search">
+            </nz-input-group>
+        </div>
 
-    <app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
+        <app-topics [topics]="topics | async" [nodes]="nodes | async"></app-topics>
 
-    <div fxLayoutAlign="space-between center" class="pagination">
-        <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
+        <div fxLayoutAlign="space-between center" class="pagination">
+            <div [translate]="'PAGINATION_STATISTICS'" [translateParams]="statisticsParams | async"></div>
 
-        <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true" [nzPageSizeOptions]="pageSizes"
-            [(nzPageSize)]="limit" (nzPageSizeChange)="limit$.next($event)" (nzPageIndexChange)="page$.next($event)" [nzHideOnSinglePage]="true"></nz-pagination>
+            <nz-pagination [nzTotal]="total | async" [nzShowQuickJumper]="true" [nzShowSizeChanger]="true"
+                [nzPageSizeOptions]="pageSizes" [(nzPageSize)]="limit" (nzPageSizeChange)="limit$.next($event)"
+                (nzPageIndexChange)="page$.next($event)" [nzHideOnSinglePage]="true"></nz-pagination>
+        </div>
     </div>
 </nz-spin>

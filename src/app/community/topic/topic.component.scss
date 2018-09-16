@@ -1,14 +1,11 @@
 @import '../../square/public-detail/public-detail.component';
+@import '../../../theme/variable.theme';
 
 .topic-info {
     margin: 0 0 1em 0;
     min-height: 32px;
-    position: relative;
-    ul {
-        margin: 0;
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
+
+    .update-btn {
+        margin-right: 2em;
     }
 }

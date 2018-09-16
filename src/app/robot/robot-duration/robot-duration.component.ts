@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 import { Robot, RobotStatus } from '../../interfaces/response.interface';
@@ -13,9 +13,9 @@ import { RobotService } from '../providers/robot.service';
     templateUrl: './robot-duration.component.html',
     styleUrls: ['./robot-duration.component.scss'],
 })
-export class RobotDurationComponent implements OnInit {
+export class RobotDurationComponent implements OnInit, OnDestroy {
 
-    info: Observable<string>;
+    @Output() info: EventEmitter<string> = new EventEmitter();
 
     balance: Observable<number>;
 
@@ -29,6 +29,14 @@ export class RobotDurationComponent implements OnInit {
 
     grossProfit: Observable<number>;
 
+    strategyTotal: Observable<number>;
+
+    agentTotal: Observable<number>;
+
+    exchangeTotal: Observable<number>;
+
+    isAlive = true;
+
     constructor(
         private publicService: PublicService,
         private robotService: RobotService,
@@ -36,6 +44,16 @@ export class RobotDurationComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.initialModel();
+
+        this.launch();
+    }
+
+    launch() {
+        this.publicService.launchAccountSummary(of(null));
+
+        this.publicService.handleAccountSummaryError(() => this.isAlive);
+
         const predicate = (robot: Robot) => !robot.is_sandbox && this.robotService.isNormalStatus(robot);
 
         const availableRobotCount = this.robotService.getRobotCountByStatus(predicate).pipe(
@@ -52,15 +70,17 @@ export class RobotDurationComponent implements OnInit {
 
         // const deadline = this.robotService.getRobotDeadLine();
 
-        this.info = combineLatest(
+        combineLatest(
             availableRobotCount,
             this.publicService.getBalance(),
             this.robotService.getRobotDeadLine()
         ).pipe(
             map(([count, balance, datetime]) => ({ count, hours: (balance / 1e8 / count / 0.125).toFixed(2), datetime })),
             mergeMap(data => this.translate.get('ROBOTS_AVAILABLE_STATE_STATISTICS', data))
-        );
+        ).subscribe(info => this.info.next(info));
+    }
 
+    initialModel() {
         this.balance = this.publicService.getBalance();
 
         this.consumed = this.publicService.getConsumed();
@@ -72,6 +92,23 @@ export class RobotDurationComponent implements OnInit {
         );
 
         this.grossProfit = this.robotService.getGrossProfit();
+
+        const summary = this.publicService.getAccountSummary();
+
+        this.strategyTotal = summary.pipe(
+            map(({ strategy, premium_strategy }) => strategy + premium_strategy)
+        );
+
+        this.agentTotal = summary.pipe(
+            map(({ node }) => node)
+        );
+
+        this.exchangeTotal = summary.pipe(
+            map(({ platform }) => platform)
+        );
     }
 
+    ngOnDestroy() {
+        this.isAlive = false;
+    }
 }

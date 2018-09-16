@@ -1,37 +1,59 @@
-<h3>{{'OVERVIEW' | translate}}</h3>
+<div fxLayoutAlign="space-between stretch">
+    <ul fxLayoutAlign="start center" class="consume">
+        <li fxLayoutAlign="space-between center">
+            <div fxLayoutAlign="start center">
+                <h3>{{'OVERVIEW' | translate}}</h3>
 
-<ul>
-    <li>
-        <span>{{'BALANCE' | translate}}</span>
-        <span [translate]="unit" [translateParams]="{amount: balance | async | balance}" style='color: red'></span>
-    </li>
+                <span class="info">{{'BALANCE' | translate}}</span>
 
-    <li>
-        <span>{{'CONSUMED' | translate}}</span>
-        <span [translate]="unit" [translateParams]="{amount: consumed | async | balance}"></span>
-    </li>
+                <span [translate]="unit" [translateParams]="{amount: balance | async | balance}" style='color: red'></span>
+            </div>
+            <a nz-button [routerLink]="['../../charge']" nzType="dark">{{'RECHARGE' | translate}}</a>
+        </li>
 
-    <li>
-        <span>{{'ROBOT_TOTAL' | translate}}</span>
-        <span>{{robotTotal | async}}</span>
-    </li>
+        <li>
+            <span class="info">{{'CONSUMED' | translate}}</span>
+            <span [translate]="unit" [translateParams]="{amount: consumed | async | balance}"></span>
+        </li>
+    </ul>
 
-    <li>
-        <span>{{'RUNNING' | translate}}</span>
-        <span>{{runningRobotCount | async}}</span>
-    </li>
+    <ul class="duration">
+        <li>
+            <i class="anticon anticon-robot-o"></i>
+            <div fxLayout="column">
+                <div>
+                    <span class="info">{{'GROSS_PROFIT' | translate}}</span>
+                    <span>{{grossProfit | async | number: '1.0-5'}}</span>
+                </div>
 
-    <li>
-        <span>{{'GROSS_PROFIT' | translate}}</span>
-        <span>{{grossProfit | async | number: '1.0-5'}}</span>
-    </li>
+                <div>
+                    <span class="info">{{'ROBOT' | translate}}</span>
+                    <span>{{robotTotal | async}}</span>
+                </div>
+            </div>
+        </li>
+        <li>
+            <i class="anticon anticon-library-o"></i>
+            <div>
+                <span class="info">{{'STRATEGY_LIBRARY' | translate}}</span>
+                <span>{{strategyTotal | async}}</span>
+            </div>
+        </li>
+        <li>
 
-    <li>
-        <span>{{'USABLE_OVERVIEW' | translate }}</span>
-        <span> {{info | async}} </span>
-        <a nz-button [nzType]="'secondary'" [routerLink]="['../../charge']">
-            <i class="anticon anticon-bank"></i>
-            {{'RECHARGE' | translate}}
-        </a>
-    </li>
-</ul>
+            <i class="anticon anticon-agent-o"></i>
+            <div>
+                <span class="info">{{'AGENT' | translate}}</span>
+                <span>{{agentTotal | async}}</span>
+            </div>
+        </li>
+        <li>
+
+            <i class="anticon anticon-exchange-o"></i>
+            <div>
+                <span class="info">{{'EXCHANGE' | translate}}</span>
+                <span>{{exchangeTotal | async}}</span>
+            </div>
+        </li>
+    </ul>
+</div>

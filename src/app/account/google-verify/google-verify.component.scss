@@ -1,0 +1,22 @@
+@import '../../../theme/variable.theme';
+
+.content {
+    @include commonContent();
+    padding: 1rem 2rem;
+
+    h3 {
+        font-size: 14px;
+        font-weight: 400;
+    }
+}
+
+:host::ng-deep .ant-steps-item-description {
+    margin-bottom: 2rem;
+}
+
+:host::ng-deep .ant-steps-item-title {
+    color: color(weak-normal-color) !important;
+    font-size: 14px;
+}
+
+@import '../../../theme/ng-zorro-extend/steps/steps';

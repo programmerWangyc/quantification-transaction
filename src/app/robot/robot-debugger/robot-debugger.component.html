@@ -1,50 +1,66 @@
 <form nz-form [formGroup]="form">
-    <nz-form-item>
-        <nz-form-label [nzSpan]="labelSpan">{{'MANDATORY' | translate}}</nz-form-label>
-        <nz-form-control [nzSpan]="controlSpan">
-            <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate" *ngIf="agents; let agt">
-                <nz-option *ngFor="let item of agt" [nzLabel]="item | btNodeName" [nzValue]="item.id">
-                    <ng-template #nzOptionTemplate>
-                        <b *ngIf="item.public === 1">{{'PUBLIC' | translate}}</b>
-                        <b *ngIf="item.public === 0">{{'PRIVATE' | translate}}</b>
-                        {{item | btNodeName}}
-                    </ng-template>
-                </nz-option>
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nz-row>
+                <nz-form-label nzSpan="8">{{'MANDATORY' | translate}}</nz-form-label>
+                <nz-form-control nzSpan="16">
+                    <nz-select formControlName="agent" [nzPlaceHolder]="'PLEASE_SELECT_AGENT' | translate" *ngIf="agents; let agt">
+                        <nz-option *ngFor="let item of agt" [nzLabel]="item | btNodeName" [nzValue]="item.id">
+                            <ng-template #nzOptionTemplate>
+                                <b *ngIf="item.public === 1">{{'PUBLIC' | translate}}</b>
+                                <b *ngIf="item.public === 0">{{'PRIVATE' | translate}}</b>
+                                {{item | btNodeName}}
+                            </ng-template>
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
 
-    <nz-form-item>
-        <nz-form-label [nzSpan]="labelSpan">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
-        <nz-form-control [nzSpan]="controlSpan">
-            <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzSpan="6" nzShowSearch>
-                <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
-            </nz-select>
-            <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
-                <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
-            </nz-form-explain>
-        </nz-form-control>
-    </nz-form-item>
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nz-row>
+                <nz-form-label nzSpan="8">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
+                <nz-form-control nzSpan="16">
+                    <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzSpan="6"
+                        nzShowSearch>
+                        <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
+                    </nz-select>
+                    <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
+                        <div *ngIf="!!platform.errors.required">{{'PLEASE_SELECT_PLATFORM' | translate}}</div>
+                    </nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
 
-    <nz-form-item>
-        <nz-form-label [nzSpan]="labelSpan">{{'EXCHANGE_NAME' | translate}}</nz-form-label>
-        <nz-form-control [nzSpan]="controlSpan">
-            <nz-input-group nzCompact fxLayout="row nowrap">
-                <nz-select [(ngModel)]="isCustomStock" [ngModelOptions]="{standalone: true}">
-                    <nz-option [nzLabel]="'CUSTOM' | translate" [nzValue]="true"></nz-option>
-                    <nz-option [nzLabel]="'USE_EXIST' | translate" [nzValue]="false"></nz-option>
-                </nz-select>
-                <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate" [nzDisabled]="!platform.value" fxFlex="1 0 auto">
-                    <nz-option *ngFor="let item of (selectedPlatform | async)?.stocks" [nzLabel]="item" [nzValue]="item"></nz-option>
-                </nz-select>
-                <input *ngIf="isCustomStock" formControlName="stock" [disabled]="!platform.value" nz-input>
-            </nz-input-group>
-        </nz-form-control>
-    </nz-form-item>
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nz-row>
+                <nz-form-label nzSpan="8">{{'EXCHANGE_NAME' | translate}}</nz-form-label>
+                <nz-form-control nzSpan="16">
+                    <nz-input-group nzCompact fxLayout="row nowrap">
+                        <nz-select [(ngModel)]="isCustomStock" [ngModelOptions]="{standalone: true}">
+                            <nz-option [nzLabel]="'CUSTOM' | translate" [nzValue]="true"></nz-option>
+                            <nz-option [nzLabel]="'USE_EXIST' | translate" [nzValue]="false"></nz-option>
+                        </nz-select>
+                        <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate"
+                            [nzDisabled]="!platform.value" fxFlex="1 0 auto">
+                            <nz-option *ngFor="let item of (selectedPlatform | async)?.stocks" [nzLabel]="item"
+                                [nzValue]="item"></nz-option>
+                        </nz-select>
+                        <input *ngIf="isCustomStock" formControlName="stock" [disabled]="!platform.value" nz-input>
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
 
-    <nz-form-item>
-        <nz-form-control [nzSpan]="controlSpan" [nzOffset]="labelSpan">
-            <button nz-button [nzType]="'primary'" [disabled]="form.invalid || isDebugging" (click)="debug.next(form.value)">{{'START_DEBUG' | translate}}</button>
-        </nz-form-control>
-    </nz-form-item>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nz-row>
+                <nz-form-control [nzOffset]="8" nzSpan="16">
+                    <button nz-button nzType="primary" [disabled]="form.invalid || isDebugging" (click)="debug.next(form.value)">{{'START_DEBUG'
+                        | translate}}</button>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
 </form>
