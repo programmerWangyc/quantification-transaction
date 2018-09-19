@@ -181,10 +181,10 @@ export interface PlatformStockPair {
 }
 @Pipe({ name: 'platformStock' })
 export class PlatformStockPipe implements PipeTransform {
-    transform(source: any[][]): PlatformStockPair[] {
+    transform(source: any[][], labels: { [key: number]: string }): PlatformStockPair[] {
         const [, platforms, stocks] = source;
 
-        return zip(platforms, stocks).map(ary => ({ platform: ary[0] === -1 ? 'BotVS' : ary[0], stock: ary[1] }));
+        return zip(platforms, stocks).map(ary => ({ platform: ary[0] === -1 ? 'BotVS' : labels[ary[0]], stock: ary[1] }));
     }
 }
 
@@ -207,7 +207,7 @@ export class CategoryColorPipe implements PipeTransform {
     transform(input: number): string {
         switch (input) {
             case CategoryType.DIGITAL_CURRENCY:
-            return 'green';
+                return 'green';
 
             case CategoryType.COMMODITY_FUTURES:
                 return 'gold';
@@ -260,6 +260,21 @@ export class StrategyChartTitlePipe implements PipeTransform {
             this.translate.get('STRATEGY_DEFAULT_TITLE', { index }).subscribe(label => str = label);
 
             return str;
+        }
+    }
+}
+
+@Pipe({ name: 'strategyDescription' })
+export class StrategyDescriptionPipe implements PipeTransform {
+    constructor(private constantService: ConstantService) { }
+
+    transform(source: string): string {
+        const hasGroupName = this.constantService.ARG_GROUP_FLAG_REG.test(source);
+
+        if (!hasGroupName) {
+            return source;
+        } else {
+            return source.split(this.constantService.ARG_GROUP_FLAG_REG)[1];
         }
     }
 }

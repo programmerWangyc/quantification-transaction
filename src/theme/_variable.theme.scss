@@ -110,3 +110,25 @@ $block-vertical-space: 20px;
         color: color(dark-bcg);
     }
 }
+
+@mixin divider($width, $bcg) {
+    content: '';
+    width: $width;
+    height: 50%;
+    background: $bcg;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@mixin pair {
+    border: 1px dashed color(weak-bcg);
+    border-radius: 4px;
+    height: 32px;
+    text-align: center;
+    line-height: 32px;
+    position: relative;
+    padding: 5px;
+    margin: 2px 8px 0 0;
+    background-color: color(gray);
+}

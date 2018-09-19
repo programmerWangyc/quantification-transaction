@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { VariableType } from '../app.config';
-import { VariableTypeDes } from '../interfaces/app.interface';
+import { VariableTypeDes, VariableOverview } from '../interfaces/app.interface';
 import { booleanableVariableNameFormat, comparableVariableNameFormat } from '../validators/validators';
 
 export const VERSION = 3.5;
@@ -161,6 +161,8 @@ export class ConstantService {
 
     readonly COMMON_PROTOCOL_EXCHANGE = COMMON_PROTOCOL_EXCHANGE;
 
+    readonly ARG_GROUP_FLAG_REG = /^\(\?([^\)]*)\)/; // (?name)other(info) ----> (?name);
+
     /**
      * 去掉参数名称中的条件；
      */
@@ -211,5 +213,35 @@ export class ConstantService {
             throw new RangeError('Range error: ID passed in is out of range;');
         }
         return this.VARIABLE_TYPES.find(item => item.id === id);
+    }
+
+    /**
+     * 兼容老项目中的周期配置
+     */
+    isPeriodEqual(target: string, predicate: string): boolean {
+        if (target === predicate) {
+            return true;
+        } else {
+            const reg = /\d+/;
+            const [count1, unit1] = target.split(reg);
+            const [count2, unit2] = target.split(reg);
+            const units = [['d', '天'], ['m', '分钟']];
+
+            return (count1 === count2) && units.some(ary => ary.includes(unit1) && ary.includes(unit2));
+        }
+    }
+
+    /**
+     * 策略参数分组名称
+     */
+    getArgumentGroupName(reg: RegExp): (arg: VariableOverview) => string {
+        let groupName = '';
+
+        return (target: VariableOverview) => {
+            if (reg.test(target.variableDes)) {
+                groupName = target.variableDes.match(reg)[1];
+            }
+            return groupName;
+        };
     }
 }

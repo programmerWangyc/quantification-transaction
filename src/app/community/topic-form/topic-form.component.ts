@@ -71,12 +71,12 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
     /**
      * @ignore
      */
-    labelSm = 6;
+    labelSm = 2;
 
     /**
      * @ignore
      */
-    controlSm = 14;
+    controlSm = 6;
 
     /**
      * @ignore

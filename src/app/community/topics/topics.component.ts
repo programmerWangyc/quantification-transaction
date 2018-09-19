@@ -42,19 +42,19 @@ export class TopicsComponent implements OnInit {
 
     username: string;
 
-    // iconMap: {
-    //     1: 'alternating',
-    //     2: 'official',
-    //     3: '',
-    //     4: '',
-    //     5: '',
-    //     6: '',
-    //     10: '',
-    //     11: '',
-    //     12: '',
-    //     13: '',
-    //     14: '',
-    // };
+    icons = {
+        1: 'alternating',
+        2: 'alternating',
+        3: 'alternating',
+        4: 'alternating',
+        5: 'alternating',
+        6: 'official',
+        10: 'official',
+        11: 'tutorial',
+        12: 'tutorial',
+        13: 'tutorial',
+        14: 'tutorial',
+    };
 
     constructor(
         private publicService: PublicService,

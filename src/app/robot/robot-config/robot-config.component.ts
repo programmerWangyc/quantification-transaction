@@ -1,8 +1,7 @@
-import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-import { FileUploader } from 'ng2-file-upload';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -54,11 +53,11 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
 
     templateArgs: Observable<TemplateVariableOverview[]>;
 
-    uploader = new FileUploader({ url: '' });
-
     warningMessage: Observable<SafeHtml>;
 
     hasStrategyArg: Observable<boolean>;
+
+    @ViewChild('fileBtn') fileBtn: ElementRef;
 
     constructor(
         private fb: FormBuilder,
@@ -156,6 +155,19 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
             result.period && this.configForm.patchValue({ kLinePeriod: result.period });
 
             this.robotOperate.importArgs(result);
+        };
+    }
+
+    /**
+     * Hack file select;
+     */
+    selectFile(): void {
+        this.fileBtn.nativeElement.click();
+
+        this.fileBtn.nativeElement.onchange = event => {
+            const files = event.target.files;
+
+            files && files.length && this.importArgs(files);
         };
     }
 

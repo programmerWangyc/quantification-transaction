@@ -13,10 +13,14 @@
     line-height: 39px;
 }
 
-nz-form-item {
-    width: 33%;
-}
-
 button {
     margin: 0 0 0 5px;
+}
+
+nz-card {
+    margin: 0 0 1rem 0;
+}
+
+:host::ng-deep .ant-card-head {
+    background: color(gray);
 }

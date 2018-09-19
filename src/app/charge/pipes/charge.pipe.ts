@@ -16,8 +16,8 @@ export class ChargeMethodPipe implements PipeTransform {
     }
 }
 
-export function getChargePrice(guid: string): number {
-    const ary = guid.split(this.constant.RECHARGE_PAYMENT_FLAG);
+export function getChargePrice(guid: string, flag: string): number {
+    const ary = guid.split(flag);
 
     if (parseInt(ary[ChargePaymentInfo.days], 10) === 0) {
         return parseInt(ary[ChargePaymentInfo.amount], 10);
@@ -30,5 +30,9 @@ export function getChargePrice(guid: string): number {
 
 @Pipe({ name: 'chargePrice' })
 export class ChargePricePipe implements PipeTransform {
-    transform = getChargePrice;
+    constructor(public constant: ChargeConstantService) { }
+
+    transform = (guid: string): number => {
+        return getChargePrice(guid, this.constant.RECHARGE_PAYMENT_FLAG);
+    }
 }

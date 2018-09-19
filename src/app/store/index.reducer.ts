@@ -362,6 +362,7 @@ export const selectBacktestState = createSelector(getBacktest, backtest.getBackt
 
 // backtest server send message
 export const selectBacktestServerSendMessage = createSelector(getBacktest, backtest.getServerSendMessage);
+// unused
 export const selectBacktestServerMessages = createSelector(getBacktest, backtest.getBacktestServerMessages);
 
 // backtest results
@@ -369,6 +370,15 @@ export const selectBacktestResults = createSelector(getBacktest, backtest.getBac
 
 // whether backtest tasks all complete
 export const selectIsAllBacktestTasksCompleted = createSelector(getBacktest, backtest.isTasksAllCompleted);
+
+// whether backtest result all received
+export const selectIsAllBacktestResultReceived = createSelector(selectBacktestResults, selectBacktestUIState, (results, state) => {
+    if (!results || !state) {
+        return null;
+    } else {
+        return results.length === state.backtestTasks.length;
+    }
+});
 
 //  ===================================================Comment======================================================
 

@@ -14,10 +14,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let item of nzTable.data; index as idx;">
-                <td>{{nzTable.data.length - idx}}</td>
-                <td>{{item.date}}</td>
-                <td>{{item.order_guid | chargeMethod | translate}}</td>
-                <td>{{item.order_guid | chargePrice}}</td>
+                <td bt-text-center>{{idx + 1}}</td>
+                <td bt-text-center>{{item.date}}</td>
+                <td bt-text-center>{{item.order_guid | chargeMethod | translate}}</td>
+                <td bt-text-center>{{item.order_guid | chargePrice}}</td>
             </tr>
         </tbody>
     </nz-table>

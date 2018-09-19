@@ -13,7 +13,7 @@
                 [(ngModel)]="monitoringSoundTypes" (ngModelChange)="updateMonitoringTypes($event)" class="log-type">
                 <nz-option *ngFor="let item of soundTypes" [nzValue]="item" [nzLabel]="item | translate "></nz-option>
             </nz-select>
-            <button nz-button [nzType]="'primary'" (click)="refresh$.next(true)" [nzLoading]="isLoading | async">
+            <button nz-button nzType="primary" (click)="refresh$.next(true)" [nzLoading]="isLoading | async">
                 <i class="anticon anticon-reload" *ngIf="!(isLoading | async)"></i>
                 {{'REFRESH' | translate}}
             </button>

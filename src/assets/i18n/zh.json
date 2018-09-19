@@ -465,7 +465,7 @@
     "INPUT_AMOUNT": "输入金额",
     "PAYMENT_METHOD": "支付方式",
     "CONFIRM_PAY_ACTION": "确认支付",
-    "SCAN_QR_CODE_TO_PAY": "请使用微信扫描右侧二维码以完成支付",
+    "CREATE_QRCODE": "生成二维码",
     "RECHARGE_SUCCESS": "充值成功！",
     "HISTORY_TOTAL_PAY": "历史支付总金额：{{total}}元",
     "BILLING_RULES": "计费规则",
@@ -556,7 +556,7 @@
     "CODE": "代码",
     "NOTE": "笔记",
     "SAVE": "保存",
-    "SAVE_BACKTEST_CONFIG": "保存回测设置",
+    "SYNC_BACKTEST_CONFIG": "同步回测设置",
     "DOWNLOAD": "下载",
     "THEME": "主题",
     "FONT_SIZE": "字号",
@@ -880,5 +880,6 @@
     "FOUR_ZERO_FOUR_TIP": "当前位置上没有发现任何内容，你可以尝试通过以下链接访问网站的其它内容。",
     "GOOGLE_VERIFY_STEPS": "请根据以下步骤完成验证",
     "SUBACCOUNT_LIST": "子帐户列表",
-    "API_INTERFACE_LIST": "API接口列表"
+    "API_INTERFACE_LIST": "API接口列表",
+    "SELECT_NODE": "选择节点"
 }

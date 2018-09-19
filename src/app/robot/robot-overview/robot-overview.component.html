@@ -1,63 +1,69 @@
-<nz-card *ngIf="robot | async; let robot" [nzExtra]="extra" [nzTitle]="'ROBOT_OVERVIEW' | translate">
-    <nz-row [nzGutter]="16">
-        <nz-col [nzSpan]="10" class="row">
-            <h6>{{'NAME' | translate}}:</h6>
-            <span>{{robot.name}}</span>
-        </nz-col>
-
-        <nz-col [nzSpan]="10" fxLayout="row" class="row">
-            <h6 fxFlexAlign="center">{{'STRATEGY' | translate}}:</h6>
+<nz-card *ngIf="robotDetail | async; let robot" [nzExtra]="extra" [nzTitle]="'ROBOT_OVERVIEW' | translate">
+    <ul fxLayoutAlign="start center">
+        <li>
             <div>
-                <p>{{'NAME' | translate}}</p>
-                <span>{{robot.strategy_name}}</span>
+                <h6>{{'NAME' | translate}}</h6>
+                <span>{{robot.name}}</span>
             </div>
             <div>
-                <p>{{'LATEST_UPDATE' | translate}}</p>
-                <span>{{robot.strategy_last_modified}}</span>
-            </div>
-        </nz-col>
-
-        <nz-col [nzSpan]="10" class="row">
-            <h6>{{'CREATE_TIME' | translate}}:</h6>
-            <span>{{robot.start_time}}</span>
-        </nz-col>
-
-        <nz-col [nzSpan]="10" fxLayout="row" class="row">
-            <h6 fxFlexAlign="center">{{'LATEST_RUN' | translate}}:</h6>
-            <div>
-                <p>{{'START_TIME' | translate}}</p>
+                <h6>{{'CREATE_TIME' | translate}}</h6>
                 <span>{{robot.start_time}}</span>
             </div>
+        </li>
+
+        <li fxLayoutAlign="space-between center">
+            <h5>{{'STRATEGY' | translate}}</h5>
             <div>
-                <p>{{'END_TIME' | translate}}</p>
-                <span>{{robot.end_time}}</span>
+                <div>
+                    <h6>{{'NAME' | translate}}</h6>
+                    <span>{{robot.strategy_name}}</span>
+                </div>
+                <div>
+                    <h6>{{'LATEST_UPDATE' | translate}}</h6>
+                    <span>{{robot.strategy_last_modified}}</span>
+                </div>
             </div>
-        </nz-col>
+        </li>
 
-        <nz-col [nzSpan]="10" class="row">
-            <h6 [nz-tooltip]="statusTip | async">{{'STATUS' | translate}}:</h6>
-            <span>{{robot.status | robotStatus | translate}}</span>
-            <button *ngIf="robot.status > 2; else elseBlock" [nzSize]="buttonSize" (click)="restart$.next(robot)" [disabled]="isRestartLoading | async"
-                nz-button>{{operateBtnText| async | translate}}</button>
-            <ng-template #elseBlock>
-                <button nz-button [nzSize]="buttonSize" (click)="stop$.next(robot)" [disabled]="isStopLoading | async">{{operateBtnText| async | translate}}</button>
-                <button nz-button [nzSize]="buttonSize" (click)="watchDog$.next(robot)">{{watchDogBtnText | async | translate}}</button>
-            </ng-template>
-        </nz-col>
+        <li fxLayoutAlign="space-between center">
+            <h5>{{'LATEST_RUN' | translate}}</h5>
+            <div>
+                <div>
+                    <h6>{{'START_TIME' | translate}}</h6>
+                    <span>{{robot.start_time}}</span>
+                </div>
+                <div>
+                    <h6>{{'END_TIME' | translate}}</h6>
+                    <span>{{robot.end_time}}</span>
+                </div>
+            </div>
+        </li>
 
-        <nz-col [nzSpan]="10" class="row">
-            <h6>{{'K_LINE_PERIOD' | translate}}:</h6>
-            <span>{{robot.strategy_exchange_pairs | fromJSON | kLinePeriod | translate}}</span>
-        </nz-col>
+        <li>
+            <div>
+                <h6>{{'K_LINE_PERIOD' | translate}}</h6>
+                <span>{{robot.strategy_exchange_pairs | fromJSON | kLinePeriod | translate}}</span>
+            </div>
+        </li>
+    </ul>
 
-        <nz-col [nzSpan]="10" class="row">
-            <h6>{{'EXCHANGE_PLATFORM' | translate}}:</h6>
-            <span fxLayout="column start">
-                <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock">{{pair.platform}}/{{pair.stock}}</span>
-            </span>
-        </nz-col>
+    <div class="status">
+        <h6 [nz-tooltip]="statusTip | async">{{'STATUS' | translate}}</h6>
+        <span>{{robot.status | robotStatus | translate}}</span>
+        <button *ngIf="robot.status > 2; else elseBlock" [nzSize]="buttonSize" (click)="restart$.next(robot)"
+            [disabled]="isRestartLoading | async" nz-button>{{operateBtnText| async | translate}}</button>
+        <ng-template #elseBlock>
+            <button nz-button [nzSize]="buttonSize" (click)="stop$.next(robot)" [disabled]="isStopLoading | async">{{operateBtnText|
+                async | translate}}</button>
+            <button nz-button [nzSize]="buttonSize" (click)="watchDog$.next(robot)">{{watchDogBtnText | async |
+                translate}}</button>
+        </ng-template>
+    </div>
 
-    </nz-row>
+    <div>
+        <h6>{{'EXCHANGE_PLATFORM' | translate}}</h6>
+        <span *ngFor="let pair of robot.strategy_exchange_pairs | fromJSON | platformStock: robot.plabels" class="pair">{{pair.platform}}/{{pair.stock}}</span>
+    </div>
 </nz-card>
 
 <ng-template #extra>

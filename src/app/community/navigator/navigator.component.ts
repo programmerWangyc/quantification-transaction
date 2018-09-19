@@ -91,10 +91,10 @@ export class NavigatorComponent implements OnInit {
     }
 
     /**
-     * @ignore
+     * 当前不支持多slug查询；
      */
     private createSlugStr(nodes: BBSNode[]): string {
-        return nodes[nodes.length - 1].slug;
         // return nodes.map(item => item.slug).join(',');
+        return nodes[0].slug;
     }
 }

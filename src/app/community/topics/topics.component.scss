@@ -1,26 +1,51 @@
+@import '../../../theme/_variable.theme';
+
 i {
     margin: 0 8px 0 0;
 }
 
-// $indicator-width: 100px;
+$indicator-width: 100px;
 
-// nz-list-item {
-//     position: relative;
+nz-list-item {
+    position: relative;
 
-    // .indicator {
-    //     position: absolute;
-    //     top: 50%;
-    //     transform: translateY(-50%);
-    //     left: 0;
-    //     height: 100%;
-    //     width: $indicator-width;
-    //     i {
-    //         margin: 0;
-    //         font-size: 32px;
-    //     }
-    // }
-// }
+    .indicator {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        height: 100%;
+        width: $indicator-width;
 
-// :host::ng-deep .ant-list-item-main {
-//     padding-left: $indicator-width;
-// }
+        i {
+            $size: 32px;
+            margin: 0;
+            font-size: $size;
+            color: color(weak-normal-color);
+            position: relative;
+
+            &::after {
+                content: '';
+                width: $size*2;
+                height: $size*2;
+                position: absolute;
+                top: -$size/2;
+                left: -$size/2;
+                background: $primary-3;
+                z-index: -1;
+            }
+        }
+    }
+}
+
+:host::ng-deep .ant-list-item-main {
+    padding-left: $indicator-width;
+}
+
+:host::ng-deep .ant-list-item-action {
+    & * {
+        cursor: default;
+    }
+
+    cursor: default;
+}

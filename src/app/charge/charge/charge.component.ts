@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilKeyChanged, filter, mapTo, startWith, take } from 'rxjs/operators';
+import { filter, mapTo, startWith, take, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { PaymentMethod } from '../charge.config';
@@ -38,18 +38,6 @@ export class ChargeBase {
         return control.valueChanges.pipe(
             filter(method => method !== PaymentMethod.WECHAT),
             startWith(null)
-        );
-    }
-
-    /**
-     * 支付处理进行中状态的流
-     */
-    protected notifyPayProcessing(submit: Observable<any>, control: AbstractControl): Observable<any> {
-        return merge(
-            submit,
-            control.valueChanges.pipe(
-                filter(method => method === PaymentMethod.WECHAT)
-            )
         );
     }
 
@@ -134,11 +122,16 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.wechatQRCode = this.chargeService.getWechatQrCode();
+        this.wechatQRCode = merge(
+            this.chargeService.getWechatQrCode(),
+            this.form.valueChanges.pipe(
+                mapTo(null)
+            )
+        );
 
         this.start = this.notifyPayStart(this.payMethod);
 
-        this.processing = this.notifyPayProcessing(this.pay$, this.payMethod);
+        this.processing = this.pay$.asObservable();
 
         this.payMethodSelected = this.notifyPayMethodState(this.payMethod);
     }
@@ -148,15 +141,16 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
      */
     launch() {
         this.subscription$$ = this.chargeService.launchPaymentArg(
-            merge(
-                this.pay$.asObservable(),
-                this.getArgsIfWechat()
-            )
+            this.pay$.asObservable(),
         )
             .add(this.chargeService.goToAlipayPage())
             .add(this.chargeService.goToPayPal());
 
         this.chargeService.handlePaymentsArgsError(() => this.isAlive);
+
+        this.chargeService.resetPaymentArgumentsRes(this.form.valueChanges.pipe(
+            takeWhile(() => this.isAlive)
+        ));
     }
 
     /**
@@ -167,16 +161,6 @@ export class ChargeComponent extends ChargeBase implements BaseComponent {
             charge: [3, Validators.required],
             payMethod: null,
         });
-    }
-
-    /**
-     * 用户选择微信支付时，获取参数
-     */
-    private getArgsIfWechat(): Observable<RechargeFormModal> {
-        return this.form.valueChanges.pipe(
-            filter((form: RechargeFormModal) => this.charge.valid && (form.payMethod === PaymentMethod.WECHAT)),
-            distinctUntilKeyChanged('charge')
-        );
     }
 
     /**

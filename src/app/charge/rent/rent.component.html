@@ -81,12 +81,14 @@
 
                 <nz-form-item>
                     <nz-form-control [nzXs]="{span:24,offset:0}" [nzSm]="{span:14,offset:6}" class="pay-btn">
-                        <button nz-button nzType="primary" [disabled]="form.invalid || payMethod.value === 1"
-                            (click)="pay$.next(form.value)">
-                            {{'CONFIRM_PAY_ACTION' | translate}}
+                        <button nz-button nzType="primary" [disabled]="form.invalid" (click)="pay$.next(form.value)">
+                            <span *ngIf="payMethod.value === 1; else normalBlock">
+                                {{'CREATE_QRCODE' | translate}}
+                            </span>
+                            <ng-template #normalBlock>
+                                {{'CONFIRM_PAY_ACTION' | translate}}
+                            </ng-template>
                         </button>
-                        <span *ngIf="payMethod.value === 1 && charge.valid" class="scan-tip">{{'SCAN_QR_CODE_TO_PAY' |
-                            translate}}</span>
                     </nz-form-control>
                 </nz-form-item>
             </form>
@@ -104,7 +106,7 @@
                 </span>
             </div>
 
-            <qr-code *ngIf="payMethod.value === 1 && charge.valid" [value]="wechatQRCode | async" [size]="150"></qr-code>
+            <qr-code *ngIf="wechatQRCode | async; let value" [value]="value" [size]="150"></qr-code>
         </div>
     </div>
 </div>

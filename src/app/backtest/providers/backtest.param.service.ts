@@ -14,12 +14,12 @@ import {
 import * as fromRes from '../../interfaces/response.interface';
 import { AdvancedOption } from '../../store/backtest/backtest.reducer';
 import * as fromRoot from '../../store/index.reducer';
+import { UIState } from '../../store/strategy/strategy.reducer';
 import { Language } from '../../strategy/strategy.config';
 import { BacktestLevel } from '../backtest.config';
 import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestBaseService } from './backtest.result.service';
-import { UIState } from '../../store/strategy/strategy.reducer';
 
 /**
  * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestService；
@@ -77,8 +77,7 @@ export class BacktestParamService extends BacktestBaseService {
      */
     private getSelectedTemplateIds(): Observable<number[]> {
         return this.getStrategyUIState().pipe(
-            map(state => state.selectedTemplates),
-            this.filterTruth()
+            map(state => state.selectedTemplates || []),
         );
     }
 

@@ -39,7 +39,7 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
     /**
      * @ignore
      */
-    labelSm = 2;
+    labelSm = 3;
 
     /**
      * @ignore

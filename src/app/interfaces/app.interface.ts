@@ -39,6 +39,7 @@ export interface VariableOverview {
     variableValue: string | number | boolean;
     variableTypeId: number;
     originValue: string | number;
+    groupName?: string;
 }
 
 export interface TemplateVariableOverview {

@@ -48,7 +48,7 @@
 <ng-template #control>
     <nz-button-group id="control">
         <button nz-button nzSize="small" (click)="save.next({ code: codeContent, note: noteContent, des: desContent, manual: manualContent})">{{'SAVE' | translate}}</button>
-        <button nz-button nzSize="small" [nzType]="isSaveBacktestConfig ? 'primary' : 'default'" (click)="toggleSaveBacktestConfig()">{{'SAVE_BACKTEST_CONFIG' | translate}}</button>
+        <button nz-button nzSize="small" [nzType]="isSaveBacktestConfig ? 'primary' : 'default'" (click)="toggleSaveBacktestConfig()">{{'SYNC_BACKTEST_CONFIG' | translate}}</button>
         <button nz-button nzSize="small" (click)="export()">{{'DOWNLOAD' | translate}}</button>
         <nz-input-number nzSize="small" [(ngModel)]="fontSize" (ngModelChange)="setFontSize()" [nzMin]="12" [nzMax]="24" [nzStep]="1" [nzFormatter]="formatter"
             [nzParser]="parser" class="input-number"></nz-input-number>

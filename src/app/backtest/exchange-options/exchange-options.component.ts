@@ -21,11 +21,13 @@ export class ExchangeOptionsComponent implements OnInit {
     @Input() set config(input: BacktestSelectedPair[]) {
         if (!input) return;
 
-        this.platformOptions = input;
+        const source = this.checkSelectedPair(input); // 兼容旧代码
 
-        this.backtestService.updatePlatformOptions(input);
+        this.platformOptions = source;
 
-        this.selectedPairs = input.map(item => {
+        this.backtestService.updatePlatformOptions(source);
+
+        this.selectedPairs = source.map(item => {
             const { eid, name, stock } = item;
 
             return { platformId: eid, platformName: name, stock };
@@ -112,6 +114,27 @@ export class ExchangeOptionsComponent implements OnInit {
      */
     ngOnInit() {
         this.util.getGroupedList(of(this.constant.BACKTEST_PLATFORMS), 'group').subscribe(result => this.platforms = result);
+    }
+
+    /**
+     * 检查的粒度可能需要更加细化。出了问题再改吧
+     */
+    private checkSelectedPair(source: BacktestSelectedPair[]): BacktestSelectedPair[] {
+        const isBacktestSelectedPair = source.every(item => !item['currency']); // 原代码可能是eid 和 currency, fee?, balance?, currency?, stocks?
+
+        if (isBacktestSelectedPair) {
+            return source;
+        } else {
+            return source.map(item => ({
+                eid: item.eid,
+                name: item.eid,
+                makerFee: item['fee'] && item['fee'][0] || this.makerFee,
+                stock: item['currency'],
+                takerFee: item['fee'] && item['fee'][1] || this.takerFee,
+                balance: item['balance'] || this.balance,
+                remainCurrency: item['stocks'] || this.currency,
+            }));
+        }
     }
 
     /**

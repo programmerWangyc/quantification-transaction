@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxDnDModule } from '@swimlane/ngx-dnd';
 
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { FileUploadModule } from 'ng2-file-upload';
 
 import { ToolModule } from '../tool/tool.module';
 import { AuthService } from './providers/auth.service';
@@ -15,7 +14,6 @@ import { WatchDogService } from './providers/watch-dog.service';
 @NgModule({
     exports: [
         CodemirrorModule,
-        FileUploadModule,
         FlexLayoutModule,
         FormsModule,
         NgZorroAntdModule,

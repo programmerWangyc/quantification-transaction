@@ -1,6 +1,6 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<div>
+<div class="content">
     <div fxLayoutAlign="space-between center" class="topic-info">
         <div fxLayout="row">
             <a *ngIf="isTopicOwner | async" nz-button nzType="primary" [routerLink]="['../../update', topic.id]" class="update-btn">{{'UPDATE'
@@ -35,9 +35,11 @@
     <markdown [data]="topic.content | toMarkdown" class="content"></markdown>
 </div>
 
-<app-comment-total [total]="total | async"></app-comment-total>
+<div class="content">
+    <app-comment-total [total]="total | async"></app-comment-total>
 
-<app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
-    [buttonText]="'REVIEW'" [row]="10"></app-reply>
+    <app-reply (send)="publish.next($event)" [showBanner]="true" [username]="username | async" [clear]="isPublishSuccess | async"
+        [buttonText]="'REVIEW'" [row]="10"></app-reply>
 
-<app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
+    <app-comment [comment]="comment | async" (delete)="delete.next($event)" (update)="update.next($event)" (reply)="reply.next($event)"></app-comment>
+</div>

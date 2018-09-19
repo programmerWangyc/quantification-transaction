@@ -13,21 +13,13 @@ import { RobotService } from '../providers/robot.service';
     selector: 'app-robot-overview',
     templateUrl: './robot-overview.component.html',
     styleUrls: ['./robot-overview.component.scss'],
-    // animations: [
-    //     trigger('foldState', [
-    //         state('fold', style({ display: 'none' })),
-    //         state('unfold', style({ display: 'block' }))
-    //     ]),
-    //     transition('unfold => fold', [style({ height: '*' }), animate(250, style({ height: 0 }))]),
-    //     transition('fold => unfold', animate(250, style({ height: '*' }))),
-    // ]
 })
 export class RobotOverviewComponent extends FoldableBusinessComponent implements BaseComponent {
 
     /**
      * @ignore
      */
-    robot: Observable<RobotDetail>;
+    robotDetail: Observable<RobotDetail>;
 
     /**
      * @ignore
@@ -129,7 +121,7 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
      * @ignore
      */
     initialModel() {
-        this.robot = this.robotService.getRobotDetail();
+        this.robotDetail = this.robotService.getRobotDetail();
 
         this.isStopLoading = this.robotOperate.isLoading(RobotOperateType.stop);
 

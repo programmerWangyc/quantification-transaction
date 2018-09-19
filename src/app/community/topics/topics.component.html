@@ -1,10 +1,10 @@
 <nz-list [nzDataSource]="topics" [nzItemLayout]="'vertical'" [nzRenderItem]="item">
     <ng-template #item let-item>
         <nz-list-item [nzActions]="[authorAction, dateAction, replyAction, hitAction]" [nzExtra]="extra">
-            <!--图标不对-->
-            <!-- <span fxLayoutAlign="center center" class="indicator">
-                <i class="anticon" [ngClass]="'anticon-' + iconMap[item.node_id]"></i>
-            </span> -->
+
+            <span fxLayoutAlign="center center" class="indicator">
+                <i class="anticon" [ngClass]="'anticon-' + icons[item.node_id]"></i>
+            </span>
 
             <ng-template #authorAction>
                 <i class="anticon anticon-user"></i>

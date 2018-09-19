@@ -7,11 +7,11 @@ import * as moment from 'moment';
 import { combineLatest, from as observableFrom, merge, Observable, of as observableOf, Subscription, zip } from 'rxjs';
 import {
     bufferCount, distinct, distinctUntilChanged, filter, groupBy, map, mapTo, mergeMap, reduce, scan, startWith,
-    switchMapTo, take as observableTake, withLatestFrom
+    switchMapTo, take as observableTake, takeWhile, withLatestFrom
 } from 'rxjs/operators';
 
 import { BaseService } from '../base/base.service';
-import { ChartUpdateIndicator } from '../interfaces/app.interface';
+import { ChartUpdateIndicator, keepAliveFn } from '../interfaces/app.interface';
 import * as fromReq from '../interfaces/request.interface';
 import * as fromRes from '../interfaces/response.interface';
 import { RobotService } from '../robot/providers/robot.service';
@@ -24,6 +24,10 @@ import {
 import { ChartService } from './chart.service';
 import { ErrorService } from './error.service';
 import { ProcessService } from './process.service';
+
+interface LogParam {
+    [key: string]: number;
+}
 
 @Injectable()
 export class RobotLogService extends BaseService {
@@ -47,16 +51,20 @@ export class RobotLogService extends BaseService {
      * Launch get robot logs request.
      * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
      * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
-     * *前端有2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点：1、是会导致再一次的刷新，2、默认参数的值变化需要额外添加新的流
+     * *2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点：1、是会导致再一次的刷新，2、默认参数的值变化需要额外添加新的流
      * *发起请求，否则有可能被前一个参数覆盖。
      * *第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
      * *默认参数会被所有的接口调用者刷新store的状态，所以需要区分业务层的请求参数是否发生变化，确定是否需要发起请求
      * *最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
      */
-    launchRobotLogs(data: Observable<{ [key: string]: number }>, isSyncAction = false /* indicate the action is  sync action or not */): Subscription {
+    launchRobotLogs(data: Observable<LogParam>, isSyncAction = false /* indicate the action is  sync action or not */, distinctFn?: (pre: LogParam, cur: LogParam) => boolean): Subscription {
+        const defaultFn = (pre, cur) => Object.keys(cur).every(key => pre[key] === cur[key]);
+
+        const fn = distinctFn || defaultFn;
+
         return this.process.processRobotLogs(
             data.pipe(
-                distinctUntilChanged((pre, cur) => Object.keys(cur).every(key => pre[key] === cur[key])),
+                distinctUntilChanged(fn),
                 withLatestFrom(
                     this.store.pipe(
                         select(fromRoot.selectRobotDefaultLogParams)
@@ -83,14 +91,13 @@ export class RobotLogService extends BaseService {
                     map(robotId => ({ robotId }))
                 )
             )
-        ));
+        ), false, () => false);
     }
 
     /**
      *  Get logs when the server notifies log updates.
      */
-    launchSyncLogsWhenServerRefreshed(): Subscription {
-        // 获取一套新的日志请求参数。
+    launchSyncLogsWhenServerRefreshed(keepAlive: keepAliveFn): Subscription {
         const newLogParam = zip(
             this.getLogParamsFroSyncLogs(),
             this.robotService.getCurrentRobotId(),
@@ -99,7 +106,6 @@ export class RobotLogService extends BaseService {
             (logMinId, robotId, profitParam, strategyParam) => ({ robotId, logMinId, ...profitParam, ...strategyParam })
         );
 
-        // 收到服务器更新通知---> 确保当前状态可以发送请求---->跳转到参数流上获取参数
         const syncNotify = this.needSyncLogs().pipe(
             withLatestFrom(
                 this.canSyncLogs(),
@@ -110,7 +116,8 @@ export class RobotLogService extends BaseService {
         );
 
         return this.launchRobotLogs(syncNotify.pipe(
-            switchMapTo(newLogParam)
+            switchMapTo(newLogParam),
+            takeWhile(keepAlive)
         ),
             true
         );
@@ -685,7 +692,9 @@ export class RobotLogService extends BaseService {
 
     //  =======================================================Error Handle=======================================================
 
-    handleRobotLogsError(): Subscription {
-        return this.error.handleResponseError(this.getRobotLogsResponse());
+    handleRobotLogsError(keepAlive: keepAliveFn): Subscription {
+        return this.error.handleResponseError(this.getRobotLogsResponse().pipe(
+            takeWhile(keepAlive)
+        ));
     }
 }

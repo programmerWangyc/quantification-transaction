@@ -9,3 +9,9 @@
         margin-right: 2em;
     }
 }
+
+.content {
+    @include simpleContent();
+
+    margin: 0 0 $block-vertical-space 0;
+}

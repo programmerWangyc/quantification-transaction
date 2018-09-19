@@ -1,10 +1,13 @@
-<div nz-row>
+<app-indicator [paths]="paths"></app-indicator>
+
+<div fxLayout="row wrap" fxLayoutAlign="start center">
     <ng-container *ngFor="let navigator of list">
-        <div nz-col nzSpan="6" class="navigator" >
-            <a nz-button [routerLink]="navigator.path" fxLayoutAlign="center center">
-                <i class="anticon" [ngClass]="'anticon-'+ navigator.icon"></i>
-                {{navigator.label | translate}}
-            </a>
+        <div [routerLink]="navigator.path" fxFlex="24%" fxLayout="column" fxLayoutAlign="center center" class="navigator">
+            <div fxLayoutAlign="center center">
+                <i class="anticon" [ngClass]="'anticon-' + navigator.icon"></i>
+            </div>
+
+            {{navigator.label | translate}}
         </div>
     </ng-container>
 </div>

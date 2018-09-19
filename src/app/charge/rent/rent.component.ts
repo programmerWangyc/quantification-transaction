@@ -7,11 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { isNull } from 'lodash';
 import * as moment from 'moment';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, mapTo, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Strategy, StrategyListByNameStrategy } from '../../interfaces/response.interface';
-import { PaymentMethod } from '../charge.config';
 import { ChargeBase } from '../charge/charge.component';
 import { ChargeConstantService } from '../providers/charge.constant.service';
 import { ChargeService, RechargeFormModal, RentPrice } from '../providers/charge.service';
@@ -116,11 +115,16 @@ export class RentComponent extends ChargeBase implements BaseComponent {
      * @ignore
      */
     initialModel() {
-        this.wechatQRCode = this.chargeService.getWechatQrCode();
+        this.wechatQRCode = merge(
+            this.chargeService.getWechatQrCode(),
+            this.form.valueChanges.pipe(
+                mapTo(null)
+            )
+        );
 
         this.start = this.notifyPayStart(this.payMethod);
 
-        this.processing = this.notifyPayProcessing(this.pay$, this.payMethod);
+        this.processing = this.pay$.asObservable();
 
         this.payMethodSelected = this.notifyPayMethodState(this.payMethod);
 
@@ -143,16 +147,17 @@ export class RentComponent extends ChargeBase implements BaseComponent {
             .add(this.chargeService.goToPayPal());
 
         this.chargeService.handlePaymentsArgsError(() => this.isAlive);
+
+        this.chargeService.resetPaymentArgumentsRes(this.form.valueChanges.pipe(
+            takeWhile(() => this.isAlive)
+        ));
     }
 
     /**
      * 生成支付参数接口的请求数据
      */
     private getPaymentArgOptions() {
-        return merge(
-            this.pay$,
-            this.getArgsIfWechat()
-        ).pipe(
+        return this.pay$.pipe(
             map(({ payMethod, charge, chargeShortcut }) => ({ payMethod, charge: chargeShortcut || charge }))
         );
     }
@@ -260,28 +265,12 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         this.form = this.fb.group({
             name: { value: '', disabled: true },
             price: { value: '', disabled: true },
-            chargeShortcut: [30, Validators.required],
+            chargeShortcut: 30,
             charge: 30,
             amount: { value: '', disabled: true },
             deadline: { value: '', disabled: true },
             payMethod: '',
         });
-    }
-
-    /**
-     * 用户选择微信支付时，获取参数
-     */
-    private getArgsIfWechat(): Observable<RentFormModal> {
-        return this.form.valueChanges.pipe(
-            filter((form: RentFormModal) => {
-                const isWechatPay = form.payMethod === PaymentMethod.WECHAT;
-
-                const isRentPeriodValid = !!this.chargeShortcut.value || this.charge.valid;
-
-                return isWechatPay && isRentPeriodValid;
-            }),
-            distinctUntilChanged((pre, cur) => pre.charge === cur.charge && pre.chargeShortcut === cur.chargeShortcut)
-        );
     }
 
     /**

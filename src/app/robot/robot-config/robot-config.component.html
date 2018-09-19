@@ -23,7 +23,8 @@
         <nz-form-item>
             <nz-form-label [nzSpan]="6">{{'EXCHANGE_PLATFORM' | translate}}</nz-form-label>
             <nz-form-control [nzSpan]="16">
-                <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzSpan="6" nzShowSearch>
+                <nz-select formControlName="platform" [nzPlaceHolder]="'PLEASE_SELECT_PLATFORM' | translate" nzSpan="6"
+                    nzShowSearch>
                     <nz-option *ngFor="let item of platforms" [nzLabel]="item.label" [nzValue]="item.id"></nz-option>
                 </nz-select>
                 <nz-form-explain *ngIf="platform.invalid && (platform.dirty || platform.touched)">
@@ -49,7 +50,8 @@
                         <nz-option [nzLabel]="'CUSTOM' | translate" [nzValue]="true"></nz-option>
                         <nz-option [nzLabel]="'USE_EXIST' | translate" [nzValue]="false"></nz-option>
                     </nz-select>
-                    <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate" [nzDisabled]="!platform.value">
+                    <nz-select *ngIf="!isCustomStock" formControlName="stock" [nzPlaceHolder]="'PLEASE_SELECT_PAIR_NAME' | translate"
+                        [nzDisabled]="!platform.value">
                         <nz-option *ngFor="let item of (selectedPlatform | async)?.stocks" [nzLabel]="item" [nzValue]="item"></nz-option>
                     </nz-select>
                     <input *ngIf="isCustomStock" formControlName="stock" [disabled]="!platform.value" nz-input>
@@ -85,21 +87,22 @@
 
     <app-strategy-arg *ngIf="hasStrategyArg | async" [args]="strategyArgs | async" (change)="argChange($event)" [title]="'STRATEGY_ARGUMENTS' | translate"></app-strategy-arg>
 
-    <app-strategy-arg *ngFor="let template of templateArgs | async" [title]="template.name" [args]="template.variables" (change)="argChange($event, template.name)"></app-strategy-arg>
+    <app-strategy-arg *ngFor="let template of templateArgs | async" [title]="template.name" [args]="template.variables"
+        (change)="argChange($event, template.name)"></app-strategy-arg>
 
-    <button nz-button [nzType]="'primary'" type="submit" (click)="modify$.next(configForm.value)" [disabled]="configForm.invalid || !selectedPairs.length">
+    <button nz-button nzType="warm" type="submit" (click)="modify$.next(configForm.value)" [disabled]="configForm.invalid || !selectedPairs.length">
         {{'UPDATE_CONFIG' | translate}}
     </button>
 
-    <button nz-button *ngIf="hasArgs | async" [nzType]="'primary'" (click)="exportArgs()" style="margin: 0 1em;">
-        <i class="anticon anticon-upload"></i>
+    <button nz-button *ngIf="hasArgs | async" nzType="primary" (click)="exportArgs()" style="margin: 0 1em;">
+        <i class="anticon anticon-export1"></i>
         <span>{{'EXPORT_ARGUMENT' | translate}}</span>
     </button>
 
-    <button nz-button *ngIf="hasArgs | async" class="file-btn">
-        <i class="anticon anticon-download"></i>
+    <button class="file-btn" *ngIf="hasArgs | async" (click)="selectFile()" nz-button>
+        <i class="anticon anticon-import"></i>
         <span>{{'IMPORT_ARGUMENT' | translate}}</span>
-        <input type='file' ng2FileSelect [uploader]="uploader" (onFileSelected)="importArgs($event)">
+        <input type='file' #fileBtn>
     </button>
 
 </nz-card>

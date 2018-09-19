@@ -15,14 +15,14 @@ const routs: Routes = [
             { path: 'charge', loadChildren: '../charge/charge.module#ChargeModule' },
             { path: 'agent', loadChildren: '../agent/agent.module#AgentModule' },
             { path: 'exchange', loadChildren: '../exchange/exchange.module#ExchangeModule' },
-            { path: 'square', loadChildren: '../square/square.module#SquareModule' }, // loaded
-            { path: 'fact', loadChildren: '../fact/fact.module#FactModule' }, // loaded
+            { path: 'square', loadChildren: '../square/square.module#SquareModule', redirectTo: '/square' }, // loaded
+            { path: 'fact', loadChildren: '../fact/fact.module#FactModule', redirectTo: '/fact' }, // loaded
             /**
              * @deprecated 暂时不搞
              */
             // { path: 'simulation', loadChildren: '../simulation/simulation.module#SimulationModule' },
-            { path: 'community', loadChildren: '../community/community.module#CommunityModule' }, // loaded
-            { path: 'doc', loadChildren: '../document/document.module#DocumentModule' }, // loaded
+            { path: 'community', loadChildren: '../community/community.module#CommunityModule', redirectTo: '/community' }, // loaded
+            { path: 'doc', loadChildren: '../document/document.module#DocumentModule', redirectTo: '/doc' }, // loaded
             { path: 'account', loadChildren: '../account/account.module#AccountModule' },
             { path: 'message', loadChildren: '../message/message.module#MessageModule' },
         ],

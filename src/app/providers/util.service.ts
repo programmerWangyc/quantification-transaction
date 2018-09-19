@@ -3,12 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { isArray, isString } from 'lodash';
 import * as moment from 'moment';
-import { combineLatest, from as observableFrom, Observable } from 'rxjs';
+import { combineLatest, from as observableFrom, Observable, of } from 'rxjs';
 import { distinctUntilChanged, groupBy, map, mergeMap, reduce, switchMap } from 'rxjs/operators';
 
-import { ChartSize } from '../interfaces/app.interface';
-import { RunningLog } from '../interfaces/response.interface';
 import { BaseService } from '../base/base.service';
+import { ChartSize, VariableOverview } from '../interfaces/app.interface';
+import { RunningLog } from '../interfaces/response.interface';
 import { pictureUrlReg } from '../validators/validators';
 
 export interface GroupedList<T> {
@@ -142,5 +142,11 @@ export class UtilService extends BaseService {
         }
 
         return urls;
+    }
+
+    getGroupedStrategyArgs<T extends VariableOverview>(source: T[], getGroupName: (T) => string): Observable<GroupedList<T>[]> {
+        const patchedSource: T[] = source.map(item => Object.assign(item, { groupName: getGroupName(item) }));
+
+        return this.getGroupedList(of(patchedSource), 'groupName');
     }
 }

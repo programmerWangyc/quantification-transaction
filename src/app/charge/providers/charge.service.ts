@@ -13,10 +13,12 @@ import {
 } from '../../interfaces/response.interface';
 import { ErrorService } from '../../providers/error.service';
 import { ProcessService } from '../../providers/process.service';
-import { ResetRechargeAction } from '../../store/charge/charge.action';
+import { ResetRechargeAction, ResetPaymentArgumentsAction } from '../../store/charge/charge.action';
 import * as fromRoot from '../../store/index.reducer';
 import { PaymentMethod } from '../charge.config';
 import { getChargePrice } from '../pipes/charge.pipe';
+import { ChargeConstantService } from './charge.constant.service';
+import { orderBy } from 'lodash';
 
 export interface RechargeFormModal {
     payMethod: number;
@@ -41,6 +43,7 @@ export class ChargeService extends BaseService {
         private error: ErrorService,
         private process: ProcessService,
         public rendererFactory: RendererFactory2,
+        public constant: ChargeConstantService,
     ) {
         super();
         this.renderer2 = this.rendererFactory.createRenderer(null, null);
@@ -157,7 +160,8 @@ export class ChargeService extends BaseService {
         const predicate = this.isSpecificOrder(flag);
 
         return this.getHistoryOrders().pipe(
-            map(orders => orders.filter(predicate))
+            map(orders => orders.filter(predicate)),
+            map(orders => orderBy(orders, ['id'], ['desc']))
         );
     }
 
@@ -175,7 +179,7 @@ export class ChargeService extends BaseService {
      */
     getHistoryOrderTotalAmount(data: Observable<PayOrder[]>): Observable<number> {
         return data.pipe(
-            map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid), 0))
+            map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid, this.constant.RECHARGE_PAYMENT_FLAG), 0))
         );
     }
 
@@ -254,6 +258,13 @@ export class ChargeService extends BaseService {
      */
     resetRecharge(): void {
         this.store.dispatch(new ResetRechargeAction());
+    }
+
+    /**
+     * @ignore
+     */
+    resetPaymentArgumentsRes(signal: Observable<any>): Subscription {
+        return signal.subscribe(_ => this.store.dispatch(new ResetPaymentArgumentsAction()));
     }
 
     //  =======================================================Error Handle=======================================================

@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import {
-    accountModules, agent, charge, community, documentation, exchange, factFinder, message, NavItem, robot, square,
-    strategy
-} from '../../base/base.config';
+import { accountModules, agent, charge, exchange, message, NavItem, robot, strategy } from '../../base/base.config';
+import { Breadcrumb } from '../../interfaces/app.interface';
 
 interface Navigator extends NavItem { }
 
@@ -14,15 +12,13 @@ interface Navigator extends NavItem { }
 })
 export class NavigationComponent implements OnInit {
 
+    paths: Breadcrumb[] = [{ name: 'CONTROL_PANEL' }];
+
     list: Navigator[] = [
         robot,
         strategy,
         agent,
         exchange,
-        square,
-        factFinder,
-        community,
-        documentation,
         charge,
         ...accountModules,
         message,

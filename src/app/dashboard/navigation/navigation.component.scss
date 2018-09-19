@@ -1,4 +1,21 @@
+@import '../../../theme/_variable.theme';
+
 .navigator {
-    margin: 2em 0;
-    padding: 0 2em;
+    cursor: pointer;
+    background: #fff;
+    margin: 0 1rem 1rem 0;
+    padding: 2rem 0;
+
+    div {
+        $length: 50px;
+        width: $length;
+        height: $length;
+        border-radius: $length/2;
+        background: color(gray);
+        margin-bottom: 1rem;
+
+        i {
+            font-size: 32px;
+        }
+    }
 }

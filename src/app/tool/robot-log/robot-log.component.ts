@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { includes } from 'lodash';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, startWith } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, startWith, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { RunningLog } from '../../interfaces/response.interface';
@@ -29,11 +29,6 @@ const soundTypes: string[] = [
     styleUrls: ['./robot-log.component.scss'],
 })
 export class RobotLogComponent extends BaseComponent {
-
-    /**
-     * @ignore
-     */
-    subscription$$: Subscription;
 
     /**
      * Running logs;
@@ -96,10 +91,7 @@ export class RobotLogComponent extends BaseComponent {
      */
     currentPage = 1;
 
-    /**
-     * @ignore
-     */
-    sync$$: Subscription;
+    isAlive = true;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -153,22 +145,30 @@ export class RobotLogComponent extends BaseComponent {
     launch() {
         const id = this.activatedRoute.paramMap.pipe(map(param => +param.get('id')));
 
-        this.subscription$$ = this.robotLog.launchRobotLogs(
+        const keepAlive = () => this.isAlive;
+
+        this.robotLog.launchRobotLogs(
             combineLatest(
                 id,
                 this.robotLog.getLogPaginationInfo(),
             ).pipe(
-                map(([robotId, pagination]) => ({ robotId, ...pagination }))
+                map(([robotId, pagination]) => ({ robotId, ...pagination })),
+                takeWhile(keepAlive)
             )
-        )
-            .add(this.robotLog.launchRefreshRobotLogs(this.refresh$))
-            .add(this.robotLog.needPlayTipAudio().pipe(
-                filter(need => need)
-            ).subscribe(_ => this.playAudio())
-            )
-            .add(this.robotLog.handleRobotLogsError());
+        );
 
-        this.sync$$ = this.robotLog.launchSyncLogsWhenServerRefreshed();
+        this.robotLog.needPlayTipAudio().pipe(
+            filter(need => need),
+            takeWhile(keepAlive)
+        ).subscribe(_ => this.playAudio());
+
+        this.robotLog.handleRobotLogsError(keepAlive);
+
+        this.robotLog.launchRefreshRobotLogs(this.refresh$.asObservable().pipe(
+            takeWhile(keepAlive)
+        ));
+
+        this.robotLog.launchSyncLogsWhenServerRefreshed(keepAlive);
     }
 
     /**
@@ -215,9 +215,7 @@ export class RobotLogComponent extends BaseComponent {
      * @ignore
      */
     ngOnDestroy() {
-        this.subscription$$.unsubscribe();
-
-        this.sync$$.unsubscribe();
+        this.isAlive = false;
     }
 
 }

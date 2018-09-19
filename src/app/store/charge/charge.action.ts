@@ -108,6 +108,12 @@ export class ResetRechargeAction implements Action {
     constructor(public payload = null) { }
 }
 
+export const RESET_PAYMENT_ARGUMENTS = '[Charge] RESET_PAYMENT_ARGUMENTS';
+
+export class ResetPaymentArgumentsAction implements Action {
+    readonly type = RESET_PAYMENT_ARGUMENTS;
+}
+
 export type ApiActions = GetPayOrdersRequestAction
     | GetPayOrdersFailAction
     | GetPayOrdersSuccessAction
@@ -117,7 +123,8 @@ export type ApiActions = GetPayOrdersRequestAction
 
 export type Actions = ApiActions
     | ResetRechargeAction
-    | ReceiveServerSendPaymentEventAction;
+    | ReceiveServerSendPaymentEventAction
+    | ResetPaymentArgumentsAction;
 
 export const ResponseActions = {
     GetPayOrdersFailAction,

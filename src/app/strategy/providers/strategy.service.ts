@@ -269,7 +269,7 @@ export class StrategyService extends BaseService {
             mergeMap(item => this.translate.get(item.period).pipe(
                 map(period => ({ ...item, period }))
             )),
-            find(item => item.period === source),
+            find(item => this.constant.isPeriodEqual(item.period, source)),
             map(item => item.id)
         ).subscribe(id => result = id);
 

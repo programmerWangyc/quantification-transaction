@@ -39,9 +39,14 @@ export function reducer(state = initialState, action: actions.Actions): State {
 
         case actions.RECEIVE_SERVER_SEND_PAYMENT_EVENT:
             return { ...state, serverMessage: action.payload };
+
         // reset store
         case actions.RESET_RECHARGE:
             return { ...state, requestParams: null };
+
+        // reset payment arg
+        case actions.RESET_PAYMENT_ARGUMENTS:
+            return { ...state, paymentArgRes: null };
 
         case actions.GET_PAY_ORDERS:
         default:

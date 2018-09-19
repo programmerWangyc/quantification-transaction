@@ -108,10 +108,12 @@ export class BacktestService extends BacktestParamService {
             ))
         );
 
-
         // 所有的任务都结束后停止轮询，这个时间早于回测结果全部拉取完成的时间
-        const pollingEnd = this.isAllTasksCompleted().pipe(
-            this.filterTruth()
+        // const pollingEnd = this.isAllTasksCompleted().pipe(
+        //     this.filterTruth()
+        // );
+        const pollingEnd = this.store.pipe(
+            this.selectTruth(fromRoot.selectIsAllBacktestResultReceived)
         );
 
         return start.pipe(

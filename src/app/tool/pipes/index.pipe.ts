@@ -1,7 +1,7 @@
 import {
     BalancePipe, BtNodeNamePipe, BytesPipe, CategoryColorPipe, CategoryNamePipe, CommandButtonTextPipe, FromJSONPipe,
     FromNowPipe, KLinePeriodPipe, OriginDataPipe, PlatformStockPipe, ProgramLanguagePipe, RemoveMd5Pipe, SafeHtmlPipe,
-    StrategyNamePipe, TemplateNamePipe, ToMarkdownPipe, VariableToSelectListPipe, VariableTypePipe, SummaryInfoPipe, PluckContentPipe, StrategyChartTitlePipe
+    StrategyNamePipe, TemplateNamePipe, ToMarkdownPipe, VariableToSelectListPipe, VariableTypePipe, SummaryInfoPipe, PluckContentPipe, StrategyChartTitlePipe, StrategyDescriptionPipe
 } from './common.pipe';
 import {
     DirectionTypePipe, Eid2StringPipe, ExtraBcgColorPickerPipe, ExtraColorPickerPipe, ExtraContentPipe, LogPricePipe,
@@ -32,6 +32,7 @@ export const PIPES = [
     RemoveMd5Pipe,
     SafeHtmlPipe,
     ShowExtraIconPipe,
+    StrategyDescriptionPipe,
     StrategyChartTitlePipe,
     StrategyNamePipe,
     SummaryInfoPipe,

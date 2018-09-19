@@ -1,6 +1,7 @@
 <form nz-form [formGroup]="form">
 
     <nz-form-item>
+        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'TITLE' | translate}}</nz-form-label>
         <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
             <input formControlName="title" nz-input [placeholder]="'ADD_BBS_TOPIC_PLACEHOLDER' | translate">
             <nz-form-explain *ngIf="title.invalid && (title.dirty || title.touched)">
@@ -10,7 +11,21 @@
     </nz-form-item>
 
     <nz-form-item>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs">
+        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'CONTENT' | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="20" [nzXs]="xs" class="main-content">
+            <app-topic-content-edit [data]="data?.content" [image]="images | async"></app-topic-content-edit>
+
+            <nz-upload [(nzFileList)]="files" nzType="drag" nzMultiple="true" [nzShowUploadList]="false"
+                [nzBeforeUpload]="beforeUpload" [nzAccept]="allowedContentTypes">
+                <i class="anticon anticon-picture"></i>
+                {{'DRAG_OR_CLICK_TO_UPLOAD' | translate}}
+            </nz-upload>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzRequired [nzSm]="labelSm" [nzXs]="xs">{{'SELECT_NODE' | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="labelSm" [nzXs]="xs">
             <nz-select formControlName="topic" [nzPlaceHolder]="'PLEASE_SELECT_TOPIC' | translate">
                 <nz-option-group *ngFor="let topic of topics | async" [nzLabel]="topic.groupName | translate">
                     <nz-option *ngFor="let item of topic.values" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
@@ -23,17 +38,10 @@
     </nz-form-item>
 
     <nz-form-item>
-        <nz-form-control [nzSm]="controlSm" [nzXs]="xs" class="main-content">
-            <app-topic-content-edit [data]="data?.content" [image]="images | async"></app-topic-content-edit>
-
-            <nz-upload [(nzFileList)]="files" nzType="drag" nzMultiple="true" [nzShowUploadList]="false" [nzBeforeUpload]="beforeUpload" [nzAccept]="allowedContentTypes">
-                <i class="anticon anticon-picture" style="color: #1890ff"></i>
-                {{'DRAG_OR_CLICK_TO_UPLOAD' | translate}}
-            </nz-upload>
+        <nz-form-control [nzSm]="labelSm" [nzXs]="xs" [nzOffset]="labelSm">
+            <button nz-button nzType="primary" (click)="emitValue()" [disabled]="form.invalid || isLoading">
+                {{buttonText | translate}}
+            </button>
         </nz-form-control>
     </nz-form-item>
-
-    <button nz-button [nzType]="'primary'" nzSize="large" (click)="emitValue()" [disabled]="form.invalid || isLoading">
-        {{buttonText | translate}}
-    </button>
 </form>

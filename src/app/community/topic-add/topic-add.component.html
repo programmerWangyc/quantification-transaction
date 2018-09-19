@@ -1,3 +1,7 @@
 <app-indicator [paths]="paths"></app-indicator>
 
-<app-topic-form (emit)="addTopic($event)"></app-topic-form>
+<div class="content">
+    <h3 class="content-head">{{'CREATE_TOPIC' | translate}}</h3>
+
+    <app-topic-form (emit)="addTopic($event)"></app-topic-form>
+</div>

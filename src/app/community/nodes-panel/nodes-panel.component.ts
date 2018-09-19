@@ -18,7 +18,7 @@ export class NodesPanelComponent implements OnInit {
      * @ignore
      */
     @Input() set nodes(input: BBSNode[]) {
-        if (!!input) this._nodes = input.map(item => ({ ...item, checked: false }));
+        if (!!input) this._nodes = input.map((item, index) => ({ ...item, checked: index === 0 }));
     }
 
     /**
@@ -48,8 +48,16 @@ export class NodesPanelComponent implements OnInit {
 
     /**
      * Callback when node selected;
+     * Disport multi query;
+     * 发数组出去，方便扩展多节点查询
      */
-    onNodeSelect(): void {
-        this.select.next(this.data.filter(item => item.checked));
+    onNodeSelect(target: PanelNode): void {
+        this.data.map(item => {
+            if (item !== target) {
+                item.checked = false;
+            }
+        });
+
+        this.select.next([target]);
     }
 }

@@ -115,7 +115,7 @@ export class StrategyConstantService extends ConstantService {
 
     jsCommentReg = /\/\*backtest\n((.+\n)*)\*\//;
 
-    pyCommentReg = /\'\'\'\*backtest\n((.+\n)*)\'\'\'/;
+    pyCommentReg = /\'\'\'backtest\n((.+\n)*)\'\'\'/;
 
     constructor() {
         super();

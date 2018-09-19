@@ -1,12 +1,12 @@
 <h5 class="arg-title">{{title | removeMD5 | templateName}}</h5>
 
 <div class="container">
-    <form nz-form [nzLayout]="'inline'">
-        <div nz-row>
-            <div nz-col *ngFor="let item of data" [nzSpan]="12">
-                <nz-form-item [hidden]="isHide(item)" fxLayoutAlign="row center">
-                    <nz-form-label style="min-width: 5em;"> {{item.variableDes}}</nz-form-label>
-                    <nz-form-control>
+    <form nz-form>
+        <ng-container *ngFor="let group of groupedData | async">
+            <nz-card [nzTitle]="group.groupName">
+                <nz-form-item *ngFor="let item of group.values" [hidden]="isHide(item)">
+                    <nz-form-label [nzSm]="6" [nzXs]="24"> {{item.variableDes | strategyDescription}}</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
                         <ng-container [ngSwitch]="item.variableTypeId">
 
                             <ng-container *ngSwitchCase="0">
@@ -67,8 +67,9 @@
                     <i *ngIf="!!item.variableComment && isHelpShow" class="anticon anticon-question-circle"
                         [nz-tooltip]="item.variableComment"></i>
                 </nz-form-item>
-            </div>
-        </div>
+            </nz-card>
+        </ng-container>
+
         <p *ngIf="!data?.length" bt-text-center>{{'NONE_ARGUMENTS_TIP' | translate}}</p>
     </form>
 
