@@ -21,9 +21,6 @@ import { BacktestCode, BacktestSelectedPair } from '../backtest.interface';
 import { BacktestConstantService } from './backtest.constant.service';
 import { BacktestBaseService } from './backtest.result.service';
 
-/**
- * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestService；
- */
 export class BacktestParamService extends BacktestBaseService {
     constructor(
         public store: Store<fromRoot.AppState>,
@@ -32,17 +29,12 @@ export class BacktestParamService extends BacktestBaseService {
         super(store);
     }
 
-    // =======================================================Data acquisition=======================================================
-
     protected getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
         return this.store.pipe(
             select(fromRoot.selectStrategyDetailResponse),
         );
     }
 
-    /**
-     * 获取当前的策略，数据来源于 strategy reducer。
-     */
     protected getStrategyDetail(): Observable<fromRes.StrategyDetail> {
         return this.getStrategyDetailResponse().pipe(
             filter(res => !!res),
@@ -57,9 +49,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取当前策略使用的编程语言
-     */
     protected getSelectedLanguage(): Observable<number> {
         return this.getStrategyUIState().pipe(
             map(state => state.selectedLanguage)
@@ -72,27 +61,18 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取当前策略所依赖的模板ID。
-     */
     private getSelectedTemplateIds(): Observable<number[]> {
         return this.getStrategyUIState().pipe(
             map(state => state.selectedTemplates || []),
         );
     }
 
-    /**
-     * 获取运行的节点，python时可以选择。
-     */
     getRunningNode(): Observable<number> {
         return this.getUIState().pipe(
             map(res => res.runningNode)
         );
     }
 
-    /**
-     * 获取回测任务，单个任务中包括策略的代码及策略所依赖的模板的代码，还包含此代码运行的参数及代码的ID。
-     */
     private getToBeTestedTask(): Observable<BacktestCode[]> {
         return this.getUIState().pipe(
             filter(state => !!state.backtestTasks),
@@ -100,15 +80,10 @@ export class BacktestParamService extends BacktestBaseService {
             map(state => {
                 const { backtestTasks, backtestCode } = state;
 
-                /**
-                 * 1、在没有设置参数调优的情况下，reducer中生成的 backtestTasks 将是空的，因此直接发送回测的代码。
-                 * 2、如果用户设置了调优参数，则需要发送多个任务进行回测，需要将调优参数分解到每一个单独任务中，else 中的逻辑就是用来生成回测请求序列
-                 */
                 if (backtestTasks.length === 0) {
                     return [backtestCode];
                 } else {
                     return backtestTasks.map(optimizeArgs => {
-                        // 深拷贝 backtestCode, 不能让流中的数据相互影响，否则有可能最后一个值把前面的值覆盖。
                         const result = cloneDeep(backtestCode);
 
                         return result.map(item => {
@@ -136,10 +111,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取用户选中的模板，模板数据源是strategy list 的响应和strategy detail 响应中的 templates字段
-     * @param releaseCache - 是否释放输出流中的缓存值。
-     */
     getSelectedTemplates(releaseCache = true): Observable<fromRes.TemplateSnapshot[]> {
         releaseCache && fromRoot.selectStrategyDetailResponse.release();
 
@@ -154,20 +125,12 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 是否在参数调优情况下进行回测；
-     */
     isOptimizeBacktest(): Observable<boolean> {
         return this.getUIState().pipe(
             map(state => state.isOptimizedBacktest)
         );
     }
 
-    // =======================================================Backtest IO parameters=======================================================
-
-    /**
-     * 获取回测接口 putTask 的参数。
-     */
     protected getPutTaskParameters(): Observable<BacktestIORequest> {
         return combineLatest(
             this.getStrategyDetail(),
@@ -184,10 +147,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 生成回测任务的配置，几乎包含回测页面上所有的内容（除了运行的节点外）；
-     * 1、合并的3条流中，最有可能出问题的是生成code的流，它需要根据参数调优及参数过滤器生成每一个回测任务的code.
-     */
     protected generatePutTaskParams(): Observable<BacktestPutTaskParams> {
         return combineLatest(
             this.generatePutTaskCode(),
@@ -199,9 +158,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 生成回测时所需要的Code字段的值。
-     */
     private generatePutTaskCode(): Observable<PutTaskCode[]> {
         const getValue = (overview: VariableOverview): string | boolean | number => {
             if (overview.variableTypeId === VariableType.SELECT_TYPE) {
@@ -245,9 +201,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 生成回测时所需的 Options 字段。
-     */
     private generatePutTaskOptions(): Observable<BacktestPutTaskOptions> {
         return combineLatest(
             this.getUIState(),
@@ -280,11 +233,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 生成回测 Options 中的 RetFlags 的值。
-     * @param isMultipleTask 是否多任务，即用户是否设置了有效的调优参数。
-     * @param level 回测的级别，模拟 or 实盘。
-     */
     private getRetFlags(isMultipleTask: boolean, level: number): number {
         if (isMultipleTask) {
             return this.constant.BT_PROFIT_LOGS | this.constant.BT_CLOSE_PROFIT_LOGS | this.constant.BT_ACCOUNTS;
@@ -299,37 +247,26 @@ export class BacktestParamService extends BacktestBaseService {
         }
     }
 
-    /**
-     * 生成回测 Options 中的 UpdatePeriod 的值。
-     */
     private getUpdatePeriod(): Observable<number> {
         return this.getSelectedLanguage().pipe(
             map(language => language === Language.Python ? 5000 : 500)
         );
     }
 
-    /**
-     * 生成回测 Options 中的 SnapshotPeriod 字段的基础值。
-     * @param start 回测开始时间
-     * @param end 回测结束时间
-     */
     private generateSnapshotPeriod(start: number, end: number): number {
         const daySeconds = 24 * 60 * 60;
 
         const range = end - start;
 
-        if (range / daySeconds <= 2) { // 2 天之内
+        if (range / daySeconds <= 2) {
             return 60 * 5;
-        } else if (range / daySeconds < 30) {  // 一个月之内
+        } else if (range / daySeconds < 30) {
             return 60 * 60;
         } else {
             return daySeconds;
         }
     }
 
-    /**
-     * 生成回测时所需要的 Exchanges 字段的值。
-     */
     private generatePutTaskExchange(): Observable<BacktestExchange[]> {
         return this.getUIState().pipe(
             filter(({ platformOptions, timeOptions }) => !!platformOptions && !!platformOptions.length && !!timeOptions.start && !!timeOptions.end),
@@ -350,15 +287,9 @@ export class BacktestParamService extends BacktestBaseService {
                         BaseCurrency: this.generateBaseCurrency(stock),
                         FeeMaker: this.generateFee(makerFee),
                         FeeTaker: this.generateFee(takerFee),
-
-                        // constant options
                         ...constantConfig,
                         DataSource: this.generateDataSource(option),
-
-                        // advance options
                         ...advanceConfig,
-
-                        // platform options
                         ...this.generatePlatformOptionsForExchange(option, klinePeriodId),
                     };
                 });
@@ -366,9 +297,6 @@ export class BacktestParamService extends BacktestBaseService {
         );
     }
 
-    /**
-     *  生成回测字段 Exchange 中的高级选项的配置。
-     */
     private generateAdvanceOptionsForExchange(option: AdvancedOption, isFaultTolerantMode: boolean, backtestLevel: number, floorKlinePeriod: number): BacktestAdvanceOptions {
         const { faultTolerant, slipPoint, delay, barLen } = option;
 
@@ -382,9 +310,6 @@ export class BacktestParamService extends BacktestBaseService {
         };
     }
 
-    /**
-     *  生成回测字段 Exchange 中的平台选项的配置。
-     */
     private generatePlatformOptionsForExchange(platform: BacktestSelectedPair, klinePeriodId: number): BacktestPlatformOptions {
         const { eid, stock, makerFee, takerFee, balance, remainingCurrency, minFee } = platform;
 
@@ -401,30 +326,18 @@ export class BacktestParamService extends BacktestBaseService {
         };
     }
 
-    /**
-     * 常量配置中的 DataSource 的值。
-     */
     private generateDataSource(pair: BacktestSelectedPair): string {
         return this.constant.BACKTEST_PLATFORMS_CONFIG.find(item => item.eid === pair.eid).DataSource || pair.stock;
     }
 
-    /**
-     * 生成回测配置 Exchange 中的 FeeMaker, FeeTaker的值。
-     */
     private generateFee(fee: number): number {
         return fee * 1000;
     }
 
-    /**
-     * 生成回测配置 Exchange 中BaseCurrency字段的值
-     */
     private generateBaseCurrency(stock: string): string {
         return stock.split('_')[0];
     }
 
-    /**
-     * 生成回测配置 Exchange 中BasePeriod字段的值
-     */
     private generateBasePeriod(backtestLevel: number, klinePeriodId: number): number {
         return backtestLevel === 1 ? 1000 : this.constant.K_LINE_PERIOD.find(item => item.id === klinePeriodId).minutes * 60000;
     }

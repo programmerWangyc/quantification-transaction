@@ -22,23 +22,23 @@ import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-cr
 })
 export class StrategyEditComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    /**
-     * 策略编辑密钥操作的类型；
-     */
+
+
+
     opToken$: Subject<number> = new Subject();
 
-    /**
-     * 策略操作的密钥
-     */
+
+
+
     secretKey: Observable<string>;
 
     templates: Observable<TemplateRefItem[]>;
 
     privateSub$$: Subscription;
 
-    /**
-     * 是否需要显示模板依赖
-     */
+
+
+
     needShowTemplateDependance: Observable<boolean>;
 
     constructor(
@@ -54,9 +54,9 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         super(backtest, constant, nodeService, route, strategyOptService, strategyService, tipService);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnInit() {
         this.addCurrentPath('EDIT');
 
@@ -69,9 +69,9 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.launchPrivate();
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     initialPrivateModel() {
         this.secretKey = this.strategyService.getStrategyToken();
 
@@ -80,13 +80,13 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     launchPrivate() {
-        /**
-         *  Besides user active acquisition, it needs to check the strategy whether has token already.
-         */
+
+
+
         this.privateSub$$ = this.strategyService.launchOpStrategyToken(
             merge(
                 this.strategyService.hasToken(this.strategyId).pipe(
@@ -102,16 +102,16 @@ export class StrategyEditComponent extends StrategyCreateMetaComponent implement
         this.strategyService.handleOpStrategyTokenError(() => this.isAlive);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngAfterViewInit() {
         this.privateSub$$.add(this.strategyOptService.launchSaveStrategy(this.getSaveParams()));
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnDestroy() {
         this.isAlive = false;
 

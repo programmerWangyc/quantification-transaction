@@ -39,33 +39,33 @@ export const K_LINE_PERIOD: KLinePeriod[] = [{
 }, {
     period: 'ONE_DAY',
     id: 10,
-    minutes: 60 * 24,
+    minutes: 60,
 }];
 
 export const VARIABLE_TYPES: VariableTypeDes[] = [{
     id: VariableType.NUMBER_TYPE,
     name: 'NUMBER_TYPE',
-    inputType: 'number', // number
+    inputType: 'number',
 }, {
     id: VariableType.BOOLEAN_TYPE,
     name: 'BOOLEAN_TYPE',
-    inputType: 'checkbox', // boolean
+    inputType: 'checkbox',
 }, {
     id: VariableType.STRING_TYPE,
     name: 'STRING_TYPE',
-    inputType: 'text', // string
+    inputType: 'text',
 }, {
     id: VariableType.SELECT_TYPE,
     name: 'SELECT_TYPE',
-    inputType: 'selected', // string split with '|'
+    inputType: 'selected',
 }, {
     id: VariableType.ENCRYPT_STRING_TYPE,
     name: 'ENCRYPT_STRING_TYPE',
-    inputType: 'password', // string
+    inputType: 'password',
 }, {
     id: VariableType.BUTTON_TYPE,
     name: 'BUTTON_TYPE',
-    inputType: 'button', // constant __button__
+    inputType: 'button',
 }];
 
 export const LIST_PREFIX = '$$$__list__$$$';
@@ -161,19 +161,12 @@ export class ConstantService {
 
     readonly COMMON_PROTOCOL_EXCHANGE = COMMON_PROTOCOL_EXCHANGE;
 
-    readonly ARG_GROUP_FLAG_REG = /^\(\?([^\)]*)\)/; // (?name)other(info) ----> (?name);
+    readonly ARG_GROUP_FLAG_REG = /^\(\?([^\)]*)\)/;
 
-    /**
-     * 去掉参数名称中的条件；
-     */
     removeConditionInName = removeConditionInName;
 
     constructor() { }
 
-    /**
-     * 将列表参数转换成 list 供组件使用；
-     * @param value 列表值；
-     */
     transformStringToList(value: string): string[] {
         let target = value;
 
@@ -184,26 +177,14 @@ export class ConstantService {
         return target.split('|');
     }
 
-    /**
-     * 去掉参数名称前的标识符
-     */
     withoutPrefix(value: string, prefix: string): string {
         return value.split(prefix)[1];
     }
 
-    /**
-     * 判定参数的生成函数；
-     * @param argPrefix 判定的参数前缀；
-     * @returns 返回的函数： 入参： 变量名称，返回：boolean；
-     * 传入的变量是否属于带有特定前缀的参数；
-     */
     isSpecialTypeArg = (argPrefix: string): (a: string) => boolean => {
         return (variableName: string) => variableName.indexOf(argPrefix) === 0;
     }
 
-    /**
-     * 传入的参数是否代表按钮
-     */
     isButton = (value: any): boolean => {
         return value === this.VALUE_OF_BUTTON_TYPE_ARG;
     }
@@ -215,9 +196,6 @@ export class ConstantService {
         return this.VARIABLE_TYPES.find(item => item.id === id);
     }
 
-    /**
-     * 兼容老项目中的周期配置
-     */
     isPeriodEqual(target: string, predicate: string): boolean {
         if (target === predicate) {
             return true;
@@ -231,9 +209,6 @@ export class ConstantService {
         }
     }
 
-    /**
-     * 策略参数分组名称
-     */
     getArgumentGroupName(reg: RegExp): (arg: VariableOverview) => string {
         let groupName = '';
 

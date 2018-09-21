@@ -11,9 +11,6 @@ import { Breadcrumb, DeactivateGuard } from '../../interfaces/app.interface';
 })
 export class StrategyRentComponent implements CanDeactivateComponent, OnInit {
 
-    /**
-     * @ignore
-     */
     paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY' }, { name: 'STRATEGY_RENT' }];
 
     constructor(
@@ -23,9 +20,6 @@ export class StrategyRentComponent implements CanDeactivateComponent, OnInit {
     ngOnInit() {
     }
 
-    /**
-     * Router guard.
-     */
     canDeactivate(): DeactivateGuard[] {
         const chargeComplete: DeactivateGuard = {
             canDeactivate: this.chargeService.isRechargeSuccess(),

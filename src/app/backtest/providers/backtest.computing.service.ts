@@ -12,7 +12,7 @@ import { ArgOptimizeSetting } from '../backtest.interface';
 
 
 export interface OptimizeArg {
-    file: string; // 模板名称
+    file: string;
     argName: string;
     argDesc: string;
     setting: ArgOptimizeSetting;
@@ -34,9 +34,6 @@ export interface OptimizedArg {
     finished: boolean;
 }
 
-/**
- * 本地回测时的服务， 和webWorker进行交互的行为应该全部都在这个服务中。
- */
 @Injectable()
 export class BacktestComputingService {
     worker: Worker;
@@ -54,9 +51,6 @@ export class BacktestComputingService {
     ) {
     }
 
-    /**
-     * 开启webworker线程，同时监听webworker上的消息。
-     */
     initWorker(): void {
         this.worker = new Worker(this.workerURI);
 
@@ -85,9 +79,6 @@ export class BacktestComputingService {
         });
     }
 
-    /**
-     * 在webworker中运行回测。
-     */
     run(data: WorkerBacktest.WorkerRequestData): Observable<WorkerBacktest.WorkerResult> {
         if (!this.worker) {
             this.initWorker();
@@ -111,9 +102,6 @@ export class BacktestComputingService {
         ) as Observable<WorkerBacktest.WorkerResult>;
     }
 
-    /**
-     * Terminate worker backtesting;
-     */
     stopRun(command: Observable<any>): Subscription {
         return command.subscribe(_ => {
             this.clearWorker();
@@ -124,9 +112,6 @@ export class BacktestComputingService {
         });
     }
 
-    /**
-     * Terminate webworker thread while unsubscribe error message if subscribed;
-     */
     private clearWorker(): void {
         if (this.worker) {
             this.worker.terminate();
@@ -136,18 +121,12 @@ export class BacktestComputingService {
         this.error$$ && this.error$$.unsubscribe();
     }
 
-    /**
-     * 回测任务是否失败
-     */
     private isBacktestFail(): Observable<boolean> {
         return this.message.asObservable().pipe(
             map(res => isString(res))
         );
     }
 
-    /**
-     * @ignore
-     */
     private handleWorkerError(): Subscription {
         return this.errorService.handleError(
             this.isBacktestFail().pipe(

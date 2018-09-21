@@ -18,7 +18,7 @@ import { RobotService } from '../providers/robot.service';
 export interface RobotConfigForm {
     robotName: string;
     kLinePeriod: number;
-    platform: number; // 交易平台，和 stock合成交易对
+    platform: number;
     stock: string;
     agent: number;
 }
@@ -132,8 +132,6 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
         this.subscription$$.unsubscribe();
     }
 
-    // ====================================Component Shortcut methods=======================================
-
     private createModifyParams(formValue: RobotConfigForm): ModifyRobotRequest {
         const { robotName, agent, kLinePeriod } = formValue;
 
@@ -158,9 +156,6 @@ export class RobotConfigComponent extends ExchangePairBusinessComponent {
         };
     }
 
-    /**
-     * Hack file select;
-     */
     selectFile(): void {
         this.fileBtn.nativeElement.click();
 

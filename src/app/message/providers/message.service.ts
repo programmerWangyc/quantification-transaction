@@ -21,11 +21,6 @@ export class MessageService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * @ignore
-     */
     launchGetMessage(params: Observable<fromReq.GetMessageRequest>): Subscription {
         return this.process.processGetMessage(params);
     }
@@ -65,11 +60,6 @@ export class MessageService extends BaseService {
         return this.process.processDeleteAPMMessage(params);
     }
 
-    //  =======================================================Data acquisition=======================================================
-
-    /**
-     * @ignore
-     */
     private getMessageResponse(): Observable<fromRes.GetMessageResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectGetMessageResponse)
@@ -161,12 +151,6 @@ export class MessageService extends BaseService {
             this.selectTruth(fromRoot.selectDeleteBBSNotifyResponse)
         );
     }
-
-    //  =======================================================UI state =======================================================
-
-    //  =======================================================Local state change=======================================================
-
-    //  =======================================================Error handler=======================================================
 
     /**
      * @ignore

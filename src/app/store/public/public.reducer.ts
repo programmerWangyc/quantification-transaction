@@ -7,7 +7,7 @@ import * as actions from './public.action';
 export interface Settings {
     about: string;
     agreement: string;
-    backtest_javascript: string; // !FIXME: 偷个懒就用了下划线命名了，只此一次，下不为例。
+    backtest_javascript: string;
     brokers: string;
     docker: object;
     index: object;
@@ -29,7 +29,7 @@ export interface State {
     publicRes: PublicResponse;
     referrer: Referrer;
     requestParams: RequestParams;
-    serverSendMessageSubscribeState: { [key: string]: boolean }; // 用来控制是否处理服务端相应的消息推送。
+    serverSendMessageSubscribeState: { [key: string]: boolean };
     settings: Settings;
     settingsRequest: SettingsRequest;
     settingsResponse: ResponseState;
@@ -79,26 +79,22 @@ export const initialState: State = {
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
-
-        // public information
         case actions.SET_PUBLIC_INFORMATION: {
             const { event } = action.payload;
 
             if (event === ServerSendEventType.BACKTEST) {
-                return { ...state, publicRes: { ...state.publicRes, event } }; // 服务器推送的回测消息中只有event，没有其它的公共信息。
+                return { ...state, publicRes: { ...state.publicRes, event } };
             } else {
                 return { ...state, publicRes: action.payload };
             }
         }
 
-        // server send message subscribe switch
         case actions.TOGGLE_SUBSCRIBE_SERVER_SEND_MESSAGE_TYPE: {
             const { message, status } = action.payload;
 
             return { ...state, serverSendMessageSubscribeState: { ...state.serverSendMessageSubscribeState, [message]: status } };
         }
 
-        // settings
         case actions.GET_SETTINGS:
             return { ...state, settingsRequest: action.payload };
 
@@ -116,7 +112,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 settings: updateSettings(state.settings, state.settingsRequest.type, action.payload.result),
             };
 
-        // logout
         case actions.LOGOUT_FAIL:
             return { ...state, logoutRes: action.payload };
 
@@ -126,7 +121,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, logoutRes: action.payload, publicRes: null };
         }
 
-        // change alert threshold setting
         case actions.CHANGE_ALERT_THRESHOLD_SETTING:
             return { ...state, requestParams: { ...state.requestParams, changeAlertThreshold: action.payload } };
 
@@ -134,12 +128,9 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.CHANGE_ALERT_THRESHOLD_SETTING_SUCCESS:
             return { ...state, changeAlertThresholdRes: action.payload };
 
-        // get account summary
         case actions.GET_ACCOUNT_SUMMARY_FAIL:
         case actions.GET_ACCOUNT_SUMMARY_SUCCESS:
             return { ...state, accountSummary: action.payload };
-
-        // ==============================================ui state=========================================
 
         case actions.SET_REFERRER:
             return { ...state, referrer: action.payload };
@@ -158,7 +149,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, editorConfig };
         }
 
-        // clear logout response
+
         case actions.RESET_LOGOUT_RESPONSE:
             return { ...state, logoutRes: null };
 

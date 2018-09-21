@@ -71,9 +71,6 @@ export class RobotDebugComponent implements BaseComponent {
 
     isDebugging: Observable<boolean>;
 
-    /**
-     * @ignore
-     */
     isAlive = true;
 
     constructor(

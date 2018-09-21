@@ -17,54 +17,24 @@ import { WatchDogService } from '../../shared/providers/watch-dog.service';
     styleUrls: ['./agent-list.component.scss'],
 })
 export class AgentListComponent extends BaseComponent {
-    /**
-     * @ignore
-     */
     subscription$$: Subscription;
 
-    /**
-     * source data of agents;
-     */
     list: Observable<BtNode[]>;
 
-    /**
-     * @ignore
-     */
     tableHead: string[] = ['ID', 'IP_ADDRESS', 'OPERATE_SYSTEM', 'ROBOT', 'VERSION', 'STATUS', 'LATEST_COMMUNICATE', 'OPERATE'];
 
-    /**
-     * Latest version
-     */
     latestVersion: string;
 
-    /**
-     * 删除
-     */
     delete$: Subject<BtNode> = new Subject();
 
-    /**
-     * 监控托管者
-     */
     setNodeWd$: Subject<BtNode> = new Subject();
 
-    /**
-     * 是否正在加载托管者列表
-     */
     isLoading: Observable<boolean>;
 
-    /**
-     * statisticsParams
-     */
     statisticsParams: Observable<TableStatistics>;
 
-    /**
-     * @ignore
-     */
     pageSize = 20;
 
-    /**
-     * @ignore
-     */
     isAlive = true;
 
     constructor(
@@ -75,18 +45,12 @@ export class AgentListComponent extends BaseComponent {
         super();
     }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
-    /**
-     * @ignore
-     */
     initialModel() {
         this.list = this.nodeService.getNodeList().pipe(
             map(nodes => nodes.filter(node => node.is_owner))

@@ -40,161 +40,65 @@ export type CommonStrategy = Strategy | StrategyListByNameStrategy | StrategyDet
 })
 export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
-    // ===========================================UI state related============================================
-
-    /**
-     * @ignore
-     */
     subscription$$: Subscription;
 
-    /**
-     * @ignore
-     */
     paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY', path: '../../' }];
 
-    /**
-     * @ignore
-     */
     tabs: Tab[] = [
         { name: 'STRATEGY_EDIT', icon: 'anticon-edit', active: true },
         { name: 'SIMULATE_BACKTEST', icon: 'anticon-rocket', active: false },
     ];
 
-    /**
-     * 禁用提交按钮；
-     * 当策略的名称为空或都代码为空时禁止用户提交；
-     */
     forbiddenSubmit: Observable<boolean>;
 
-    // ==================================Used for interact with StrategyDesComponent================================
-
-    /**
-     * Strategy data;
-     */
     strategy: Observable<CommonStrategy>;
 
-    /**
-     * Strategy name;
-     */
     name$: Subject<string> = new Subject();
 
-    /**
-     * Strategy language;
-     */
     language$: Subject<number> = new Subject();
 
-    /**
-     * Strategy category;
-     */
     category$: Subject<number> = new Subject();
 
-    /**
-     * @ignore
-     */
     @ViewChild(StrategyDesComponent) StrategyDes: StrategyDesComponent;
 
-    /**
-     * Language in these observable comes from api response and component output;
-     */
     language: Observable<number>;
 
-    /**
-     * Category in these observable comes from api response and component output;
-     */
     category: Observable<number>;
 
-    // ========================== Used for interact with StrategyCodeMirrorComponent========================
-
-    /**
-     * Strategy detail
-     */
     strategyDetail: Observable<StrategyDetail>;
 
-    /**
-     * Save strategy signal;
-     */
     save$: Subject<boolean | CodeContent> = new Subject();
 
-    /**
-     * Download strategy signal;
-     */
     export$: Subject<FileContent> = new Subject();
 
-    /**
-     * @ignore
-     */
     @ViewChild(StrategyCodemirrorComponent) codeMirror: StrategyCodemirrorComponent;
 
-    /**
-     * @ignore
-     */
     @ViewChild(StrategyDependanceComponent) dependance: StrategyDependanceComponent;
 
-    // ==========================Used for interact with AddArgComponent and ArgListComponent======================
-
-    /**
-     * Args outputted by other component
-     */
     args$: Subject<StrategyMetaArg> = new Subject();
 
-    /**
-     * Strategy args;
-     */
     args: Observable<StrategyMetaArg | StrategyMetaArg[]>;
 
-    /**
-     * Command args outputted by other component;
-     */
     commandArgs$: Subject<StrategyMetaArg> = new Subject();
 
-    /**
-     * Command args;
-     */
     commandArgs: Observable<StrategyMetaArg | StrategyMetaArg[]>;
 
-    /**
-     * Removed command args;
-     */
     removedCommandArg$: Subject<StrategyMetaArg> = new Subject();
 
-    /**
-     * Wether had command args;
-     */
     hasCommandArgs: Observable<boolean>;
 
-    /**
-     * @ignore
-     */
     @ViewChild('strategyArgs') strategyArgs: ArgListComponent;
 
-    /**
-     * @ignore
-     */
     @ViewChild('strategyCommandArgs') strategyCommandArgs: ArgListComponent;
 
-    /**
-     * Comes from router;
-     */
     strategyId: number;
 
-    /**
-     * Loading state, if true when requesting and false after received response;
-     */
     isLoading: Observable<boolean>;
 
-    /**
-     * Whether the category is template;
-     */
     isTemplateCategorySelected: Observable<boolean>;
 
-    /**
-     * backtest config data in code
-     */
     backtestConfig: Observable<BacktestConfigInCode>;
 
-    /**
-     * @ignore
-     */
     isAlive = true;
 
     constructor(
@@ -208,9 +112,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
     ) {
     }
 
-    /**
-     * @ignore
-     */
     protected initialModel(isAddStrategy = false) {
         if (isAddStrategy) {
             this.initialAddStrategyModel();
@@ -219,9 +120,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         }
     }
 
-    /**
-     * Initial model if add strategy;
-     */
     private initialAddStrategyModel() {
         this.args = this.args$.asObservable();
 
@@ -233,9 +131,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
 
         this.isLoading = this.strategyService.isLoading();
 
-        /**
-         * Multi source observables;
-         */
         this.language = this.language$.pipe(
             startWith(0)
         );
@@ -254,21 +149,11 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         );
     }
 
-    /**
-     * Initial model if edit, copy strategy;
-     */
     private initialCommonStrategyModel() {
         this.strategyId = +this.route.snapshot.paramMap.get('id');
 
-        /**
-         * 当前策略的详细信息由响应数据提供。
-         */
         this.strategyDetail = this.strategyService.getStrategyDetail();
 
-        /**
-         * 首先从list上来取这些信息时更快，不需要等后台响应就可以拿到。
-         * 如果从没有拉过这两个list的页面进来时，可能找不到这个数据，需要用详情响应数据；
-         */
         this.strategy = merge(
             this.strategyService.getStrategies(),
             this.strategyService.getMarketStrategyList(),
@@ -277,11 +162,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             first(item => item.id === this.strategyId),
         );
 
-        /**
-         * 主要是提供给参数列表组件使用，它的数据来源于响应中已有的参数及AddArgComponent输出的数据。
-         * *直接订阅时subject时，无法传递相同的数据，map 函数中的值不使用扩展运算符时也一样，
-         * *类似于distinct的效果，但是翻了下 async 的源码没有看到相关的设置，困惑！
-         */
         this.args = merge(
             this.strategyService.getExistedStrategyArgs(negate(this.strategyService.isCommandArg())).pipe(
                 map(args => args.map(this.transformToMetaArg))
@@ -304,14 +184,8 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
             map(res => Array.isArray(res) ? !!res.length : !!res)
         );
 
-        /**
-         * loading 状态控制
-         */
         this.isLoading = this.strategyService.isLoading();
 
-        /**
-         * Multi source observables;
-         */
         this.language = merge(
             this.strategy.pipe(
                 map(strategy => strategy.language)
@@ -338,9 +212,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         this.backtestConfig = this.strategyService.getBacktestConfigInCode();
     }
 
-    /**
-     * @param isBacktest Whether route comes from backtest;
-     */
     protected launch(isBacktest: boolean): void {
         const id = this.route.paramMap.pipe(
             map(data => ({ id: +data.get('id') })),
@@ -352,11 +223,9 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         if (isBacktest) {
             this.strategyService.launchStrategyDetail(id);
         } else {
-            // 响应用户导出文件的操作
             this.subscription$$ = this.export$.asObservable()
                 .subscribe(content => this.exportFile(content));
 
-            // 获取当前策略详情
             this.strategyService.launchStrategyDetail(id);
 
             this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg }));
@@ -371,9 +240,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         this.strategyService.handleStrategyDetailError(keepAlive);
     }
 
-    /**
-     * Get save strategy request params;
-     */
     protected getSaveParams(): Observable<SaveStrategyRequest> {
         return this.save$.asObservable().pipe(
             map(content => {
@@ -398,11 +264,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         );
     }
 
-    /**
-     * 发起请求前提醒用户确认；
-     * @param id strategy id;
-     * @returns 请求参数
-     */
     protected confirmBeforeRequest(id: number): Observable<SaveStrategyRequest> {
         return this.getSaveParams().pipe(
             map(params => ({ ...params, id })),
@@ -412,9 +273,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         );
     }
 
-    /**
-     * Router guard.
-     */
     canDeactivate(): DeactivateGuard[] {
         const codeMirrorGuard: DeactivateGuard = {
             canDeactivate: of(!this.codeMirror.isCodeChanged()),
@@ -432,18 +290,12 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         return [codeMirrorGuard, backtestGuard];
     }
 
-    /**
-     * 提供给子类使用，完善当前的路径信息。
-     */
     protected addCurrentPath(name: string, path?: string): void {
         this.paths.push({ name });
 
         if (path) this.paths[1].path = path;
     }
 
-    /**
-     * Download strategy code;
-     */
     protected exportFile(data: FileContent): void {
         const name = this.StrategyDes.strategyName;
 
@@ -452,9 +304,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         fileSaver.saveAs(content, name || 'strategy' + extensionName);
     }
 
-    /**
-     * @ignore
-     */
     private transformToMetaArg(arg: VariableOverview): StrategyMetaArg {
         return {
             name: arg.variableName,
@@ -465,9 +314,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         };
     }
 
-    /**
-     * Get strategy args;
-     */
     private getArgs(): string {
         const args = this.strategyArgs.data.map(item => [item.name, item.des, item.comment, this.constant.addPrefix(item.defaultValue, item.type)]);
 
@@ -476,9 +322,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         return JSON.stringify([...args, ...commandArgs]);
     }
 
-    /**
-     * Get strategy dependance template ids;
-     */
     private getDependance(): number[] {
         if (this.dependance && this.dependance.data) {
             return this.dependance.data.filter(item => item.checked).map(item => item.id);
@@ -487,9 +330,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         }
     }
 
-    /**
-     * @ignore
-     */
     protected getTemplateDependance(source: Observable<TemplateRefItem[]>): Observable<TemplateRefItem[]> {
         return combineLatest(
             source,
@@ -499,9 +339,6 @@ export class StrategyCreateMetaComponent implements CanDeactivateComponent {
         );
     }
 
-    /**
-     * 策略创建和复制时需要用到
-     */
     protected isShowTemplateDependance(templates: Observable<TemplateRefItem[]>): Observable<boolean> {
         return combineLatest(
             templates.pipe(

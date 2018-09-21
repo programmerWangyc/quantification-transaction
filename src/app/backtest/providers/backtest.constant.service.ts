@@ -22,7 +22,7 @@ export interface AdvancedOptionConfig {
     value: number;
     max: number;
     min: number;
-    storageKey: string; // corresponding to the key of AdvancedOption interface that defined in backtest.reducer.ts;
+    storageKey: string;
     tip: string;
     step: number;
 }
@@ -37,8 +37,6 @@ export interface BacktestConstantConfig extends BacktestConstantOptions {
     eid: string;
     yearDays: number;
 }
-
-// =====================================================Constant========================================================
 
 export const BACKTEST_MODES: BacktestMode[] = [
     { id: 0, name: 'SIMULATION_LEVEL_TICK' },
@@ -128,15 +126,12 @@ export class BacktestConstantService extends ConstantService {
 
     BACK_END_LANGUAGES = BACK_END_LANGUAGES;
 
-    BACKTEST_RESULT_ELAPSED_RATE = 1000000000; // 没细看这个为啥是这么多0， 抄的。
+    BACKTEST_RESULT_ELAPSED_RATE = 1000000000;
 
     constructor() {
         super();
     }
 
-    /**
-     * 参数调优时各选项的配置
-     */
     getOptimizeSetting(value: number): ArgOptimizeSetting {
         return value < 1 ? {
             begin: 0.1,
@@ -149,14 +144,8 @@ export class BacktestConstantService extends ConstantService {
             };
     }
 
-    /**
-     * 回测时间选项中可选日期的配置；
-     */
     getBacktestPeriodTimeConfig(category: number): BacktestPeriodConfig {
 
-        /**
-         *  The 'subtract' method would be modify the origin data, it is not a pure function.
-         */
         const now = moment();
 
         const today = moment().format('YYYY-MM-DD HH:00:00');
@@ -174,9 +163,6 @@ export class BacktestConstantService extends ConstantService {
         }
     }
 
-    /**
-     * Ret flag; 反正就叫这个。
-     */
     getRetFlags(): number {
         return this.BT_STATUS | this.BT_CHART | this.BT_PROFIT_LOGS | this.BT_RUNTIME_LOGS | this.BT_CLOSE_PROFIT_LOGS | this.BT_ACCOUNTS | this.BT_ACCOUNTS_PNL;
     }

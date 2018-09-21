@@ -29,25 +29,14 @@ export class CommentService extends UploadService {
         super();
     }
 
-    //  =======================================================Server Request=======================================================
-
-    /**
-     * Get comment list
-     */
     launchCommentList(source: Observable<fromReq.GetCommentListRequest>): Subscription {
         return this.process.processCommentList(source);
     }
 
-    /**
-     * Add comment
-     */
     launchAddComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
         return this.process.processAddComment(source);
     }
 
-    /**
-     * Delete comment
-     */
     launchDeleteComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
         return this.process.processDeleteComment(
             source.pipe(
@@ -58,25 +47,14 @@ export class CommentService extends UploadService {
         );
     }
 
-    /**
-     * Update comment
-     */
     launchUpdateComment(source: Observable<fromReq.SubmitCommentRequest>): Subscription {
         return this.process.processUpdateComment(source);
     }
 
-    /**
-     * Get qiniu token
-     */
     launchQiniuToken(source: Observable<fromReq.GetQiniuTokenRequest>): Subscription {
         return this.process.processCommentGetQiniuToken(source);
     }
 
-    /**
-     * Upload file to qiniu server;
-     * @param fileObs File flow to be uploaded;
-     * @returns index文件上传时的索引，方便映射到上传文上；
-     */
     uploadImage(fileObs: Observable<UploadFile>): Observable<{ index: number; obs: Qiniu.Observable }> {
         return zip(
             fileObs,
@@ -89,65 +67,42 @@ export class CommentService extends UploadService {
         );
     }
 
-    //  =======================================================Date acquisition=======================================================
-
-    /**
-     * Comment list response;
-     */
     private getCommentListResponse(): Observable<fromRes.GetCommentListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectCommentListResponse)
         );
     }
 
-    /**
-     * Comment list
-     */
     getCommentList(): Observable<fromRes.CommentListResponse> {
         return this.getCommentListResponse().pipe(
             map(res => res.result)
         );
     }
 
-    /**
-     * Submit comment response;
-     */
     private getSubmitCommentResponse(): Observable<fromRes.SubmitCommentResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectSubmitResponse)
         );
     }
 
-    /**
-     * Submit comment
-     */
     getSubmitCommentResult(): Observable<number> {
         return this.getSubmitCommentResponse().pipe(
             map(res => res.result)
         );
     }
 
-    /**
-     * Get qiniu token
-     */
     getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectCommentQiniuTokenResponse)
         );
     }
 
-    /**
-     * Get comment related request;
-     */
     private getRequestParams(): Observable<RequestParams> {
         return this.store.pipe(
             select(fromRoot.selectCommentRequestParams)
         );
     }
 
-    /**
-     * Wether publish comment success
-     */
     isPublishSuccess(): Observable<boolean> {
         return this.getSubmitCommentResult().pipe(
             withLatestFrom(
@@ -160,9 +115,6 @@ export class CommentService extends UploadService {
         );
     }
 
-    /**
-     * @ignore
-     */
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectCommentUIState),
@@ -171,38 +123,22 @@ export class CommentService extends UploadService {
         );
     }
 
-    //  =======================================================Local state change=======================================================
-
-    /**
-     * clear qiniu token
-     */
     clearQiniuToken(): void {
         this.store.dispatch(new ClearQiniuTokenAction());
     }
 
-    //  =======================================================Error Handle=======================================================
-
-    /**
-     * @ignore
-     */
     handleCommentListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getCommentListResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleSubmitCommentError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getSubmitCommentResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleQiniuTokenError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getQiniuTokenResponse().pipe(
             takeWhile(keepAlive)

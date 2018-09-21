@@ -21,11 +21,7 @@ export interface Filter {
 })
 export class ArgOptimizerComponent implements OnInit {
 
-    /**
-     * Source data to generate filters;
-     */
     @Input() set data(value: OptimizedVariableOverview[]) {
-        // Filter need two variables at least;
         if (value.length < 2) {
             this.filters.length > 0 && this.optimize.emit([]);
             this.filters = [];
@@ -35,56 +31,26 @@ export class ArgOptimizerComponent implements OnInit {
 
             this.rightList = value.map(item => ({ ...item }));
         }
-
-        // 检查当前所有的参数过滤器，删除被移除调优的参数；
         !!this.filters.length && this.checkFilters(value);
-
         this.checkSelectedVariable(value);
     }
 
-    /**
-     * Output all filters user set.
-     */
     @Output() optimize: EventEmitter<Filter[]> = new EventEmitter();
 
-    /**
-     * Left variable list for selected;
-     */
     leftList: OptimizedVariableOverview[] = [];
 
-    /**
-     * Selected left variable.
-     */
     selectedLeftVariable: OptimizedVariableOverview;
 
-    /**
-     * Right variable list for selected;
-     */
     rightList: OptimizedVariableOverview[] = [];
 
-    /**
-     * Selected right variable.
-     */
     selectedRightVariable: OptimizedVariableOverview;
 
-    /**
-     * Variable compare operators;
-     */
     operators: CompareOperator[];
 
-    /**
-     * Selected compare operator;
-     */
     selectedOperator: CompareOperator;
 
-    /**
-     * Compare base value;
-     */
     selectedValue: number = 1;
 
-    /**
-     * Generated Filters;
-     */
     filters: Filter[] = [];
 
     constructor(
@@ -92,18 +58,12 @@ export class ArgOptimizerComponent implements OnInit {
         private tip: TipService,
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.operators = this.constant.COMPARE_OPERATORS;
 
         this.selectedOperator = this.operators[0];
     }
 
-    /**
-     * Add filter then emit filters;
-     */
     addFilter() {
         if (this.selectedLeftVariable.variableDes === this.selectedRightVariable.variableDes) {
             this.tip.messageError('COMPARE_EQUAL_TO_COMPARED');
@@ -125,26 +85,16 @@ export class ArgOptimizerComponent implements OnInit {
         this.optimize.emit(this.filters);
     }
 
-    /**
-     * Remove the filter then emit filters;
-     * @param index Index of the filter need to delete;
-     */
     deleteFilter(index: number): void {
         this.filters = this.filters.filter((_, idx) => idx !== index);
 
         this.optimize.emit(this.filters);
     }
 
-    /**
-     * Check compare value;
-     */
     checkValue(): void {
         if (!isNumber(this.selectedValue)) this.selectedValue = 1;
     }
 
-    /**
-     * 检查过滤器，如果有已经被移出调优的参数，需要将对应的过滤器删除；
-     */
     private checkFilters(data: OptimizedVariableOverview[]): void {
         const names = data.map(item => item.variableName);
 
@@ -157,9 +107,6 @@ export class ArgOptimizerComponent implements OnInit {
         this.optimize.emit(this.filters);
     }
 
-    /**
-     * 检查左右下拉框中的值是否仍然有效；
-     */
     checkSelectedVariable(data: OptimizedVariableOverview[]): void {
         const isValid = (value: OptimizedVariableOverview): any => data.find(item => item.variableName === value.variableName);
 

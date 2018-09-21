@@ -32,9 +32,6 @@ export class TipService extends BaseService {
         super();
     }
 
-    /**
-     * NzNotificationService secondary wrap.
-     */
     success(msg: string, title = '', option = this.NZ_NOTIFICATION_CONFIG): void {
         this.translate.get(msg)
             .subscribe(content => {
@@ -45,9 +42,6 @@ export class TipService extends BaseService {
             );
     }
 
-    /**
-     * NzMessageService secondary wrap.
-     */
     messageSuccess(msg: string, options?: NzMessageDataOptions): void {
         this.translate.get(msg).subscribe(content => this.message.success(content, options));
     }
@@ -66,9 +60,6 @@ export class TipService extends BaseService {
         this.translate.get(labels).subscribe(res => this.notification.info(res[title] || '', res[msg], option));
     }
 
-    /**
-     * NzModalService secondary wrap.
-     */
     getNzConfirmOperateConfig(): Observable<object> {
         return this.translate.get(['OPERATE_CONFIRM', 'CONFIRM', 'CANCEL']).pipe(
             map(res => ({
@@ -80,9 +71,6 @@ export class TipService extends BaseService {
         );
     }
 
-    /**
-     * Custom method related with tip functional.
-     */
     playAudio(src: string): void {
         const audio = new Audio();
 
@@ -93,9 +81,6 @@ export class TipService extends BaseService {
         audio.play();
     }
 
-    /**
-     * @ignore
-     */
     messageByResponse<T extends ApiActions>(successMsg: string, failMsg: string, isSuccess?: (result: any) => boolean): (action: T) => void {
         return (action: T) => {
             if (isSuccess ? isSuccess(action.payload.result) : !!action.payload.result) {
@@ -106,10 +91,6 @@ export class TipService extends BaseService {
         };
     }
 
-    /**
-     * Close loading state if timeout as the same time show tip message for user;
-     * @param input loading state or error message object
-     */
     loadingSlowlyTip = (input: boolean | object): boolean => {
         if (isBoolean(input)) {
             return input;
@@ -119,13 +100,6 @@ export class TipService extends BaseService {
         }
     }
 
-    /**
-     * 确认是否要执行高危操作
-     * @param message to be translated message;
-     * @param options Translate params;
-     * @param config  Modal options
-     * @param onlyTrue Whether the output observable only emit 'true' value;
-     */
     guardRiskOperate(message: string, options: { [key: string]: any } = {}, config: ModalOptions = {}, onlyTrue = true): Observable<boolean> {
         return this.translate.get(message, options).pipe(
             mergeMap(content => {
@@ -142,9 +116,6 @@ export class TipService extends BaseService {
         );
     }
 
-    /**
-     * 验证密码成功后的通知流；和exchange。form.service上的方法一样，因为循环引用懒得优化
-     */
     securityVerify(component: any): Observable<boolean> {
         const modal = this.nzModal.confirm({
             nzContent: component,

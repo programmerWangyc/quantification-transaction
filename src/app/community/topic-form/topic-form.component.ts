@@ -26,14 +26,8 @@ export interface BBSTopicForm {
 })
 export class TopicFormComponent extends UploadBaseComponent implements OnInit, OnDestroy {
 
-    /**
-     * Submit button text;
-     */
     @Input() buttonText = 'SUBMIT';
 
-    /**
-     * Edit mode origin title
-     */
     @Input() set data(input: BBSTopicById) {
         if (!!input) {
             this._data = input;
@@ -58,9 +52,6 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
         return this._data;
     }
 
-    /**
-     * Submit flow
-     */
     @Output() emit: EventEmitter<BBSTopicForm> = new EventEmitter();
 
     /**
@@ -88,9 +79,6 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
      */
     form: FormGroup;
 
-    /**
-     * Available topics
-     */
     topics: Observable<GroupedList<BBSNode>[]>;
 
     /**
@@ -98,14 +86,8 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
      */
     isAlive = true;
 
-    /**
-     * Uploaded image's url
-     */
     images: Observable<string>;
 
-    /**
-     * 钩子subject，zorro插入文件和上传动作发生前的中间件
-     */
     private audit$: Subject<any> = new Subject();
 
     /**
@@ -152,16 +134,10 @@ export class TopicFormComponent extends UploadBaseComponent implements OnInit, O
         });
     }
 
-    /**
-     * 输出表单的值
-     */
     emitValue(): void {
         this.emit.next({ ...this.form.value, content: this.contentComponent.content });
     }
 
-    /**
-     * 覆盖基类上的方法，转为自动上传，主动调用上传方法，而非使用框架提供的自动上传方法，因此返回值仍是false；
-     */
     beforeUpload = (file: UploadFile) => {
         this.files.push(file);
 

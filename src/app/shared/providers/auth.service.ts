@@ -39,8 +39,6 @@ export class AuthService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
     launchLogin(source: Observable<LoginRequest>): Subscription {
         return this.process.processLogin(source);
     }
@@ -59,17 +57,10 @@ export class AuthService extends BaseService {
         return this.process.processSetPwd(source);
     }
 
-    /**
-     * 请求验证用户的密码
-     * @param source 验证用户密码
-     */
     launchVerifyPassword(source: Observable<VerifyPasswordRequest>): Subscription {
         return this.process.processVerifyPwd(source);
     }
 
-    //  =======================================================Date Acquisition=======================================================
-
-    // login
     private getLoginResponse(): Observable<LoginResponse> {
         return this.store.pipe(
             this.selectTruth(selectLoginResponse)
@@ -86,14 +77,10 @@ export class AuthService extends BaseService {
         );
     }
 
-    /**
-     * 清除用户的登录信息
-     */
     resetLoginInfo(): void {
         this.store.dispatch(new ClearLoginInfoAction());
     }
 
-    // signup
     private getSignupResponse(): Observable<SignupResponse> {
         return this.store.pipe(
             this.selectTruth(selectSignupResponse)
@@ -128,7 +115,6 @@ export class AuthService extends BaseService {
             .subscribe(isSuccess => this.showMessage(isSuccess, 'SIGNUP_SUCCESS_TIP', 'SIGNUP_FAIL_TIP'));
     }
 
-    // reset password
     private getResetPasswordResponse(): Observable<ResetPasswordResponse> {
         return this.store.pipe(
             this.selectTruth(selectResetPasswordResponse)
@@ -142,7 +128,6 @@ export class AuthService extends BaseService {
             .subscribe(result => this.showMessage(result.result, 'EMAIL_VALID_TIP', 'EMAIL_INVALID_TIP'));
     }
 
-    // set password
     private getSetPasswordResponse(): Observable<SetPasswordResponse> {
         return this.store.pipe(
             select(selectSetPwdResponse),
@@ -174,9 +159,6 @@ export class AuthService extends BaseService {
         );
     }
 
-    /**
-     * 验证通过的密码
-     */
     getTemporaryPwd(): Observable<string> {
         return this.store.pipe(
             this.selectTruth(selectTemporaryPwd)
@@ -191,11 +173,6 @@ export class AuthService extends BaseService {
         }
     }
 
-    //  =======================================================Local Action=======================================================
-
-    /**
-     * This action must take place after the VerifyPasswordSuccessAction action.
-     */
     storePwdTemporary(pwdObs: Observable<string>): Subscription {
         return pwdObs.pipe(
             delayWhen(_ => this.isVerifyPasswordSuccess().pipe(
@@ -215,23 +192,15 @@ export class AuthService extends BaseService {
         this.store.dispatch(new ResetVerifyPasswordResponseAction());
     }
 
-    /**
-     * 清除谷歌二次验证码
-     */
     closeSecondaryVerify(): void {
         this.store.dispatch(new CloseSecondaryVerifyAction());
     }
 
-    /**
-     * 清理密码
-     */
     private clearPwdTemporary(): Subscription {
         return of(null).pipe(
             delay(5 * 60 * 1000)
         ).subscribe(_ => this.resetVerifyPwdResponse());
     }
-
-    //  =======================================================Error Handle=======================================================
 
     handleLoginError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getLoginResponse().pipe(

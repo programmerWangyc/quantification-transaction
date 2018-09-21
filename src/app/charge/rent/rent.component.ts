@@ -34,54 +34,24 @@ interface RentFormModal extends RechargeFormModal {
 })
 export class RentComponent extends ChargeBase implements BaseComponent {
 
-    /**
-     * @ignore
-     */
     subscription$$: Subscription;
 
-    /**
-     * @ignore
-     */
     form: FormGroup;
 
-    /**
-     * 提交支付
-     */
     pay$: Subject<RentFormModal> = new Subject();
 
-    /**
-     * 微信支付码
-     */
     wechatQRCode: Observable<string>;
 
-    /**
-     * 充值的策略
-     */
     strategy: Observable<Strategy | StrategyListByNameStrategy>;
 
-    /**
-     * 快速充值设置
-     */
     periods: RentOption[] = [];
 
-    /**
-     * 标识支付正在进行的流
-     */
     processing: Observable<RentFormModal>;
 
-    /**
-     * 标识支付重新开始的流
-     */
     start: Observable<any>;
 
-    /**
-     * 是否已选择了支付方式
-     */
     payMethodSelected: Observable<string>;
 
-    /**
-     * @ignore
-     */
     isAlive = true;
 
     constructor(
@@ -96,9 +66,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         this.initForm();
     }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.initialModel();
 
@@ -111,9 +78,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         this.setValidate();
     }
 
-    /**
-     * @ignore
-     */
     initialModel() {
         this.wechatQRCode = merge(
             this.chargeService.getWechatQrCode(),
@@ -133,9 +97,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         ));
     }
 
-    /**
-     * @ignore
-     */
     launch() {
         this.subscription$$ = this.chargeService.launchPaymentArg(
             this.getPaymentArgOptions(),
@@ -153,18 +114,12 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         ));
     }
 
-    /**
-     * 生成支付参数接口的请求数据
-     */
     private getPaymentArgOptions() {
         return this.pay$.pipe(
             map(({ payMethod, charge, chargeShortcut }) => ({ payMethod, charge: chargeShortcut || charge }))
         );
     }
 
-    /**
-     * 设置租用信息控件的值
-     */
     private setRentInfo() {
         this.strategy.pipe(
             takeWhile(() => this.isAlive)
@@ -198,9 +153,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         });
     }
 
-    /**
-     * 切换购买输入控件后修表单验证规则
-     */
     private setValidate() {
         this.chargeShortcut.valueChanges.pipe(
             map(value => isNull(value)),
@@ -217,9 +169,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
 
     }
 
-    /**
-     * 设置支付价格和到期时间
-     */
     private setPayPriceAndDeadline(): void {
         this.form.valueChanges.pipe(
             takeWhile(() => this.isAlive),
@@ -238,9 +187,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         });
     }
 
-    /**
-     * 获取计算当前价格所使用配置信息
-     */
     private getRentOption(): RentOption {
         if (this.chargeShortcut.value) {
             return this.periods.find(item => item.days === this.chargeShortcut.value);
@@ -258,9 +204,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         }
     }
 
-    /**
-     * @ignore
-     */
     private initForm() {
         this.form = this.fb.group({
             name: { value: '', disabled: true },
@@ -273,9 +216,6 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         });
     }
 
-    /**
-     * 金额的格式化函数
-     */
     amountFormatter = (value: number): string => {
         const language = this.translate.getDefaultLang();
 
@@ -286,58 +226,34 @@ export class RentComponent extends ChargeBase implements BaseComponent {
         return pipe.transform(value, currencyCode, 'symbol');
     }
 
-    /**
-     * @ignore
-     */
     get charge(): AbstractControl {
         return this.form.get('charge');
     }
 
-    /**
-     * @ignore
-     */
     get chargeShortcut(): AbstractControl {
         return this.form.get('chargeShortcut');
     }
 
-    /**
-     * @ignore
-     */
     get payMethod(): AbstractControl {
         return this.form.get('payMethod');
     }
 
-    /**
-     * @ignore
-     */
     get price(): AbstractControl {
         return this.form.get('price');
     }
 
-    /**
-     * @ignore
-     */
     get name(): AbstractControl {
         return this.form.get('name');
     }
 
-    /**
-     * @ignore
-     */
     get deadline(): AbstractControl {
         return this.form.get('deadline');
     }
 
-    /**
-     * @ignore
-     */
     get amount(): AbstractControl {
         return this.form.get('amount');
     }
 
-    /**
-     * @ignore
-     */
     ngOnDestroy() {
         this.isAlive = false;
 

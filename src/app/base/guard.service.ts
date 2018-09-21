@@ -18,10 +18,6 @@ export class BaseGuard extends BaseService implements CanDeactivate<CanDeactivat
         super();
     }
 
-    /**
-     * 是否可以退出当前路由。
-     * !FIXME:守卫上有一个bug，被拦截后点取消时，侧边栏没有恢复
-     */
     canDeactivate(component: CanDeactivateComponent, _route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) {
         const guards = component.canDeactivate();
 

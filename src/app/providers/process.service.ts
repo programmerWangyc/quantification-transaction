@@ -26,17 +26,12 @@ import { SetWDRequestAction } from '../store/watch-dog/watch-dog.action';
 import * as AccountActions from '../store/account/account.action';
 import * as MessageActions from '../store/message/message.action';
 
-/**
- * @ignore
- */
 @Injectable()
 export class ProcessService {
 
     constructor(
         private store: Store<AppState>,
     ) { }
-
-    //  ===================================================Public===================================================
 
     processSettings(paramObs: Observable<Request.SettingsRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new GetSettingsRequestAction(params)));
@@ -49,8 +44,6 @@ export class ProcessService {
     processGetAccountSummary(paramObs: Observable<Request.GetAccountSummaryRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new GetAccountSummaryRequestAction(params)));
     }
-
-    //  ===================================================Auth===================================================
 
     processLogin(paramObs: Observable<Request.LoginRequest>): Subscription {
         return paramObs.subscribe(data => this.store.dispatch(new LoginRequestAction(data)));
@@ -75,14 +68,9 @@ export class ProcessService {
     processLogout(paramObs: Observable<Request.LoginRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new LogoutRequestAction(params)));
     }
-
-    //  ===================================================Exchange===================================================
-
     processExchangeList(paramObs: Observable<Request.GetExchangeListRequest>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new GetExchangeListRequestAction()));
     }
-
-    //  ===================================================Robot===================================================
 
     processRobotList(paramObs: Observable<Request.GetRobotListRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new RobotActions.GetRobotListRequestAction(params)));
@@ -136,8 +124,6 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new RobotActions.PluginRunRequestAction(params)));
     }
 
-    //  ===================================================Agent ===================================================
-
     processGetNodeList(paramObs: Observable<Request.GetNodeListRequest>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new BtNode.GetNodeListRequestAction(null)));
     }
@@ -149,8 +135,6 @@ export class ProcessService {
     processGetNodeHash(paramObs: Observable<Request.GetNodeHashRequest>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new BtNode.GetNodeHashRequestAction(null)));
     }
-
-    //  ===================================================Platform===================================================
 
     processGetPlatformList(paramObs: Observable<Request.GetPlatformListRequest>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new PlatformActions.GetPlatformListRequestAction(null)));
@@ -168,13 +152,9 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new PlatformActions.SavePlatformRequestAction(params)));
     }
 
-    //  ===================================================Watch dog===================================================
-
     processSetWatchDog(paramObs: Observable<Request.SetWDRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new SetWDRequestAction(params)));
     }
-
-    //  ===================================================Strategy======================================================
 
     processStrategyList(paramObs: Observable<Request.GetStrategyListRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new StrategyActions.GetStrategyListRequestAction(params)));
@@ -319,13 +299,9 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new BBSActions.GetBBSQiniuTokenRequestAction(params)));
     }
 
-    //  ===================================================Document======================================================
-
     processDocument(paramObs: Observable<Request.GetBBSTopicRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new DocumentActions.GetDocumentRequestAction(params)));
     }
-
-    //  ===================================================Account======================================================
 
     processChangePassword(paramObs: Observable<Request.ChangePasswordRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new AccountActions.ChangePasswordRequestAction(params)));
@@ -391,8 +367,6 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new AccountActions.GetRegisterCodeRequestAction(params)));
     }
 
-    //  ===================================================Message======================================================
-
     processGetMessage(paramObs: Observable<Request.GetMessageRequest>): Subscription {
         return paramObs.subscribe(params => this.store.dispatch(new MessageActions.GetMessageRequestAction(params)));
     }
@@ -417,11 +391,6 @@ export class ProcessService {
         return paramObs.subscribe(params => this.store.dispatch(new MessageActions.DeleteBBSNotifyRequestAction(params)));
     }
 
-    //  ===================================================Simulation======================================================
-
-    /**
-     * @deprecated 实盘仿真的接口
-     */
     processSandboxToken(paramObs: Observable<any>): Subscription {
         return paramObs.subscribe(_ => this.store.dispatch(new SimulationActions.GetSandBoxTokenRequestAction()));
     }

@@ -25,43 +25,22 @@ export class FactService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * @ignore
-     */
     launchPublicRobotList(source: Observable<fromReq.GetPublicRobotListRequest>): Subscription {
         return this.process.processPublicRobotList(source);
     }
 
-    //  =======================================================Date Acquisition=======================================================
-    // public robot list
-    /**
-     * @ignore
-     */
     private getPublicRobotListResponse(): Observable<fromRes.GetPublicRobotListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectPublicRobotListResponse)
         );
     }
 
-    /**
-     * @ignore
-     */
     getPublicRobotList(): Observable<fromRes.PublicRobot[]> {
         return this.getPublicRobotListResponse().pipe(
             map(res => res.result.robots)
         );
     }
 
-    //  =======================================================Short cart method==================================================
-
-    //  =======================================================Local state modify==================================================
-
-    /**
-     * 获取loading的状态；
-     * @param type loading type
-     */
     isLoading(type?: string): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotUiState),
@@ -70,11 +49,6 @@ export class FactService extends BaseService {
         );
     }
 
-    //  =======================================================Error Handle=======================================================
-
-    /**
-     * @ignore
-     */
     handlePublicRobotListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getPublicRobotListResponse().pipe(
             takeWhile(keepAlive)

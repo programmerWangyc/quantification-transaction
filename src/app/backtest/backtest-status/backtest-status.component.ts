@@ -15,49 +15,22 @@ import { BacktestService } from '../providers/backtest.service';
 })
 export class BacktestStatusComponent implements OnInit {
 
-    /**
-     * The index of the processing task.
-     */
     processingTaskIndex: Observable<number>;
 
-    /**
-     * @ignore
-     */
     loadBytes: Observable<number>;
 
-    /**
-     * @ignore
-     */
     logTotal: Observable<number>;
 
-    /**
-     * Backtest progress;
-     */
     progress: Observable<number>;
 
-    /**
-     * Backtest profit
-     */
     profit: Observable<number>;
 
-    /**
-     * Backtest status, completed or running;
-     */
     status: Observable<string>;
 
-    /**
-     * Total task amount;
-     */
     tasks: Observable<number>;
 
-    /**
-     * Backtest time consuming;
-     */
     timeConsuming: Observable<number>;
 
-    /**
-     * Trade counts;
-     */
     transactions: Observable<number>;
 
     constructor(
@@ -66,9 +39,6 @@ export class BacktestStatusComponent implements OnInit {
         private chartService: BacktestChartService,
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
 
         this.processingTaskIndex = this.chartService.getIndexOfBacktestingTask();

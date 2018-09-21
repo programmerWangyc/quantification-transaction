@@ -12,9 +12,6 @@ import { RobotService } from '../../robot/providers/robot.service';
 })
 export class FactRobotOverviewComponent extends FoldableBusinessComponent implements OnInit {
 
-    /**
-     * Robot detail
-     */
     @Input() robot: RobotDetail;
 
     /**

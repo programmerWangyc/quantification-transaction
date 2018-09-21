@@ -26,35 +26,22 @@ export class RobotStrategyService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
     launchStrategyList(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
         return this.process.processStrategyList(source);
     }
 
-    //  =======================================================Date acquisition=======================================================
-
-    /**
-     * 获取策略列表接口的响应数据；
-     */
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectStrategyListResponse)
         );
     }
 
-    /**
-     * 获取策略列表;
-     */
     private getStrategies(): Observable<fromRes.Strategy[]> {
         return this.getStrategyListResponse().pipe(
             map(res => res.result.strategies)
         );
     }
 
-    /**
-     *分组后的策略
-     */
     getGroupedStrategy(key: string, getName?: (arg: number | boolean) => string, getNameValue?: (arg: string) => number | boolean): Observable<GroupedStrategy[]> {
         return this.utilService.getGroupedList(this.getStrategies(), key, getName).pipe(
             map(list => {
@@ -69,9 +56,6 @@ export class RobotStrategyService extends BaseService {
         );
     }
 
-    /**
-     * 获取策略参数
-     */
     getStrategyArgs(strategyId: Observable<number>): Observable<SemanticArg> {
         return strategyId.pipe(
             this.filterTruth(),
@@ -87,31 +71,16 @@ export class RobotStrategyService extends BaseService {
         );
     }
 
-    //  =======================================================Local state change=======================================================
-
-    //  =======================================================Shortcut methods=======================================================
-
-    /**
-     * @ignore
-     */
     getCategoryName(id: number): string {
         return fromReq.CategoryType[id] || 'UNKNOWN_TYPE';
     }
 
-    /**
-     * @ignore
-     */
     reverseGetCategoryName(str: string): number {
         const id = fromReq.CategoryType[str];
 
         return isNumber(id) ? id : void 0;
     }
 
-    //  =======================================================Error handler=======================================================
-
-    /**
-     * @ignore
-     */
     handleStrategyListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getStrategyListResponse().pipe(
             takeWhile(keepAlive)

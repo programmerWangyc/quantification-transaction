@@ -10,24 +10,15 @@ import { Breadcrumb, DeactivateGuard } from '../../interfaces/app.interface';
 })
 export class RechargeComponent implements OnInit, OnDestroy {
 
-    /**
-     * @ignore
-     */
     paths: Breadcrumb[] = [{ name: 'ACCOUNT_RECHARGE' }];
 
     constructor(
         private chargeService: ChargeService
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
     }
 
-    /**
-     * 路由守卫
-     */
     canDeactivate(): DeactivateGuard[] {
         const chargeComplete: DeactivateGuard = {
             canDeactivate: this.chargeService.isRechargeSuccess(),
@@ -37,9 +28,6 @@ export class RechargeComponent implements OnInit, OnDestroy {
         return [chargeComplete];
     }
 
-    /**
-     * @ignore
-     */
     ngOnDestroy() {
         this.chargeService.resetRecharge();
     }

@@ -31,9 +31,6 @@ export class AgentConstantService extends ConstantService {
         super();
     }
 
-    /**
-     * 获取指定的客户端
-     */
     getClient(os: number, version: number, clientVersion?: number): AgentClient {
         return this.AGENT_CLIENTS.find(client => {
             const isSystemConsistent = client.os === +os && client.version === +version;

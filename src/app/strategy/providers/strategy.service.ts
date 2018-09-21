@@ -38,16 +38,11 @@ export class StrategyService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
 
     launchStrategyList(source: Observable<fromReq.GetStrategyListRequest>): Subscription {
         return this.process.processStrategyList(source);
     }
 
-    /**
-     * 发起对策略token的操作请求；
-     * @param source 远程编辑的token的操作请求；
-     */
     launchOpStrategyToken(sourceObs: Observable<fromReq.OpStrategyTokenRequest>): Subscription {
         return this.process.processOpStrategyToken(sourceObs.pipe(
             switchMap(source => source.opCode === OpStrategyTokenTypeAdapter.GET ? of(source)
@@ -58,27 +53,17 @@ export class StrategyService extends BaseService {
         ));
     }
 
-    /**
-     * 查询策略详情
-     */
     launchStrategyDetail(source: Observable<fromReq.GetStrategyDetailRequest>): Subscription {
         return this.process.processStrategyDetail(source);
     }
 
-    //  =======================================================Date acquisition=======================================================
 
-    /**
-     * 获取策略列表接口的响应数据；
-     */
     private getStrategyListResponse(): Observable<fromRes.GetStrategyListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectStrategyListResponse)
         );
     }
 
-    /**
-     * 获取策略列表;
-     */
     getStrategies(): Observable<fromRes.Strategy[]> {
         return this.getStrategyListResponse().pipe(
             map(res => res.result.strategies)
@@ -91,9 +76,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     *  Get secret key response from 'OpStrategyToken' api.
-     */
     getStrategyToken(): Observable<string> {
         return this.getOpStrategyTokenResponse().pipe(
             map(res => res.result)
@@ -106,27 +88,18 @@ export class StrategyService extends BaseService {
         ).subscribe(hasToken => this.store.dispatch(new UpdateStrategySecretKeyStateAction({ id, hasToken })));
     }
 
-    /**
-     * 获取策略详情的响应；
-     */
     private getStrategyDetailResponse(): Observable<fromRes.GetStrategyDetailResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectStrategyDetailResponse)
         );
     }
 
-    /**
-     * 获取策略的详情信息；
-     */
     getStrategyDetail(): Observable<fromRes.StrategyDetail> {
         return this.getStrategyDetailResponse().pipe(
             map(res => res.result.strategy)
         );
     }
 
-    /**
-     * 获取策略的模板依赖；来源于2部分：1、当前的依赖；2、可用的依赖；
-     */
     getStrategyDependance(): Observable<TemplateRefItem[]> {
         return combineLatest(
             this.getAvailableDependance(),
@@ -142,10 +115,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 获取策略可用的模板依赖；
-     * @param isAddStrategy 调用是否来自于创建新策略；
-     */
     getAvailableDependance(isAddStrategy = false): Observable<TemplateRefItem[]> {
         return this.getStrategies().pipe(
             withLatestFrom(
@@ -159,9 +128,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 获取策略当前的模板依赖；
-     */
     getCurrentDependance(): Observable<TemplateRefItem[]> {
         return this.getStrategyDetail().pipe(
             map(detail => detail.templates ? detail.templates.map(tpl => {
@@ -176,9 +142,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 是否正在加载数据；
-     */
     isLoading(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectStrategyUIState),
@@ -187,19 +150,12 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 获取已经存在的策略参数；
-     * @param predicate 判定函数，用来判定参数是否所需要的参数；
-     */
     getExistedStrategyArgs(predicate: (s: string) => boolean): Observable<VariableOverview[]> {
         return this.getStrategyDetail().pipe(
             map(detail => detail.semanticArgs.filter(arg => predicate(arg.variableName)))
         );
     }
 
-    /**
-     * 需要保存的设置包括：1、时间范围 2、k线周期 3、交易对；
-     */
     generateBacktestConfig(): Observable<string> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState),
@@ -225,9 +181,6 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 策略代码中的回测设置
-     */
     getBacktestConfigInCode(): Observable<BacktestConfigInCode> {
         return this.getStrategyDetail().pipe(
             take(1),
@@ -276,9 +229,6 @@ export class StrategyService extends BaseService {
         return result;
     }
 
-    /**
-     * @ignore
-     */
     private getStrategyListByNameResponse(): Observable<fromRes.GetStrategyListByNameResponse> {
         return this.store.pipe(
             select(fromRoot.selectStrategyListByNameResponse),
@@ -286,16 +236,11 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 策略广场的数据源
-     */
     getMarketStrategyList(): Observable<fromRes.StrategyListByNameStrategy[]> {
         return this.getStrategyListByNameResponse().pipe(
             map(res => res.result.strategies)
         );
     }
-
-    //  =======================================================Local state change=======================================================
 
     resetState(): void {
         this.store.dispatch(new ResetStateAction());
@@ -313,17 +258,12 @@ export class StrategyService extends BaseService {
         this.store.dispatch(new SnapshotCodeAction(code));
     }
 
-    //  =======================================================Shortcut methods=======================================================
-
     getSpecificStrategies(predicate: (data: fromRes.Strategy) => boolean): Observable<fromRes.Strategy[]> {
         return this.getStrategies().pipe(
             map(strategies => strategies.filter(predicate))
         );
     }
 
-    /**
-     * 查找当前编辑的策略是否已经生成过远程编辑的token;
-     */
     hasToken(id: number): Observable<boolean> {
         return this.getStrategies().pipe(
             mergeMap(list => from(list)),
@@ -333,36 +273,22 @@ export class StrategyService extends BaseService {
         );
     }
 
-    /**
-     * 判定参数是否交互参数；
-     */
     isCommandArg() {
         return this.constant.isSpecialTypeArg(this.constant.COMMAND_PREFIX);
     }
 
-    //  =======================================================Error handler=======================================================
-
-    /**
-     * @ignore
-     */
     handleStrategyListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getStrategyListResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleOpStrategyTokenError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getOpStrategyTokenResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleStrategyDetailError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getStrategyDetailResponse().pipe(
             takeWhile(keepAlive)

@@ -18,10 +18,6 @@ import { GET_PUBLIC_ROBOT_LIST, ResponseActions as robotResponseActions } from '
 @Injectable()
 export class PublicEffect extends BaseEffect {
 
-    /**
-     * 简单的把事件流从公共信息中去除，保证是dispatch 的是 PublicResponse;
-     * 各业务reducer自行订阅所需事件，公共reducer不提供。
-     */
     @Effect()
     pubInfo$: Observable<ResponseAction> = this.ws.messages.pipe(
         filter(data => !data.event),

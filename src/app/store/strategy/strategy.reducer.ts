@@ -61,7 +61,7 @@ const initialState: State = {
 
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
-        // strategy list
+
         case actions.GET_STRATEGY_LIST:
             return { ...state, requestParams: { ...state.requestParams, strategyList: action.payload }, UIState: { ...state.UIState, loading: true } };
 
@@ -76,7 +76,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, strategyListRes: { ...action.payload, result: { ...action.payload.result, strategies: result } }, UIState: { ...state.UIState, loading: false } };
         }
 
-        // share strategy
+
         case actions.SHARE_STRATEGY:
             return { ...state, requestParams: { ...state.requestParams, shareStrategy: action.payload } };
 
@@ -95,7 +95,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, shareStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
 
-        // gen key
+
         case actions.GEN_KEY:
             return { ...state, requestParams: { ...state.requestParams, genKey: action.payload } };
 
@@ -103,7 +103,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GEN_KEY_SUCCESS:
             return { ...state, genKeyRes: action.payload };
 
-        // verify gen key
+
         case actions.VERIFY_KEY:
             return { ...state, requestParams: { ...state.requestParams, verifyKey: action.payload } };
 
@@ -111,7 +111,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.VERIFY_KEY_SUCCESS:
             return { ...state, verifyKeyRes: action.payload };
 
-        // delete strategy
+
         case actions.DELETE_STRATEGY:
             return { ...state, requestParams: { ...state.requestParams, deleteStrategy: action.payload } };
 
@@ -130,7 +130,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, deleteStrategyRes: action.payload, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
 
-        // op strategy token
+
         case actions.GET_STRATEGY_TOKEN:
             return { ...state, requestParams: { ...state.requestParams, opStrategyToken: action.payload } };
 
@@ -138,7 +138,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_STRATEGY_TOKEN_SUCCESS:
             return { ...state, opStrategyTokenRes: action.payload };
 
-        // strategy detail
+
         case actions.GET_STRATEGY_DETAIL:
             return { ...state, requestParams: { ...state.requestParams, strategyDetail: action.payload }, UIState: { ...state.UIState, loading: true } };
 
@@ -157,7 +157,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, strategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
         }
 
-        // save strategy
+
         case actions.SAVE_STRATEGY:
             return { ...state, requestParams: { ...state.requestParams, saveStrategy: action.payload } };
 
@@ -172,7 +172,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_STRATEGY_LIST_BY_NAME_SUCCESS:
             return { ...state, strategyListByNameRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
-        // public strategy detail
+
         case actions.GET_PUBLIC_STRATEGY_DETAIL:
             return { ...state, requestParams: { ...state.requestParams, publicStrategyDetail: action.payload }, UIState: { ...state.UIState, loading: true } };
 
@@ -180,9 +180,6 @@ export function reducer(state = initialState, action: actions.Actions): State {
         case actions.GET_PUBLIC_STRATEGY_DETAIL_SUCCESS:
             return { ...state, publicStrategyDetailRes: action.payload, UIState: { ...state.UIState, loading: false } };
 
-        /**==================================================================Local State change=========================================== **/
-
-        // update strategy hasToken
         case actions.UPDATE_STRATEGY_SECRET_KEY_STATE: {
             const { result } = state.strategyListRes;
 
@@ -193,7 +190,7 @@ export function reducer(state = initialState, action: actions.Actions): State {
             return { ...state, strategyListRes: { ...state.strategyListRes, result: { all, strategies } } };
         }
 
-        // reset state
+
         case actions.RESET_STATE:
             return {
                 ...state,
@@ -217,15 +214,15 @@ export function reducer(state = initialState, action: actions.Actions): State {
                 },
             };
 
-        // strategy dependance
+
         case actions.UPDATE_STRATEGY_DEPENDANCE_TEMPLATES:
             return { ...state, UIState: { ...state.UIState, selectedTemplates: action.payload } };
 
-        // strategy language
+
         case actions.UPDATE_SELECTED_LANGUAGE:
             return { ...state, UIState: { ...state.UIState, selectedLanguage: action.payload } };
 
-        // code snapshot
+
         case actions.SNAPSHOT_CODE:
             return { ...state, UIState: { ...state.UIState, codeSnapshot: action.payload } };
 

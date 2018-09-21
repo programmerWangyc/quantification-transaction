@@ -32,27 +32,14 @@ export class SquareService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * 通过名称查询策略详情
-     */
     launchStrategyListByName(source: Observable<fromReq.GetStrategyListByNameRequest>): Subscription {
         return this.process.processStrategyListByName(source);
     }
 
-    /**
-     * 查询公共策略的详情信息
-     */
     launchPublicStrategyDetail(source: Observable<fromReq.GetPublicStrategyDetailRequest>): Subscription {
         return this.process.processPublicStrategyDetail(source);
     }
 
-    //  =======================================================Date acquisition=======================================================
-
-    /**
-     * 是否正在加载数据；
-     */
     isLoading(): Observable<boolean> {
         return this.store.select(fromRoot.selectStrategyUIState).pipe(
             map(state => state && state.loading),
@@ -98,20 +85,12 @@ export class SquareService extends BaseService {
         );
     }
 
-    /**
-     * 公共策略详情
-     */
     getPublicStrategyDetail(): Observable<fromRes.PublicStrategyDetail> {
         return this.getPublicStrategyDetailResponse().pipe(
             map(res => res.result.strategy)
         );
     }
 
-    //  =======================================================Local state change=======================================================
-
-    //  =======================================================Shortcut methods=======================================================
-
-    //  =======================================================Error handler=======================================================
 
     /**
      * @ignore

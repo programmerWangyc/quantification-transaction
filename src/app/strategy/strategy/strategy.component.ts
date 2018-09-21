@@ -25,49 +25,49 @@ import { StrategyRenewalComponent } from '../../tool/strategy-renewal/strategy-r
     styleUrls: ['./strategy.component.scss'],
 })
 export class StrategyComponent implements BaseComponent {
-    /**
-     * @ignore
-     */
+
+
+
     paths: Breadcrumb[] = [{ name: 'STRATEGY_LIBRARY' }];
 
-    /**
-     * @ignore
-     */
+
+
+
     subscription$$: Subscription;
 
-    /**
-     * 策略列表
-     */
+
+
+
     strategyList: Observable<Strategy[]>;
 
-    /**
-     * 公开
-     */
+
+
+
     share$: Subject<ShareStrategyStateSnapshot> = new Subject();
 
-    /**
-     * 续费
-     */
+
+
+
     renewal$: Subject<Strategy> = new Subject();
 
-    /**
-     * 删除
-     */
+
+
+
     delete$: Subject<Strategy> = new Subject();
 
-    /**
-     * @ignore
-     */
+
+
+
     isLoading: Observable<boolean>;
 
-    /**
-     * 搜索名称中包含指定关键字的策略
-     */
+
+
+
     search: FormControl = new FormControl();
 
-    /**
-     * @ignore
-     */
+
+
+
     isAlive = true;
 
     constructor(
@@ -81,18 +81,18 @@ export class StrategyComponent implements BaseComponent {
     ) {
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     initialModel() {
         this.strategyList = combineLatest(
             this.strategyService.getStrategies(),
@@ -106,13 +106,13 @@ export class StrategyComponent implements BaseComponent {
         this.isLoading = this.strategyService.isLoading();
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     launch() {
-        /**
-         * Api request
-         */
+
+
+
         this.subscription$$ = this.strategyOperate.launchDeleteStrategy(this.delete$.asObservable())
             .add(this.strategyOperate.launchShareStrategy(this.share$.asObservable()));
 
@@ -122,9 +122,9 @@ export class StrategyComponent implements BaseComponent {
 
         this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: -1, needArgsType: needArgsType.none }));
 
-        /**
-         * Payment entrance;
-         */
+
+
+
         const keepAlive = () => this.isAlive;
 
         const [renewalByPay, renewalByCode] = partition(({ pricing }) => isString(pricing) && pricing.includes('/'))(this.renewal$.asObservable().pipe(
@@ -139,16 +139,16 @@ export class StrategyComponent implements BaseComponent {
 
         renewalByPay.subscribe((strategy: Strategy) => this.router.navigate([Path.charge, Path.rent, strategy.id], { relativeTo: this.activatedRoute.parent }));
 
-        /**
-         * Api result tip
-         */
+
+
+
         this.strategyOperate.remindPublishRobot(keepAlive);
 
         this.strategyOperate.remindStoreGenKeyResult(keepAlive);
 
-        /**
-         * Error handle
-         */
+
+
+
         this.strategyService.handleStrategyListError(keepAlive);
 
         this.btNodeService.handleNodeListError(keepAlive);
@@ -162,9 +162,9 @@ export class StrategyComponent implements BaseComponent {
         this.strategyOperate.handleDeleteStrategyError(keepAlive);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnDestroy() {
         this.isAlive = false;
 

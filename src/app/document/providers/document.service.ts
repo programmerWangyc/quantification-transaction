@@ -28,11 +28,6 @@ export class DocumentService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * @ignore
-     */
     launchDocument(): Subscription {
         return this.process.processDocument(
             this.publicService.getSetting(`${SettingTypes.api}_${this.getRequestSuffix()}`).pipe(
@@ -42,11 +37,6 @@ export class DocumentService extends BaseService {
         );
     }
 
-    //  =======================================================Date acquisition=======================================================
-
-    /**
-     * @ignore
-     */
     private getDocumentResponse(): Observable<GetBBSTopicResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectDocumentResponse)
@@ -73,32 +63,18 @@ export class DocumentService extends BaseService {
         );
     }
 
-    //  =======================================================Shortcut methods=======================================================
-
-    /**
-     * Setting 的api 请求后缀；
-     */
     private getRequestSuffix(): string {
         const language = this.translate.getDefaultLang();
 
         return language === 'zh' ? 'zh_CN' : 'en_US';
     }
 
-    /**
-     * 从api setting响应的数据中提取 document 的 id;
-     */
     private pluckDocumentId(input: string): number {
         const [id] = input.match(/\d+/);
 
         return +id;
     }
 
-    //  =======================================================Local state change=======================================================
-    //  =======================================================Error handler=======================================================
-
-    /**
-     * @ignore
-     */
     handleGetDocumentError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getDocumentResponse().pipe(
             takeWhile(keepAlive)

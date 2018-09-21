@@ -16,9 +16,6 @@ export function getTableStatistics(total: number, pageSize: number): TableStatis
 
 export class BaseService {
 
-    /**
-     * 统计表格数据
-     */
     getTableStatistics = getTableStatistics;
 
     isTruth(predicate: any): boolean {
@@ -66,9 +63,6 @@ export class BaseService {
         };
     }
 
-    /**
-     * Custom operator
-     */
     loadingTimeout<T>(callback: (value: any) => T, secondes = 5000): (source: Observable<T>) => Observable<T> {
         return function (source: Observable<T>) {
             return Observable.create((subscriber: Observer<T>) => {
@@ -93,9 +87,6 @@ export class BaseService {
         };
     }
 
-    /**
-     * 取出 Observable 中的结果;
-     */
     protected unwrap<T>(obs: Observable<T>): T {
         let result = null;
 

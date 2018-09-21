@@ -4,9 +4,6 @@ export enum Language {
     'C++',
 }
 
-/**
- * 密钥操作的适配器；
- */
 export enum OpStrategyTokenTypeAdapter {
    GET,
    UPDATE,
@@ -14,9 +11,6 @@ export enum OpStrategyTokenTypeAdapter {
    ADD,
 }
 
-/**
- * 策略的可见性分类
- */
 export enum StrategyVisibilityType {
     publicOrRentable = -2,
     visibleMySelf,

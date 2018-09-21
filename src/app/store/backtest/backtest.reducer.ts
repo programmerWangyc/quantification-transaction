@@ -425,9 +425,6 @@ function updateCode(fresh: BacktestCode, list: BacktestCode[]): BacktestCode[] {
     }
 }
 
-/**
- * 如果代码中的参数设置了调优，根据调优设置成新的字段存储被测试的参数值，同时生成回测任务，
- */
 function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
     return data.map(code => {
         const { name, id } = code;
@@ -440,9 +437,6 @@ function generateToBeTestedValues(data: BacktestCode[]): BacktestCode[] {
     });
 }
 
-/**
- * 根据参数的调优设置生成需要测试的值。
- */
 function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
 
     const { step, end } = data;
@@ -470,9 +464,6 @@ function getToBeTestedValues(data: ArgOptimizeSetting): number[] {
     return testedValues;
 }
 
-/**
- * 根据参数的调优设置生成测试任务，生成的数组中的每一项用来描述该测试任务所对应的各个参数。
- */
 function generateBacktestTasks(source: BacktestCode[]): BacktestTaskDescription[][] {
     let tasks: BacktestTaskDescription[][] = null;
 
@@ -498,9 +489,6 @@ function generateBacktestTasks(source: BacktestCode[]): BacktestTaskDescription[
 
 type FilterPredicateFun = (data: BacktestTaskDescription[]) => boolean;
 
-/**
- * 过滤出符合过滤器规定的条件的任务, 只对策略参数有效， 因为只有策略参数才可以设置参数过滤器。
- */
 function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[]): BacktestTaskDescription[][] {
     if (!filters || !filters.length) return data;
 
@@ -509,18 +497,12 @@ function filterBacktestTasks(data: BacktestTaskDescription[][], filters: Filter[
     return data.filter(task => predicateFns.every(fn => fn(task)));
 }
 
-/**
- * 生成过滤器判定函数的工厂函数。
- * @param filterer - 参数过滤器
- * @returns 返回的函数用来判定回测任务的参数设置是否符合过滤器的描述。当参数设置符合过滤器的描述时，判定函数返回true，反之返回false。
- */
 function filterPredicateFunFactory(filterer: Filter): FilterPredicateFun {
     return (data: BacktestTaskDescription[]): boolean => {
         const { comparedVariable, compareVariable, logic, baseValue } = filterer;
 
         const findValue = (variable: OptimizedVariableOverview) => data.find(item => item.file === MAIN_CODE_FLAG && item.variableDes === variable.variableDes && item.variableName === variable.variableName);
 
-        // 只要加了优化过滤器，必然可以在主代码中找到两个比较的值，所以findValue的结果一定是存在的。
         const left = findValue(compareVariable);
 
         const right = findValue(comparedVariable);
@@ -538,24 +520,17 @@ function filterPredicateFunFactory(filterer: Filter): FilterPredicateFun {
         } else if (logic.id === CompareLogic.EQUAL) {
             return result === 0;
         } else {
-            // 但愿永远不要进来
             throw Error('Compare logic error: supported operators: "more than: >=", "less than: <=" and "equal: ===".');
         }
     };
 }
 
-/**
- * 获取回测的结果，将结果解析出来。
- */
 function getBacktestResult(payload: BacktestIOResponse): string | number | ServerBacktestResult<string | BacktestResult> {
     const { result } = payload;
 
     return isNumber(result) ? result : <ServerBacktestResult<string>>JSON.parse(<string>result);
 }
 
-/**
- * 重置store的状态，恢复到初始状态。
- */
 function resetState(): any {
     return {
         backtestRes: null,
@@ -567,14 +542,6 @@ function resetState(): any {
     };
 }
 
-/**
- * Predicate whether all backtest task completed;
- * @param tasks All task need to be backtest;
- * @param results Received results;
- * @param alreadyReceivedResult Wether backtest result had been received when this function called;
- * If backtesting at server side, this function run when server send complete message, then browser request backtest result. This function run before all result received;
- * If backtesting at client side, this function run when webworker post backtest result, all result had been received at the moment that this function run;
- */
 function isAllTasksCompleted(tasks: BacktestTaskDescription[][], results: BacktestIOResponse[], alreadyReceivedResult = false): boolean {
     const taskAmount = tasks.length;
 

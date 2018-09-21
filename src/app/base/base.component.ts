@@ -51,9 +51,6 @@ export abstract class ExchangePairBusinessComponent extends FoldableBusinessComp
         if (!this.selectedPairs.find(item => item.platformId === platformId && item.stock === stock)) {
             this.selectedPairs.push({ platformId, stock, platformName: name });
         } else {
-            /**
-             * do nothing;
-             */
         }
     }
 

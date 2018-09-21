@@ -21,11 +21,6 @@ export class EncryptService {
         return CryptoJS.MD5(password + '/botvs').toString();
     }
 
-    /**
-     * 加密文本
-     * @param data 被加密的值
-     * @param password 密码
-     */
     encryptText(data: string, password: string): string {
         let key: string = this.encryptPassword(password);
 
@@ -76,9 +71,6 @@ export class EncryptService {
         );
     }
 
-    /**
-     * Transform data to ary structure, usually for api interactive purpose;
-     */
     private transformArgs(data: VariableOverview, isEncrypt = true): Observable<Array<string | number | boolean>> {
         const { variableName, variableValue, variableTypeId, originValue } = data;
 

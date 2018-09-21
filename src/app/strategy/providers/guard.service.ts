@@ -19,10 +19,6 @@ export class StrategyBaseGuard extends BaseGuard implements CanActivate {
         super(tip);
     }
 
-    /**
-     * 是否可以进入当前路由,
-     * 会把用户重定向到策略页面
-     */
     canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
         return combineLatest(
             this.hasResponse(selectStrategyListResponse),

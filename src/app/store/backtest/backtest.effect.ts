@@ -68,9 +68,6 @@ export class BacktestEffect extends BaseEffect {
         super(ws, actions$);
     }
 
-    /**
-     * 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出具有回测功能的页面或者将任务停止后时会取消订阅，此时不再处理回测消息。
-     */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
         return this.store.select(selectServerMsgSubscribeState).pipe(
             map(status => status[ServerSendEventType.BACKTEST])
@@ -78,10 +75,6 @@ export class BacktestEffect extends BaseEffect {
     }
 }
 
-/**
- * @function getBacktestErrorMessage
- *  将backtestIO接口返回的错误信息映射成提示消息。
- */
 export function getBacktestErrorMessage(result: string | number | ServerBacktestResult<BacktestResult | string>): string {
     if (result === -1) {
         return 'BACKTEST_SERVER_OFFLINE';
@@ -98,9 +91,6 @@ export function getBacktestErrorMessage(result: string | number | ServerBacktest
     }
 }
 
-/**
- * Whether BacktestIO api execute fail;
- */
 function isBacktestFail(response: BacktestIOResponse): boolean {
     return !!response.error || !!getBacktestErrorMessage(isNumber(response.result) ? response.result : JSON.parse(<string>response.result));
 }

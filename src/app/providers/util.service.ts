@@ -16,12 +16,6 @@ export interface GroupedList<T> {
     values: T[];
 }
 
-/**
- * 获取运行日志，source里的元素将被转换成字典形式。
- * @param source Source data of log;
- * @param isBacktest Wether the source data produced by backtest or robot;
- * @returns 字典形式的运行日志；
- */
 export function getRunningLogs(source: (string | number)[][], isBacktest = false): RunningLog[] {
     const getResult = (id, date, logType, eid, orderId, price, amount, extra, contractType, direction) => ({
         id: <number>id,
@@ -29,7 +23,7 @@ export function getRunningLogs(source: (string | number)[][], isBacktest = false
         eid: <string>eid,
         orderId: <string>orderId,
         extra: <string>extra,
-        contractType: <string>contractType, // !FIXME: contractType === direction ?
+        contractType: <string>contractType,
         direction: <string>direction,
         price: parseFloat((<number>price).toFixed(12)),
         amount: parseFloat((<number>amount).toFixed(6)),
@@ -52,9 +46,6 @@ export function getRunningLogs(source: (string | number)[][], isBacktest = false
 @Injectable()
 export class UtilService extends BaseService {
 
-    /**
-     * @ignore
-     */
     getRunningLogs = getRunningLogs;
 
     constructor(
@@ -63,20 +54,10 @@ export class UtilService extends BaseService {
         super();
     }
 
-    /**
-     * @ignore
-     */
     toArray<T>(value: T): T[] {
         return isArray(value) ? value : [value];
     }
 
-    /**
-     * Save incoming data packets.
-     * @param source - Origin data would be grouped.
-     * @param distinctKey - The key used to distinct data.
-     * @param getGroupName - Get grouped group name;
-     * @returns Observable<GroupedList<T>[]> Grouped data.
-     */
     getGroupedList<T>(source: Observable<T[]>, distinctKey: string, getGroupName = arg => String(arg)): Observable<GroupedList<T>[]> {
         return source.pipe(
             mergeMap(list => observableFrom(list).pipe(
@@ -91,10 +72,6 @@ export class UtilService extends BaseService {
         );
     }
 
-    /**
-     * 获取图表对象及它的窗口尺寸以调整图表的大小。
-     * @param charts highcharts object collection;
-     */
     createChartSize(charts: Highcharts.ChartObject[] | Highcharts.ChartObject): ChartSize {
         const chart = document.getElementsByClassName('chart');
 
@@ -107,9 +84,6 @@ export class UtilService extends BaseService {
         return { charts, width, height };
     }
 
-    /**
-     * Create the statistics label of log, depending on the log's total amount that from serve and the limit that from view.
-     */
     getPaginationStatistics(totalObs: Observable<number>, pageSizeObs: Observable<number>): Observable<string> {
         return combineLatest(
             totalObs,
@@ -121,11 +95,6 @@ export class UtilService extends BaseService {
         );
     }
 
-    /**
-     * 提取符中的图片信息
-     * @param source 原始字符串
-     * @returns 数据中包含的图片url
-     */
     pluckPictures(source: string): string[] {
         let result = [];
 

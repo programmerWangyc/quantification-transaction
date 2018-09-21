@@ -104,18 +104,12 @@ export class AppComponent implements OnInit, OnDestroy {
         return routeConfig && routeConfig.path === '**' || url && url.includes(Path.dashboard);
     }
 
-    /**
-     * 应用启动时检查一次是否保存有用户的登录信息，如果有跳转到登录后的页面
-     */
     private directTo() {
         this.pubService.isLogin().pipe(
             take(1)
         ).subscribe(hasLogged => hasLogged && this.router.navigateByUrl(location.pathname));
     }
 
-    /**
-     * 初始化应用语言，配置moment.js使用的语言；
-     */
     private initLanguage(): void {
         this.translate.setDefaultLang('zh');
 
@@ -132,9 +126,6 @@ export class AppComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * @ignore
-     */
     ngOnDestroy() {
         this.isAlive = false;
 

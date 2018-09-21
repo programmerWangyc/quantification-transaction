@@ -5,9 +5,6 @@ import { CanDeactivateComponent } from '../../base/guard.service';
 import { of } from 'rxjs';
 import { CreateRobotComponent } from '../create-robot/create-robot.component';
 
-/**
- * @ignore
- */
 @Component({
     selector: 'app-robot-creation',
     templateUrl: './robot-creation.component.html',
@@ -17,9 +14,6 @@ export class RobotCreationComponent implements OnInit, CanDeactivateComponent {
 
     paths: Breadcrumb[] = [{ name: 'ROBOT', path: '../' }, { name: 'CREATE_ROBOT' }];
 
-    /**
-     * @ignore
-     */
     @ViewChild(CreateRobotComponent) formComponent: CreateRobotComponent;
 
     constructor() { }

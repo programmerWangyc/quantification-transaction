@@ -11,24 +11,12 @@ import { GetQiniuTokenResponse } from '../interfaces/response.interface';
 
 export abstract class UploadService extends BaseService {
 
-    /**
-     * 获取 token 的方法
-     */
     abstract launchQiniuToken(source: Observable<GetQiniuTokenRequest>): Subscription;
 
-    /**
-     * 上传文件的方法
-     */
     abstract uploadImage(fileObs: Observable<UploadFile>): Observable<{ index: number; obs: Qiniu.Observable }>;
 
-    /**
-     * @ignore
-     */
     abstract getQiniuTokenResponse(): Observable<GetQiniuTokenResponse>;
 
-    /**
-     * 清除token
-     */
     abstract clearQiniuToken(): void;
 }
 
@@ -58,39 +46,18 @@ export const QiniuErrorCode = {
 
 export class UploadBaseComponent {
 
-    /**
-     * 需要上传的文件
-     */
     files: UploadFile[] = [];
 
-    /**
-     * Upload file amount limit;
-     */
     limit = 5;
 
-    /**
-     * @ignore
-     */
     allowedContentTypes = 'image/jpg, image/png, image/jpeg, image/gif';
 
-    /**
-     * 是否正在上传
-     */
     uploading$: Subject<boolean> = new Subject();
 
-    /**
-     * 上传完成的图片数量
-     */
     protected uploadedCount = 0;
 
-    /**
-     * @ignore
-     */
     protected urlPrefix: string = location.protocol === 'https' ? 'https://dn-filebox.qbox.me/' : 'http://7xi2n7.com1.z0.glb.clouddn.com/';
 
-    /**
-     * 上传成功生成的url
-     */
     url$: Subject<string> = new Subject();
 
     constructor(
@@ -101,18 +68,12 @@ export class UploadBaseComponent {
 
     }
 
-    /**
-     * @ignore
-     */
     beforeUpload = (file: UploadFile) => {
         this.files.push(file);
 
         return false;
     }
 
-    /**
-     * 上传文件
-     */
     uploadFile() {
         this.uploadService.launchQiniuToken(from(this.files).pipe(
             map(({ name }) => ({ name }))
@@ -131,9 +92,6 @@ export class UploadBaseComponent {
         this.uploading$.next(true);
     }
 
-    /**
-     * @ignore;
-     */
     protected tokenError(): void {
         this.reset();
 
@@ -142,9 +100,6 @@ export class UploadBaseComponent {
         this.uploadService.clearQiniuToken();
     }
 
-    /**
-     * Get upload image observer;
-     */
     protected createUploadObserver(): Qiniu.Observer {
         return {
             next: _ => { },
@@ -165,9 +120,6 @@ export class UploadBaseComponent {
         };
     }
 
-    /**
-     * @ignore
-     */
     protected reset(): void {
         this.uploading$.next(false);
 

@@ -64,21 +64,12 @@ export class ChargeService extends BaseService {
         return this.process.processPayOrders(data);
     }
 
-    //  =======================================================Date Acquisition=======================================================
-
-    /**
-     * 支付参数接口的响应
-     */
     private getPaymentArgsResponse(): Observable<GetPaymentArgResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectPaymentArgResponse)
         );
     }
 
-    /**
-     * 跳转到相应的支付页面
-     * @param payMethod 支付方式
-     */
     private goToPaymentPage(payMethod: number): Observable<GetPaymentArgResponse> {
         return this.getPaymentArgsResponse().pipe(
             withLatestFrom(this.store.select(fromRoot.selectPaymentArgRequestParams)),
@@ -87,9 +78,6 @@ export class ChargeService extends BaseService {
         );
     }
 
-    /**
-     * 跳转到支付宝付款页面
-     */
     goToAlipayPage(): Subscription {
         return this.goToPaymentPage(PaymentMethod.ALIPAY).pipe(
             map(res => {
@@ -116,17 +104,11 @@ export class ChargeService extends BaseService {
         ).subscribe(form => this.renderer2.removeChild(document.body, form));
     }
 
-    /**
-     * 跳转到payPal 支付页面
-     */
     goToPayPal(): Subscription {
         return this.goToPaymentPage(PaymentMethod.PAY_PAL)
             .subscribe(res => location.href = res.result.code_url);
     }
 
-    /**
-     * 获取微信扫描二维码
-     */
     getWechatQrCode(): Observable<string> {
         return this.goToPaymentPage(PaymentMethod.WECHAT).pipe(
             map(res => res.result.code_url),
@@ -134,28 +116,18 @@ export class ChargeService extends BaseService {
         );
     }
 
-    /**
-     * 获取支付订单的响应
-     */
     private getPayOrdersResponse(): Observable<GetPayOrdersResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectPayOrdersResponse)
         );
     }
 
-    /**
-     * 获取历史订单
-     */
     getHistoryOrders(): Observable<PayOrder[]> {
         return this.getPayOrdersResponse().pipe(
             map(res => res.result.items)
         );
     }
 
-    /**
-     * 获取指定标识的订单
-     * @param flag 订单标识
-     */
     getSpecificHistoryOrders(flag: string): Observable<PayOrder[]> {
         const predicate = this.isSpecificOrder(flag);
 
@@ -165,27 +137,16 @@ export class ChargeService extends BaseService {
         );
     }
 
-    /**
-     * 是否指定标识的订单
-     * @param flag 订单标识
-     */
     private isSpecificOrder(flag: string): (order: PayOrder) => boolean {
         return order => order.order_guid.indexOf(flag) !== -1;
     }
 
-    /**
-     * 获取订单总额
-     * @param data 订单数据
-     */
     getHistoryOrderTotalAmount(data: Observable<PayOrder[]>): Observable<number> {
         return data.pipe(
             map(orders => orders.reduce((acc, cur) => acc + getChargePrice(cur.order_guid, this.constant.RECHARGE_PAYMENT_FLAG), 0))
         );
     }
 
-    /**
-     * 充值成功
-     */
     chargeAlreadySuccess(): Observable<boolean> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectServerSendRechargeMessage),
@@ -193,19 +154,12 @@ export class ChargeService extends BaseService {
         );
     }
 
-    /**
-     * 充值是否成功
-     */
     isRechargeSuccess(): Observable<boolean> {
         return this.store.select(fromRoot.selectServerSendRechargeMessage).pipe(
             map(res => !!res && !!res.orderId)
         );
     }
 
-    /**
-     * 获取需要租用的策略
-     * @param idObs 目标id
-     */
     getChargeStrategy(idObs: Observable<number>): Observable<Strategy> {
         return merge(
             this.store.pipe(
@@ -226,11 +180,6 @@ export class ChargeService extends BaseService {
         );
     }
 
-    //  =======================================================Short cart method==================================================
-
-    /**
-     * 解析策略的租用价格
-     */
     parsePricing(info: string): RentPrice[] {
         const data = info.split(',');
 
@@ -251,36 +200,20 @@ export class ChargeService extends BaseService {
         });
     }
 
-    //  =======================================================Local state modify==================================================
-
-    /**
-     * @ignore
-     */
     resetRecharge(): void {
         this.store.dispatch(new ResetRechargeAction());
     }
 
-    /**
-     * @ignore
-     */
     resetPaymentArgumentsRes(signal: Observable<any>): Subscription {
         return signal.subscribe(_ => this.store.dispatch(new ResetPaymentArgumentsAction()));
     }
 
-    //  =======================================================Error Handle=======================================================
-
-    /**
-     * @ignore
-     */
     handlePaymentsArgsError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getPaymentArgsResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handlePayOrdersError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getPayOrdersResponse().pipe(
             takeWhile(keepAlive)

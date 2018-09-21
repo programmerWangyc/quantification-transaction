@@ -73,19 +73,8 @@ export class CommunityService extends UploadService {
         return this.process.processBBSGetQiniuToken(source);
     }
 
-    /**
-     * Upload file to qiniu server;
-     * @param fileObs File flow to be uploaded;
-     * @returns index文件上传时的索引，方便映射到上传文上；
-     */
     uploadImage(fileObs: Observable<UploadFile>): Observable<{ index: number; obs: Qiniu.Observable }> {
-        return zip(
-            fileObs,
-            this.getQiniuTokenResponse().pipe(
-                this.filterTruth(),
-                map(res => res.result)
-            )
-        ).pipe(
+        return zip(fileObs, this.getQiniuTokenResponse().pipe(this.filterTruth(), map(res => res.result))).pipe(
             map(([file, token], index) => ({ index, obs: qiniu.upload(file, file.name, token, {}, {}) }))
         );
     }
@@ -101,9 +90,6 @@ export class CommunityService extends UploadService {
         );
     }
 
-    /**
-     * bbs planes
-     */
     getBBSPlanes(): Observable<fromRes.BBSPlane[]> {
         return this.getBBSPlaneListResponse().pipe(
             map(res => res.result.items)
@@ -119,43 +105,28 @@ export class CommunityService extends UploadService {
         );
     }
 
-    /**
-     * bbs nodes
-     */
     getBBSNodes(): Observable<fromRes.BBSNode[]> {
         return this.getBBSNodeListResponse().pipe(
             map(res => res.result.items)
         );
     }
 
-    /**
-     * 分组的的bbs node；
-     */
     getGroupedBBSNodes(): Observable<GroupedList<fromRes.BBSNode>[]> {
         return this.utilService.getGroupedList(this.getBBSNodes(), 'plane_id', this.getPlaneName());
     }
 
-    /**
-     * @ignore
-     */
     private getBBSTopicListBySlugResponse(): Observable<fromRes.GetBBSTopicListBySlugResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectBBSTopicListBySlugResponse)
         );
     }
 
-    /**
-     * bbs topics
-     */
     getBBSTopics(): Observable<fromRes.BBSTopic[]> {
         return this.getBBSTopicListBySlugResponse().pipe(
             map(res => res.result.items)
         );
     }
 
-    /**
-     * Total amount of topics;
-     */
     getBBSTopicsTotal(): Observable<number> {
         return this.getBBSTopicListBySlugResponse().pipe(
             map(res => res.result.all_items)
@@ -171,9 +142,6 @@ export class CommunityService extends UploadService {
         );
     }
 
-    /**
-     * 提供store中 BBSTopicById的所有响应状态
-     */
     getBBSTopicByIdResponseState(): Observable<fromRes.GetBBSTopicResponse> {
         return this.store.pipe(
             select(fromRoot.selectBBSTopicByIdResponse)
@@ -209,29 +177,18 @@ export class CommunityService extends UploadService {
         );
     }
 
-    /**
-     * 是否发贴成功
-     */
     isAddTopicSuccess(): Observable<boolean> {
         return this.getAddBBSTopicResponse().pipe(
             map(res => !!res.result)
         );
     }
 
-    /**
-     * Get qiniu token
-     */
     getQiniuTokenResponse(): Observable<fromRes.GetQiniuTokenResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectBBSQiniuTokenResponse)
         );
     }
 
-    //  =======================================================Shortcut methods=======================================================
-
-    /**
-     * @ignore
-     */
     private getPlaneName(): (id: number) => string {
         let planes: fromRes.BBSPlane[] = null;
 
@@ -242,34 +199,18 @@ export class CommunityService extends UploadService {
         return (id: number) => planes.find(item => item.id === id).name;
     }
 
-    //  =======================================================Local state change=======================================================
-
-    /**
-     * Reset bbs top by id response;
-     */
     resetTopicState(): void {
         this.store.dispatch(new ResetBBSTopicAction());
     }
 
-    /**
-     * clear qiniu token
-     */
     clearQiniuToken(): void {
         this.store.dispatch(new ClearQiniuTokenAction());
     }
 
-    /**
-     * clear add topic state;
-     */
     clearBBSOperateState(): void {
         this.store.dispatch(new ClearBBSOperateStateAction());
     }
 
-    //  =======================================================Error handler=======================================================
-
-    /**
-     * @ignore
-     */
     handleBBSPlaneListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getBBSPlaneListResponse().pipe(
             takeWhile(keepAlive)

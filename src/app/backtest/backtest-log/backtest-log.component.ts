@@ -18,37 +18,21 @@ export interface BacktestTaskLog {
 })
 export class BacktestLogComponent implements OnInit {
 
-    /**
-     * Col names;
-     */
     cols: Observable<string[]>;
 
-    /**
-     * Backtest log
-     */
     logs: Observable<BacktestLogResult[]>;
 
-    /**
-     * Backtest task
-     */
     tasks: number[][] = [];
 
-    /**
-     * Whether logs could be downloaded;
-     */
     canSave: Observable<boolean>;
 
     constructor(
         private chartService: BacktestChartService,
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.cols = this.chartService.getBacktestLogCols();
 
-        // 注意： 这条流上会有 null 抛出，代表这个回测结果失败。
         this.logs = this.chartService.getBacktestLogResults();
 
         this.chartService.getBacktestLogRows()
@@ -57,9 +41,6 @@ export class BacktestLogComponent implements OnInit {
         this.canSave = this.chartService.canSaveResult();
     }
 
-    /**
-     * @ignore
-     */
     onDownload() {
         this.chartService.downloadLogs();
     }

@@ -12,13 +12,6 @@ export enum ConfirmType {
     PUBLIC,
 }
 
-/**
- *
- * Input: 1, targetType: Public type that the strategy want to be. 2, currentType: Public type that the strategy is hold on.
- * Output: The param of the close method, indicate the result of user selected.
- *
- * Both the input and output will decide how to handle the next action together.
- */
 @Component({
     selector: 'app-share-confirm',
     templateUrl: './share-confirm.component.html',

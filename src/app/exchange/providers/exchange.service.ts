@@ -22,20 +22,12 @@ export class ExchangeService extends BaseService {
         super();
     }
 
-    // ========================================Data acquisition==================================
-
-    /**
-     * @ignore
-     */
     private getExchangeUIState(): Observable<UIState> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectExchangeUIState)
         );
     }
 
-    /**
-     * 交易所配置
-     */
     getExchangeConfig(): Observable<ExchangeConfig> {
         return this.getExchangeUIState().pipe(
             map(state => state.exchange),
@@ -43,9 +35,6 @@ export class ExchangeService extends BaseService {
         );
     }
 
-    /**
-     * 通过配置信息获取指定的平台
-     */
     getTargetExchange<T extends Exchange>(config: ExchangeConfig, source: T[]): T {
         const { selectedTypeId } = config;
 
@@ -62,20 +51,12 @@ export class ExchangeService extends BaseService {
         }
     }
 
-    /**
-     * 获取锁定的交易所类型
-     */
     getFreezeExchangeType(eidObs: Observable<string>): Observable<number> {
         return eidObs.pipe(
             map(eid => this.constant.eidToExchangeType(eid))
         );
     }
 
-    // ========================================Local date update===================================
-
-    /**
-     * @ignore
-     */
     updateExchangeType(typeObs: Observable<number>): Subscription {
         return typeObs.subscribe(type => this.store.dispatch(new Actions.UpdateSelectedExchangeTypeAction(type)));
     }

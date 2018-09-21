@@ -41,11 +41,6 @@ export class StrategyOperateService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * @ignore
-     */
     launchShareStrategy(paramsObs: Observable<ShareStrategyStateSnapshot>): Subscription {
         return this.process.processShareStrategy(paramsObs.pipe(
             switchMap(params => this.confirmStrategyShare(params, ShareConfirmComponent).pipe(
@@ -56,9 +51,6 @@ export class StrategyOperateService extends BaseService {
         )).add(this.launchGenKey());
     }
 
-    /**
-     * @ignore
-     */
     private launchGenKey(): Subscription {
         return this.process.processGenKey(this.genKey$.pipe(
             switchMap(([params]) => this.confirmStrategyShare(params, InnerShareConfirmComponent).pipe(
@@ -72,9 +64,6 @@ export class StrategyOperateService extends BaseService {
         ));
     }
 
-    /**
-     * 发起删除策略请求
-     */
     launchDeleteStrategy(paramsObs: Observable<fromRes.Strategy>): Subscription {
         return this.process.processDeleteStrategy(paramsObs.pipe(
             switchMap((params: fromRes.Strategy) => this.tip.guardRiskOperate('DELETE_STRATEGY_TIP', { name: params.name }).pipe(
@@ -83,9 +72,6 @@ export class StrategyOperateService extends BaseService {
         ));
     }
 
-    /**
-     * @ignore
-     */
     launchSaveStrategy(paramsObs: Observable<fromReq.SaveStrategyRequest>): Subscription {
         return this.process.processSaveStrategy(
             paramsObs.pipe(
@@ -95,11 +81,6 @@ export class StrategyOperateService extends BaseService {
         );
     }
 
-    //  =======================================================Date acquisition=======================================================
-
-    /**
-     * @ignore
-     */
     private getShareStrategyResponse(): Observable<fromRes.ShareStrategyResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectShareStrategyResponse)
@@ -163,16 +144,11 @@ export class StrategyOperateService extends BaseService {
         );
     }
 
-    /**
-     * store 中的请求参数;
-     */
     private getRequestParams(): Observable<RequestParams> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectStrategyRequestParams)
         );
     }
-
-    //  =======================================================Shortcut methods=======================================================
 
     private confirmStrategyShare(param: ShareStrategyStateSnapshot, component: any): Observable<number | InnerShareFormModel> {
         const { type, currentType } = param;
@@ -187,8 +163,6 @@ export class StrategyOperateService extends BaseService {
             this.filterTruth()
         );
     }
-
-    //  =======================================================Error handler=======================================================
 
     handleShareStrategyError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getShareStrategyResponse().pipe(

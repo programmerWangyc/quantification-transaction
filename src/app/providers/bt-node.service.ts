@@ -38,32 +38,20 @@ export class BtNodeService extends BaseService {
 
     // =======================================================Serve Request=======================================================
 
-    /**
-     * Request node list from server.
-     */
     launchGetNodeList(data: Observable<any>): Subscription {
         return this.process.processGetNodeList(data);
     }
 
-    /**
-     * Delete node
-     */
     launchDeleteNode(node: Observable<BtNode>): Subscription {
         return this.process.processDeleteNode(node.pipe(
             map(({ id }) => ({ id }))
         ));
     }
 
-    /**
-     * get node hash
-     */
     launchNodeHash(start: Observable<any>): Subscription {
         return this.process.processGetNodeHash(start);
     }
 
-    /**
-     * 下载agent package
-     */
     launchDownloadPackage(uri: Observable<string>): Subscription {
         return uri.pipe(
             switchMap(url => this.httpClient.get(url, { responseType: 'blob' }).pipe(
@@ -91,54 +79,30 @@ export class BtNodeService extends BaseService {
             });
     }
 
-    // =======================================================Date Acquisition=======================================================
-
-    /**
-     * Get node list response.
-     */
     private getNodeListResponse(): Observable<GetNodeListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectBtNodeListResponse)
         );
     }
 
-    /**
-     * Select nodes from node list response;
-     */
     getNodeList(): Observable<BtNode[]> {
         return this.getNodeListResponse().pipe(
             map(res => res.result.nodes)
         );
     }
 
-    /**
-     * 获取分组后的 node list.
-     * @param getName  The method to generate group name.
-     * @param key The key used to distinct data.
-     */
     getGroupedNodeList(key: string, getName?: (arg: number | boolean) => string): Observable<GroupedNode[]> {
         return this.utilService.getGroupedList(this.getNodeList(), key, getName);
     }
 
-    /**
-     * 生成代理节点的名称。
-     * @param id  Node id.
-     */
     getAgentName(id: number): string {
         return id === 0 ? 'PRIVATE_AGENT' : 'PUBLIC_AGENT';
     }
 
-    /**
-     * 根据代理节点的名称获取它的id。
-     * @param str 代理节点的名称。
-     */
     reverseGetAgentName(str: string): number {
         return str === 'PRIVATE_AGENT' ? 0 : 1;
     }
 
-    /**
-     * Predicate whether the node is public node.
-     */
     isPublicNode(nodeId: number): Observable<boolean> {
         return this.getNodeList().pipe(
             map(list => {
@@ -149,37 +113,24 @@ export class BtNodeService extends BaseService {
         );
     }
 
-    /**
-     * 获取符合条件的节点集合。
-     * @param conditions Collection of predicate functions;
-     */
     getSpecificNodeList(...conditions: NodeFilterFn[]): Observable<BtNode[]> {
         return this.getNodeList().pipe(
             map(list => list.filter(item => conditions.reduce((acc, cur) => acc && cur(item), true)))
         );
     }
 
-    /**
-     * @ignore
-     */
     private getDeleteNodeResponse(): Observable<DeleteNodeResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectDeleteNodeResponse)
         );
     }
 
-    /**
-     * @ignore
-     */
     private getNodeUIState(): Observable<UIState> {
         return this.store.pipe(
             select(fromRoot.selectBtNodeUIState),
         );
     }
 
-    /**
-     * 是否正在加载托管者列表
-     */
     isLoading(): Observable<boolean> {
         return this.getNodeUIState().pipe(
             map(state => state.isLoading),
@@ -187,9 +138,6 @@ export class BtNodeService extends BaseService {
         );
     }
 
-    /**
-     * node hash
-     */
     getNodeHash(): Observable<string> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectNodeHashResponse),
@@ -197,36 +145,21 @@ export class BtNodeService extends BaseService {
         );
     }
 
-    // =======================================================Shortcut methods=======================================================
 
-    /**
-     * Predicate whether the node is main node.
-     */
     isMineNode(node: BtNode): boolean {
         return node.is_owner;
     }
 
-    /**
-     * Whether the node is latest available node.
-     */
     isLatestFunctionalNode(node: BtNode): boolean {
         return node.version.indexOf('plugin') !== -1;
     }
 
-    // =======================================================Error Handle==========================================================
-
-    /**
-     * Handle the error of node list request.
-     */
     handleNodeListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getNodeListResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleDeleteNodeError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getDeleteNodeResponse().pipe(
             takeWhile(keepAlive)

@@ -27,12 +27,6 @@ export type MaxDrawdownResultFn = (maxDrawdown: number, [time, profit]: [number,
 
 export type BacktestResultFilterer = (res: fromRes.BacktestResult) => boolean;
 
-/**
- * 获取收益，递归查找所有的 'Long' ，'Short' 字段，将各字段的值进行累积。
- * @param data 查找的对象
- * @param initial 计算的初始值
- * @returns 收益的统计结果对象
- */
 export function getProfit(data: Object, initial: { Profit: number; Margin: number }): { Profit: number; Margin: number } {
     return Object.entries(data).reduce((acc, [key, value]) => {
         if (key === 'Long' || key === 'Short') {
@@ -49,9 +43,6 @@ export function getProfit(data: Object, initial: { Profit: number; Margin: numbe
     }, initial);
 }
 
-/**
- * 回测服务的基类；
- */
 export class BacktestBaseService extends BaseService {
     constructor(
         public store: Store<fromRoot.AppState>,
@@ -59,9 +50,6 @@ export class BacktestBaseService extends BaseService {
         super();
     }
 
-    /**
-     * 获取回测接口的响应，如果传入回测的callbackId，则只会获取到指定的响应，否则将会获取到所有通过backtestIO接口接收到的响应。
-     */
     protected getBacktestIOResponse(callbackId?: string): Observable<fromRes.BacktestIOResponse> {
         return this.store.pipe(
             select(fromRoot.selectBacktestIOResponse),
@@ -70,9 +58,6 @@ export class BacktestBaseService extends BaseService {
         );
     }
 
-    /**
-     * 获取回测结果，包括服务端的回测结果及webworker中的回测结果；
-     */
     getBacktestResult(): Observable<WorkerBacktest.WorkerResult> {
         return this.getBacktestIOResponse(BacktestOperateCallbackId.result).pipe(
             map(res => {
@@ -84,9 +69,6 @@ export class BacktestBaseService extends BaseService {
         );
     }
 
-    /**
-     * 获取回测的ui状态。
-     */
     getUIState(): Observable<UIState> {
         return this.store.pipe(
             select(fromRoot.selectBacktestUIState)
@@ -94,10 +76,6 @@ export class BacktestBaseService extends BaseService {
     }
 }
 
-
-/**
- * 注意：这个服务不可被注入，如需使用服务上的方法，使用其子类： BacktestChartService；
- */
 export class BacktestResultService extends BacktestBaseService {
     PERIOD = 24 * 60 * 60 * 1000;
 
@@ -110,11 +88,7 @@ export class BacktestResultService extends BacktestBaseService {
         super(store);
     }
 
-    // ==============================================Shortcut methods============================================
 
-    /**
-     * 是否允许用户下载回测结果。只有当回测完成并且有结果供下载时才可以下载。
-     */
     canSaveResult(): Observable<boolean> {
         return this.getUIState().pipe(
             map(state => state.backtestMilestone),
@@ -127,17 +101,10 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * The name of the file to be download;
-     */
     private createFileName(start: number, end: number): string {
         return moment(start).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + '_' + moment(end).format('YYYYMMDDhhmmss').replace(/[\-\s:]/g, '') + '.csv';
     }
 
-    /**
-     * 获取回测完成的结果。
-     * @param ignore 结果的过滤函数，接收Code作为参数，当响应的code满足指定条件时将被忽略，输出null。
-     */
     getBacktestResults(ignore?: (code: number) => boolean): Observable<fromRes.BacktestResult[]> {
         return this.store.pipe(
             select(fromRoot.selectBacktestResults),
@@ -150,19 +117,10 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 当是任务是否已经成功或存在
-     */
     private isTaskSuccessOrExist(code: number): boolean {
         return code === ServerBacktestCode.SUCCESS || code === ServerBacktestCode.ALREADY_EXIST;
     }
 
-    // ================================================Backtest status panel===============================================
-
-    /**
-     * 获取回测的统计数据。
-     * @param statisticKey 字段名称
-     */
     getBacktestStatistics(statisticKey: string, filterer: BacktestResultFilterer = res => res.Finished): Observable<number> {
         return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
             switchMap(results => from(results).pipe(
@@ -182,9 +140,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取回测的进度。
-     */
     getBacktestProgress(): Observable<number> {
         return this.getUIState().pipe(
             map(state => state.isOptimizedBacktest),
@@ -192,9 +147,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 非调优状态下回测时，显示 回测状态的 Progress 字段的值；
-     */
     private getNormalBacktestProgress(): Observable<number> {
         const middleStatus = this.store.pipe(
             select(fromRoot.selectBacktestState),
@@ -220,9 +172,6 @@ export class BacktestResultService extends BacktestBaseService {
         return merge(middleStatus, completeStatus);
     }
 
-    /**
-     * 调优状态下回测，显示 已完成的任务 / 任务总数；
-     */
     private getOptimizedBacktestProgress(): Observable<number> {
         return this.getUIState().pipe(
             filter(state => !!state.backtestTasks),
@@ -232,16 +181,11 @@ export class BacktestResultService extends BacktestBaseService {
                 this.filterTruth(),
                 map(results => results.length)
             ),
-                (total, completed) => (completed / total) * 100
+                (total, completed) => (completed / total)
             )
         );
     }
 
-    /**
-     * 获取交易次数，从各个包含 'TradeStatus' 字段的数据上统计交易次数。累积其sell， buy字段。
-     * @param data 回测结果
-     * @returns 交易总次数
-     */
     private calTradeCount(data: fromRes.BacktestResult): number {
         const { TradeStatus, Snapshort, Snapshorts } = data;
 
@@ -256,9 +200,6 @@ export class BacktestResultService extends BacktestBaseService {
         return cal(TradeStatus) + calShort(Snapshort) + calShorts(Snapshorts);
     }
 
-    /**
-     * 获取交易次数总计；
-     */
     getTradeCount(): Observable<number> {
         return this.getBacktestResults(code => code !== ServerBacktestCode.SUCCESS).pipe(
             switchMap(results => from(results).pipe(
@@ -270,9 +211,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取当前正在回测的任务的序号
-     */
     getIndexOfBacktestingTask(): Observable<number> {
         return this.getUIState().pipe(
             map(state => state.backtestingTaskIndex),
@@ -281,11 +219,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    // ============================================================调优状态下的日志信息==================================================================
-
-    /**
-     * 获取日志表格的列名称，参数列需要根据用户选择的调优参数动态生成；
-     */
     getBacktestLogCols(): Observable<string[]> {
         return this.getUIState().pipe(
             filter(state => state.backtestTasks && !!state.backtestTasks.length),
@@ -293,9 +226,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取日志表格中的每一行。也就是根据调优参数生成的每一个进行测试的任务的参数组合。
-     */
     getBacktestLogRows(): Observable<number[][]> {
         return this.getUIState().pipe(
             filter(state => Array.isArray(state.backtestTasks)),
@@ -303,9 +233,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取胜率；ProfitLogs 元素中后个收益大于前一个收益时，取胜结果加1，胜率 = 取胜结果 / 收益日志总数。
-     */
     protected getWinningRate(source: BacktestProfitDescription[]): Observable<number> {
         if (!source || source.length === 0) {
             return of(0);
@@ -328,11 +255,6 @@ export class BacktestResultService extends BacktestBaseService {
         }
     }
 
-    /**
-     * 获取最大回撤的信息集合；
-     * @param source 收益数据
-     * @param isBalancePrior 苑取总资产时是否优先使用余额
-     */
     protected getMaxDrawdown(source: BacktestProfitDescription[], isBalancePrior = false): Observable<BacktestMaxDrawDownDescription> {
         return this.getTotalAssets(isBalancePrior).pipe(
             take(1),
@@ -362,9 +284,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取总资产；默认优先使用余币的值。
-     */
     protected getTotalAssets(isBalancePrior = false): Observable<number> {
         return this.getUIState().pipe(
             filter(state => !!state.platformOptions && !!state.platformOptions.length),
@@ -380,10 +299,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 计算回测任务的夏普比率
-     * {@link www.baike.baidu.com} SharpeRatio = (E(Rp) - Rf) / oP  E(Rp): 投资组合预期报酬率 Rf:无风险利率；oP: 投资组合的标准差；
-     */
     protected getSharpRatio(source: BacktestProfitDescription[]): Observable<number> {
         return this.getStandardDeviation(source).pipe(
             withLatestFrom(
@@ -393,9 +308,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 计算标准差；
-     */
     protected getStandardDeviation(source: BacktestProfitDescription[]): Observable<number> {
         return this.getRatio(source).pipe(
             defaultIfEmpty([]),
@@ -417,9 +329,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取周期内的夏普比率。
-     */
     private getRatio(source: BacktestProfitDescription[]): Observable<number[]> {
         return this.getTimeRange().pipe(
             withLatestFrom(
@@ -436,9 +345,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取日收益
-     */
     private getDayProfit(source: BacktestProfitDescription[]): (end: number) => number {
         let i = 0;
 
@@ -455,9 +361,6 @@ export class BacktestResultService extends BacktestBaseService {
         };
     }
 
-    /**
-     * 获取回测的时间周期
-     */
     protected getTimeRange(): Observable<{ start: number; end: number }> {
         return this.getUIState().pipe(
             filter(state => !!state.timeOptions),
@@ -473,9 +376,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取年化交易天数，使用回测交易平台中的最小值。
-     */
     protected getYearDays(): Observable<number> {
         return this.getUIState().pipe(
             filter(state => !!state.platformOptions),
@@ -492,9 +392,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取年化预估收益
-     */
     protected getAnnualizedReturns(source: BacktestProfitDescription[]): Observable<number> {
         if (isEmpty(source)) return of(0);
 
@@ -513,9 +410,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取时间值和收益值
-     */
     protected getAssetsAndTimeInfo(source: BacktestProfitDescription[]): Observable<BacktestAssetsAndTime> {
         if (isEmpty(source)) {
             return of(null);
@@ -530,9 +424,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 生成回测日志，数据来源于响应的Result字段， 如果发生错误，当前的回测结果为null。
-     */
     getBacktestLogResults(): Observable<BacktestLogResult[]> {
         const generateLogResult = (data: fromRes.BacktestResult): BacktestLogResult => {
             const { Elapsed, Profit, ProfitLogs } = data;
@@ -555,9 +446,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 下载调优回测日志。
-     */
     downloadLogs(): void {
         const colNames = zip(
             this.translate.get(['SEQUENCE_NUMBER', 'TIME_CONSUMING_WITH_UNIT', 'TRANSACTIONS', 'WINNING_RATE', 'MAXIMUM_WITHDRAWAL', 'SHARP', 'ESTIMATED_REVENUE', 'PROFIT']),
@@ -608,11 +496,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 导出文件；
-     * @param source File content;
-     * @param filename File name;
-     */
     private exportFile(source: Observable<any[][]>, filename: Observable<string>): void {
         source.pipe(
             reduce((acc, cur) => [acc, ...cur]),
@@ -626,12 +509,6 @@ export class BacktestResultService extends BacktestBaseService {
         });
     }
 
-    // ============================================================非调优状态下的帐户信息==================================================================
-
-    /**
-     * 获取未调优状态下的回测结果。
-     * @param futuresDataFilter: 期货的数据过滤器，用来在生成期货信息时过滤出有效的snapshot。
-     */
     getBacktestAccountInfo(futuresDataFilter = (data: fromRes.BacktestResultSnapshot) => !!data.Symbols): Observable<BacktestAccount[]> {
         return this.getBacktestResult().pipe(
             map(data => {
@@ -654,9 +531,6 @@ export class BacktestResultService extends BacktestBaseService {
         );
     }
 
-    /**
-     * 获取非期货的帐户信息；
-     */
     private getAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[]): BacktestAccount {
         const subSnapshots = source.filter(this.curry2Right(this.isValidSnapshot)(account));
 
@@ -671,16 +545,10 @@ export class BacktestResultService extends BacktestBaseService {
         return { ...account, returns, commission, profitAndLose };
     }
 
-    /**
-     * 计算收益值；
-     */
     private calculateProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): number {
         return snapshot.Balance + snapshot.FrozenBalance - account.initialBalance + (snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks) * snapshot.Symbols[account.symbol].Last;
     }
 
-    /**
-     * 获取期货的帐户信息；
-     */
     private getFuturesAccount(account: BacktestAccount, source: fromRes.BacktestResultSnapshot[], filterFn: (data: fromRes.BacktestResultSnapshot) => boolean): BacktestAccount {
         const subSnapshots = source.filter(filterFn);
 
@@ -703,26 +571,18 @@ export class BacktestResultService extends BacktestBaseService {
         return { ...account, positionProfit: Profit, currentMargin: Margin, commission: snapshot && snapshot.Commission || 0, returns, profitAndLose };
     }
 
-    /**
-     * 计算期货的收益值；
-     */
+
     private calculateFuturesProfit(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount, initial = 0): number {
         return account.isFuturesOkCoin ? initial + snapshot.Stocks + snapshot.FrozenStocks - account.initialStocks :
             initial + snapshot.Balance + snapshot.FrozenBalance - account.initialBalance;
     }
 
-    /**
-     * 计算snapshot时的判定函数。
-     */
     private isValidSnapshot(snapshot: fromRes.BacktestResultSnapshot, account: BacktestAccount): boolean {
         const { Symbols } = snapshot;
 
         return Symbols && <fromRes.BacktestResultSymbol>Symbols[account.symbol] && Symbols[account.symbol].Last;
     }
 
-    /**
-     * 生成帐户的初始信息。
-     */
     protected getAccountInitialInfo(source: fromRes.BacktestResultExchange): BacktestAccount {
         const { Id, BaseCurrency, QuoteCurrency, Balance, Stocks } = source;
 
@@ -746,11 +606,6 @@ export class BacktestResultService extends BacktestBaseService {
         };
     }
 
-    // ============================================================非调优状态下的日志信息==================================================================
-
-    /**
-     * 获取回测的运行日志
-     */
     private getRuntimeLogs(): Observable<fromRes.RuntimeLog[]> {
         return this.getBacktestResult().pipe(
             filter(({ RuntimeLogs }) => !!RuntimeLogs && !!RuntimeLogs.length),

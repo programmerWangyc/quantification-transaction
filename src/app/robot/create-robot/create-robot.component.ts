@@ -61,45 +61,21 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
      */
     form: FormGroup;
 
-    /**
-     * kline period;
-     */
     periods = K_LINE_PERIOD;
 
 
-    /**
-     * 交易平台
-     */
     platforms: Platform[] = [];
 
-    /**
-     * 是否自定义股票
-     */
     isCustomStock = false;
 
-    /**
-     * 选中的交易对
-     */
     selectedPairs: SelectedPair[] = [];
 
-    /**
-     * 创建指令
-     */
     create$: Subject<RobotCreationForm> = new Subject();
 
-    /**
-     * 托管者
-     */
     agents: Observable<GroupedNode[]>;
 
-    /**
-     * 分组后的策略
-     */
     strategies: Observable<GroupedStrategy[]>;
 
-    /**
-     * 策略参数
-     */
     selectedStrategyArgs: SemanticArg = null;
 
     /**
@@ -212,9 +188,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         });
     }
 
-    /**
-     * 创建请求参数
-     */
     private createSaveParams(formValue: RobotCreationForm): SaveRobotRequest {
         const { robotName, kLinePeriod, agent, strategy } = formValue;
 
@@ -235,9 +208,6 @@ export class CreateRobotComponent extends ExchangePairBusinessComponent {
         return { name: robotName, kLineId: kLinePeriod, nodeId: agent, args, strategyId: strategy, pairExchanges: platform, pairStocks: stocks };
     }
 
-    /**
-     * 处理参数变化
-     */
     argChange(arg: VariableOverview, templateName?: string): void {
         if (!arg.variableName) return;
 

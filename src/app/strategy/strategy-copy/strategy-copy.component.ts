@@ -21,14 +21,14 @@ import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-cr
 })
 export class StrategyCopyComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    /**
-     * 策略所依赖的模板
-     */
+
+
+
     templates: Observable<TemplateRefItem[]>;
 
-    /**
-     * 是否需要显示模板依赖
-     */
+
+
+
     needShowTemplateDependance: Observable<boolean>;
 
     constructor(
@@ -44,9 +44,9 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         super(backtest, constant, nodeService, route, strategyOptService, strategyService, tipService);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnInit() {
         this.initialModel();
 
@@ -57,27 +57,27 @@ export class StrategyCopyComponent extends StrategyCreateMetaComponent implement
         this.initialPrivateModel();
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     initialPrivateModel() {
         this.templates = this.getTemplateDependance(this.strategyService.getCurrentDependance());
 
         this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngAfterViewInit() {
         this.strategyOptService.launchSaveStrategy(this.confirmBeforeRequest(-1 - this.strategyId).pipe(
             takeWhile(() => this.isAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnDestroy() {
         this.isAlive = false;
 

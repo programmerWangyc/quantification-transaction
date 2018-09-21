@@ -15,9 +15,9 @@ import { StrategyService } from '../providers/strategy.service';
 })
 export class StrategyDesComponent implements OnInit {
 
-    /**
-     * @ignore
-     */
+
+
+
     @Input() set strategy(value: Strategy) {
         if (!value) return;
 
@@ -34,44 +34,44 @@ export class StrategyDesComponent implements OnInit {
         this.strategyName = input ? this.strategyName + '(copy)' : this.strategyName;
     }
 
-    /**
-     * Update language;
-     */
+
+
+
     @Output() langChange: EventEmitter<number> = new EventEmitter();
 
-    /**
-     * Update category;
-     */
+
+
+
     @Output() catChange: EventEmitter<number> = new EventEmitter();
 
-    /**
-     * Update name;
-     */
+
+
+
     @Output() nameUpdate: EventEmitter<string> = new EventEmitter();
 
-    /**
-     * @ignore
-     */
+
+
+
     strategyName = '';
 
-    /**
-     * @ignore
-     */
+
+
+
     language = 0;
 
-    /**
-     * @ignore
-     */
+
+
+
     category = 0;
 
-    /**
-     * Supported languages;
-     */
+
+
+
     languages: SupportedLanguage[] = [];
 
-    /**
-     * Supported categories;
-     */
+
+
+
     categories: Category[] = [];
 
     constructor(
@@ -80,22 +80,22 @@ export class StrategyDesComponent implements OnInit {
         private strategyService: StrategyService,
     ) { }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnInit() {
         this.categories = this.constant.STRATEGY_CATEGORIES.slice(0, -1);
 
         this.languages = this.constant.SUPPORTED_LANGUAGE;
 
         this.strategyService.updateSelectedLanguage(this.language);
-        // category 是没有在store中存储的，只是在最后要保存的时候由父组件从子组件下提取了值，但是它变化时会影响回测周期的设置
+
     }
 
-    /**
-     * Show tip message when user selected template category;
-     * @param category Current category;
-     */
+
+
+
+
     showCategoryChangeTip(category: number): void {
         if (category === CategoryType.TEMPLATE_LIBRARY) {
             this.nzModal.warning({
@@ -109,9 +109,9 @@ export class StrategyDesComponent implements OnInit {
         }
     }
 
-    /**
-     * 监听策略编程语言的变化；
-     */
+
+
+
     onLanguageChange(language: number): void {
         this.langChange.next(language);
 

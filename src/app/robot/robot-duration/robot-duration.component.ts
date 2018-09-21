@@ -60,16 +60,6 @@ export class RobotDurationComponent implements OnInit, OnDestroy {
             map(robots => Math.max(1, robots.length))
         );
 
-        // const availableHours = availableRobotCount
-        //     .pipe(
-        //         withLatestFrom(
-        //             this.publicService.getBalance(),
-        //             (count, balance) => (balance / 1e8 / count / 0.125).toFixed(2)
-        //         ),
-        // )
-
-        // const deadline = this.robotService.getRobotDeadLine();
-
         combineLatest(
             availableRobotCount,
             this.publicService.getBalance(),

@@ -9,9 +9,6 @@ import { Breadcrumb } from '../../interfaces/app.interface';
     styleUrls: ['./agent.component.scss'],
 })
 export class AgentComponent implements OnInit {
-    /**
-     * @ignore
-     */
     paths: Breadcrumb[] = [{ name: 'AGENT' }];
 
     constructor(
@@ -19,16 +16,9 @@ export class AgentComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
     }
 
-    /**
-     * Navigate to other pate;
-     * @param path target route;
-     */
     navigateTo(path: string, isRelativeToParent = false): void {
         this.router.navigate([path], { relativeTo: isRelativeToParent ? this.activatedRoute.parent : this.activatedRoute });
     }

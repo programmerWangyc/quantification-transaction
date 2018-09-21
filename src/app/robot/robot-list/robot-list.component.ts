@@ -20,19 +20,10 @@ import { RobotService } from '../providers/robot.service';
 })
 export class RobotListComponent extends BaseComponent {
 
-    /**
-     * @ignore
-     */
     subscription$$: Subscription;
 
-    /**
-     * Source data
-     */
     data: Observable<Robot[]>;
 
-    /**
-     * 公开机器人
-     */
     publicRobot$: Subject<Robot> = new Subject();
 
     /**
@@ -45,29 +36,14 @@ export class RobotListComponent extends BaseComponent {
      */
     isLoading: Observable<boolean>;
 
-    /**
-     * 当前公开的机器人
-     */
     currentPublicRobot: Robot;
 
-    /**
-     * @ignore
-     */
     restartRobot$: Subject<Robot> = new Subject();
 
-    /**
-     * @ignore
-     */
     stopRobot$: Subject<Robot> = new Subject();
 
-    /**
-     * @ignore
-     */
     deleteRobot$: Subject<Robot> = new Subject();
 
-    /**
-     * @ignore
-     */
     setRobotWD$: Subject<Robot> = new Subject();
 
     /**

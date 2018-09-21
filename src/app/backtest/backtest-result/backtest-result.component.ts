@@ -12,39 +12,18 @@ import { BacktestService } from '../providers/backtest.service';
     styleUrls: ['./backtest-result.component.scss'],
 })
 export class BacktestResultComponent implements OnInit {
-    /**
-     * Whether show backtest dashboard;
-     */
     @Input() isDashboardDisplay = false;
 
-    /**
-     * Whether the backtest is optimized or not;
-     */
     isOptimizeBacktest: Observable<boolean>;
 
-    /**
-     * Whether show quota chart;
-     */
     isQuoteDisplay: Observable<boolean>;
 
-    /**
-     * Whether show floating profit and lose chart;
-     */
     isFloatingPLDisplay: Observable<boolean>;
 
-    /**
-     * Whether show profit curve chart;
-     */
     isProfitCurveDisplay: Observable<boolean>;
 
-    /**
-     * Whether show strategy charts;
-     */
     isStrategyChartsDisplay: Observable<boolean>;
 
-    /**
-     * Whether has backtest result;
-     */
     hasResult: Observable<boolean>;
 
     constructor(

@@ -26,49 +26,22 @@ export class RobotOverviewComponent extends FoldableBusinessComponent implements
      */
     subscription$$: Subscription;
 
-    /**
-     * Restart robot flow;
-     */
     restart$: Subject<RobotDetail> = new Subject();
 
-    /**
-     * Stop robot flow;
-     */
     stop$: Subject<RobotDetail> = new Subject();
 
-    /**
-     * Watch dog toggle flow;
-     */
     watchDog$: Subject<RobotDetail> = new Subject();
 
-    /**
-     * Operate button text. Difference during each processing;
-     */
     operateBtnText: Observable<string>;
 
-    /**
-     * Watch dog button text;
-     */
     watchDogBtnText: Observable<string>;
 
-    /**
-     * Stopping state;
-     */
     isStopLoading: Observable<boolean>;
 
-    /**
-     * Restarting state;
-     */
     isRestartLoading: Observable<boolean>;
 
-    /**
-     * @ignore
-     */
     statusTip: Observable<string>;
 
-    /**
-     * @ignore
-     */
     isFold = false;
 
     /**

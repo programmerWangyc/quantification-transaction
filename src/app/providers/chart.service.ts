@@ -24,9 +24,6 @@ export class ChartService {
         this.initialConfig();
     }
 
-    /**
-     * Init highcharts config.
-     */
     private initialConfig() {
 
         this.setDefaultOptions();
@@ -46,9 +43,6 @@ export class ChartService {
             .subscribe((result: Highstock.RangeSelectorButton[]) => this.typeButtons = result);
     }
 
-    /**
-     *  Set highstock global configuration;
-     */
     private setDefaultOptions() {
 
         const monthsArr = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
@@ -87,11 +81,6 @@ export class ChartService {
             .subscribe(lang => Highstock.setOptions({ lang, credits: { enabled: false }, global: { useUTC: false } }));
     }
 
-    // ========================================Robot detail chart section=============================================
-
-    /**
-     * Get robot profit log options;
-     */
     getRobotProfitLogsOptions(data: [number, number][]): Highstock.Options {
         let seriesName = '';
 
@@ -100,7 +89,7 @@ export class ChartService {
         return {
             plotOptions: {
                 series: {
-                    turboThreshold: 0, // 禁用涡轮增压
+                    turboThreshold: 0,
                 },
             },
             rangeSelector: {
@@ -124,9 +113,6 @@ export class ChartService {
         };
     }
 
-    /**
-     * Be careful, this function is very very very impure. It will modify the options parameter in multi places.
-     */
     getRobotStrategyLogsOptions(options: any[], logs: StrategyChartData[]): Highcharts.Options[] {
         const seriesSource = orderBy(logs, ['seriesIdx'], ['asc']).map(item => item.data);
 
@@ -140,7 +126,7 @@ export class ChartService {
             if (newData) {
                 item.data = item.data.concat(newData);
             } else {
-                // nothing to do ;
+
             }
         });
 
@@ -160,7 +146,7 @@ export class ChartService {
 
         const info = { x: data[0] };
 
-        if (data.length < 5) { // !FIXME: magic number 5; why 5?
+        if (data.length < 5) {
             return { ...result, ...info, y: data[1] };
         } else {
             return {
@@ -197,7 +183,7 @@ export class ChartService {
 
             updateIndicator = flatten(result);
         } else {
-            // nothing to do
+
         }
 
         return updateIndicator;
@@ -223,7 +209,7 @@ export class ChartService {
         const update = (key: string) => (item: Highcharts.AxisOptions, index: number) => {
             const newPlotLines = item.plotLines;
 
-            // const oldPlotLines = chart.options[key][index].plotLines;
+
             const old = chart.options[key][index];
 
             newPlotLines && old && !isEqual(newPlotLines, old.plotLines) && chart[key][index].update({ plotLines: newPlotLines });
@@ -301,7 +287,7 @@ export class ChartService {
         return updateIndicator;
     }
 
-    // 这个东西是调试发现的，从ChartObject上取系列时，有导航的图表会多出这么一个系列。
+
     private isValidSeries(series): boolean {
         return series.name !== 'Navigator 1';
     }

@@ -26,9 +26,8 @@ const appRoutes: Routes = [
         RouterModule.forRoot(
             appRoutes,
             {
-                // enableTracing: true,
                 preloadingStrategy: SelectivePreloadingStrategyService,
-            } // for debugging purpose;
+            }
         ),
     ],
     exports: [

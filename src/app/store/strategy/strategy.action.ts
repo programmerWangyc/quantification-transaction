@@ -10,8 +10,6 @@ import {
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
-//  ===========================================Api action===================================
-
 export enum GetStrategyListOrder {
     offset,
     limit,
@@ -21,7 +19,7 @@ export enum GetStrategyListOrder {
     length,
 }
 
-// Get strategy list
+
 class GetStrategyList extends ApiAction {
     isSingleParams = false;
 
@@ -58,7 +56,7 @@ export class GetStrategyListSuccessAction extends GetStrategyList implements Act
     constructor(public payload: GetStrategyListResponse) { super(); }
 }
 
-// Share strategy
+
 export enum ShareStrategyOrder {
     id,
     type,
@@ -101,7 +99,7 @@ export class ShareStrategySuccessAction extends ShareStrategyAction implements A
     constructor(public payload: ShareStrategyResponse) { super(); }
 }
 
-// gen key
+
 export enum GenKeyOrder {
     type,
     strategyId,
@@ -146,7 +144,7 @@ export class GenKeySuccessAction extends GenKeyAction implements Action {
     constructor(public payload: GenKeyResponse) { super(); }
 }
 
-// verify gen key
+
 export enum VerifyKeyOrder {
     strategyId,
     verifyCode,
@@ -189,7 +187,7 @@ export class VerifyKeySuccessAction extends VerifyKeyAction implements Action {
     constructor(public payload: VerifyKeyResponse) { super(); }
 }
 
-// delete strategy
+
 class DeleteStrategyAction extends ApiAction {
     isSingleParams = true;
 
@@ -226,7 +224,7 @@ export class DeleteStrategySuccessAction extends DeleteStrategyAction implements
     constructor(public payload: DeleteStrategyResponse) { super(); }
 }
 
-// op strategy token
+
 export enum OpStrategyTokenOrder {
     strategyId,
     opCode,
@@ -269,7 +267,7 @@ export class OpStrategyTokenSuccessAction extends OpStrategyTokenAction implemen
     constructor(public payload: OpStrategyTokenResponse) { super(); }
 }
 
-// strategy detail
+
 class GetStrategyDetailAction extends ApiAction {
     isSingleParams = true;
 
@@ -306,7 +304,7 @@ export class GetStrategyDetailSuccessAction extends GetStrategyDetailAction impl
     constructor(public payload: GetStrategyDetailResponse) { super(); }
 }
 
-// public strategy detail
+
 class GetPublicStrategyDetailAction extends ApiAction {
     isSingleParams = true;
 
@@ -341,7 +339,7 @@ export class GetPublicStrategyDetailSuccessAction extends GetPublicStrategyDetai
     constructor(public payload: GetPublicStrategyDetailResponse) { super(); }
 }
 
-// save strategy
+
 export enum SaveStrategyOrder {
     id,
     categoryId,
@@ -392,7 +390,7 @@ export class SaveStrategySuccessAction extends SaveStrategyAction implements Act
     constructor(public payload: SaveStrategyResponse) { super(); }
 }
 
-// strategy list by name
+
 export enum StrategyListByNameOrder {
     offset,
     limit,
@@ -437,9 +435,6 @@ export class GetStrategyListByNameSuccessAction extends GetStrategyListByName im
     constructor(public payload: GetStrategyListByNameResponse) { super(); }
 }
 
-//  ===========================================Local action===================================
-
-// update strategy hasToken field
 export const UPDATE_STRATEGY_SECRET_KEY_STATE = '[Strategy] UPDATE_STRATEGY_SECRET_KEY_STATE';
 
 export class UpdateStrategySecretKeyStateAction implements Action {
@@ -448,14 +443,13 @@ export class UpdateStrategySecretKeyStateAction implements Action {
     constructor(public payload: { id: number, hasToken: boolean }) { }
 }
 
-// reset state
 export const RESET_STATE = '[Strategy] RESET_STATE';
 
 export class ResetStateAction implements Action {
     readonly type = RESET_STATE;
 }
 
-// update selected dependance templates
+
 export const UPDATE_STRATEGY_DEPENDANCE_TEMPLATES = '[Strategy] UPDATE_STRATEGY_DEPENDANCE_TEMPLATES';
 
 export class UpdateStrategyDependanceTemplatesAction implements Action {
@@ -464,7 +458,7 @@ export class UpdateStrategyDependanceTemplatesAction implements Action {
     constructor(public payload: number[]) { }
 }
 
-// update selected language
+
 export const UPDATE_SELECTED_LANGUAGE = '[Strategy] UPDATE_SELECTED_LANGUAGE';
 
 export class UpdateStrategyLanguageAction implements Action {

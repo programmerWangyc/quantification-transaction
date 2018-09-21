@@ -17,9 +17,6 @@ import { BaseEffect } from '../base.effect';
 import { AppState, selectRobotRequestParameters } from '../index.reducer';
 import * as robotActions from './robot.action';
 
-/**
- * @ignore
- */
 @Injectable()
 export class RobotEffect extends BaseEffect {
 
@@ -54,7 +51,7 @@ export class RobotEffect extends BaseEffect {
         tap(this.tip.messageByResponse('COMMAND_ROBOT_SUCCESS_TIP', 'COMMAND_ROBOT_FAIL_TIP'))
     );
 
-    // 响应结果服务中处理。
+
     @Effect()
     deleteRobot$: Observable<ResponseAction> = this.getResponseAction(robotActions.DELETE_ROBOT, robotActions.ResponseActions, isDeleteRobotFail);
 
@@ -87,20 +84,12 @@ export class RobotEffect extends BaseEffect {
         super(ws, actions$);
     }
 
-    /**
-     * 这个流用来在前端模拟出订阅和取消订阅行为，当用户退出机器人详情页面时（目前只有这个页面需要订阅机器人）会取消订阅，此时除了机器人的状态变更外，其它的相关信息将不再被订阅。
-     */
     toggleResponsiveServerSendEvent(): Observable<boolean> {
         return this.store.select(selectRobotRequestParameters).pipe(
             filter(request => !!request),
             map(res => res.subscribeRobot && res.subscribeRobot.id !== 0),
             distinctUntilChanged()
         );
-        // return this.store.pipe(
-        //     select(selectRouteState),
-        //     map(state => /robot\/\d+\/\w+/.test(state.url)),
-        //     distinctUntilChanged()
-        // );
     }
 }
 

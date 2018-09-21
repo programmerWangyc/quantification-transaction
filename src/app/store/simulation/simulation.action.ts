@@ -4,9 +4,6 @@ import { GetSandboxTokenRequest } from '../../interfaces/request.interface';
 import { GetSandboxTokenResponse } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
-//  ===========================================Api action===================================
-
-// Get sandbox token
 class GetSandboxToken extends ApiAction {
     isSingleParams = false;
 
@@ -40,8 +37,6 @@ export class GetSandBoxTokenSuccessAction extends GetSandboxToken implements Act
 
     constructor(public payload: GetSandboxTokenResponse) { super(); }
 }
-
-//  ===========================================Local action===================================
 
 export type ApiActions = GetSandBoxTokenRequestAction
     | GetSandBoxTokenFailAction

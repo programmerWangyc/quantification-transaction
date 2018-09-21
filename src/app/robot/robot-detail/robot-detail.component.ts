@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Observable, of } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, take, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mapTo, mergeMapTo, takeWhile } from 'rxjs/operators';
 
 import { BaseComponent } from '../../base/base.component';
 import { Breadcrumb } from '../../interfaces/app.interface';
@@ -60,22 +60,14 @@ export class RobotDetailComponent extends BaseComponent {
 
         this.paths = [{ name: 'ROBOT', path: '../../' }, { name }];
 
-        /**
-         * state: false ---> true ---> false;
-         */
-        this.isLoading = this.robotService.isLoading().pipe(
-            take(3)
-        );
+        this.isLoading = this.robotService.isLoading();
     }
 
     /**
      * @ignore
      */
     launch() {
-        const idObs = this.activatedRoute.paramMap.pipe(
-            map(param => +param.get('id')),
-            take(1)
-        );
+        const idObs = this.activatedRoute.paramMap.pipe( map(param => +param.get('id')));
 
         const isMainAccount = this.publicService.isSubAccount().pipe(
             filter(sure => !sure),

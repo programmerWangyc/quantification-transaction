@@ -19,59 +19,26 @@ import { AgentConstantService } from '../providers/agent.constant.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class CreateAgentComponent extends BaseComponent {
-    /**
-     * 系统选择
-     */
     system: FormControl = new FormControl();
 
-    /**
-     * 系统版本
-     */
     version: FormControl = new FormControl();
 
-    /**
-     * client version
-     */
     clientVersion: FormControl = new FormControl();
 
-    /**
-     * download
-     */
     download$: Subject<boolean> = new Subject();
 
-    /**
-     * 当前的步骤
-     */
     currentStep: Observable<number>;
 
-    /**
-     * 用户的操作是否已完成
-     */
     isOperateComplete: FormControl = new FormControl(false);
 
-    /**
-     * @ignore
-     */
     subscription$$: Subscription;
 
-    /**
-     * 托管者最新的版本信息
-     */
     latestVersion: Observable<string>;
 
-    /**
-     * docker setting
-     */
     private agentSetting: Observable<DockerSetting>;
 
-    /**
-     * @ignore
-     */
     rpc: Observable<string>;
 
-    /**
-     * 跳过指定的步骤
-     */
     skipStep$: Subject<number> = new Subject();
 
     constructor(
@@ -83,18 +50,12 @@ export class CreateAgentComponent extends BaseComponent {
         super();
     }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.initialModel();
 
         this.launch();
     }
 
-    /**
-     * @ignore
-     */
     initialModel() {
         this.currentStep = this.getCurrentStep();
 
@@ -114,9 +75,6 @@ export class CreateAgentComponent extends BaseComponent {
         );
     }
 
-    /**
-     * @ignore
-     */
     launch() {
         this.subscription$$ = this.system.valueChanges
             .subscribe(_s => {
@@ -133,9 +91,6 @@ export class CreateAgentComponent extends BaseComponent {
             .add(this.nodeService.launchNodeHash(of(true)));
     }
 
-    /**
-     * 获取当前的步骤
-     */
     private getCurrentStep(): Observable<number> {
         const systemReady = this.system.valueChanges.pipe(
             mapTo(1)
@@ -162,9 +117,6 @@ export class CreateAgentComponent extends BaseComponent {
         return merge(systemReady, versionReady, clientReady, commandReady);
     }
 
-    /**
-     * 获取下载uri
-     */
     private getDownloadUri(): Observable<string> {
         return this.download$.pipe(
             map(_ => this.constant.getClient(this.system.value, this.version.value, this.clientVersion.value)),
@@ -174,9 +126,6 @@ export class CreateAgentComponent extends BaseComponent {
         );
     }
 
-    /**
-     * @ignore
-     */
     ngOnDestroy() {
         this.subscription$$.unsubscribe();
     }

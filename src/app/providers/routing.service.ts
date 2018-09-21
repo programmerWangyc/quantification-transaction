@@ -55,18 +55,12 @@ export class RoutingService extends BaseService {
         super();
     }
 
-    /**
-     * @ignore
-     */
     getCurrentRouteState(): Observable<RouterStateUrl> {
         return this.store.pipe(
             this.selectTruth(selectRouteState)
         );
     }
 
-    /**
-     * @ignore
-     */
     getCurrentUrl(): Observable<string> {
         return this.getCurrentRouteState().pipe(
             map(state => state.url),
@@ -80,58 +74,15 @@ export class RoutingService extends BaseService {
         );
     }
 
-    // getBreadcrumb(extra?: (data: { [key: string]: any }) => Breadcrumb[]): Observable<Breadcrumb[]> {
-    //     return this.getCurrentRouteState().pipe(
-    //         map(({ url, params }) => {
-    //             const options: string[] = Object.values(params);
-
-    //             let urlWithoutPath = url;
-
-    //             let extraBreadcrumb = [];
-
-    //             if (options.length) {
-    //                 urlWithoutPath = options.reduce((acc, cur) => acc.replace('/' + cur, ''), url);
-
-    //                 if (extra) {
-    //                     extraBreadcrumb = extra(params);
-    //                 }
-    //             }
-
-    //             let result = urlWithoutPath.split('/').filter(item => !!item && !!item.length);
-
-    //             result = result.includes(Path.dashboard) && result.length > 1 ? result.slice(1) : result;
-
-    //             const lastIndex = result.length - 1;
-
-    //             return result.map((item, index) => {
-    //                 if (index === lastIndex) {
-    //                     return { name: PathMapToBreadcrumb.get(item) };
-    //                 } else {
-    //                     return { name: PathMapToBreadcrumb.get(item), path: '/' + result.slice(0, index + 1).join('/') };
-    //                 }
-    //             }).concat(extraBreadcrumb);
-
-    //         })
-    //     );
-    // }
-
-    /**
-     * @ignore
-     */
     go(data: RouterInfo): void {
         this.store.dispatch(new Go(data));
     }
 
-    /**
-     * @ignore
-     */
+
     back(): void {
         this.store.dispatch(new Back());
     }
 
-    /**
-     * @ignore
-     */
     forward(): void {
         this.store.dispatch(new Forward());
     }

@@ -15,10 +15,7 @@ export declare function resultPredicate(data: ResponseUnit<any>): boolean;
 
 export type isFail<T> = (result: ResponseUnit<T>) => boolean;
 
-/**
- * Predicate the response is an error or not;
- * @param data ResponseUnit<any>
- */
+
 export const isFail: isFail<any> = (data: ResponseUnit<any>) => !!data.error;
 
 @Injectable()
@@ -30,12 +27,9 @@ export class BaseEffect {
         public actions$: Actions,
     ) { }
 
-    /**
-     * Used to split the response data to corresponding response actions.
-     * @param data ResponseBody
-     * @param actionModule Collection of response actions;
-     * @param resultFail Predicate whether the response is success.
-     */
+
+
+
     private getSplitAction(data: ResponseBody, actionModule: Object, resultFail = isFail): Observable<ResponseAction> {
         return zip(
             observableFrom(<ResponseUnit<ResponseItem>[]>data.result || []),
@@ -47,12 +41,7 @@ export class BaseEffect {
         );
     }
 
-    /**
-     * If a request calls only one interface, use this method.
-     * @param actionName Request action name;
-     * @param actionModule Collection of response actions;
-     * @param resultFail Predicate whether the response is success.
-     */
+
     protected getResponseAction(actionName: string, actionModule: object, resultFail = isFail): Observable<ResponseAction> {
         return this.actions$.ofType(actionName).pipe(
             switchMap((action: ApiActions) => this.ws
@@ -65,12 +54,7 @@ export class BaseEffect {
         );
     }
 
-    /**
-     * If a request calls multiple interfaces, use this method.
-     * @param source Collection of request actions.
-     * @param actionModule Collection of response actions;
-     * @deprecated 停止使用这种方式，可能导致一个请求触发多个响应动作，这些动作可能散落在不同的模块中，非常难以调试。
-     */
+
     protected getMultiResponseActions(source: Observable<Action[]>, actionModule: object): Observable<ResponseAction> {
         return source.pipe(
             map(actions => actions.map((action: RequestAction) => action.getParams(action.payload))),
@@ -83,9 +67,6 @@ export class BaseEffect {
         );
     }
 
-    /**
-     * Merge multiple requests into one request.
-     */
     private mergeParams(source: WsRequest[]): WsRequest {
         const result = { method: [], params: [], callbackId: '' };
 

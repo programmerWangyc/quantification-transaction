@@ -9,9 +9,6 @@ import {
 } from '../../interfaces/response.interface';
 import { ApiAction } from '../base.action';
 
-//  ===========================================Api action===================================
-
-// public
 export const SET_PUBLIC_INFORMATION = '[Public] SET_PUBLIC_INFORMATION';
 
 export class SetPublicInformationAction implements Action {
@@ -28,7 +25,6 @@ export class SetReferrerAction implements Action {
     constructor(public payload: Referrer) { }
 }
 
-// settings
 export class SettingsAction extends ApiAction {
     isSingleParams = true;
 
@@ -65,7 +61,6 @@ export class GetSettingsSuccessAction extends SettingsAction implements Action {
     constructor(public payload: SettingsResponse) { super(); }
 }
 
-// change alert threshold
 enum AlertThresholdOrder {
     type,
     amount,
@@ -108,7 +103,6 @@ export class ChangeAlertThresholdSettingSuccessAction extends AlertThreshold imp
     constructor(public payload: ChangeAlertThresholdSettingResponse) { super(); }
 }
 
-// logout
 export class Logout extends ApiAction {
     isSingleParams = false;
 
@@ -143,7 +137,6 @@ export class LogoutSuccessAction extends Logout implements Action {
     constructor(public payload: LogoutResponse) { super(); }
 }
 
-// account summary
 export class GetAccountSummary extends ApiAction {
     isSingleParams = false;
 
@@ -177,8 +170,6 @@ export class GetAccountSummarySuccessAction extends GetAccountSummary implements
 
     constructor(public payload: GetAccountSummaryResponse) { super(); }
 }
-
-//  ===========================================Local action===================================
 
 export const SET_LANGUAGE = '[Public] SET_LANGUAGE';
 

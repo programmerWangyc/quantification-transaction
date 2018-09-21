@@ -45,19 +45,7 @@ export class RobotLogService extends BaseService {
         super();
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * Launch get robot logs request.
-     * 当用户切换页数时，需要保持其它数据不发生变化，所以这里加入了perviousParams，这个参数只有用户手动获取日志信息时会在store中更新。
-     * 根本原因在于，日志信息，收益图表，策略图表的数据使用了一个接口，因此如果请求参数发生变化，必然导致响应结果变化。
-     * *2种方法可以处理，第一种就是目前采用的方法，带着上一次的参数再次请求数据，优点是简单且不需要在响应中额外更新数据，缺点：1、是会导致再一次的刷新，2、默认参数的值变化需要额外添加新的流
-     * *发起请求，否则有可能被前一个参数覆盖。
-     * *第二种是直接使用新参数发起请求，在响应回来后根据请求的参数和响应结果在store中手动更新每一个数据， 这样虽然可以做到页面不刷新无关的日志，但在store中对于响应结果的处理会更加复杂。
-     * *默认参数会被所有的接口调用者刷新store的状态，所以需要区分业务层的请求参数是否发生变化，确定是否需要发起请求
-     * *最优解应该是分离接口，单独获取相应的数据，在获取某种日志信息时不会干扰其它的日志信息。
-     */
-    launchRobotLogs(data: Observable<LogParam>, isSyncAction = false /* indicate the action is  sync action or not */, distinctFn?: (pre: LogParam, cur: LogParam) => boolean): Subscription {
+    launchRobotLogs(data: Observable<LogParam>, isSyncAction = false , distinctFn?: (pre: LogParam, cur: LogParam) => boolean): Subscription {
         const defaultFn = (pre, cur) => Object.keys(cur).every(key => pre[key] === cur[key]);
 
         const fn = distinctFn || defaultFn;
@@ -80,9 +68,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    /**
-     *  Refresh logs if user want to;
-     */
     launchRefreshRobotLogs(flag: Observable<boolean>): Subscription {
         return this.launchRobotLogs(flag.pipe(
             switchMapTo(
@@ -94,9 +79,6 @@ export class RobotLogService extends BaseService {
         ), false, () => false);
     }
 
-    /**
-     *  Get logs when the server notifies log updates.
-     */
     launchSyncLogsWhenServerRefreshed(keepAlive: keepAliveFn): Subscription {
         const newLogParam = zip(
             this.getLogParamsFroSyncLogs(),
@@ -122,8 +104,6 @@ export class RobotLogService extends BaseService {
             true
         );
     }
-
-    //  =======================================================Date Acquisition=======================================================
 
     private getRobotLogsResponse(): Observable<fromRes.GetRobotLogsResponse> {
         return this.store.pipe(
@@ -171,10 +151,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    /**
-     * 获取loading的状态；
-     * @param type loading type
-     */
     isLoading(type?: string): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotUiState),
@@ -182,11 +158,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    //  =======================================================Running log ======================================================
-
-    /**
-     *  The log information retrieved here is the semantic version of the original log.
-     */
     getSemanticsRobotRunningLogs(): Observable<fromRes.RunningLog[]> {
         return combineLatest(
             this.getRobotLogs().pipe(
@@ -209,11 +180,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    /**
-     *
-     * 1、自动获取的不一定比手动获取的更新，如手动获取发生在自动获取之后恰好日志又有更新时。
-     * 2、只有通过比较手动获取和自动获取的Max值，其中较大者才一定是客户端所知道的最新的ID。
-     */
     getLogParamsFroSyncLogs(): Observable<number> {
         return combineLatest(
             this.getRobotLogs().pipe(
@@ -242,7 +208,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    // monitoring message
     getRobotLogMonitorSoundState(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotLogMonitoringSound),
@@ -257,9 +222,6 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    /**
-     *  Request parameter of getRobotLogs, corresponding to 'logOffset' field.
-     */
     getLogPaginationInfo(): Observable<{ logOffset: number; logLimit: number; }> {
         return combineLatest(
             this.store.pipe(
@@ -577,20 +539,12 @@ export class RobotLogService extends BaseService {
             map(([page, { chartLimit }]) => page * chartLimit)
         );
     }
-    //  =======================================================Short cart method==================================================
-
-    /**
-     * Predicate whether the robot status need to refresh log automatically.
-     */
     private isInValidStatusToSyncLogs(): Observable<boolean> {
         return this.robotService.getRobotDetail().pipe(
             map(robot => this.robotService.isNormalStatus(robot))
         );
     }
 
-    /**
-     * Predicate whether the log can be synchronized.
-     */
     private canSyncLogs(): Observable<boolean> {
         return combineLatest(
             combineLatest(
@@ -606,30 +560,18 @@ export class RobotLogService extends BaseService {
         );
     }
 
-    /**
-     * Whether need to sync log with server;
-     */
     private needSyncLogs(): Observable<boolean> {
         return this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_REFRESH).pipe(
-            // .merge(this.robotService.getServerSendRobotMessageType(ServerSendRobotEventType.UPDATE_SUMMARY))
             withLatestFrom(
                 this.robotService.getRobotDetail(),
                 (msg, robot) => msg.id === robot.id)
         );
     }
 
-    /**
-     * Wether the log is fresh. If the log's date is behind the latest log by user obtains, it's fresh, otherwise not.
-     * @param headLog The first data of the log that user actively pulls.
-     * @param compareLog After the server notification, the program automatically obtains information.
-     */
     private isFresh(headLog: fromRes.RunningLog, compareLog: fromRes.RunningLog): boolean {
         return headLog ? headLog.date < compareLog.date : true;
     }
 
-    /**
-     * After the program automatically obtains logs, it updates the log information the user sees.;
-     */
     private updateLogs(logs: fromRes.RunningLog[], newLogs: fromRes.RunningLog[]): fromRes.RunningLog[] {
         const result = newLogs.filter(item => this.isFresh(logs[0], item));
 

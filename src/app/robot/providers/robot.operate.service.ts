@@ -62,15 +62,10 @@ export class RobotOperateService extends RobotBaseService {
         super(store, tipService);
     }
 
-    //  =======================================================Serve Request=======================================================
-
     launchPublicRobot(data: Observable<fromRes.Robot>): Subscription {
         return this.process.processPublicRobot(this.getPublicRobotRequest(data));
     }
 
-    /**
-     *  1、验证能否切换平台；2、提示用户进行操作确认；3、如果公有节点需要验证密码；
-     */
     launchRestartRobot(source: Observable<fromRes.RobotDetail | fromRes.Robot>, needVerifyPlatform = true): Subscription {
         const param1 = this.canChangePlatform().pipe(
             this.filterTruth(),
@@ -114,15 +109,6 @@ export class RobotOperateService extends RobotBaseService {
         );
     }
 
-    /**
-     *  是否需要编码参数
-     * 1 不需要：直接发送；
-     * 2 需要：是否需要验证密码
-     *      3 不需要： 编码并发送
-     *      4 需要： 验证密码
-     *          5 验证成功：编码并发送
-     *          6 验证失败：不发送
-     */
     launchUpdateRobotConfig(request: Observable<fromReq.ModifyRobotRequest>): Subscription {
         return this.process.processModifyRobot(request.pipe(
             switchMap(data => this.isArgsNeedToEncrypt().pipe(
@@ -389,7 +375,6 @@ export class RobotOperateService extends RobotBaseService {
         );
     }
 
-    // ui state
     isLoading(type?: string): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotUiState),
@@ -509,8 +494,6 @@ export class RobotOperateService extends RobotBaseService {
         );
     }
 
-    //  =======================================================Short cart method==================================================
-
     private getEncryptedArgs(isEncrypt = true): Observable<string> {
         return combineLatest(
             this.encryptService.transformStrategyArgsToEncryptType(
@@ -540,9 +523,6 @@ export class RobotOperateService extends RobotBaseService {
         );
     }
 
-    /**
-     * 验证密码成功后的通知流；
-     */
     private isSecurityVerifySuccess(): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectTemporaryPwd),
@@ -586,8 +566,6 @@ export class RobotOperateService extends RobotBaseService {
         );
     }
 
-    //  =======================================================Local state modify==================================================
-
     updateRobotArg(variable: VariableOverview | ImportedArg, templateFlag?: string | number): void {
         this.store.dispatch(new ModifyRobotArgAction(variable, templateFlag));
     }
@@ -599,8 +577,6 @@ export class RobotOperateService extends RobotBaseService {
     updateRobotWDState(target: Observable<fromReq.SetWDRequest>): Subscription {
         return target.subscribe(request => this.store.dispatch(new UpdateRobotWatchDogStateAction(request)));
     }
-
-    //  =======================================================Error Handle=======================================================
 
     handlePublicRobotError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getPublicRobotResponse().pipe(

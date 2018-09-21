@@ -15,9 +15,6 @@ import { TableStatistics } from '../../interfaces/app.interface';
 })
 export class FactRobotTableComponent implements OnInit {
 
-    /**
-     * @ignore
-     */
     @Input() set robots(input: PublicRobot[]) {
         if (!!input) {
             this._robots = input;

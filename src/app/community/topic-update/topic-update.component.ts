@@ -35,16 +35,10 @@ export class TopicUpdateComponent implements OnInit, CanDeactivateComponent {
         private route: ActivatedRoute,
     ) { }
 
-    /**
-     * @ignore
-     */
     canDeactivate(): DeactivateGuard[] {
         return this.formComponent.canDeactivate();
     }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.topic = this.route.data.pipe(
             map((data: { topic: BBSTopicById }) => data.topic)

@@ -4,9 +4,6 @@ import { GetPlatformListResponse, DeletePlatformResponse, GetPlatformDetailRespo
 import { ApiAction } from '../base.action';
 import { DeletePlatformRequest, GetPlatformDetailRequest, SavePlatformRequest } from '../../interfaces/request.interface';
 
-//  ===========================================Api action===================================
-
-// platform list
 export class GetPlatformListAction extends ApiAction {
     isSingleParams = false;
 
@@ -43,7 +40,6 @@ export class GetPlatformListSuccessAction extends GetPlatformListAction implemen
     constructor(public payload: GetPlatformListResponse) { super(); }
 }
 
-// delete platform
 class DeletePlatformAction extends ApiAction {
     isSingleParams = true;
 
@@ -80,7 +76,6 @@ export class DeletePlatformSuccessAction extends DeletePlatformAction implements
     constructor(public payload: DeletePlatformResponse) { super(); }
 }
 
-// platform detail
 class GetPlatformDetailAction extends ApiAction {
     isSingleParams = true;
 
@@ -116,8 +111,6 @@ export class GetPlatformDetailSuccessAction extends GetPlatformDetailAction impl
 
     constructor(public payload: GetPlatformDetailResponse) { super(); }
 }
-
-// update platform
 
 enum SavePlatformOrder {
     id,
@@ -170,10 +163,6 @@ export class ResetStateAction implements Action {
     readonly type = RESET_STATE;
 }
 
-
-//  ===========================================Local action===================================
-
-//  none local action
 
 export type ApiActions = GetPlatformListRequestAction
     | DeletePlatformFailAction

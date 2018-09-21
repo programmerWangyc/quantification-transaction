@@ -22,19 +22,19 @@ import { StrategyCreateMetaComponent } from '../strategy-create-meta/strategy-cr
 })
 export class StrategyAddComponent extends StrategyCreateMetaComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    /**
-     * 可使用的模板
-     */
+
+
+
     templates: Observable<TemplateRefItem[]>;
 
-    /**
-     * 是否需要显示模板依赖
-     */
+
+
+
     needShowTemplateDependance: Observable<boolean>;
 
-    /**
-     * 策略
-     */
+
+
+
     strategyDetail: Observable<StrategyDetail>;
 
     constructor(
@@ -49,9 +49,9 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
         super(backtest, constant, nodeService, route, strategyOptService, strategyService, tipService);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnInit() {
         this.initialModel(true);
 
@@ -62,18 +62,18 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
         this.privateLaunch();
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     private initialPrivateModel() {
         this.templates = this.getTemplateDependance(this.strategyService.getAvailableDependance(true));
 
         this.needShowTemplateDependance = this.isShowTemplateDependance(this.templates);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     private privateLaunch() {
         const keepAlive = () => this.isAlive;
 
@@ -81,7 +81,7 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
             takeWhile(keepAlive)
         ).subscribe(content => this.exportFile(content));
 
-        // 只获取属于模板类库的策略
+
         this.strategyService.launchStrategyList(of({ offset: -1, limit: -1, strategyType: -1, categoryType: CategoryType.TEMPLATE_LIBRARY, needArgsType: needArgsType.onlyStrategyArg }));
 
         this.nodeService.launchGetNodeList(of(true));
@@ -91,18 +91,18 @@ export class StrategyAddComponent extends StrategyCreateMetaComponent implements
         this.strategyOptService.handleSaveStrategyError(keepAlive);
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngAfterViewInit() {
         this.strategyOptService.launchSaveStrategy(this.confirmBeforeRequest(-1).pipe(
             takeWhile(() => this.isAlive)
-        )); // 为啥是-1，我也不知道；
+        ));
     }
 
-    /**
-     * @ignore
-     */
+
+
+
     ngOnDestroy() {
         this.isAlive = false;
 

@@ -16,44 +16,20 @@ import { BacktestChartService } from '../providers/backtest.chart.service';
 })
 export class BacktestLogInfoComponent implements OnInit {
 
-    /**
-     * Running logs
-     */
     logs: Observable<RunningLog[]>;
 
-    /**
-     * Whether the logs could be downloaded.
-     */
     canSave: Observable<boolean>;
 
-    /**
-     * Log statistics;
-     */
     statistics: Observable<string>;
 
-    /**
-     * Log total amount.
-     */
     logTotal: Observable<number>;
 
-    /**
-     * Page size.
-     */
     pageSize: Observable<number> = of(50);
 
-    /**
-     * @ignore
-     */
     pageSize$: Subject<number> = new Subject();
 
-    /**
-     * @ignore
-     */
     search$: Subject<number[]> = new Subject();
 
-    /**
-     * @ignore
-     */
     pageIndex$: Subject<number> = new Subject();
 
     constructor(
@@ -61,9 +37,6 @@ export class BacktestLogInfoComponent implements OnInit {
         private utilService: UtilService,
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnInit() {
         this.logs = combineLatest(
             this.orderLogs(),
@@ -94,18 +67,12 @@ export class BacktestLogInfoComponent implements OnInit {
         this.canSave = this.chartService.hasRunningLogs();
     }
 
-    /**
-     * Reverse the logs.
-     */
     private orderLogs(): Observable<RunningLog[]> {
         return this.chartService.getRunningLogs().pipe(
             map(logs => logs.reverse())
         );
     }
 
-    /**
-     * Reactive the download action send by user.
-     */
     onDownload() {
         this.chartService.downloadRunningLog();
     }

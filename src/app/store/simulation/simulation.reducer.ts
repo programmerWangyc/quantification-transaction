@@ -18,7 +18,6 @@ const initialState: State = {
 export function reducer(state = initialState, action: actions.Actions): State {
     switch (action.type) {
 
-        // sandbox token
         case actions.GET_SANDBOX_TOKEN_FAIL:
         case actions.GET_SANDBOX_TOKEN_SUCCESS:
             return { ...state, sandboxTokenRes: action.payload };

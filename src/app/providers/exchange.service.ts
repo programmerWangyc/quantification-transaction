@@ -23,30 +23,15 @@ export class ExchangeService extends BaseService {
         super();
     }
 
-    //  =======================================================Server request=======================================================
-
-    /**
-     * @ignore
-     */
     launchExchangeList(): Subscription {
         return this.process.processExchangeList(observableOf(null));
     }
 
-    //  =======================================================Date Acquisition=======================================================
-
-    /**
-     * exchange list 的响应应状态；
-     */
     private getExchangeListResponse(): Observable<GetExchangeListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectExchangeListResponse)
         );
     }
-
-    /**
-     * 获取所有交易所
-     * @param excludes 需要排除的交易所 eid 列表;
-     */
     getExchangeList(excludes: string[] = []): Observable<Exchange[]> {
         return this.getExchangeListResponse().pipe(
             map(res => res.result.exchanges),
@@ -54,14 +39,6 @@ export class ExchangeService extends BaseService {
         );
     }
 
-    //  =======================================================Local state change=======================================================
-
-
-    //  =======================================================Error handle=======================================================
-
-    /**
-     * @ignore
-     */
     handleExchangeListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getExchangeListResponse().pipe(
             takeWhile(keepAlive)

@@ -29,27 +29,18 @@ export class RobotBaseService extends BaseService {
         super();
     }
 
-    /**
-     * @ignore
-     */
     protected getRobotDetailResponse(): Observable<fromRes.GetRobotDetailResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectRobotDetailResponse)
         );
     }
 
-    /**
-     * @ignore
-     */
     getRobotDetail(): Observable<fromRes.RobotDetail> {
         return this.getRobotDetailResponse().pipe(
             map(res => res.result.robot)
         );
     }
 
-    /**
-     * @ignore
-     */
     protected getRobotStrategyExchangePair(): Observable<fromRes.StrategyExchangePairs> {
         return this.getRobotDetail().pipe(
             map(detail => {
@@ -60,9 +51,6 @@ export class RobotBaseService extends BaseService {
         );
     }
 
-    /**
-     * @ignore
-     */
     protected canChangePlatform(): Observable<boolean> {
         return this.getRobotStrategyExchangePair().pipe(
             map(pairs => pairs.exchangeIds.some(id => id > -10)),
@@ -88,32 +76,18 @@ export class RobotService extends RobotBaseService {
         super(store, tipService);
     }
 
-    //  =======================================================Serve Request=======================================================
-
-    /**
-     * @ignore
-     */
     launchRobotList(data: Observable<fromReq.GetRobotListRequest>): Subscription {
         return this.process.processRobotList(data);
     }
 
-    /**
-     * @ignore
-     */
     launchRobotDetail(data: Observable<fromReq.GetRobotDetailRequest>) {
         return this.process.processRobotDetail(data);
     }
 
-    /**
-     * @ignore
-     */
     launchSubscribeRobot(data: Observable<fromReq.SubscribeRobotRequest>): Subscription {
         return this.process.processSubscribeRobot(data);
     }
 
-    /**
-     * @ignore
-     */
     launchCreateRobot(source: Observable<fromReq.SaveRobotRequest>): Subscription {
         return this.process.processSaveRobot(
             source.pipe(
@@ -127,48 +101,18 @@ export class RobotService extends RobotBaseService {
         );
     }
 
-    //  =======================================================Date Acquisition=======================================================
-
-    // robot list
-    /**
-     * @ignore
-     */
     private getRobotListResponse(): Observable<fromRes.RobotListResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectRobotListData)
         );
     }
 
-    /**
-     * @ignore
-     */
-    // private getRobotTotal(): Observable<number> {
-    //     return this.getRobotListResponse().pipe(
-    //         map(res => res.all)
-    //     );
-    // }
-
-    /**
-     * @ignore
-     */
-    // private getRobotConcurrence(): Observable<number> {
-    //     return this.getRobotListResponse().pipe(
-    //         map(res => res.concurrent)
-    //     );
-    // }
-
-    /**
-     * @ignore
-     */
     getRobots(): Observable<fromRes.Robot[]> {
         return this.getRobotListResponse().pipe(
             map(res => res.robots)
         );
     }
 
-    /**
-     * @ignore
-     */
     private getRobotListResState(): Observable<fromRes.ResponseState> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectRobotListResState)
@@ -198,76 +142,29 @@ export class RobotService extends RobotBaseService {
         );
     }
 
-    /**
-     * 总收益
-     */
     getGrossProfit(): Observable<number> {
         return this.getRobots().pipe(
             map(robots => robots.reduce((acc, cur) => acc + cur.profit, 0))
         );
     }
-
-    // public robot list
-    /**
-     * @ignore
-     */
-    // private getPublicRobotListResponse(): Observable<fromRes.GetPublicRobotListResponse> {
-    //     return this.store.pipe(
-    //         select(fromRoot.selectPublicRobotListResponse),
-    //         this.filterTruth()
-    //     );
-    // }
-
-    /**
-     * @ignore
-     */
-    // private getPublicRobotTotal(): Observable<number> {
-    //     return this.getPublicRobotListResponse().pipe(
-    //         map(res => res.result.all)
-    //     );
-    // }
-
-    /**
-     * @ignore
-     */
     getCurrentRobotId(): Observable<number> {
         return this.getRobotDetail().pipe(
             map(robot => robot.id)
         );
     }
 
-    // subscribe robot
-    /**
-     * @ignore
-     */
     private getSubscribeRobotResponse(): Observable<fromRes.SubscribeRobotResponse> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectSubscribeRobotResponse)
         );
     }
 
-    /**
-     * @ignore
-     */
-    // isSubscribeRobotSuccess(): Observable<boolean> {
-    //     return this.getSubscribeRobotResponse().pipe(
-    //         map(res => res.result)
-    //     );
-    // }
-
-    // server send message
-    /**
-     * @ignore
-     */
     private getServerSendRobotMessage(): Observable<fromRes.ServerSendRobotMessage> {
         return this.store.pipe(
             this.selectTruth(fromRoot.selectServerSendRobotMessage)
         );
     }
 
-    /**
-     * @ignore
-     */
     getServerSendRobotMessageType(msgType: number): Observable<fromRes.ServerSendRobotMessage> {
         return this.getServerSendRobotMessage().pipe(
             filter(msg => !!(msg.flags & msgType))
@@ -280,20 +177,12 @@ export class RobotService extends RobotBaseService {
         );
     }
 
-    /**
-     * 通知机器人创建成功
-     */
     isSaveRobotSuccess(): Observable<boolean> {
         return this.getSaveRobotResponse().pipe(
             map(res => !isSaveRobotFail(res))
         );
     }
 
-    //  =======================================================Short cart method==================================================
-
-    /**
-     * @ignore
-     */
     monitorServerSendRobotStatus(keepAlive: keepAliveFn): Subscription {
         const param = this.getServerSendRobotMessage().pipe(
             filter(data => data.status && this.isOverStatus(data)),
@@ -308,24 +197,14 @@ export class RobotService extends RobotBaseService {
         return this.launchRobotDetail(param);
     }
 
-    /**
-     * 结束状态
-     */
     private isOverStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
         return includes([fromRes.RobotStatus.COMPLETE, fromRes.RobotStatus.STOPPED, fromRes.RobotStatus.ERROR], robot.status);
     }
 
-    /**
-     * 正常状态
-     */
     isNormalStatus(robot: fromRes.Robot | fromRes.ServerSendRobotMessage | fromRes.RobotDetail): boolean {
         return includes([fromRes.RobotStatus.QUEUEING, fromRes.RobotStatus.RUNNING, fromRes.RobotStatus.STOPPING], robot.status);
     }
 
-    /**
-     * 获取loading的状态；
-     * @param type loading type
-     */
     isLoading(type?: string): Observable<boolean> {
         return this.store.pipe(
             select(fromRoot.selectRobotUiState),
@@ -334,54 +213,32 @@ export class RobotService extends RobotBaseService {
         );
     }
 
-    //  =======================================================Local state modify==================================================
-
-    /**
-     * @ignore
-     */
     resetRobotDetail(): void {
         this.store.dispatch(new ResetRobotDetailAction());
     }
 
-    /**
-     * @ignore
-     */
     resetRobotState(): void {
         this.store.dispatch(new ResetRobotStateAction());
     }
 
-    //  =======================================================Error Handle=======================================================
-
-    /**
-     * @ignore
-     */
     handleRobotListError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getRobotListResState().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleRobotDetailError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getRobotDetailResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleSubscribeRobotError(keepAlive: keepAliveFn): Subscription {
         return this.error.handleResponseError(this.getSubscribeRobotResponse().pipe(
             takeWhile(keepAlive)
         ));
     }
 
-    /**
-     * @ignore
-     */
     handleSaveRobotError(keepAlive: () => boolean): Subscription {
         return this.error.handleResponseError(this.getSaveRobotResponse().pipe(
             takeWhile(keepAlive)
